@@ -38,7 +38,9 @@ typedef char my_atomic_rwlock_t;
 #define MY_ATOMIC_MODE "dummy (non-atomic)"
 #else /* not MY_ATOMIC_MODE_DUMMY */
 
-typedef struct {pthread_mutex_t rw;} my_atomic_rwlock_t;
+typedef struct {
+    pthread_mutex_t rw;
+} my_atomic_rwlock_t;
 
 #ifndef SAFE_MUTEX
 
@@ -47,12 +49,12 @@ typedef struct {pthread_mutex_t rw;} my_atomic_rwlock_t;
   faster. Still, having semantically rich API we can change the
   underlying implementation, if necessary.
 */
-#define my_atomic_rwlock_destroy(name)     pthread_mutex_destroy(& (name)->rw)
-#define my_atomic_rwlock_init(name)        pthread_mutex_init(& (name)->rw, 0)
-#define my_atomic_rwlock_rdlock(name)      pthread_mutex_lock(& (name)->rw)
-#define my_atomic_rwlock_wrlock(name)      pthread_mutex_lock(& (name)->rw)
-#define my_atomic_rwlock_rdunlock(name)    pthread_mutex_unlock(& (name)->rw)
-#define my_atomic_rwlock_wrunlock(name)    pthread_mutex_unlock(& (name)->rw)
+#define my_atomic_rwlock_destroy(name) pthread_mutex_destroy(&(name)->rw)
+#define my_atomic_rwlock_init(name) pthread_mutex_init(&(name)->rw, 0)
+#define my_atomic_rwlock_rdlock(name) pthread_mutex_lock(&(name)->rw)
+#define my_atomic_rwlock_wrlock(name) pthread_mutex_lock(&(name)->rw)
+#define my_atomic_rwlock_rdunlock(name) pthread_mutex_unlock(&(name)->rw)
+#define my_atomic_rwlock_wrunlock(name) pthread_mutex_unlock(&(name)->rw)
 
 #else /* SAFE_MUTEX */
 
@@ -70,18 +72,18 @@ typedef struct {pthread_mutex_t rw;} my_atomic_rwlock_t;
   production builds.
 */
 C_MODE_START
-extern void plain_pthread_mutex_init(safe_mutex_t *);
-extern void plain_pthread_mutex_destroy(safe_mutex_t *);
-extern void plain_pthread_mutex_lock(safe_mutex_t *);
-extern void plain_pthread_mutex_unlock(safe_mutex_t *);
+extern void plain_pthread_mutex_init(safe_mutex_t*);
+extern void plain_pthread_mutex_destroy(safe_mutex_t*);
+extern void plain_pthread_mutex_lock(safe_mutex_t*);
+extern void plain_pthread_mutex_unlock(safe_mutex_t*);
 C_MODE_END
 
-#define my_atomic_rwlock_destroy(name)     plain_pthread_mutex_destroy(&(name)->rw)
-#define my_atomic_rwlock_init(name)        plain_pthread_mutex_init(&(name)->rw)
-#define my_atomic_rwlock_rdlock(name)      plain_pthread_mutex_lock(&(name)->rw)
-#define my_atomic_rwlock_wrlock(name)      plain_pthread_mutex_lock(&(name)->rw)
-#define my_atomic_rwlock_rdunlock(name)    plain_pthread_mutex_unlock(&(name)->rw)
-#define my_atomic_rwlock_wrunlock(name)    plain_pthread_mutex_unlock(&(name)->rw)
+#define my_atomic_rwlock_destroy(name) plain_pthread_mutex_destroy(&(name)->rw)
+#define my_atomic_rwlock_init(name) plain_pthread_mutex_init(&(name)->rw)
+#define my_atomic_rwlock_rdlock(name) plain_pthread_mutex_lock(&(name)->rw)
+#define my_atomic_rwlock_wrlock(name) plain_pthread_mutex_lock(&(name)->rw)
+#define my_atomic_rwlock_rdunlock(name) plain_pthread_mutex_unlock(&(name)->rw)
+#define my_atomic_rwlock_wrunlock(name) plain_pthread_mutex_unlock(&(name)->rw)
 
 #endif /* SAFE_MUTEX */
 
@@ -91,10 +93,22 @@ C_MODE_END
 #endif
 #endif
 
-#define make_atomic_add_body(S)     int ## S sav; sav= *a; *a+= v; v=sav;
-#define make_atomic_fas_body(S)     int ## S sav; sav= *a; *a= v; v=sav;
-#define make_atomic_cas_body(S)     if ((ret= (*a == *cmp))) *a= set; else *cmp=*a;
-#define make_atomic_load_body(S)    ret= *a;
-#define make_atomic_store_body(S)   *a= v;
+#define make_atomic_add_body(S)                                                \
+    int##S sav;                                                                \
+    sav = *a;                                                                  \
+    *a += v;                                                                   \
+    v = sav;
+#define make_atomic_fas_body(S)                                                \
+    int##S sav;                                                                \
+    sav = *a;                                                                  \
+    *a  = v;                                                                   \
+    v   = sav;
+#define make_atomic_cas_body(S)                                                \
+    if ((ret = (*a == *cmp)))                                                  \
+        *a = set;                                                              \
+    else                                                                       \
+        *cmp = *a;
+#define make_atomic_load_body(S) ret = *a;
+#define make_atomic_store_body(S) *a = v;
 
 #endif /* ATOMIC_RWLOCK_INCLUDED */

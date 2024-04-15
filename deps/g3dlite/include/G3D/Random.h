@@ -1,8 +1,8 @@
 /**
  \file G3D/Random.h
- 
+
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
- 
+
  \created 2009-01-02
  \edited  2012-07-20
 
@@ -12,9 +12,9 @@
 #ifndef G3D_Random_h
 #define G3D_Random_h
 
-#include "G3D/platform.h"
-#include "G3D/g3dmath.h"
 #include "G3D/GMutex.h"
+#include "G3D/g3dmath.h"
+#include "G3D/platform.h"
 
 namespace G3D {
 
@@ -30,7 +30,7 @@ namespace G3D {
     On average, uniform() runs about 2x-3x faster than rand().
 
     @cite http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/index.html
-    
+
     On OS X, Random is about 10x faster than drand48() (which is
     threadsafe) and 4x faster than rand() (which is not threadsafe).
 
@@ -38,7 +38,6 @@ namespace G3D {
  */
 class Random {
 protected:
-
     /** Constants (important for the algorithm; do not modify) */
     enum {
         N = 624,
@@ -50,48 +49,48 @@ protected:
         L = 18,
         A = 0x9908B0DF,
         B = 0x9D2C5680,
-        C = 0xEFC60000};
+        C = 0xEFC60000
+    };
 
-    /** 
-        Prevents multiple overlapping calls to generate(). 
+    /**
+        Prevents multiple overlapping calls to generate().
      */
-    Spinlock     lock;
+    Spinlock lock;
 
     /** State vector (these are the next N values that will be returned) */
-    uint32*      state;
+    uint32* state;
 
     /** Index into state */
-    int          index;
+    int index;
 
-    bool         m_threadsafe;
+    bool m_threadsafe;
 
     /** Generate the next N ints, and store them for readback later.
         Called from bits() */
     virtual void generate();
 
-    /** For subclasses.  The void* parameter is just to distinguish this from the
-        public constructor.*/
+    /** For subclasses.  The void* parameter is just to distinguish this from
+       the public constructor.*/
     Random(void*);
 
-
 private:
-
-    Random& operator=(const Random&) {
-        alwaysAssertM(false,
-            "There is no copy constructor or assignment operator for Random because you "
+    Random& operator=(const Random&)
+    {
+        alwaysAssertM(
+            false,
+            "There is no copy constructor or assignment operator for Random "
+            "because you "
             "probably didn't actually want to copy the state--it would "
-            "be slow and duplicate the state of a pseudo-random sequence.  Maybe you could "
+            "be slow and duplicate the state of a pseudo-random sequence.  "
+            "Maybe you could "
             "provide arguments to a member variable in the constructor, "
             "or pass the Random by reference?");
         return *this;
     }
 
-    Random(const Random& r) {
-        *this = r;
-    }
+    Random(const Random& r) { *this = r; }
 
 public:
-
     /** \param threadsafe Set to false if you know that this random
         will only be used on a single thread.  This eliminates the
         lock and improves performance on some platforms.
@@ -102,7 +101,7 @@ public:
 
     virtual void reset(uint32 seed = 0xF018A4D2, bool threadsafe = true);
 
-    /** Each bit is random.  Subclasses can choose to override just 
+    /** Each bit is random.  Subclasses can choose to override just
        this method and the other methods will all work automatically. */
     virtual uint32 bits();
 
@@ -110,7 +109,8 @@ public:
     virtual int integer(int min, int max);
 
     /** Uniform random float on the range [min, max] */
-    virtual inline float uniform(float low, float high) {
+    virtual inline float uniform(float low, float high)
+    {
         // We could compute the ratio in double precision here for
         // about 1.5x slower performance and slightly better
         // precision.
@@ -118,7 +118,8 @@ public:
     }
 
     /** Uniform random float on the range [0, 1] */
-    virtual inline float uniform() {
+    virtual inline float uniform()
+    {
         // We could compute the ratio in double precision here for
         // about 1.5x slower performance and slightly better
         // precision.
@@ -129,11 +130,11 @@ public:
     /** Normally distributed reals. */
     virtual float gaussian(float mean, float stdev);
 
-    /** Returns 3D unit vectors distributed according to 
+    /** Returns 3D unit vectors distributed according to
         a cosine distribution about the positive z-axis. */
     virtual void cosHemi(float& x, float& y, float& z);
 
-    /** Returns 3D unit vectors distributed according to 
+    /** Returns 3D unit vectors distributed according to
         a cosine distribution about the z-axis. */
     virtual void cosSphere(float& x, float& y, float& z);
 
@@ -142,7 +143,7 @@ public:
         the z-axis. */
     virtual void cosPowHemi(const float k, float& x, float& y, float& z);
 
-    /** Returns 3D unit vectors uniformly distributed on the 
+    /** Returns 3D unit vectors uniformly distributed on the
         hemisphere about the z-axis. */
     virtual void hemi(float& x, float& y, float& z);
 
@@ -153,12 +154,12 @@ public:
        A shared instance for when the performance and features but not
        consistency of the class are desired.  It is slightly (10%)
        faster to use a distinct instance than to use the common one.
-       
+
        Threadsafe.
     */
     static Random& common();
 };
 
-}
+} // namespace G3D
 
 #endif

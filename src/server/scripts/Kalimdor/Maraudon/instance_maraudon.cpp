@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,16 +21,12 @@
 #include "InstanceScript.h"
 #include "maraudon.h"
 
-class instance_maraudon : public InstanceMapScript
-{
+class instance_maraudon : public InstanceMapScript {
 public:
-    instance_maraudon() : InstanceMapScript("instance_maraudon", 349) { }
+    instance_maraudon() : InstanceMapScript("instance_maraudon", 349) {}
 
-    struct instance_maraudon_InstanceMapScript : public InstanceScript
-    {
-        instance_maraudon_InstanceMapScript(Map* map) : InstanceScript(map)
-        {
-        }
+    struct instance_maraudon_InstanceMapScript : public InstanceScript {
+        instance_maraudon_InstanceMapScript(Map* map) : InstanceScript(map) {}
 
         void Initialize() override
         {
@@ -39,22 +36,20 @@ public:
 
         void OnGameObjectCreate(GameObject* gameobject) override
         {
-            switch (gameobject->GetEntry())
-            {
-                case GO_CORRUPTION_SPEWER:
-                    if (_encounters[TYPE_NOXXION] == DONE)
-                        HandleGameObject(ObjectGuid::Empty, true, gameobject);
-                    break;
+            switch (gameobject->GetEntry()) {
+            case GO_CORRUPTION_SPEWER:
+                if (_encounters[TYPE_NOXXION] == DONE)
+                    HandleGameObject(ObjectGuid::Empty, true, gameobject);
+                break;
             }
         }
 
         void SetData(uint32 type, uint32 data) override
         {
-            switch (type)
-            {
-                case TYPE_NOXXION:
-                    _encounters[type] = data;
-                    break;
+            switch (type) {
+            case TYPE_NOXXION:
+                _encounters[type] = data;
+                break;
             }
 
             if (data == DONE)
@@ -81,7 +76,4 @@ public:
     }
 };
 
-void AddSC_instance_maraudon()
-{
-    new instance_maraudon();
-}
+void AddSC_instance_maraudon() { new instance_maraudon(); }

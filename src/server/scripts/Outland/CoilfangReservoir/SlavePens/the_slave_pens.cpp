@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,18 +21,16 @@
 #include "InstanceScript.h"
 #include "Player.h"
 
-class at_quagmirran_lair : public AreaTriggerScript
-{
+class at_quagmirran_lair : public AreaTriggerScript {
 public:
     at_quagmirran_lair() : AreaTriggerScript("at_quagmirran_lair") {}
 
     bool OnTrigger(Player* player, AreaTrigger const* /*trigger*/) override
     {
-        if (InstanceScript* instance = player->GetInstanceScript())
-        {
-            if (Creature* quagmirran = instance->GetCreature(DATA_QUAGMIRRAN))
-            {
-                quagmirran->GetMotionMaster()->MovePath(quagmirran->GetEntry() * 100, true);
+        if (InstanceScript* instance = player->GetInstanceScript()) {
+            if (Creature* quagmirran = instance->GetCreature(DATA_QUAGMIRRAN)) {
+                quagmirran->GetMotionMaster()->MovePath(
+                    quagmirran->GetEntry() * 100, true);
             }
         }
 
@@ -39,8 +38,4 @@ public:
     }
 };
 
-void AddSC_the_slave_pens()
-{
-    new at_quagmirran_lair();
-}
-
+void AddSC_the_slave_pens() { new at_quagmirran_lair(); }

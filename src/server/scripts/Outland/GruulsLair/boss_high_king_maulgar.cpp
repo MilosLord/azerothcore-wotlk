@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,54 +21,50 @@
 #include "TaskScheduler.h"
 #include "gruuls_lair.h"
 
-enum HighKingMaulgar
-{
-    SAY_AGGRO                   = 0,
-    SAY_ENRAGE                  = 1,
-    SAY_OGRE_DEATH              = 2,
-    SAY_SLAY                    = 3,
-    SAY_DEATH                   = 4,
+enum HighKingMaulgar {
+    SAY_AGGRO      = 0,
+    SAY_ENRAGE     = 1,
+    SAY_OGRE_DEATH = 2,
+    SAY_SLAY       = 3,
+    SAY_DEATH      = 4,
 
     // High King Maulgar
-    SPELL_ARCING_SMASH          = 39144,
-    SPELL_MIGHTY_BLOW           = 33230,
-    SPELL_WHIRLWIND             = 33238,
-    SPELL_BERSERKER_C           = 26561,
-    SPELL_ROAR                  = 16508,
-    SPELL_FLURRY                = 33232,
+    SPELL_ARCING_SMASH = 39144,
+    SPELL_MIGHTY_BLOW  = 33230,
+    SPELL_WHIRLWIND    = 33238,
+    SPELL_BERSERKER_C  = 26561,
+    SPELL_ROAR         = 16508,
+    SPELL_FLURRY       = 33232,
 
     // Olm the Summoner
-    SPELL_DARK_DECAY            = 33129,
-    SPELL_DEATH_COIL            = 33130,
-    SPELL_SUMMON_WFH            = 33131,
+    SPELL_DARK_DECAY = 33129,
+    SPELL_DEATH_COIL = 33130,
+    SPELL_SUMMON_WFH = 33131,
 
     // Kiggler the Craed
-    SPELL_GREATER_POLYMORPH     = 33173,
-    SPELL_LIGHTNING_BOLT        = 36152,
-    SPELL_ARCANE_SHOCK          = 33175,
-    SPELL_ARCANE_EXPLOSION      = 33237,
+    SPELL_GREATER_POLYMORPH = 33173,
+    SPELL_LIGHTNING_BOLT    = 36152,
+    SPELL_ARCANE_SHOCK      = 33175,
+    SPELL_ARCANE_EXPLOSION  = 33237,
 
     // Blindeye the Seer
-    SPELL_GREATER_PW_SHIELD     = 33147,
-    SPELL_HEAL                  = 33144,
-    SPELL_PRAYER_OH             = 33152,
+    SPELL_GREATER_PW_SHIELD = 33147,
+    SPELL_HEAL              = 33144,
+    SPELL_PRAYER_OH         = 33152,
 
     // Krosh Firehand
-    SPELL_GREATER_FIREBALL      = 33051,
-    SPELL_SPELLSHIELD           = 33054,
-    SPELL_BLAST_WAVE            = 33061,
+    SPELL_GREATER_FIREBALL = 33051,
+    SPELL_SPELLSHIELD      = 33054,
+    SPELL_BLAST_WAVE       = 33061,
 
-    ACTION_ADD_DEATH            = 1
+    ACTION_ADD_DEATH = 1
 };
 
-struct boss_high_king_maulgar : public BossAI
-{
+struct boss_high_king_maulgar : public BossAI {
     boss_high_king_maulgar(Creature* creature) : BossAI(creature, DATA_MAULGAR)
     {
-        scheduler.SetValidator([this]
-        {
-            return !me->HasUnitState(UNIT_STATE_CASTING);
-        });
+        scheduler.SetValidator(
+            [this] { return !me->HasUnitState(UNIT_STATE_CASTING); });
     }
 
     void Reset() override
@@ -75,34 +72,32 @@ struct boss_high_king_maulgar : public BossAI
         _Reset();
         _recentlySpoken = false;
         me->SetLootMode(0);
-        ScheduleHealthCheckEvent(50, [&]{
+        ScheduleHealthCheckEvent(50, [&] {
             Talk(SAY_ENRAGE);
             DoCastSelf(SPELL_FLURRY);
 
-            scheduler.Schedule(0ms, [this](TaskContext context)
-            {
-                DoCastRandomTarget(SPELL_BERSERKER_C);
-                context.Repeat(35s);
-            }).Schedule(0ms, [this](TaskContext context)
-            {
-                DoCastVictim(SPELL_ROAR);
-                context.Repeat(20600ms, 29100ms);
-            });
+            scheduler
+                .Schedule(0ms,
+                          [this](TaskContext context) {
+                              DoCastRandomTarget(SPELL_BERSERKER_C);
+                              context.Repeat(35s);
+                          })
+                .Schedule(0ms, [this](TaskContext context) {
+                    DoCastVictim(SPELL_ROAR);
+                    context.Repeat(20600ms, 29100ms);
+                });
         });
     }
 
-    void KilledUnit(Unit*  /*victim*/) override
+    void KilledUnit(Unit* /*victim*/) override
     {
-        if(!_recentlySpoken)
-        {
+        if (!_recentlySpoken) {
             Talk(SAY_SLAY);
             _recentlySpoken = true;
         }
 
-        scheduler.Schedule(5s, [this](TaskContext)
-        {
-            _recentlySpoken = false;
-        });
+        scheduler.Schedule(5s,
+                           [this](TaskContext) { _recentlySpoken = false; });
     }
 
     void JustDied(Unit* /*killer*/) override
@@ -114,19 +109,22 @@ struct boss_high_king_maulgar : public BossAI
 
     void DoAction(int32 actionId) override
     {
-        if (me->IsAlive())
-        {
+        if (me->IsAlive()) {
             Talk(SAY_OGRE_DEATH);
-            if (actionId == MAX_ADD_NUMBER)
-            {
+            if (actionId == MAX_ADD_NUMBER) {
                 me->AddLootMode(1);
             }
         }
-        else if (actionId == MAX_ADD_NUMBER)
-        {
+        else if (actionId == MAX_ADD_NUMBER) {
             me->AddLootMode(1);
             me->loot.clear();
-            me->loot.FillLoot(me->GetCreatureTemplate()->lootid, LootTemplates_Creature, me->GetLootRecipient(), false, false, me->GetLootMode(), me);
+            me->loot.FillLoot(me->GetCreatureTemplate()->lootid,
+                              LootTemplates_Creature,
+                              me->GetLootRecipient(),
+                              false,
+                              false,
+                              me->GetLootMode(),
+                              me);
             me->SetDynamicFlag(UNIT_DYNFLAG_LOOTABLE);
             _JustDied();
         }
@@ -137,20 +135,22 @@ struct boss_high_king_maulgar : public BossAI
         _JustEngagedWith();
         Talk(SAY_AGGRO);
 
-        scheduler.Schedule(9500ms, [this](TaskContext context)
-        {
-            DoCastVictim(SPELL_ARCING_SMASH);
-            context.Repeat(9500ms, 12s);
-        }).Schedule(15700ms, [this](TaskContext context)
-        {
-            DoCastVictim(SPELL_MIGHTY_BLOW);
-            context.Repeat(16200ms, 19s);
-        }).Schedule(67000ms, [this](TaskContext context)
-        {
-            scheduler.DelayAll(15s);
-            DoCastSelf(SPELL_WHIRLWIND);
-            context.Repeat(45s, 60s);
-        });
+        scheduler
+            .Schedule(9500ms,
+                      [this](TaskContext context) {
+                          DoCastVictim(SPELL_ARCING_SMASH);
+                          context.Repeat(9500ms, 12s);
+                      })
+            .Schedule(15700ms,
+                      [this](TaskContext context) {
+                          DoCastVictim(SPELL_MIGHTY_BLOW);
+                          context.Repeat(16200ms, 19s);
+                      })
+            .Schedule(67000ms, [this](TaskContext context) {
+                scheduler.DelayAll(15s);
+                DoCastSelf(SPELL_WHIRLWIND);
+                context.Repeat(45s, 60s);
+            });
     }
 
     void UpdateAI(uint32 diff) override
@@ -162,22 +162,21 @@ struct boss_high_king_maulgar : public BossAI
 
         DoMeleeAttackIfReady();
     }
+
 private:
     bool _recentlySpoken;
 };
 
-struct boss_olm_the_summoner : public ScriptedAI
-{
-    boss_olm_the_summoner(Creature* creature) : ScriptedAI(creature), summons(me)
+struct boss_olm_the_summoner : public ScriptedAI {
+    boss_olm_the_summoner(Creature* creature)
+        : ScriptedAI(creature), summons(me)
     {
         instance = creature->GetInstanceScript();
-        _scheduler.SetValidator([this]
-        {
-            return !me->HasUnitState(UNIT_STATE_CASTING);
-        });
+        _scheduler.SetValidator(
+            [this] { return !me->HasUnitState(UNIT_STATE_CASTING); });
     }
 
-    SummonList summons;
+    SummonList      summons;
     InstanceScript* instance;
 
     void Reset() override
@@ -201,22 +200,23 @@ struct boss_olm_the_summoner : public ScriptedAI
         me->SetInCombatWithZone();
         instance->SetBossState(DATA_MAULGAR, IN_PROGRESS);
 
-        _scheduler.Schedule(1200ms, [this](TaskContext context)
-        {
-            DoCastSelf(SPELL_SUMMON_WFH);
-            context.Repeat(48500ms);
-        }).Schedule(6050ms, [this](TaskContext context)
-        {
-            DoCastVictim(SPELL_DARK_DECAY);
-            context.Repeat(6050ms);
-        }).Schedule(6500ms, [this](TaskContext context)
-        {
-            if (me->HealthBelowPct(90))
-            {
-                DoCastRandomTarget(SPELL_DEATH_COIL);
-            }
-            context.Repeat(6s, 13500ms);
-        });
+        _scheduler
+            .Schedule(1200ms,
+                      [this](TaskContext context) {
+                          DoCastSelf(SPELL_SUMMON_WFH);
+                          context.Repeat(48500ms);
+                      })
+            .Schedule(6050ms,
+                      [this](TaskContext context) {
+                          DoCastVictim(SPELL_DARK_DECAY);
+                          context.Repeat(6050ms);
+                      })
+            .Schedule(6500ms, [this](TaskContext context) {
+                if (me->HealthBelowPct(90)) {
+                    DoCastRandomTarget(SPELL_DEATH_COIL);
+                }
+                context.Repeat(6s, 13500ms);
+            });
     }
 
     void JustDied(Unit* /*killer*/) override
@@ -224,10 +224,7 @@ struct boss_olm_the_summoner : public ScriptedAI
         instance->SetData(DATA_ADDS_KILLED, 1);
     }
 
-    void JustSummoned(Creature* summon) override
-    {
-        summons.Summon(summon);
-    }
+    void JustSummoned(Creature* summon) override { summons.Summon(summon); }
 
     void UpdateAI(uint32 diff) override
     {
@@ -238,19 +235,17 @@ struct boss_olm_the_summoner : public ScriptedAI
 
         DoMeleeAttackIfReady();
     }
+
 private:
     TaskScheduler _scheduler;
 };
 
-struct boss_kiggler_the_crazed : public ScriptedAI
-{
+struct boss_kiggler_the_crazed : public ScriptedAI {
     boss_kiggler_the_crazed(Creature* creature) : ScriptedAI(creature)
     {
         instance = creature->GetInstanceScript();
-        _scheduler.SetValidator([this]
-        {
-            return !me->HasUnitState(UNIT_STATE_CASTING);
-        });
+        _scheduler.SetValidator(
+            [this] { return !me->HasUnitState(UNIT_STATE_CASTING); });
     }
 
     InstanceScript* instance;
@@ -275,35 +270,40 @@ struct boss_kiggler_the_crazed : public ScriptedAI
         me->SetInCombatWithZone();
         instance->SetBossState(DATA_MAULGAR, IN_PROGRESS);
 
-        _scheduler.Schedule(1200ms, [this](TaskContext context)
-        {
-            DoCastVictim(SPELL_LIGHTNING_BOLT);
-            context.Repeat(2400ms);
-        }).Schedule(29s, [this](TaskContext context)
-        {
-            DoCastVictim(SPELL_ARCANE_SHOCK);
-            context.Repeat(7200ms, 20600ms);
-        }).Schedule(23s, [this](TaskContext context)
-        {
-            //changed to work similarly to Ikiss poly
-            SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(SPELL_GREATER_POLYMORPH);
-            if (Unit* target = SelectTarget(SelectTargetMethod::MaxThreat, 1, [&]
-            (Unit* target) -> bool
-                {
-                    return target && !target->IsImmunedToSpell(spellInfo);
-                }))
-            {
-                DoCast(target, SPELL_GREATER_POLYMORPH);
-            }
-            context.Repeat(10900ms);
-        }).Schedule(30s, [this](TaskContext context)
-        {
-            if (me->SelectNearestPlayer(30.0f))
-            {
+        _scheduler
+            .Schedule(1200ms,
+                      [this](TaskContext context) {
+                          DoCastVictim(SPELL_LIGHTNING_BOLT);
+                          context.Repeat(2400ms);
+                      })
+            .Schedule(29s,
+                      [this](TaskContext context) {
+                          DoCastVictim(SPELL_ARCANE_SHOCK);
+                          context.Repeat(7200ms, 20600ms);
+                      })
+            .Schedule(23s,
+                      [this](TaskContext context) {
+                          // changed to work similarly to Ikiss poly
+                          SpellInfo const* spellInfo =
+                              sSpellMgr->GetSpellInfo(SPELL_GREATER_POLYMORPH);
+                          if (Unit* target = SelectTarget(
+                                  SelectTargetMethod::MaxThreat,
+                                  1,
+                                  [&](Unit* target) -> bool {
+                                      return target &&
+                                             !target->IsImmunedToSpell(
+                                                 spellInfo);
+                                  })) {
+                              DoCast(target, SPELL_GREATER_POLYMORPH);
+                          }
+                          context.Repeat(10900ms);
+                      })
+            .Schedule(30s, [this](TaskContext context) {
+                if (me->SelectNearestPlayer(30.0f)) {
                     DoCastAOE(SPELL_ARCANE_EXPLOSION);
-            }
-            context.Repeat(30s);
-        });
+                }
+                context.Repeat(30s);
+            });
     }
 
     void JustDied(Unit* /*killer*/) override
@@ -320,19 +320,17 @@ struct boss_kiggler_the_crazed : public ScriptedAI
 
         DoMeleeAttackIfReady();
     }
+
 private:
     TaskScheduler _scheduler;
 };
 
-struct boss_blindeye_the_seer : public ScriptedAI
-{
+struct boss_blindeye_the_seer : public ScriptedAI {
     boss_blindeye_the_seer(Creature* creature) : ScriptedAI(creature)
     {
         instance = creature->GetInstanceScript();
-        _scheduler.SetValidator([this]
-        {
-            return !me->HasUnitState(UNIT_STATE_CASTING);
-        });
+        _scheduler.SetValidator(
+            [this] { return !me->HasUnitState(UNIT_STATE_CASTING); });
     }
 
     InstanceScript* instance;
@@ -348,22 +346,22 @@ struct boss_blindeye_the_seer : public ScriptedAI
         me->SetInCombatWithZone();
         instance->SetBossState(DATA_MAULGAR, IN_PROGRESS);
 
-        _scheduler.Schedule(7200ms, [this](TaskContext context)
-        {
-            if (Unit* target = DoSelectLowestHpFriendly(60.0f, 50000))
-            {
-                DoCast(target, SPELL_HEAL);
-            }
-            context.Repeat(7200ms);
-        }).Schedule(37500s, [this](TaskContext context)
-        {
-            DoCastSelf(SPELL_GREATER_PW_SHIELD);
-            _scheduler.Schedule(1200ms, [this](TaskContext)
-            {
-                DoCastSelf(SPELL_PRAYER_OH);
+        _scheduler
+            .Schedule(7200ms,
+                      [this](TaskContext context) {
+                          if (Unit* target =
+                                  DoSelectLowestHpFriendly(60.0f, 50000)) {
+                              DoCast(target, SPELL_HEAL);
+                          }
+                          context.Repeat(7200ms);
+                      })
+            .Schedule(37500s, [this](TaskContext context) {
+                DoCastSelf(SPELL_GREATER_PW_SHIELD);
+                _scheduler.Schedule(1200ms, [this](TaskContext) {
+                    DoCastSelf(SPELL_PRAYER_OH);
+                });
+                context.Repeat(54500ms, 63s);
             });
-            context.Repeat(54500ms, 63s);
-        });
     }
 
     void JustDied(Unit* /*killer*/) override
@@ -380,19 +378,17 @@ struct boss_blindeye_the_seer : public ScriptedAI
 
         DoMeleeAttackIfReady();
     }
+
 private:
     TaskScheduler _scheduler;
 };
 
-struct boss_krosh_firehand : public ScriptedAI
-{
+struct boss_krosh_firehand : public ScriptedAI {
     boss_krosh_firehand(Creature* creature) : ScriptedAI(creature)
     {
         instance = creature->GetInstanceScript();
-        _scheduler.SetValidator([this]
-        {
-            return !me->HasUnitState(UNIT_STATE_CASTING);
-        });
+        _scheduler.SetValidator(
+            [this] { return !me->HasUnitState(UNIT_STATE_CASTING); });
     }
 
     InstanceScript* instance;
@@ -417,22 +413,23 @@ struct boss_krosh_firehand : public ScriptedAI
         me->SetInCombatWithZone();
         instance->SetBossState(DATA_MAULGAR, IN_PROGRESS);
 
-        _scheduler.Schedule(1200ms, [this](TaskContext context)
-        {
-            DoCastSelf(SPELL_SPELLSHIELD);
-            context.Repeat(30300ms);
-        }).Schedule(3600ms, [this](TaskContext context)
-        {
-            DoCastVictim(SPELL_GREATER_FIREBALL);
-            context.Repeat(3600ms);
-        }).Schedule(7200ms, [this](TaskContext context)
-        {
-            if (me->SelectNearestPlayer(15.0f))
-            {
+        _scheduler
+            .Schedule(1200ms,
+                      [this](TaskContext context) {
+                          DoCastSelf(SPELL_SPELLSHIELD);
+                          context.Repeat(30300ms);
+                      })
+            .Schedule(3600ms,
+                      [this](TaskContext context) {
+                          DoCastVictim(SPELL_GREATER_FIREBALL);
+                          context.Repeat(3600ms);
+                      })
+            .Schedule(7200ms, [this](TaskContext context) {
+                if (me->SelectNearestPlayer(15.0f)) {
                     DoCastAOE(SPELL_BLAST_WAVE);
-            }
-            context.Repeat(7200ms);
-        });
+                }
+                context.Repeat(7200ms);
+            });
     }
 
     void JustDied(Unit* /*killer*/) override
@@ -449,6 +446,7 @@ struct boss_krosh_firehand : public ScriptedAI
 
         DoMeleeAttackIfReady();
     }
+
 private:
     TaskScheduler _scheduler;
 };

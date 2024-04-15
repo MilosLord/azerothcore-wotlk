@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -24,26 +25,24 @@
 
 using namespace Acore::ChatCommands;
 
-class spectator_commandscript : public CommandScript
-{
+class spectator_commandscript : public CommandScript {
 public:
-    spectator_commandscript() : CommandScript("spectator_commandscript") { }
+    spectator_commandscript() : CommandScript("spectator_commandscript") {}
 
     ChatCommandTable GetCommands() const override
     {
-        static ChatCommandTable spectatorCommandTable =
-        {
-            { "version",  HandleSpectatorVersionCommand,  SEC_PLAYER, Console::No },
-            { "reset",    HandleSpectatorResetCommand,    SEC_PLAYER, Console::No },
-            { "spectate", HandleSpectatorSpectateCommand, SEC_PLAYER, Console::No },
-            { "watch",    HandleSpectatorWatchCommand,    SEC_PLAYER, Console::No },
-            { "leave",    HandleSpectatorLeaveCommand,    SEC_PLAYER, Console::No },
-            { "",         HandleSpectatorCommand,         SEC_PLAYER, Console::No }
-        };
-        static ChatCommandTable commandTable =
-        {
-            { "spect", spectatorCommandTable }
-        };
+        static ChatCommandTable spectatorCommandTable = {
+            {"version", HandleSpectatorVersionCommand, SEC_PLAYER, Console::No},
+            {"reset", HandleSpectatorResetCommand, SEC_PLAYER, Console::No},
+            {"spectate",
+             HandleSpectatorSpectateCommand,
+             SEC_PLAYER,
+             Console::No},
+            {"watch", HandleSpectatorWatchCommand, SEC_PLAYER, Console::No},
+            {"leave", HandleSpectatorLeaveCommand, SEC_PLAYER, Console::No},
+            {"", HandleSpectatorCommand, SEC_PLAYER, Console::No}};
+        static ChatCommandTable commandTable = {
+            {"spect", spectatorCommandTable}};
         return commandTable;
     }
 
@@ -56,10 +55,13 @@ public:
         return true;
     }
 
-    static bool HandleSpectatorVersionCommand(ChatHandler* handler, uint16 version)
+    static bool HandleSpectatorVersionCommand(ChatHandler* handler,
+                                              uint16       version)
     {
         if (version < SPECTATOR_ADDON_VERSION)
-            ArenaSpectator::SendCommand(handler->GetSession()->GetPlayer(), "%sOUTDATED", SPECTATOR_ADDON_PREFIX);
+            ArenaSpectator::SendCommand(handler->GetSession()->GetPlayer(),
+                                        "%sOUTDATED",
+                                        SPECTATOR_ADDON_PREFIX);
         return true;
     }
 
@@ -75,18 +77,19 @@ public:
     static bool HandleSpectatorLeaveCommand(ChatHandler* handler)
     {
         Player* player = handler->GetSession()->GetPlayer();
-        if (!player->IsSpectator() || !player->FindMap() || !player->FindMap()->IsBattleArena())
-        {
+        if (!player->IsSpectator() || !player->FindMap() ||
+            !player->FindMap()->IsBattleArena()) {
             handler->SendSysMessage("You are not a spectator.");
             return true;
         }
 
-        //player->SetIsSpectator(false);
+        // player->SetIsSpectator(false);
         player->TeleportToEntryPoint();
         return true;
     }
 
-    static bool HandleSpectatorSpectateCommand(ChatHandler* handler, std::string const& name)
+    static bool HandleSpectatorSpectateCommand(ChatHandler*       handler,
+                                               std::string const& name)
     {
         if (!ArenaSpectator::HandleSpectatorSpectateCommand(handler, name))
             return false;
@@ -94,7 +97,8 @@ public:
         return true;
     }
 
-    static bool HandleSpectatorWatchCommand(ChatHandler* handler, std::string const& name)
+    static bool HandleSpectatorWatchCommand(ChatHandler*       handler,
+                                            std::string const& name)
     {
         if (!ArenaSpectator::HandleSpectatorWatchCommand(handler, name))
             return false;
@@ -103,7 +107,4 @@ public:
     }
 };
 
-void AddSC_spectator_commandscript()
-{
-    new spectator_commandscript();
-}
+void AddSC_spectator_commandscript() { new spectator_commandscript(); }

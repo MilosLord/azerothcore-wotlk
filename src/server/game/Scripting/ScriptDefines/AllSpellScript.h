@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,8 +22,7 @@
 #include "ScriptObject.h"
 #include <vector>
 
-enum AllSpellHook
-{
+enum AllSpellHook {
     ALLSPELLHOOK_ON_CALC_MAX_DURATION,
     ALLSPELLHOOK_CAN_MOD_AURA_EFFECT_DAMAGE_DONE,
     ALLSPELLHOOK_CAN_MOD_AURA_EFFECT_MOD_DAMAGE_PERCENT_DONE,
@@ -42,34 +42,84 @@ enum AllSpellHook
 enum SpellCastResult : uint8;
 enum SpellEffIndex : uint8;
 
-class AllSpellScript : public ScriptObject
-{
+class AllSpellScript : public ScriptObject {
 protected:
-    AllSpellScript(const char* name, std::vector<uint16> enabledHooks = std::vector<uint16>());
+    AllSpellScript(const char*         name,
+                   std::vector<uint16> enabledHooks = std::vector<uint16>());
 
 public:
     [[nodiscard]] bool IsDatabaseBound() const override { return false; }
 
     // Calculate max duration in applying aura
-    virtual void OnCalcMaxDuration(Aura const* /*aura*/, int32& /*maxDuration*/) { }
+    virtual void OnCalcMaxDuration(Aura const* /*aura*/, int32& /*maxDuration*/)
+    {
+    }
 
-    [[nodiscard]] virtual bool CanModAuraEffectDamageDone(AuraEffect const* /*auraEff*/, Unit* /*target*/, AuraApplication const* /*aurApp*/, uint8 /*mode*/, bool /*apply*/) { return true; }
+    [[nodiscard]] virtual bool
+    CanModAuraEffectDamageDone(AuraEffect const* /*auraEff*/,
+                               Unit* /*target*/,
+                               AuraApplication const* /*aurApp*/,
+                               uint8 /*mode*/,
+                               bool /*apply*/)
+    {
+        return true;
+    }
 
-    [[nodiscard]] virtual bool CanModAuraEffectModDamagePercentDone(AuraEffect const* /*auraEff*/, Unit* /*target*/, AuraApplication const* /*aurApp*/, uint8 /*mode*/, bool /*apply*/) { return true; }
+    [[nodiscard]] virtual bool
+    CanModAuraEffectModDamagePercentDone(AuraEffect const* /*auraEff*/,
+                                         Unit* /*target*/,
+                                         AuraApplication const* /*aurApp*/,
+                                         uint8 /*mode*/,
+                                         bool /*apply*/)
+    {
+        return true;
+    }
 
-    virtual void OnSpellCheckCast(Spell* /*spell*/, bool /*strict*/, SpellCastResult& /*res*/) { }
+    virtual void OnSpellCheckCast(Spell* /*spell*/,
+                                  bool /*strict*/,
+                                  SpellCastResult& /*res*/)
+    {
+    }
 
-    [[nodiscard]] virtual bool CanPrepare(Spell* /*spell*/, SpellCastTargets const* /*targets*/, AuraEffect const* /*triggeredByAura*/) { return true; }
+    [[nodiscard]] virtual bool CanPrepare(Spell* /*spell*/,
+                                          SpellCastTargets const* /*targets*/,
+                                          AuraEffect const* /*triggeredByAura*/)
+    {
+        return true;
+    }
 
-    [[nodiscard]] virtual bool CanScalingEverything(Spell* /*spell*/) { return false; }
+    [[nodiscard]] virtual bool CanScalingEverything(Spell* /*spell*/)
+    {
+        return false;
+    }
 
-    [[nodiscard]] virtual bool CanSelectSpecTalent(Spell* /*spell*/) { return true; }
+    [[nodiscard]] virtual bool CanSelectSpecTalent(Spell* /*spell*/)
+    {
+        return true;
+    }
 
-    virtual void OnScaleAuraUnitAdd(Spell* /*spell*/, Unit* /*target*/, uint32 /*effectMask*/, bool /*checkIfValid*/, bool /*implicit*/, uint8 /*auraScaleMask*/, TargetInfo& /*targetInfo*/) { }
+    virtual void OnScaleAuraUnitAdd(Spell* /*spell*/,
+                                    Unit* /*target*/,
+                                    uint32 /*effectMask*/,
+                                    bool /*checkIfValid*/,
+                                    bool /*implicit*/,
+                                    uint8 /*auraScaleMask*/,
+                                    TargetInfo& /*targetInfo*/)
+    {
+    }
 
-    virtual void OnRemoveAuraScaleTargets(Spell* /*spell*/, TargetInfo& /*targetInfo*/, uint8 /*auraScaleMask*/, bool& /*needErase*/) { }
+    virtual void OnRemoveAuraScaleTargets(Spell* /*spell*/,
+                                          TargetInfo& /*targetInfo*/,
+                                          uint8 /*auraScaleMask*/,
+                                          bool& /*needErase*/)
+    {
+    }
 
-    virtual void OnBeforeAuraRankForLevel(SpellInfo const* /*spellInfo*/, SpellInfo const* /*latestSpellInfo*/, uint8 /*level*/) { }
+    virtual void OnBeforeAuraRankForLevel(SpellInfo const* /*spellInfo*/,
+                                          SpellInfo const* /*latestSpellInfo*/,
+                                          uint8 /*level*/)
+    {
+    }
 
     /**
      * @brief This hook called after spell dummy effect
@@ -79,7 +129,12 @@ public:
      * @param effIndex Contains information about the SpellEffIndex
      * @param gameObjTarget Contains information about the GameObject
      */
-    virtual void OnDummyEffect(WorldObject* /*caster*/, uint32 /*spellID*/, SpellEffIndex /*effIndex*/, GameObject* /*gameObjTarget*/) { }
+    virtual void OnDummyEffect(WorldObject* /*caster*/,
+                               uint32 /*spellID*/,
+                               SpellEffIndex /*effIndex*/,
+                               GameObject* /*gameObjTarget*/)
+    {
+    }
 
     /**
      * @brief This hook called after spell dummy effect
@@ -89,7 +144,12 @@ public:
      * @param effIndex Contains information about the SpellEffIndex
      * @param creatureTarget Contains information about the Creature
      */
-    virtual void OnDummyEffect(WorldObject* /*caster*/, uint32 /*spellID*/, SpellEffIndex /*effIndex*/, Creature* /*creatureTarget*/) { }
+    virtual void OnDummyEffect(WorldObject* /*caster*/,
+                               uint32 /*spellID*/,
+                               SpellEffIndex /*effIndex*/,
+                               Creature* /*creatureTarget*/)
+    {
+    }
 
     /**
      * @brief This hook called after spell dummy effect
@@ -99,7 +159,12 @@ public:
      * @param effIndex Contains information about the SpellEffIndex
      * @param itemTarget Contains information about the Item
      */
-    virtual void OnDummyEffect(WorldObject* /*caster*/, uint32 /*spellID*/, SpellEffIndex /*effIndex*/, Item* /*itemTarget*/) { }
+    virtual void OnDummyEffect(WorldObject* /*caster*/,
+                               uint32 /*spellID*/,
+                               SpellEffIndex /*effIndex*/,
+                               Item* /*itemTarget*/)
+    {
+    }
 };
 
 // Compatibility for old scripts

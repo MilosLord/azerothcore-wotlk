@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -24,8 +25,7 @@
 ######*/
 
 // NPC 3057: Cairne Bloodhoof <High Chieftain>
-enum CairneBloodhoof
-{
+enum CairneBloodhoof {
     SPELL_BERSERKER_CHARGE  = 16636,
     SPELL_CLEAVE            = 16044,
     SPELL_MORTAL_STRIKE     = 16856,
@@ -35,14 +35,12 @@ enum CairneBloodhoof
 };
 
 // @todo verify abilities/timers
-class npc_cairne_bloodhoof : public CreatureScript
-{
+class npc_cairne_bloodhoof : public CreatureScript {
 public:
-    npc_cairne_bloodhoof() : CreatureScript("npc_cairne_bloodhoof") { }
+    npc_cairne_bloodhoof() : CreatureScript("npc_cairne_bloodhoof") {}
 
-    struct npc_cairne_bloodhoofAI : public ScriptedAI
-    {
-        npc_cairne_bloodhoofAI(Creature* creature) : ScriptedAI(creature) { }
+    struct npc_cairne_bloodhoofAI : public ScriptedAI {
+        npc_cairne_bloodhoofAI(Creature* creature) : ScriptedAI(creature) {}
 
         void Reset() override
         {
@@ -53,76 +51,66 @@ public:
             _uppercutTimer        = 10000;
         }
 
-        void sGossipSelect(Player* player, uint32 /*sender*/, uint32 action) override
+        void
+        sGossipSelect(Player* player, uint32 /*sender*/, uint32 action) override
         {
-            if (action == 0)
-            {
+            if (action == 0) {
                 player->CastSpell(player, SPELL_CAIRNES_HOOFPRINT, false);
             }
         }
 
         void UpdateAI(uint32 diff) override
         {
-            if (!UpdateVictim())
-            {
+            if (!UpdateVictim()) {
                 return;
             }
 
-            if (_berserkerChargeTimer <= diff)
-            {
-                if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0))
-                {
+            if (_berserkerChargeTimer <= diff) {
+                if (Unit* target =
+                        SelectTarget(SelectTargetMethod::Random, 0)) {
                     DoCast(target, SPELL_BERSERKER_CHARGE);
                 }
                 _berserkerChargeTimer = 25000;
             }
-            else
-            {
+            else {
                 _berserkerChargeTimer -= diff;
             }
 
-            if (_uppercutTimer <= diff)
-            {
+            if (_uppercutTimer <= diff) {
                 DoCastVictim(SPELL_UPPERCUT);
                 _uppercutTimer = 20000;
             }
-            else
-            {
+            else {
                 _uppercutTimer -= diff;
             }
 
-            if (_thunderclapTimer <= diff)
-            {
+            if (_thunderclapTimer <= diff) {
                 DoCastVictim(SPELL_THUNDERCLAP);
                 _thunderclapTimer = 15000;
             }
-            else
-            {
+            else {
                 _thunderclapTimer -= diff;
             }
 
-            if (_mortalStrikeTimer <= diff)
-            {
+            if (_mortalStrikeTimer <= diff) {
                 DoCastVictim(SPELL_MORTAL_STRIKE);
                 _mortalStrikeTimer = 15000;
             }
-            else
-            {
+            else {
                 _mortalStrikeTimer -= diff;
             }
 
-            if (_cleaveTimer <= diff)
-            {
+            if (_cleaveTimer <= diff) {
                 DoCastVictim(SPELL_CLEAVE);
                 _cleaveTimer = 7000;
             }
-            else
-            {
+            else {
                 _cleaveTimer -= diff;
             }
 
             DoMeleeAttackIfReady();
         }
+
     private:
         uint32 _berserkerChargeTimer;
         uint32 _cleaveTimer;
@@ -137,7 +125,4 @@ public:
     }
 };
 
-void AddSC_thunder_bluff()
-{
-    new npc_cairne_bloodhoof();
-}
+void AddSC_thunder_bluff() { new npc_cairne_bloodhoof(); }

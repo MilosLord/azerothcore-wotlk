@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -27,9 +28,8 @@
 
 /** ObjectRegistry holds all registry item of the same type
  */
-template<class T, class Key = std::string>
-class ObjectRegistry final
-{
+template <class T, class Key = std::string>
+class ObjectRegistry final {
 public:
     typedef std::map<Key, std::unique_ptr<T>> RegistryMapType;
 
@@ -52,16 +52,16 @@ public:
     bool InsertItem(T* obj, Key const& key, bool force = false)
     {
         auto itr = _registeredObjects.find(key);
-        if (itr != _registeredObjects.end())
-        {
-            if (!force)
-            {
+        if (itr != _registeredObjects.end()) {
+            if (!force) {
                 return false;
             }
             _registeredObjects.erase(itr);
         }
 
-        _registeredObjects.emplace(std::piecewise_construct, std::forward_as_tuple(key), std::forward_as_tuple(obj));
+        _registeredObjects.emplace(std::piecewise_construct,
+                                   std::forward_as_tuple(key),
+                                   std::forward_as_tuple(obj));
         return true;
     }
 
@@ -81,8 +81,8 @@ private:
     RegistryMapType _registeredObjects;
 
     // non instanceable, only static
-    ObjectRegistry() { }
-    ~ObjectRegistry() { }
+    ObjectRegistry() {}
+    ~ObjectRegistry() {}
 };
 
 #endif

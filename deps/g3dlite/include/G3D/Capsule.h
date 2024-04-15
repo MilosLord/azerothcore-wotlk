@@ -1,8 +1,8 @@
 /**
  @file Capsule.h
-  
+
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
-  
+
  @created 2003-02-07
  @edited  2005-08-20
 
@@ -13,9 +13,9 @@
 #ifndef G3D_CAPSULE_H
 #define G3D_CAPSULE_H
 
-#include "G3D/platform.h"
-#include "G3D/g3dmath.h"
 #include "G3D/Vector3.h"
+#include "G3D/g3dmath.h"
+#include "G3D/platform.h"
 
 namespace G3D {
 
@@ -26,44 +26,39 @@ class AABox;
  */
 class Capsule {
 private:
-    Vector3            p1;
-    Vector3            p2;
+    Vector3 p1;
+    Vector3 p2;
 
-    float            _radius;
+    float _radius;
+
 public:
-
-
     /** Uninitialized */
     Capsule();
     Capsule(class BinaryInput& b);
     Capsule(const Vector3& _p1, const Vector3& _p2, float _r);
     void serialize(class BinaryOutput& b) const;
     void deserialize(class BinaryInput& b);
-    
+
     /** The line down the center of the capsule */
     Line axis() const;
 
-    inline float radius() const {
-        return _radius;
-    }
+    inline float radius() const { return _radius; }
 
     /** Argument may be 0 or 1 */
-    inline Vector3 point(int i) const {
+    inline Vector3 point(int i) const
+    {
         debugAssert(i == 0 || i == 1);
         return (i == 0) ? p1 : p2;
     }
 
-    /** Distance between the sphere centers.  The total extent of the cylinder is 
-        2r + h. */
-    inline float height() const {
-        return (p1 - p2).magnitude();
-    }
+    /** Distance between the sphere centers.  The total extent of the cylinder
+       is 2r + h. */
+    inline float height() const { return (p1 - p2).magnitude(); }
 
-    inline Vector3 center() const {
-        return (p1 + p2) / 2.0;
-    }
+    inline Vector3 center() const { return (p1 + p2) / 2.0; }
 
-    /** Get a reference frame in which the center of mass is the origin and Y is the axis of the capsule.*/
+    /** Get a reference frame in which the center of mass is the origin and Y is
+     * the axis of the capsule.*/
     void getReferenceFrame(class CoordinateFrame& cframe) const;
 
     /**
@@ -85,6 +80,6 @@ public:
     Vector3 randomInteriorPoint() const;
 };
 
-} // namespace
+} // namespace G3D
 
 #endif

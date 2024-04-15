@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,22 +23,17 @@
 #include <string>
 #include <unordered_map>
 
-namespace VMAP
-{
-    const char VMAP_MAGIC[] = "VMAP_4.7";
-    const char RAW_VMAP_MAGIC[] = "VMAP047";                // used in extracted vmap files with raw data
-}
+namespace VMAP {
+const char VMAP_MAGIC[] = "VMAP_4.7";
+const char RAW_VMAP_MAGIC[] =
+    "VMAP047"; // used in extracted vmap files with raw data
+} // namespace VMAP
 
-enum ModelFlags
-{
-    MOD_M2 = 1,
-    MOD_WORLDSPAWN = 1 << 1,
-    MOD_HAS_BOUND = 1 << 2
-};
+enum ModelFlags { MOD_M2 = 1, MOD_WORLDSPAWN = 1 << 1, MOD_HAS_BOUND = 1 << 2 };
 
 struct WMODoodadData;
 
-extern const char * szWorkDirWmo;
+extern const char*                                    szWorkDirWmo;
 extern std::unordered_map<std::string, WMODoodadData> WmoDoodads;
 
 uint32 GenerateUniqueObjectId(uint32 clientId, uint16 clientDoodadId);

@@ -10,22 +10,22 @@
 #ifndef G3D_LOG_H
 #define G3D_LOG_H
 
+#include "G3D/platform.h"
 #include <stdio.h>
 #include <string>
-#include "G3D/platform.h"
 
 #ifndef G3D_WINDOWS
-    #include <stdarg.h>
+#include <stdarg.h>
 #endif
 
 namespace G3D {
 
-/** Prints to the common system log, log.txt, which is usually 
-    in the working directory of the program.  If your disk is 
+/** Prints to the common system log, log.txt, which is usually
+    in the working directory of the program.  If your disk is
     not writable or is slow, it will attempt to write to "c:/tmp/log.txt" or
-     "c:/temp/log.txt" on Windows systems instead. 
+     "c:/temp/log.txt" on Windows systems instead.
 
-    Unlike printf or debugPrintf, 
+    Unlike printf or debugPrintf,
     this function guarantees that all output is committed before it returns.
     This is very useful for debugging a crash, which might hide the last few
     buffered print statements otherwise.
@@ -47,19 +47,17 @@ void logLazyPrintf(const char* fmt, ...);
  */
 class Log {
 private:
-
     /**
      Log messages go here.
      */
-    FILE*                   logFile;
+    FILE* logFile;
 
-    std::string             filename;
+    std::string filename;
 
-    static Log*             commonLog;
+    static Log* commonLog;
 
 public:
-    int                     stripFromStackBottom;
-
+    int stripFromStackBottom;
 
     /**
      @param stripFromStackBottom Number of call stacks to strip from the
@@ -68,8 +66,7 @@ public:
      be opened for some reason, tries to open "c:/tmp/log.txt" or
      "c:/temp/log.txt" instead.
      */
-    Log(const std::string& filename = "log.txt",
-        int stripFromStackBottom    = 0);
+    Log(const std::string& filename = "log.txt", int stripFromStackBottom = 0);
 
     virtual ~Log();
 
@@ -90,9 +87,11 @@ public:
     // overload.
     void __cdecl printf(const char* fmt, ...) G3D_CHECK_PRINTF_METHOD_ARGS;
 
-    void __cdecl vprintf(const char*, va_list argPtr) G3D_CHECK_VPRINTF_METHOD_ARGS;
+    void __cdecl vprintf(const char*,
+                         va_list argPtr) G3D_CHECK_VPRINTF_METHOD_ARGS;
     /** Does not flush */
-    void __cdecl lazyvprintf(const char*, va_list argPtr) G3D_CHECK_VPRINTF_METHOD_ARGS;
+    void __cdecl lazyvprintf(const char*,
+                             va_list argPtr) G3D_CHECK_VPRINTF_METHOD_ARGS;
 
     static Log* common();
 
@@ -100,10 +99,9 @@ public:
 
     void print(const std::string& s);
 
-
     void println(const std::string& s);
 };
 
-}
+} // namespace G3D
 
 #endif

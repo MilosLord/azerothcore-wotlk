@@ -25,7 +25,10 @@
 #ifdef NDEBUG
 
 // From http://cnicholson.net/2009/02/stupid-c-tricks-adventures-in-assert/
-#	define rcAssert(x) do { (void)sizeof(x); } while((void)(__LINE__==-1),false)
+#define rcAssert(x)                                                            \
+    do {                                                                       \
+        (void)sizeof(x);                                                       \
+    } while ((void)(__LINE__ == -1), false)
 
 #else
 
@@ -34,22 +37,29 @@
 //  @param[in]		file  Filename of the failed assertion.
 //  @param[in]		line  Line number of the failed assertion.
 ///  @see rcAssertFailSetCustom
-typedef void (rcAssertFailFunc)(const char* expression, const char* file, int line);
+typedef void(rcAssertFailFunc)(const char* expression,
+                               const char* file,
+                               int         line);
 
 /// Sets the base custom assertion failure function to be used by Recast.
-///  @param[in]		assertFailFunc	The function to be used in case of failure of #dtAssert
-void rcAssertFailSetCustom(rcAssertFailFunc *assertFailFunc);
+///  @param[in]		assertFailFunc	The function to be used in case of failure
+///  of #dtAssert
+void rcAssertFailSetCustom(rcAssertFailFunc* assertFailFunc);
 
 /// Gets the base custom assertion failure function to be used by Recast.
 rcAssertFailFunc* rcAssertFailGetCustom();
 
-#	include <assert.h> 
-#	define rcAssert(expression) \
-		{ \
-			rcAssertFailFunc* failFunc = rcAssertFailGetCustom(); \
-			if(failFunc == NULL) { assert(expression); } \
-			else if(!(expression)) { (*failFunc)(#expression, __FILE__, __LINE__); } \
-		}
+#include <assert.h>
+#define rcAssert(expression)                                                   \
+    {                                                                          \
+        rcAssertFailFunc* failFunc = rcAssertFailGetCustom();                  \
+        if (failFunc == NULL) {                                                \
+            assert(expression);                                                \
+        }                                                                      \
+        else if (!(expression)) {                                              \
+            (*failFunc)(#expression, __FILE__, __LINE__);                      \
+        }                                                                      \
+    }
 
 #endif
 

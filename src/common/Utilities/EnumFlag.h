@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,56 +21,70 @@
 
 #include <type_traits>
 
-template<typename T>
-constexpr bool IsEnumFlag(T) { return false; }
-
-#define DEFINE_ENUM_FLAG(enumType) constexpr bool IsEnumFlag(enumType) { return true; }
-
-namespace EnumTraits
+template <typename T>
+constexpr bool IsEnumFlag(T)
 {
-    template<typename T>
-    using IsFlag = std::integral_constant<bool, IsEnumFlag(T{})>;
+    return false;
 }
 
-template<typename T, std::enable_if_t<EnumTraits::IsFlag<T>::value, std::nullptr_t> = nullptr>
+#define DEFINE_ENUM_FLAG(enumType)                                             \
+    constexpr bool IsEnumFlag(enumType) { return true; }
+
+namespace EnumTraits {
+template <typename T>
+using IsFlag = std::integral_constant<bool, IsEnumFlag(T{})>;
+}
+
+template <
+    typename T,
+    std::enable_if_t<EnumTraits::IsFlag<T>::value, std::nullptr_t> = nullptr>
 inline constexpr T operator&(T left, T right)
 {
-    return static_cast<T>(static_cast<std::underlying_type_t<T>>(left) & static_cast<std::underlying_type_t<T>>(right));
+    return static_cast<T>(static_cast<std::underlying_type_t<T>>(left) &
+                          static_cast<std::underlying_type_t<T>>(right));
 }
 
-template<typename T, std::enable_if_t<EnumTraits::IsFlag<T>::value, std::nullptr_t> = nullptr>
+template <
+    typename T,
+    std::enable_if_t<EnumTraits::IsFlag<T>::value, std::nullptr_t> = nullptr>
 inline constexpr T& operator&=(T& left, T right)
 {
     return left = left & right;
 }
 
-template<typename T, std::enable_if_t<EnumTraits::IsFlag<T>::value, std::nullptr_t> = nullptr>
+template <
+    typename T,
+    std::enable_if_t<EnumTraits::IsFlag<T>::value, std::nullptr_t> = nullptr>
 inline constexpr T operator|(T left, T right)
 {
-    return static_cast<T>(static_cast<std::underlying_type_t<T>>(left) | static_cast<std::underlying_type_t<T>>(right));
+    return static_cast<T>(static_cast<std::underlying_type_t<T>>(left) |
+                          static_cast<std::underlying_type_t<T>>(right));
 }
 
-template<typename T, std::enable_if_t<EnumTraits::IsFlag<T>::value, std::nullptr_t> = nullptr>
+template <
+    typename T,
+    std::enable_if_t<EnumTraits::IsFlag<T>::value, std::nullptr_t> = nullptr>
 inline constexpr T& operator|=(T& left, T right)
 {
     return left = left | right;
 }
 
-template<typename T, std::enable_if_t<EnumTraits::IsFlag<T>::value, std::nullptr_t> = nullptr>
+template <
+    typename T,
+    std::enable_if_t<EnumTraits::IsFlag<T>::value, std::nullptr_t> = nullptr>
 inline constexpr T operator~(T value)
 {
     return static_cast<T>(~static_cast<std::underlying_type_t<T>>(value));
 }
 
-template<typename T>
-class EnumFlag
-{
-    static_assert(EnumTraits::IsFlag<T>::value, "EnumFlag must be used only with enums that are specify EnumFlag::IsFlag");
+template <typename T>
+class EnumFlag {
+    static_assert(EnumTraits::IsFlag<T>::value,
+                  "EnumFlag must be used only with enums that are specify "
+                  "EnumFlag::IsFlag");
 
 public:
-    /*implicit*/ constexpr EnumFlag(T value) : _value(value)
-    {
-    }
+    /*implicit*/ constexpr EnumFlag(T value) : _value(value) {}
 
     constexpr EnumFlag& operator&=(EnumFlag right)
     {
@@ -98,10 +113,7 @@ public:
         return static_cast<T>(~static_cast<std::underlying_type_t<T>>(_value));
     }
 
-    constexpr void RemoveFlag(EnumFlag flag)
-    {
-        _value &= ~flag._value;
-    }
+    constexpr void RemoveFlag(EnumFlag flag) { _value &= ~flag._value; }
 
     constexpr bool HasFlag(T flag) const
     {
@@ -114,10 +126,7 @@ public:
         return (_value & flags) == flags;
     }
 
-    constexpr operator T() const
-    {
-        return _value;
-    }
+    constexpr operator T() const { return _value; }
 
     constexpr std::underlying_type_t<T> AsUnderlyingType() const
     {

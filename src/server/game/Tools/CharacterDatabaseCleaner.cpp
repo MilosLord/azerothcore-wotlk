@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -33,7 +34,8 @@ void CharacterDatabaseCleaner::CleanDatabase()
     uint32 oldMSTime = getMSTime();
 
     // check flags which clean ups are necessary
-    QueryResult result = CharacterDatabase.Query("SELECT value FROM worldstates WHERE entry = {}", WS_CLEANING_FLAGS);
+    QueryResult result = CharacterDatabase.Query(
+        "SELECT value FROM worldstates WHERE entry = {}", WS_CLEANING_FLAGS);
     if (!result)
         return;
 
@@ -55,38 +57,42 @@ void CharacterDatabaseCleaner::CleanDatabase()
     if (flags & CLEANING_FLAG_QUESTSTATUS)
         CleanCharacterQuestStatus();
 
-    // NOTE: In order to have persistentFlags be set in worldstates for the next cleanup,
-    // you need to define them at least once in worldstates.
+    // NOTE: In order to have persistentFlags be set in worldstates for the next
+    // cleanup, you need to define them at least once in worldstates.
     flags &= sWorld->getIntConfig(CONFIG_PERSISTENT_CHARACTER_CLEAN_FLAGS);
-    CharacterDatabase.DirectExecute("UPDATE worldstates SET value = {} WHERE entry = {}", flags, WS_CLEANING_FLAGS);
+    CharacterDatabase.DirectExecute(
+        "UPDATE worldstates SET value = {} WHERE entry = {}",
+        flags,
+        WS_CLEANING_FLAGS);
 
     sWorld->SetCleaningFlags(flags);
 
-    LOG_INFO("server.loading", ">> Cleaned character database in {} ms", GetMSTimeDiffToNow(oldMSTime));
+    LOG_INFO("server.loading",
+             ">> Cleaned character database in {} ms",
+             GetMSTimeDiffToNow(oldMSTime));
     LOG_INFO("server.loading", " ");
 }
 
-void CharacterDatabaseCleaner::CheckUnique(const char* column, const char* table, bool (*check)(uint32))
+void CharacterDatabaseCleaner::CheckUnique(const char* column,
+                                           const char* table,
+                                           bool (*check)(uint32))
 {
-    QueryResult result = CharacterDatabase.Query("SELECT DISTINCT {} FROM {}", column, table);
-    if (!result)
-    {
+    QueryResult result =
+        CharacterDatabase.Query("SELECT DISTINCT {} FROM {}", column, table);
+    if (!result) {
         LOG_INFO("sql.sql", "Table {} is empty.", table);
         return;
     }
 
-    bool found = false;
+    bool               found = false;
     std::ostringstream ss;
-    do
-    {
+    do {
         Field* fields = result->Fetch();
 
         uint32 id = fields[0].Get<uint32>();
 
-        if (!check(id))
-        {
-            if (!found)
-            {
+        if (!check(id)) {
+            if (!found) {
                 ss << "DELETE FROM " << table << " WHERE " << column << " IN (";
                 found = true;
             }
@@ -97,8 +103,7 @@ void CharacterDatabaseCleaner::CheckUnique(const char* column, const char* table
         }
     } while (result->NextRow());
 
-    if (found)
-    {
+    if (found) {
         ss << ')';
         CharacterDatabase.Execute(ss.str().c_str());
     }
@@ -111,7 +116,9 @@ bool CharacterDatabaseCleaner::AchievementProgressCheck(uint32 criteria)
 
 void CharacterDatabaseCleaner::CleanCharacterAchievementProgress()
 {
-    CheckUnique("criteria", "character_achievement_progress", &AchievementProgressCheck);
+    CheckUnique("criteria",
+                "character_achievement_progress",
+                &AchievementProgressCheck);
 }
 
 bool CharacterDatabaseCleaner::SkillCheck(uint32 skill)
@@ -145,11 +152,14 @@ bool CharacterDatabaseCleaner::TalentCheck(uint32 talent_id)
 
 void CharacterDatabaseCleaner::CleanCharacterTalent()
 {
-    CharacterDatabase.DirectExecute("DELETE FROM character_talent WHERE specMask >= {}", 1 << MAX_TALENT_SPECS);
+    CharacterDatabase.DirectExecute(
+        "DELETE FROM character_talent WHERE specMask >= {}",
+        1 << MAX_TALENT_SPECS);
     CheckUnique("spell", "character_talent", &TalentCheck);
 }
 
 void CharacterDatabaseCleaner::CleanCharacterQuestStatus()
 {
-    CharacterDatabase.DirectExecute("DELETE FROM character_queststatus WHERE status = 0");
+    CharacterDatabase.DirectExecute(
+        "DELETE FROM character_queststatus WHERE status = 0");
 }

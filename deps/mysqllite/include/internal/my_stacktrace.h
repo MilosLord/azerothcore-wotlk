@@ -19,7 +19,7 @@
 #include <my_global.h>
 
 #ifdef TARGET_OS_LINUX
-#if defined (__x86_64__) || defined (__i386__) || \
+#if defined(__x86_64__) || defined(__i386__) ||                                \
     (defined(__alpha__) && defined(__GNUC__))
 #define HAVE_STACKTRACE 1
 #endif
@@ -34,9 +34,8 @@
 
 #define HAVE_WRITE_CORE
 
-#if HAVE_BACKTRACE && HAVE_BACKTRACE_SYMBOLS && \
-    HAVE_CXXABI_H && HAVE_ABI_CXA_DEMANGLE && \
-    HAVE_WEAK_SYMBOL
+#if HAVE_BACKTRACE && HAVE_BACKTRACE_SYMBOLS && HAVE_CXXABI_H &&               \
+    HAVE_ABI_CXA_DEMANGLE && HAVE_WEAK_SYMBOL
 #define BACKTRACE_DEMANGLE 1
 #endif
 
@@ -48,10 +47,10 @@ void my_print_stacktrace(uchar* stack_bottom, ulong thread_stack);
 void my_safe_print_str(const char* val, int max_len);
 void my_write_core(int sig);
 #if BACKTRACE_DEMANGLE
-char *my_demangle(const char *mangled_name, int *status);
+char* my_demangle(const char* mangled_name, int* status);
 #endif
 #ifdef __WIN__
-void my_set_exception_pointers(EXCEPTION_POINTERS *ep);
+void my_set_exception_pointers(EXCEPTION_POINTERS* ep);
 #endif
 #endif
 

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -23,26 +24,22 @@
 
 class MPQFile;
 
-u_map_fcc MverMagic = { {'R', 'E', 'V', 'M'} };
+u_map_fcc MverMagic = {{'R', 'E', 'V', 'M'}};
 
 FileLoader::FileLoader()
 {
-    data = nullptr;
+    data      = nullptr;
     data_size = 0;
-    version = nullptr;
+    version   = nullptr;
 }
 
-FileLoader::~FileLoader()
-{
-    free();
-}
+FileLoader::~FileLoader() { free(); }
 
 bool FileLoader::loadFile(std::string const& fileName, bool log)
 {
     free();
     MPQFile mf(fileName.c_str());
-    if (mf.isEof())
-    {
+    if (mf.isEof()) {
         if (log)
             printf("No such file %s\n", fileName.c_str());
         return false;
@@ -50,7 +47,7 @@ bool FileLoader::loadFile(std::string const& fileName, bool log)
 
     data_size = mf.getSize();
 
-    data = new uint8 [data_size];
+    data = new uint8[data_size];
     mf.read(data, data_size);
     mf.close();
     if (prepareLoadedData())
@@ -65,7 +62,7 @@ bool FileLoader::loadFile(std::string const& fileName, bool log)
 bool FileLoader::prepareLoadedData()
 {
     // Check version
-    version = (file_MVER*) data;
+    version = (file_MVER*)data;
     if (version->fcc != MverMagic.fcc)
         return false;
     if (version->ver != FILE_FORMAT_VERSION)
@@ -76,7 +73,7 @@ bool FileLoader::prepareLoadedData()
 void FileLoader::free()
 {
     delete[] data;
-    data = nullptr;
+    data      = nullptr;
     data_size = 0;
-    version = nullptr;
+    version   = nullptr;
 }

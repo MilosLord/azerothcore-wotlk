@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -39,8 +40,8 @@
 using namespace boost::program_options;
 namespace fs = std::filesystem;
 
-bool StartDB();
-void StopDB();
+bool          StartDB();
+void          StopDB();
 variables_map GetConsoleArguments(int argc, char** argv, fs::path& configFile);
 
 /// Launch the db import server
@@ -49,43 +50,55 @@ int main(int argc, char** argv)
     signal(SIGABRT, &Acore::AbortHandler);
 
     // Command line parsing
-    auto configFile = fs::path(sConfigMgr->GetConfigPath() + std::string(_ACORE_DB_IMPORT_CONFIG));
-    auto vm = GetConsoleArguments(argc, argv, configFile);
+    auto configFile = fs::path(sConfigMgr->GetConfigPath() +
+                               std::string(_ACORE_DB_IMPORT_CONFIG));
+    auto vm         = GetConsoleArguments(argc, argv, configFile);
 
     // exit if help is enabled
     if (vm.count("help"))
         return 0;
 
     // Add file and args in config
-    sConfigMgr->Configure(configFile.generic_string(), std::vector<std::string>(argv, argv + argc));
+    sConfigMgr->Configure(configFile.generic_string(),
+                          std::vector<std::string>(argv, argv + argc));
 
     if (!sConfigMgr->LoadAppConfigs())
         return 1;
 
-    std::vector<std::string> overriddenKeys = sConfigMgr->OverrideWithEnvVariablesIfAny();
+    std::vector<std::string> overriddenKeys =
+        sConfigMgr->OverrideWithEnvVariablesIfAny();
 
     // Init logging
     sLog->Initialize();
 
-    Acore::Banner::Show("dbimport",
-        [](std::string_view text)
-        {
-            LOG_INFO("dbimport", text);
-        },
-        []()
-        {
-            LOG_INFO("dbimport", "> Using configuration file:       {}", sConfigMgr->GetFilename());
-            LOG_INFO("dbimport", "> Using SSL version:              {} (library: {})", OPENSSL_VERSION_TEXT, OpenSSL_version(OPENSSL_VERSION));
-            LOG_INFO("dbimport", "> Using Boost version:            {}.{}.{}", BOOST_VERSION / 100000, BOOST_VERSION / 100 % 1000, BOOST_VERSION % 100);
-        }
-    );
+    Acore::Banner::Show(
+        "dbimport",
+        [](std::string_view text) { LOG_INFO("dbimport", text); },
+        []() {
+            LOG_INFO("dbimport",
+                     "> Using configuration file:       {}",
+                     sConfigMgr->GetFilename());
+            LOG_INFO("dbimport",
+                     "> Using SSL version:              {} (library: {})",
+                     OPENSSL_VERSION_TEXT,
+                     OpenSSL_version(OPENSSL_VERSION));
+            LOG_INFO("dbimport",
+                     "> Using Boost version:            {}.{}.{}",
+                     BOOST_VERSION / 100000,
+                     BOOST_VERSION / 100 % 1000,
+                     BOOST_VERSION % 100);
+        });
 
     for (std::string const& key : overriddenKeys)
-        LOG_INFO("dbimport", "Configuration field {} was overridden with environment variable.", key);
+        LOG_INFO(
+            "dbimport",
+            "Configuration field {} was overridden with environment variable.",
+            key);
 
     OpenSSLCrypto::threadsSetup();
 
-    std::shared_ptr<void> opensslHandle(nullptr, [](void*) { OpenSSLCrypto::threadsCleanup(); });
+    std::shared_ptr<void> opensslHandle(
+        nullptr, [](void*) { OpenSSLCrypto::threadsCleanup(); });
 
     // Initialize the database connection
     if (!StartDB())
@@ -105,8 +118,7 @@ bool StartDB()
 
     // Load databases
     DatabaseLoader loader("dbimport");
-    loader
-        .AddDatabase(LoginDatabase, "Login")
+    loader.AddDatabase(LoginDatabase, "Login")
         .AddDatabase(CharacterDatabase, "Character")
         .AddDatabase(WorldDatabase, "World");
 
@@ -129,30 +141,32 @@ void StopDB()
 variables_map GetConsoleArguments(int argc, char** argv, fs::path& configFile)
 {
     options_description all("Allowed options");
-    all.add_options()
-        ("help,h", "print usage message")
-        ("version,v", "print version build info")
-        ("dry-run,d", "Dry run")
-        ("config,c", value<fs::path>(&configFile)->default_value(fs::path(sConfigMgr->GetConfigPath() + std::string(_ACORE_DB_IMPORT_CONFIG))), "use <arg> as configuration file");
+    all.add_options()("help,h", "print usage message")(
+        "version,v", "print version build info")("dry-run,d", "Dry run")(
+        "config,c",
+        value<fs::path>(&configFile)
+            ->default_value(fs::path(sConfigMgr->GetConfigPath() +
+                                     std::string(_ACORE_DB_IMPORT_CONFIG))),
+        "use <arg> as configuration file");
 
     variables_map variablesMap;
 
-    try
-    {
-        store(command_line_parser(argc, argv).options(all).allow_unregistered().run(), variablesMap);
+    try {
+        store(command_line_parser(argc, argv)
+                  .options(all)
+                  .allow_unregistered()
+                  .run(),
+              variablesMap);
         notify(variablesMap);
     }
-    catch (std::exception const& e)
-    {
+    catch (std::exception const& e) {
         std::cerr << e.what() << "\n";
     }
 
-    if (variablesMap.count("help"))
-    {
+    if (variablesMap.count("help")) {
         std::cout << all << "\n";
     }
-    else if (variablesMap.count("dry-run"))
-    {
+    else if (variablesMap.count("dry-run")) {
         sConfigMgr->setDryRun(true);
     }
 

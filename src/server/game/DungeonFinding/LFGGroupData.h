@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,58 +21,56 @@
 
 #include "LFG.h"
 
-namespace lfg
-{
-    /**
-        Stores all lfg data needed about a group.
-    */
-    class LfgGroupData
-    {
-    public:
-        LfgGroupData();
-        ~LfgGroupData();
+namespace lfg {
+/**
+    Stores all lfg data needed about a group.
+*/
+class LfgGroupData {
+public:
+    LfgGroupData();
+    ~LfgGroupData();
 
-        bool IsLfgGroup();
+    bool IsLfgGroup();
 
-        // General
-        void SetState(LfgState state);
-        void RestoreState();
-        void AddPlayer(ObjectGuid guid);
-        uint8 RemovePlayer(ObjectGuid guid);
-        void RemoveAllPlayers();
-        void SetLeader(ObjectGuid guid);
+    // General
+    void  SetState(LfgState state);
+    void  RestoreState();
+    void  AddPlayer(ObjectGuid guid);
+    uint8 RemovePlayer(ObjectGuid guid);
+    void  RemoveAllPlayers();
+    void  SetLeader(ObjectGuid guid);
 
-        // Dungeon
-        void SetDungeon(uint32 dungeon);
+    // Dungeon
+    void SetDungeon(uint32 dungeon);
 
-        // VoteKick
-        void DecreaseKicksLeft();
+    // VoteKick
+    void DecreaseKicksLeft();
 
-        // General
-        [[nodiscard]] LfgState GetState() const;
-        [[nodiscard]] LfgState GetOldState() const;
-        [[nodiscard]] LfgGuidSet const& GetPlayers() const;
-        [[nodiscard]] uint8 GetPlayerCount() const;
-        [[nodiscard]] ObjectGuid GetLeader() const;
+    // General
+    [[nodiscard]] LfgState          GetState() const;
+    [[nodiscard]] LfgState          GetOldState() const;
+    [[nodiscard]] LfgGuidSet const& GetPlayers() const;
+    [[nodiscard]] uint8             GetPlayerCount() const;
+    [[nodiscard]] ObjectGuid        GetLeader() const;
 
-        // Dungeon
-        [[nodiscard]] uint32 GetDungeon(bool asId = true) const;
+    // Dungeon
+    [[nodiscard]] uint32 GetDungeon(bool asId = true) const;
 
-        // VoteKick
-        [[nodiscard]] uint8 GetKicksLeft() const;
+    // VoteKick
+    [[nodiscard]] uint8 GetKicksLeft() const;
 
-    private:
-        // General
-        LfgState m_State;                   ///< State if group in LFG
-        LfgState m_OldState;                ///< Old State
-        ObjectGuid m_Leader;                ///< Leader GUID
-        LfgGuidSet m_Players;               ///< Players in group
-        // Dungeon
-        uint32 m_Dungeon;                   ///< Dungeon entry
-        bool _isLFGGroup;
-        // Vote Kick
-        uint8 m_KicksLeft;                  ///< Number of kicks left
-    };
+private:
+    // General
+    LfgState   m_State;    ///< State if group in LFG
+    LfgState   m_OldState; ///< Old State
+    ObjectGuid m_Leader;   ///< Leader GUID
+    LfgGuidSet m_Players;  ///< Players in group
+    // Dungeon
+    uint32 m_Dungeon; ///< Dungeon entry
+    bool   _isLFGGroup;
+    // Vote Kick
+    uint8 m_KicksLeft; ///< Number of kicks left
+};
 
 } // namespace lfg
 

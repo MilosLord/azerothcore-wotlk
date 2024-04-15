@@ -3,7 +3,8 @@
 
 namespace G3D {
 
-int ThreadSet::size() const {
+int ThreadSet::size() const
+{
     ThreadSet* me = const_cast<ThreadSet*>(this);
     me->m_lock.lock();
     int s = m_thread.size();
@@ -11,8 +12,8 @@ int ThreadSet::size() const {
     return s;
 }
 
-
-int ThreadSet::numStarted() const {
+int ThreadSet::numStarted() const
+{
     ThreadSet* me = const_cast<ThreadSet*>(this);
     me->m_lock.lock();
     int count = 0;
@@ -24,16 +25,16 @@ int ThreadSet::numStarted() const {
     me->m_lock.unlock();
     return count;
 }
-    
-    
-void ThreadSet::start(SpawnBehavior lastBehavior) const {
+
+void ThreadSet::start(SpawnBehavior lastBehavior) const
+{
     ThreadSet* me = const_cast<ThreadSet*>(this);
 
     Array<GThreadRef> unstarted;
     me->m_lock.lock();
     // Find the unstarted threads
     for (int i = 0; i < m_thread.size(); ++i) {
-        if (! m_thread[i]->started()) {
+        if (!m_thread[i]->started()) {
             unstarted.append(m_thread[i]);
         }
     }
@@ -57,9 +58,9 @@ void ThreadSet::start(SpawnBehavior lastBehavior) const {
         debugAssert(unstarted.last()->completed());
     }
 }
-    
 
-void ThreadSet::terminate() const {
+void ThreadSet::terminate() const
+{
     ThreadSet* me = const_cast<ThreadSet*>(this);
     me->m_lock.lock();
     for (int i = 0; i < m_thread.size(); ++i) {
@@ -69,9 +70,9 @@ void ThreadSet::terminate() const {
     }
     me->m_lock.unlock();
 }
-    
 
-void ThreadSet::waitForCompletion() const {
+void ThreadSet::waitForCompletion() const
+{
     ThreadSet* me = const_cast<ThreadSet*>(this);
 
     me->m_lock.lock();
@@ -82,9 +83,9 @@ void ThreadSet::waitForCompletion() const {
     }
     me->m_lock.unlock();
 }
-    
 
-int ThreadSet::removeCompleted() {
+int ThreadSet::removeCompleted()
+{
     m_lock.lock();
     for (int i = 0; i < m_thread.size(); ++i) {
         if (m_thread[i]->completed()) {
@@ -92,39 +93,39 @@ int ThreadSet::removeCompleted() {
             --i;
         }
     }
-    
+
     int s = m_thread.size();
     m_lock.unlock();
     return s;
 }
 
-
-void ThreadSet::clear() {
+void ThreadSet::clear()
+{
     m_lock.lock();
     m_thread.clear();
     m_lock.unlock();
 }
-    
 
-int ThreadSet::insert(const ThreadRef& t) {
+int ThreadSet::insert(const ThreadRef& t)
+{
     m_lock.lock();
     bool found = false;
-    for (int i = 0; i < m_thread.size() && ! found; ++i) {
+    for (int i = 0; i < m_thread.size() && !found; ++i) {
         found = (m_thread[i] == t);
     }
-    if (! found) {
+    if (!found) {
         m_thread.append(t);
     }
     int s = m_thread.size();
     m_lock.unlock();
     return s;
 }
-    
 
-bool ThreadSet::remove(const ThreadRef& t) {
+bool ThreadSet::remove(const ThreadRef& t)
+{
     m_lock.lock();
     bool found = false;
-    for (int i = 0; i < m_thread.size() && ! found; ++i) {
+    for (int i = 0; i < m_thread.size() && !found; ++i) {
         found = (m_thread[i] == t);
         if (found) {
             m_thread.fastRemove(i);
@@ -133,38 +134,25 @@ bool ThreadSet::remove(const ThreadRef& t) {
     m_lock.unlock();
     return found;
 }
-    
 
-bool ThreadSet::contains(const ThreadRef& t) const {
+bool ThreadSet::contains(const ThreadRef& t) const
+{
     ThreadSet* me = const_cast<ThreadSet*>(this);
     me->m_lock.lock();
     bool found = false;
-    for (int i = 0; i < m_thread.size() && ! found; ++i) {
+    for (int i = 0; i < m_thread.size() && !found; ++i) {
         found = (m_thread[i] == t);
     }
     me->m_lock.unlock();
     return found;
 }
 
-   
-ThreadSet::Iterator ThreadSet::begin() {
-    return m_thread.begin();
-}
-    
+ThreadSet::Iterator ThreadSet::begin() { return m_thread.begin(); }
 
-ThreadSet::Iterator ThreadSet::end() {
-    return m_thread.end();
-}
-    
+ThreadSet::Iterator ThreadSet::end() { return m_thread.end(); }
 
-ThreadSet::ConstIterator ThreadSet::begin() const {
-    return m_thread.begin();
-}
-    
-    
-ThreadSet::ConstIterator ThreadSet::end() const {
-    return m_thread.end();
-}
+ThreadSet::ConstIterator ThreadSet::begin() const { return m_thread.begin(); }
 
+ThreadSet::ConstIterator ThreadSet::end() const { return m_thread.end(); }
 
 } // namespace G3D

@@ -29,17 +29,17 @@
 #undef MY_ATOMIC_HAS_8_AND_16
 
 #ifdef __x86_64__
-#  ifdef MY_ATOMIC_NO_XADD
-#    define MY_ATOMIC_MODE "gcc-amd64" LOCK_prefix "-no-xadd"
-#  else
-#    define MY_ATOMIC_MODE "gcc-amd64" LOCK_prefix
-#  endif
+#ifdef MY_ATOMIC_NO_XADD
+#define MY_ATOMIC_MODE "gcc-amd64" LOCK_prefix "-no-xadd"
 #else
-#  ifdef MY_ATOMIC_NO_XADD
-#    define MY_ATOMIC_MODE "gcc-x86" LOCK_prefix "-no-xadd"
-#  else
-#    define MY_ATOMIC_MODE "gcc-x86" LOCK_prefix
-#  endif
+#define MY_ATOMIC_MODE "gcc-amd64" LOCK_prefix
+#endif
+#else
+#ifdef MY_ATOMIC_NO_XADD
+#define MY_ATOMIC_MODE "gcc-x86" LOCK_prefix "-no-xadd"
+#else
+#define MY_ATOMIC_MODE "gcc-x86" LOCK_prefix
+#endif
 #endif
 
 /* fix -ansi errors while maintaining readability */
@@ -48,50 +48,44 @@
 #endif
 
 #ifndef MY_ATOMIC_NO_XADD
-#define make_atomic_add_body(S)         make_atomic_add_body ## S
-#define make_atomic_cas_body(S)         make_atomic_cas_body ## S
+#define make_atomic_add_body(S) make_atomic_add_body##S
+#define make_atomic_cas_body(S) make_atomic_cas_body##S
 #endif
 
-#define make_atomic_add_body32                                  \
-  asm volatile (LOCK_prefix "; xadd %0, %1;"                    \
-                : "+r" (v), "=m" (*a)                           \
-                : "m" (*a)                                      \
-                : "memory")
+#define make_atomic_add_body32                                                 \
+    asm volatile(LOCK_prefix "; xadd %0, %1;"                                  \
+                 : "+r"(v), "=m"(*a)                                           \
+                 : "m"(*a)                                                     \
+                 : "memory")
 
-#define make_atomic_cas_body32                                  \
-  __typeof__(*cmp) sav;                                         \
-  asm volatile (LOCK_prefix "; cmpxchg %3, %0; setz %2;"	\
-                : "=m" (*a), "=a" (sav), "=q" (ret)             \
-                : "r" (set), "m" (*a), "a" (*cmp)               \
-                : "memory");                                    \
-  if (!ret)                                                     \
-    *cmp= sav
+#define make_atomic_cas_body32                                                 \
+    __typeof__(*cmp) sav;                                                      \
+    asm volatile(LOCK_prefix "; cmpxchg %3, %0; setz %2;"                      \
+                 : "=m"(*a), "=a"(sav), "=q"(ret)                              \
+                 : "r"(set), "m"(*a), "a"(*cmp)                                \
+                 : "memory");                                                  \
+    if (!ret)                                                                  \
+    *cmp = sav
 
 #ifdef __x86_64__
 #define make_atomic_add_body64 make_atomic_add_body32
 #define make_atomic_cas_body64 make_atomic_cas_body32
 
-#define make_atomic_fas_body(S)                                 \
-  asm volatile ("xchg %0, %1;"                                  \
-                : "+r" (v), "=m" (*a)                           \
-                : "m" (*a)                                      \
-                : "memory")
+#define make_atomic_fas_body(S)                                                \
+    asm volatile("xchg %0, %1;" : "+r"(v), "=m"(*a) : "m"(*a) : "memory")
 
 /*
   Actually 32/64-bit reads/writes are always atomic on x86_64,
   nonetheless issue memory barriers as appropriate.
 */
-#define make_atomic_load_body(S)                                \
-  /* Serialize prior load and store operations. */              \
-  asm volatile ("mfence" ::: "memory");                         \
-  ret= *a;                                                      \
-  /* Prevent compiler from reordering instructions. */          \
-  asm volatile ("" ::: "memory")
-#define make_atomic_store_body(S)                               \
-  asm volatile ("; xchg %0, %1;"                                \
-                : "=m" (*a), "+r" (v)                           \
-                : "m" (*a)                                      \
-                : "memory")
+#define make_atomic_load_body(S)                                               \
+    /* Serialize prior load and store operations. */                           \
+    asm volatile("mfence" ::: "memory");                                       \
+    ret = *a;                                                                  \
+    /* Prevent compiler from reordering instructions. */                       \
+    asm volatile("" ::: "memory")
+#define make_atomic_store_body(S)                                              \
+    asm volatile("; xchg %0, %1;" : "=m"(*a), "+r"(v) : "m"(*a) : "memory")
 
 #else
 /*
@@ -102,10 +96,11 @@
   here, but we haven't defined fas, load and store at all, so
   we can fallback on default implementations.
 */
-#define make_atomic_add_body64                                  \
-  int64 tmp=*a;                                                 \
-  while (!my_atomic_cas64(a, &tmp, tmp+v)) ;                    \
-  v=tmp;
+#define make_atomic_add_body64                                                 \
+    int64 tmp = *a;                                                            \
+    while (!my_atomic_cas64(a, &tmp, tmp + v))                                 \
+        ;                                                                      \
+    v = tmp;
 
 /*
   On some platforms (e.g. Mac OS X and Solaris) the ebx register
@@ -120,15 +115,14 @@
   platforms the much simpler make_atomic_cas_body32 will work
   fine.
 */
-#define make_atomic_cas_body64                                    \
-  asm volatile ("push %%ebx;"                                     \
-                "movl (%%ecx), %%ebx;"                            \
-                "movl 4(%%ecx), %%ecx;"                           \
-                LOCK_prefix "; cmpxchg8b %0;"                     \
-                "setz %2; pop %%ebx"                              \
-                : "=m" (*a), "+A" (*cmp), "=c" (ret)              \
-                : "c" (&set), "m" (*a)                            \
-                : "memory", "esp")
+#define make_atomic_cas_body64                                                 \
+    asm volatile("push %%ebx;"                                                 \
+                 "movl (%%ecx), %%ebx;"                                        \
+                 "movl 4(%%ecx), %%ecx;" LOCK_prefix "; cmpxchg8b %0;"         \
+                 "setz %2; pop %%ebx"                                          \
+                 : "=m"(*a), "+A"(*cmp), "=c"(ret)                             \
+                 : "c"(&set), "m"(*a)                                          \
+                 : "memory", "esp")
 #endif
 
 /*
@@ -139,7 +133,7 @@
 #define make_atomic_cas_bodyptr make_atomic_cas_body32
 
 #ifdef MY_ATOMIC_MODE_DUMMY
-#define make_atomic_load_body(S)   ret=*a
-#define make_atomic_store_body(S)  *a=v
+#define make_atomic_load_body(S) ret = *a
+#define make_atomic_store_body(S) *a = v
 #endif
 #endif /* ATOMIC_X86_GCC_INCLUDED */

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,31 +21,28 @@
 #include "Vehicle.h"
 #include "pit_of_saron.h"
 
-enum Texts
-{
-    SAY_AGGRO                           = 2,
-    SAY_SLAY                            = 3,
-    SAY_DEATH                           = 4,
-    SAY_MARK                            = 5,
-    EMOTE_MARK                          = 6,
-    SAY_DARK_MIGHT                      = 7,
-    EMOTE_DARK_MIGHT                    = 8,
+enum Texts {
+    SAY_AGGRO        = 2,
+    SAY_SLAY         = 3,
+    SAY_DEATH        = 4,
+    SAY_MARK         = 5,
+    EMOTE_MARK       = 6,
+    SAY_DARK_MIGHT   = 7,
+    EMOTE_DARK_MIGHT = 8,
 };
 
-enum Spells
-{
-    SPELL_OVERLORDS_BRAND               = 69172,
-    SPELL_OVERLORDS_BRAND_HEAL          = 69190,
-    SPELL_OVERLORDS_BRAND_DAMAGE        = 69189,
-    SPELL_FORCEFUL_SMASH                = 69155,
-    SPELL_UNHOLY_POWER                  = 69167,
-    RIMEFANG_SPELL_ICY_BLAST            = 69232,
-    SPELL_MARK_OF_RIMEFANG              = 69275,
-    RIMEFANG_SPELL_HOARFROST            = 69246,
+enum Spells {
+    SPELL_OVERLORDS_BRAND        = 69172,
+    SPELL_OVERLORDS_BRAND_HEAL   = 69190,
+    SPELL_OVERLORDS_BRAND_DAMAGE = 69189,
+    SPELL_FORCEFUL_SMASH         = 69155,
+    SPELL_UNHOLY_POWER           = 69167,
+    RIMEFANG_SPELL_ICY_BLAST     = 69232,
+    SPELL_MARK_OF_RIMEFANG       = 69275,
+    RIMEFANG_SPELL_HOARFROST     = 69246,
 };
 
-enum Events
-{
+enum Events {
     EVENT_SPELL_FORCEFUL_SMASH = 1,
     EVENT_SPELL_UNHOLY_POWER,
     EVENT_SPELL_OVERLORDS_BRAND,
@@ -52,47 +50,48 @@ enum Events
     EVENT_SPELL_MARK_OF_RIMEFANG,
 };
 
-class boss_tyrannus : public CreatureScript
-{
+class boss_tyrannus : public CreatureScript {
 public:
-    boss_tyrannus() : CreatureScript("boss_tyrannus") { }
+    boss_tyrannus() : CreatureScript("boss_tyrannus") {}
 
-    struct boss_tyrannusAI : public ScriptedAI
-    {
+    struct boss_tyrannusAI : public ScriptedAI {
         boss_tyrannusAI(Creature* creature) : ScriptedAI(creature)
         {
             pInstance = me->GetInstanceScript();
             me->SetReactState(REACT_PASSIVE);
-            if (Creature* c = pInstance->instance->GetCreature(pInstance->GetGuidData(DATA_RIMEFANG_GUID)))
-            {
+            if (Creature* c = pInstance->instance->GetCreature(
+                    pInstance->GetGuidData(DATA_RIMEFANG_GUID))) {
                 c->SetCanFly(true);
             }
         }
 
         InstanceScript* pInstance;
-        EventMap events;
+        EventMap        events;
 
         void Reset() override
         {
             me->SetUnitFlag(UNIT_FLAG_NON_ATTACKABLE);
             events.Reset();
-            if (me->HasReactState(REACT_AGGRESSIVE)) // Reset() called by EnterEvadeMode()
+            if (me->HasReactState(
+                    REACT_AGGRESSIVE)) // Reset() called by EnterEvadeMode()
             {
                 if (!pInstance)
                     return;
-                if (Creature* c = pInstance->instance->GetCreature(pInstance->GetGuidData(DATA_MARTIN_OR_GORKUN_GUID)))
-                {
+                if (Creature* c = pInstance->instance->GetCreature(
+                        pInstance->GetGuidData(DATA_MARTIN_OR_GORKUN_GUID))) {
                     c->AI()->DoAction(1);
                     c->DespawnOrUnsummon();
-                    pInstance->SetGuidData(DATA_MARTIN_OR_GORKUN_GUID, ObjectGuid::Empty);
+                    pInstance->SetGuidData(DATA_MARTIN_OR_GORKUN_GUID,
+                                           ObjectGuid::Empty);
                 }
-                if (Creature* c = pInstance->instance->GetCreature(pInstance->GetGuidData(DATA_RIMEFANG_GUID)))
-                {
+                if (Creature* c = pInstance->instance->GetCreature(
+                        pInstance->GetGuidData(DATA_RIMEFANG_GUID))) {
                     c->GetMotionMaster()->Clear();
                     c->GetMotionMaster()->MoveIdle();
 
                     c->RemoveAllAuras();
-                    c->UpdatePosition(1017.3f, 168.974f, 642.926f, 5.2709f, true);
+                    c->UpdatePosition(
+                        1017.3f, 168.974f, 642.926f, 5.2709f, true);
                     c->StopMovingOnCurrentPos();
                     if (Vehicle* v = c->GetVehicleKit())
                         v->InstallAllAccessories(false);
@@ -102,11 +101,10 @@ public:
 
         void DoAction(int32 param) override
         {
-            if (param == 1)
-            {
+            if (param == 1) {
                 Position exitPos = {1023.46f, 159.12f, 628.2f, 5.23f};
-                if (Creature* c = pInstance->instance->GetCreature(pInstance->GetGuidData(DATA_RIMEFANG_GUID)))
-                {
+                if (Creature* c = pInstance->instance->GetCreature(
+                        pInstance->GetGuidData(DATA_RIMEFANG_GUID))) {
                     c->RemoveAura(46598);
                     c->GetMotionMaster()->Clear();
                     c->GetMotionMaster()->MovePath(PATH_BEGIN_VALUE + 18, true);
@@ -133,12 +131,12 @@ public:
             if (!UpdateVictim())
                 return;
 
-            if (me->GetVictim())
-            {
+            if (me->GetVictim()) {
                 float x, y, z;
                 me->GetVictim()->GetPosition(x, y, z);
-                if (TSDistCheckPos.GetExactDist(x, y, z) > 100.0f || z > TSDistCheckPos.GetPositionZ() + 20.0f || z < TSDistCheckPos.GetPositionZ() - 20.0f)
-                {
+                if (TSDistCheckPos.GetExactDist(x, y, z) > 100.0f ||
+                    z > TSDistCheckPos.GetPositionZ() + 20.0f ||
+                    z < TSDistCheckPos.GetPositionZ() - 20.0f) {
                     me->SetHealth(me->GetMaxHealth());
                     EnterEvadeMode();
                     return;
@@ -150,49 +148,51 @@ public:
             if (me->HasUnitState(UNIT_STATE_CASTING))
                 return;
 
-            switch(events.ExecuteEvent())
-            {
-                case 0:
-                    break;
-                case EVENT_SPELL_FORCEFUL_SMASH:
-                    if (me->IsWithinMeleeRange(me->GetVictim()))
-                    {
-                        me->CastSpell(me->GetVictim(), SPELL_FORCEFUL_SMASH, false);
+            switch (events.ExecuteEvent()) {
+            case 0:
+                break;
+            case EVENT_SPELL_FORCEFUL_SMASH:
+                if (me->IsWithinMeleeRange(me->GetVictim())) {
+                    me->CastSpell(me->GetVictim(), SPELL_FORCEFUL_SMASH, false);
 
-                        events.RescheduleEvent(EVENT_SPELL_UNHOLY_POWER, 1s);
-                        break;
+                    events.RescheduleEvent(EVENT_SPELL_UNHOLY_POWER, 1s);
+                    break;
+                }
+                events.RepeatEvent(3000);
+                break;
+            case EVENT_SPELL_UNHOLY_POWER:
+                Talk(SAY_DARK_MIGHT);
+                Talk(EMOTE_DARK_MIGHT);
+                me->CastSpell(me, SPELL_UNHOLY_POWER, false);
+
+                events.ScheduleEvent(EVENT_SPELL_FORCEFUL_SMASH, 40s, 48s);
+                break;
+            case EVENT_SPELL_OVERLORDS_BRAND:
+                if (Unit* target = SelectTarget(
+                        SelectTargetMethod::Random, 0, 95.0f, true))
+                    me->CastSpell(target, SPELL_OVERLORDS_BRAND, false);
+                events.Repeat(11s, 12s);
+                break;
+            case EVENT_RIMEFANG_SPELL_ICY_BLAST:
+                if (Unit* target = SelectTarget(
+                        SelectTargetMethod::Random, 0, 190.0f, true))
+                    if (Creature* c = pInstance->instance->GetCreature(
+                            pInstance->GetGuidData(DATA_RIMEFANG_GUID)))
+                        c->CastSpell(target, RIMEFANG_SPELL_ICY_BLAST, false);
+                events.Repeat(5s);
+                break;
+            case EVENT_SPELL_MARK_OF_RIMEFANG:
+                if (Unit* target = SelectTarget(
+                        SelectTargetMethod::Random, 0, 190.0f, true))
+                    if (Creature* c = pInstance->instance->GetCreature(
+                            pInstance->GetGuidData(DATA_RIMEFANG_GUID))) {
+                        Talk(SAY_MARK);
+                        Talk(EMOTE_MARK, target);
+                        c->CastSpell(target, RIMEFANG_SPELL_HOARFROST, false);
                     }
-                    events.RepeatEvent(3000);
-                    break;
-                case EVENT_SPELL_UNHOLY_POWER:
-                    Talk(SAY_DARK_MIGHT);
-                    Talk(EMOTE_DARK_MIGHT);
-                    me->CastSpell(me, SPELL_UNHOLY_POWER, false);
-
-                    events.ScheduleEvent(EVENT_SPELL_FORCEFUL_SMASH, 40s, 48s);
-                    break;
-                case EVENT_SPELL_OVERLORDS_BRAND:
-                    if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0, 95.0f, true))
-                        me->CastSpell(target, SPELL_OVERLORDS_BRAND, false);
-                    events.Repeat(11s, 12s);
-                    break;
-                case EVENT_RIMEFANG_SPELL_ICY_BLAST:
-                    if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0, 190.0f, true))
-                        if (Creature* c = pInstance->instance->GetCreature(pInstance->GetGuidData(DATA_RIMEFANG_GUID)))
-                            c->CastSpell(target, RIMEFANG_SPELL_ICY_BLAST, false);
-                    events.Repeat(5s);
-                    break;
-                case EVENT_SPELL_MARK_OF_RIMEFANG:
-                    if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0, 190.0f, true))
-                        if (Creature* c = pInstance->instance->GetCreature(pInstance->GetGuidData(DATA_RIMEFANG_GUID)))
-                        {
-                            Talk(SAY_MARK);
-                            Talk(EMOTE_MARK, target);
-                            c->CastSpell(target, RIMEFANG_SPELL_HOARFROST, false);
-                        }
-                    events.Repeat(25s);
-                    events.RescheduleEvent(EVENT_RIMEFANG_SPELL_ICY_BLAST, 10s);
-                    break;
+                events.Repeat(25s);
+                events.RescheduleEvent(EVENT_RIMEFANG_SPELL_ICY_BLAST, 10s);
+                break;
             }
 
             DoMeleeAttackIfReady();
@@ -204,7 +204,8 @@ public:
             if (pInstance)
                 pInstance->SetData(DATA_TYRANNUS, DONE);
             if (me->IsSummon())
-                me->ToTempSummon()->SetTempSummonType(TEMPSUMMON_MANUAL_DESPAWN);
+                me->ToTempSummon()->SetTempSummonType(
+                    TEMPSUMMON_MANUAL_DESPAWN);
         }
 
         void KilledUnit(Unit* who) override
@@ -215,19 +216,18 @@ public:
 
         bool CanAIAttack(Unit const* who) const override
         {
-            switch (who->GetEntry())
-            {
-                case NPC_MARTIN_VICTUS_2:
-                case NPC_GORKUN_IRONSKULL_2:
-                case NPC_FREED_SLAVE_1_ALLIANCE:
-                case NPC_FREED_SLAVE_2_ALLIANCE:
-                case NPC_FREED_SLAVE_3_ALLIANCE:
-                case NPC_FREED_SLAVE_1_HORDE:
-                case NPC_FREED_SLAVE_2_HORDE:
-                case NPC_FREED_SLAVE_3_HORDE:
-                    return false;
-                default:
-                    return true;
+            switch (who->GetEntry()) {
+            case NPC_MARTIN_VICTUS_2:
+            case NPC_GORKUN_IRONSKULL_2:
+            case NPC_FREED_SLAVE_1_ALLIANCE:
+            case NPC_FREED_SLAVE_2_ALLIANCE:
+            case NPC_FREED_SLAVE_3_ALLIANCE:
+            case NPC_FREED_SLAVE_1_HORDE:
+            case NPC_FREED_SLAVE_2_HORDE:
+            case NPC_FREED_SLAVE_3_HORDE:
+                return false;
+            default:
+                return true;
             }
         }
     };
@@ -238,7 +238,4 @@ public:
     }
 };
 
-void AddSC_boss_tyrannus()
-{
-    new boss_tyrannus();
-}
+void AddSC_boss_tyrannus() { new boss_tyrannus(); }

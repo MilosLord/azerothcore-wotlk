@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -28,8 +29,7 @@
 #include <vector>
 
 /*! Transactions, high level class. */
-class AC_DATABASE_API TransactionBase
-{
+class AC_DATABASE_API TransactionBase {
     friend class TransactionTask;
     friend class MySQLConnection;
 
@@ -37,12 +37,12 @@ class AC_DATABASE_API TransactionBase
     friend class DatabaseWorkerPool;
 
 public:
-    TransactionBase()  = default;
+    TransactionBase() = default;
     virtual ~TransactionBase() { Cleanup(); }
 
     void Append(std::string_view sql);
 
-    template<typename... Args>
+    template <typename... Args>
     void Append(std::string_view sql, Args&&... args)
     {
         Append(Acore::StringFormatFmt(sql, std::forward<Args>(args)...));
@@ -59,9 +59,8 @@ private:
     bool _cleanedUp{false};
 };
 
-template<typename T>
-class Transaction : public TransactionBase
-{
+template <typename T>
+class Transaction : public TransactionBase {
 public:
     using TransactionBase::Append;
 
@@ -72,8 +71,7 @@ public:
 };
 
 /*! Low level class*/
-class AC_DATABASE_API TransactionTask : public SQLOperation
-{
+class AC_DATABASE_API TransactionTask : public SQLOperation {
     template <class T>
     friend class DatabaseWorkerPool;
 
@@ -81,22 +79,27 @@ class AC_DATABASE_API TransactionTask : public SQLOperation
     friend class TransactionCallback;
 
 public:
-    TransactionTask(std::shared_ptr<TransactionBase> trans) : m_trans(std::move(trans)) { }
+    TransactionTask(std::shared_ptr<TransactionBase> trans)
+        : m_trans(std::move(trans))
+    {
+    }
     ~TransactionTask() override = default;
 
 protected:
     bool Execute() override;
-    int TryExecute();
+    int  TryExecute();
     void CleanupOnFailure();
 
     std::shared_ptr<TransactionBase> m_trans;
-    static std::mutex _deadlockLock;
+    static std::mutex                _deadlockLock;
 };
 
-class AC_DATABASE_API TransactionWithResultTask : public TransactionTask
-{
+class AC_DATABASE_API TransactionWithResultTask : public TransactionTask {
 public:
-    TransactionWithResultTask(std::shared_ptr<TransactionBase> trans) : TransactionTask(trans) { }
+    TransactionWithResultTask(std::shared_ptr<TransactionBase> trans)
+        : TransactionTask(trans)
+    {
+    }
 
     TransactionFuture GetFuture() { return m_result.get_future(); }
 
@@ -106,10 +109,12 @@ protected:
     TransactionPromise m_result;
 };
 
-class AC_DATABASE_API TransactionCallback
-{
+class AC_DATABASE_API TransactionCallback {
 public:
-    TransactionCallback(TransactionFuture&& future) : m_future(std::move(future)) { }
+    TransactionCallback(TransactionFuture&& future)
+        : m_future(std::move(future))
+    {
+    }
     TransactionCallback(TransactionCallback&&) = default;
 
     TransactionCallback& operator=(TransactionCallback&&) = default;
@@ -121,7 +126,7 @@ public:
 
     bool InvokeIfReady();
 
-    TransactionFuture m_future;
+    TransactionFuture         m_future;
     std::function<void(bool)> m_callback;
 };
 

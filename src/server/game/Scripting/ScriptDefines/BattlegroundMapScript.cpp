@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -19,8 +20,8 @@
 #include "Log.h"
 #include "ScriptMgr.h"
 
-BattlegroundMapScript::BattlegroundMapScript(const char* name, uint32 mapId) :
-    ScriptObject(name), MapScript<BattlegroundMap>(mapId)
+BattlegroundMapScript::BattlegroundMapScript(const char* name, uint32 mapId)
+    : ScriptObject(name), MapScript<BattlegroundMap>(mapId)
 {
     ScriptRegistry<BattlegroundMapScript>::AddScript(this);
 }
@@ -29,9 +30,10 @@ void BattlegroundMapScript::checkValidity()
 {
     checkMap();
 
-    if (GetEntry() && !GetEntry()->IsBattleground())
-    {
-        LOG_ERROR("maps.script", "BattlegroundMapScript for map {} is invalid.", GetEntry()->MapID);
+    if (GetEntry() && !GetEntry()->IsBattleground()) {
+        LOG_ERROR("maps.script",
+                  "BattlegroundMapScript for map {} is invalid.",
+                  GetEntry()->MapID);
     }
 }
 

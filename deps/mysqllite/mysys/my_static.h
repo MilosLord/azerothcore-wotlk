@@ -24,22 +24,22 @@
 C_MODE_START
 #include <signal.h>
 
-#define MAX_SIGNALS	10		/* Max signals under a dont-allow */
+#define MAX_SIGNALS 10 /* Max signals under a dont-allow */
 
 struct st_remember {
-  int number;
-  sig_handler (*func)(int number);
+    int number;
+    sig_handler (*func)(int number);
 };
 
 extern char curr_dir[FN_REFLEN], home_dir_buff[FN_REFLEN];
 
-extern volatile int _my_signals;
+extern volatile int       _my_signals;
 extern struct st_remember _my_sig_remember[MAX_SIGNALS];
 
-extern const char *soundex_map;
+extern const char* soundex_map;
 
 extern USED_MEM* my_once_root_block;
-extern uint	 my_once_extra;
+extern uint      my_once_extra;
 
 extern struct st_my_file_info my_file_info_default[MY_NFILE];
 

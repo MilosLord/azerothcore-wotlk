@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,58 +9,56 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "utgarde_keep.h"
 #include "CreatureScript.h"
 #include "GameObjectAI.h"
 #include "ScriptedCreature.h"
 #include "SpellScriptLoader.h"
 #include "Vehicle.h"
-#include "utgarde_keep.h"
 
-class npc_dragonflayer_forge_master : public CreatureScript
-{
+class npc_dragonflayer_forge_master : public CreatureScript {
 public:
-    npc_dragonflayer_forge_master() : CreatureScript("npc_dragonflayer_forge_master") { }
+    npc_dragonflayer_forge_master()
+        : CreatureScript("npc_dragonflayer_forge_master")
+    {
+    }
 
     CreatureAI* GetAI(Creature* pCreature) const override
     {
         return GetUtgardeKeepAI<npc_dragonflayer_forge_masterAI>(pCreature);
     }
 
-    struct npc_dragonflayer_forge_masterAI : public ScriptedAI
-    {
+    struct npc_dragonflayer_forge_masterAI : public ScriptedAI {
         npc_dragonflayer_forge_masterAI(Creature* c) : ScriptedAI(c)
         {
             pInstance = c->GetInstanceScript();
 
             float x = me->GetHomePosition().GetPositionX();
             float y = me->GetHomePosition().GetPositionY();
-            if (x > 344.0f && x < 357.0f && y < -35.0f && y > -44.0f)
-            {
-                dataId = DATA_FORGE_1;
+            if (x > 344.0f && x < 357.0f && y < -35.0f && y > -44.0f) {
+                dataId     = DATA_FORGE_1;
                 prevDataId = 0;
             }
-            else if (x > 380.0f && x < 389.0f && y < -12.0f && y > -21.0f)
-            {
-                dataId = DATA_FORGE_2;
+            else if (x > 380.0f && x < 389.0f && y < -12.0f && y > -21.0f) {
+                dataId     = DATA_FORGE_2;
                 prevDataId = DATA_FORGE_1;
             }
-            else
-            {
-                dataId = DATA_FORGE_3;
+            else {
+                dataId     = DATA_FORGE_3;
                 prevDataId = DATA_FORGE_2;
             }
         }
 
         InstanceScript* pInstance;
-        uint32 dataId;
-        uint32 prevDataId;
+        uint32          dataId;
+        uint32          prevDataId;
 
         void Reset() override
         {
@@ -76,10 +75,8 @@ public:
 
         void JustEngagedWith(Unit* /*who*/) override
         {
-            if (pInstance)
-            {
-                if (prevDataId && !pInstance->GetData(prevDataId))
-                {
+            if (pInstance) {
+                if (prevDataId && !pInstance->GetData(prevDataId)) {
                     EnterEvadeMode();
                     return;
                 }
@@ -90,33 +87,30 @@ public:
     };
 };
 
-enum EnslavedProtoDrake
-{
-    TYPE_PROTODRAKE_AT      = 28,
-    DATA_PROTODRAKE_MOVE    = 6,
+enum EnslavedProtoDrake {
+    TYPE_PROTODRAKE_AT   = 28,
+    DATA_PROTODRAKE_MOVE = 6,
 
-    PATH_PROTODRAKE         = 125946,
+    PATH_PROTODRAKE = 125946,
 
-    EVENT_REND              = 1,
-    EVENT_FLAME_BREATH      = 2,
-    EVENT_KNOCKAWAY         = 3,
+    EVENT_REND         = 1,
+    EVENT_FLAME_BREATH = 2,
+    EVENT_KNOCKAWAY    = 3,
 
-    SPELL_REND              = 43931,
-    SPELL_FLAME_BREATH      = 50653,
-    SPELL_KNOCK_AWAY        = 49722,
+    SPELL_REND         = 43931,
+    SPELL_FLAME_BREATH = 50653,
+    SPELL_KNOCK_AWAY   = 49722,
 
-    POINT_LAST              = 5,
+    POINT_LAST = 5,
 };
 
 const Position protodrakeCheckPos = {206.24f, -190.28f, 200.11f, 0.f};
 
-class npc_enslaved_proto_drake : public CreatureScript
-{
+class npc_enslaved_proto_drake : public CreatureScript {
 public:
-    npc_enslaved_proto_drake() : CreatureScript("npc_enslaved_proto_drake") { }
+    npc_enslaved_proto_drake() : CreatureScript("npc_enslaved_proto_drake") {}
 
-    struct npc_enslaved_proto_drakeAI : public ScriptedAI
-    {
+    struct npc_enslaved_proto_drakeAI : public ScriptedAI {
         npc_enslaved_proto_drakeAI(Creature* creature) : ScriptedAI(creature)
         {
             _setData = false;
@@ -132,13 +126,18 @@ public:
 
         void MovementInform(uint32 type, uint32 id) override
         {
-            if (type == WAYPOINT_MOTION_TYPE && id == POINT_LAST)
-            {
-                me->SetHomePosition(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0.25f);
+            if (type == WAYPOINT_MOTION_TYPE && id == POINT_LAST) {
+                me->SetHomePosition(me->GetPositionX(),
+                                    me->GetPositionY(),
+                                    me->GetPositionZ(),
+                                    0.25f);
                 if (Vehicle* v = me->GetVehicleKit())
                     if (Unit* p = v->GetPassenger(0))
                         if (Creature* rider = p->ToCreature())
-                            rider->SetHomePosition(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0.25f);
+                            rider->SetHomePosition(me->GetPositionX(),
+                                                   me->GetPositionY(),
+                                                   me->GetPositionZ(),
+                                                   0.25f);
 
                 me->SetCanFly(false);
                 me->SetDisableGravity(false);
@@ -149,8 +148,9 @@ public:
 
         void SetData(uint32 type, uint32 data) override
         {
-            if (type == TYPE_PROTODRAKE_AT && data == DATA_PROTODRAKE_MOVE && !_setData && me->IsAlive() && me->GetDistance(protodrakeCheckPos) < 10.0f)
-            {
+            if (type == TYPE_PROTODRAKE_AT && data == DATA_PROTODRAKE_MOVE &&
+                !_setData && me->IsAlive() &&
+                me->GetDistance(protodrakeCheckPos) < 10.0f) {
                 _setData = true;
                 me->SetCanFly(true);
                 me->SetDisableGravity(true);
@@ -168,24 +168,22 @@ public:
             if (me->HasUnitState(UNIT_STATE_CASTING))
                 return;
 
-            while (uint32 eventid = _events.ExecuteEvent())
-            {
-                switch (eventid)
-                {
-                    case EVENT_REND:
-                        DoCast(SPELL_REND);
-                        _events.ScheduleEvent(EVENT_REND, 15s, 20s);
-                        break;
-                    case EVENT_FLAME_BREATH:
-                        DoCast(SPELL_FLAME_BREATH);
-                        _events.ScheduleEvent(EVENT_FLAME_BREATH, 11s, 12s);
-                        break;
-                    case EVENT_KNOCKAWAY:
-                        DoCast(SPELL_KNOCK_AWAY);
-                        _events.ScheduleEvent(EVENT_KNOCKAWAY, 7000ms, 8500ms);
-                        break;
-                    default:
-                        break;
+            while (uint32 eventid = _events.ExecuteEvent()) {
+                switch (eventid) {
+                case EVENT_REND:
+                    DoCast(SPELL_REND);
+                    _events.ScheduleEvent(EVENT_REND, 15s, 20s);
+                    break;
+                case EVENT_FLAME_BREATH:
+                    DoCast(SPELL_FLAME_BREATH);
+                    _events.ScheduleEvent(EVENT_FLAME_BREATH, 11s, 12s);
+                    break;
+                case EVENT_KNOCKAWAY:
+                    DoCast(SPELL_KNOCK_AWAY);
+                    _events.ScheduleEvent(EVENT_KNOCKAWAY, 7000ms, 8500ms);
+                    break;
+                default:
+                    break;
                 }
             }
 
@@ -193,7 +191,7 @@ public:
         }
 
     private:
-        bool _setData;
+        bool     _setData;
         EventMap _events;
     };
 
@@ -203,36 +201,36 @@ public:
     }
 };
 
-enum TickingTimeBomb
-{
-    SPELL_TICKING_TIME_BOMB_EXPLODE = 59687
-};
+enum TickingTimeBomb { SPELL_TICKING_TIME_BOMB_EXPLODE = 59687 };
 
-class spell_ticking_time_bomb : public SpellScriptLoader
-{
+class spell_ticking_time_bomb : public SpellScriptLoader {
 public:
-    spell_ticking_time_bomb() : SpellScriptLoader("spell_ticking_time_bomb") { }
+    spell_ticking_time_bomb() : SpellScriptLoader("spell_ticking_time_bomb") {}
 
-    class spell_ticking_time_bomb_AuraScript : public AuraScript
-    {
+    class spell_ticking_time_bomb_AuraScript : public AuraScript {
         PrepareAuraScript(spell_ticking_time_bomb_AuraScript);
 
         bool Validate(SpellInfo const* /*spellInfo*/) override
         {
-            return ValidateSpellInfo({ SPELL_TICKING_TIME_BOMB_EXPLODE });
+            return ValidateSpellInfo({SPELL_TICKING_TIME_BOMB_EXPLODE});
         }
 
-        void HandleOnEffectRemove(AuraEffect const* /* aurEff */, AuraEffectHandleModes /* mode */)
+        void HandleOnEffectRemove(AuraEffect const* /* aurEff */,
+                                  AuraEffectHandleModes /* mode */)
         {
-            if (GetCaster() == GetTarget())
-            {
-                GetTarget()->CastSpell(GetTarget(), SPELL_TICKING_TIME_BOMB_EXPLODE, true);
+            if (GetCaster() == GetTarget()) {
+                GetTarget()->CastSpell(
+                    GetTarget(), SPELL_TICKING_TIME_BOMB_EXPLODE, true);
             }
         }
 
         void Register() override
         {
-            OnEffectRemove += AuraEffectRemoveFn(spell_ticking_time_bomb_AuraScript::HandleOnEffectRemove, EFFECT_0, SPELL_AURA_PERIODIC_DUMMY, AURA_EFFECT_HANDLE_REAL);
+            OnEffectRemove += AuraEffectRemoveFn(
+                spell_ticking_time_bomb_AuraScript::HandleOnEffectRemove,
+                EFFECT_0,
+                SPELL_AURA_PERIODIC_DUMMY,
+                AURA_EFFECT_HANDLE_REAL);
         }
     };
 
@@ -249,4 +247,3 @@ void AddSC_utgarde_keep()
 
     new spell_ticking_time_bomb();
 }
-

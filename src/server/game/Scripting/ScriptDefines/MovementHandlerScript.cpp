@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -19,20 +20,26 @@
 #include "ScriptMgr.h"
 #include "ScriptMgrMacros.h"
 
-void ScriptMgr::OnPlayerMove(Player* player, MovementInfo movementInfo, uint32 opcode)
+void ScriptMgr::OnPlayerMove(Player*      player,
+                             MovementInfo movementInfo,
+                             uint32       opcode)
 {
-    CALL_ENABLED_HOOKS(MovementHandlerScript, MOVEMENTHOOK_ON_PLAYER_MOVE, script->OnPlayerMove(player, movementInfo, opcode));
+    CALL_ENABLED_HOOKS(MovementHandlerScript,
+                       MOVEMENTHOOK_ON_PLAYER_MOVE,
+                       script->OnPlayerMove(player, movementInfo, opcode));
 }
 
-MovementHandlerScript::MovementHandlerScript(const char* name, std::vector<uint16> enabledHooks) :
-    ScriptObject(name, MOVEMENTHOOK_END)
+MovementHandlerScript::MovementHandlerScript(const char*         name,
+                                             std::vector<uint16> enabledHooks)
+    : ScriptObject(name, MOVEMENTHOOK_END)
 {
     // If empty - enable all available hooks.
     if (enabledHooks.empty())
         for (uint16 i = 0; i < MOVEMENTHOOK_END; ++i)
             enabledHooks.emplace_back(i);
 
-    ScriptRegistry<MovementHandlerScript>::AddScript(this, std::move(enabledHooks));
+    ScriptRegistry<MovementHandlerScript>::AddScript(this,
+                                                     std::move(enabledHooks));
 }
 
 template class AC_GAME_API ScriptRegistry<MovementHandlerScript>;

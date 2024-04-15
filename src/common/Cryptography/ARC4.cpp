@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -50,7 +51,7 @@ void Acore::Crypto::ARC4::Init(uint8 const* seed, size_t len)
 
 void Acore::Crypto::ARC4::UpdateData(uint8* data, size_t len)
 {
-    int outlen = 0;
+    int outlen  = 0;
     int result1 = EVP_EncryptUpdate(_ctx, data, &outlen, data, len);
     ASSERT(result1 == 1);
     int result2 = EVP_EncryptFinal_ex(_ctx, data, &outlen);

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,28 +22,27 @@
 #include "Define.h"
 #include "Duration.h"
 
-namespace GameTime
-{
-    // Server start time
-    AC_GAME_API Seconds GetStartTime();
+namespace GameTime {
+// Server start time
+AC_GAME_API Seconds GetStartTime();
 
-    // Current server time (unix)
-    AC_GAME_API Seconds GetGameTime();
+// Current server time (unix)
+AC_GAME_API Seconds GetGameTime();
 
-    // Milliseconds since server start
-    AC_GAME_API Milliseconds GetGameTimeMS();
+// Milliseconds since server start
+AC_GAME_API Milliseconds GetGameTimeMS();
 
-    /// Current chrono system_clock time point
-    AC_GAME_API SystemTimePoint GetSystemTime();
+/// Current chrono system_clock time point
+AC_GAME_API SystemTimePoint GetSystemTime();
 
-    /// Current chrono steady_clock time point
-    AC_GAME_API TimePoint Now();
+/// Current chrono steady_clock time point
+AC_GAME_API TimePoint Now();
 
-    /// Uptime
-    AC_GAME_API Seconds GetUptime();
+/// Uptime
+AC_GAME_API Seconds GetUptime();
 
-    /// Update all timers
-    void UpdateGameTimers();
-}
+/// Update all timers
+void UpdateGameTimers();
+} // namespace GameTime
 
 #endif

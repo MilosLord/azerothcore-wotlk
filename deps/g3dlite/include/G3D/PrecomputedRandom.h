@@ -1,8 +1,8 @@
 /**
  @file PrecomputedRandom.h
- 
+
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
- 
+
  @created 2009-03-31
  @edited  2009-03-31
 
@@ -12,17 +12,17 @@
 #ifndef G3D_PrecomputedRandom_h
 #define G3D_PrecomputedRandom_h
 
-#include "G3D/platform.h"
 #include "G3D/Random.h"
+#include "G3D/platform.h"
 
 namespace G3D {
 
-/** Fast random numbers using a precomputed data table. 
+/** Fast random numbers using a precomputed data table.
 
     e.g., generates cosHemi about 13x faster than Random.
-    This is useful for quickly generating seeded random 
+    This is useful for quickly generating seeded random
     numbers for reproducibility.  G3D::Random takes a long
-    time to seed; this is instantaneous (providing the 
+    time to seed; this is instantaneous (providing the
     precomputed data is already available.)
 
     Not threadsafe.*/
@@ -33,50 +33,52 @@ public:
         into a good size for SIMD and GPU operations.*/
     class HemiUniformData {
     public:
-        float   cosHemiX;
-        float   cosHemiY;
-        float   cosHemiZ;
-        float   uniform;
+        float cosHemiX;
+        float cosHemiY;
+        float cosHemiZ;
+        float uniform;
     };
 
     class SphereBitsData {
     public:
-        float   sphereX;
-        float   sphereY;
-        float   sphereZ;
-        uint32  bits;
+        float  sphereX;
+        float  sphereY;
+        float  sphereZ;
+        uint32 bits;
     };
 
 protected:
-
     /** Array of 2^n elements. */
-    const HemiUniformData*      m_hemiUniform;
-    const SphereBitsData*       m_sphereBits;
+    const HemiUniformData* m_hemiUniform;
+    const SphereBitsData*  m_sphereBits;
 
     /** 2^n - 1; the AND mask for computing a fast modulo */
-    int                         m_modMask;
+    int m_modMask;
 
-    int                         m_index;
+    int m_index;
 
     /** If true, free m_hemiUniform and m_sphereBits in destructor */
-    bool                        m_freeData;
+    bool m_freeData;
 
 public:
-
     /*
       \param dataSize Must be a power of 2
       \param data Will NOT be deleted by the destructor.
      */
-    PrecomputedRandom(const HemiUniformData* data1, const SphereBitsData* data2, int dataSize, uint32 seed = 0xF018A4D2);
+    PrecomputedRandom(const HemiUniformData* data1,
+                      const SphereBitsData*  data2,
+                      int                    dataSize,
+                      uint32                 seed = 0xF018A4D2);
 
     /**
-      \param dataSize Number of random numbers that can be requested before periodicity.  Must be a power of 2.
+      \param dataSize Number of random numbers that can be requested before
+      periodicity.  Must be a power of 2.
       */
     PrecomputedRandom(int dataSize, uint32 seed = 0xF018A4D2);
 
     ~PrecomputedRandom();
 
-    /** Each bit is random.  Subclasses can choose to override just 
+    /** Each bit is random.  Subclasses can choose to override just
        this method and the other methods will all work automatically. */
     virtual uint32 bits();
 
@@ -90,7 +92,7 @@ public:
 
     // gaussian is inherited
 
-    /** Returns 3D unit vectors distributed according to 
+    /** Returns 3D unit vectors distributed according to
         a cosine distribution about the z axis. */
     virtual void cosHemi(float& x, float& y, float& z);
 
@@ -105,6 +107,6 @@ public:
     virtual void sphere(float& x, float& y, float& z);
 };
 
-}
+} // namespace G3D
 
 #endif

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,15 +9,15 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DBCStores.h"
 #include "Formulas.h"
+#include "DBCStores.h"
 #include "WorldMock.h"
 #include "gtest/gtest.h"
 
@@ -96,7 +97,8 @@ TEST(FormulasTest, BaseGain)
     EXPECT_EQ(BaseGain(65, 66, CONTENT_61_70), 588);
     EXPECT_EQ(BaseGain(79, 78, CONTENT_71_80), 917);
 
-    // check outError() has been called after passing an invalid ContentLevels content
+    // check outError() has been called after passing an invalid ContentLevels
+    // content
     EXPECT_EQ(BaseGain(79, 1, ContentLevels(999)), 0);
 }
 

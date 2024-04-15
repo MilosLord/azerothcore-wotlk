@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -36,52 +37,44 @@ EndScriptData */
 
 using namespace Acore::ChatCommands;
 
-class gm_commandscript : public CommandScript
-{
+class gm_commandscript : public CommandScript {
 public:
-    gm_commandscript() : CommandScript("gm_commandscript") { }
+    gm_commandscript() : CommandScript("gm_commandscript") {}
 
     ChatCommandTable GetCommands() const override
     {
-        static ChatCommandTable gmCommandTable =
-        {
-            { "chat",    HandleGMChatCommand,       SEC_GAMEMASTER,     Console::No  },
-            { "fly",     HandleGMFlyCommand,        SEC_GAMEMASTER,     Console::No  },
-            { "ingame",  HandleGMListIngameCommand, SEC_PLAYER,         Console::Yes },
-            { "list",    HandleGMListFullCommand,   SEC_ADMINISTRATOR,  Console::Yes },
-            { "visible", HandleGMVisibleCommand,    SEC_GAMEMASTER,     Console::No  },
-            { "on",      HandleGMOnCommand,         SEC_MODERATOR,      Console::No  },
-            { "off",     HandleGMOffCommand,        SEC_MODERATOR,      Console::No  }
-        };
-        static ChatCommandTable commandTable =
-        {
-            { "gm", gmCommandTable }
-        };
+        static ChatCommandTable gmCommandTable = {
+            {"chat", HandleGMChatCommand, SEC_GAMEMASTER, Console::No},
+            {"fly", HandleGMFlyCommand, SEC_GAMEMASTER, Console::No},
+            {"ingame", HandleGMListIngameCommand, SEC_PLAYER, Console::Yes},
+            {"list", HandleGMListFullCommand, SEC_ADMINISTRATOR, Console::Yes},
+            {"visible", HandleGMVisibleCommand, SEC_GAMEMASTER, Console::No},
+            {"on", HandleGMOnCommand, SEC_MODERATOR, Console::No},
+            {"off", HandleGMOffCommand, SEC_MODERATOR, Console::No}};
+        static ChatCommandTable commandTable = {{"gm", gmCommandTable}};
         return commandTable;
     }
 
     // Enables or disables the staff badge
-    static bool HandleGMChatCommand(ChatHandler* handler, Optional<bool> enableArg)
+    static bool HandleGMChatCommand(ChatHandler*   handler,
+                                    Optional<bool> enableArg)
     {
-        if (WorldSession* session = handler->GetSession())
-        {
-            if (!enableArg)
-            {
-                if (!AccountMgr::IsPlayerAccount(session->GetSecurity()) && session->GetPlayer()->isGMChat())
+        if (WorldSession* session = handler->GetSession()) {
+            if (!enableArg) {
+                if (!AccountMgr::IsPlayerAccount(session->GetSecurity()) &&
+                    session->GetPlayer()->isGMChat())
                     session->SendNotification(LANG_GM_CHAT_ON);
                 else
                     session->SendNotification(LANG_GM_CHAT_OFF);
                 return true;
             }
 
-            if (*enableArg)
-            {
+            if (*enableArg) {
                 session->GetPlayer()->SetGMChat(true);
                 session->SendNotification(LANG_GM_CHAT_ON);
                 return true;
             }
-            else
-            {
+            else {
                 session->GetPlayer()->SetGMChat(false);
                 session->SendNotification(LANG_GM_CHAT_OFF);
                 return true;
@@ -105,43 +98,54 @@ public:
             data.SetOpcode(SMSG_MOVE_UNSET_CAN_FLY);
 
         data << target->GetPackGUID();
-        data << uint32(0);                                      // unknown
+        data << uint32(0); // unknown
         target->SendMessageToSet(&data, true);
-        handler->PSendSysMessage(LANG_COMMAND_FLYMODE_STATUS, handler->GetNameLink(target).c_str(), enable ? "on" : "off");
+        handler->PSendSysMessage(LANG_COMMAND_FLYMODE_STATUS,
+                                 handler->GetNameLink(target).c_str(),
+                                 enable ? "on" : "off");
         return true;
     }
 
     static bool HandleGMListIngameCommand(ChatHandler* handler)
     {
-        bool first = true;
+        bool first  = true;
         bool footer = false;
 
-        std::shared_lock<std::shared_mutex> lock(*HashMapHolder<Player>::GetLock());
-        for (auto const& [playerGuid, player] : ObjectAccessor::GetPlayers())
-        {
+        std::shared_lock<std::shared_mutex> lock(
+            *HashMapHolder<Player>::GetLock());
+        for (auto const& [playerGuid, player] : ObjectAccessor::GetPlayers()) {
             AccountTypes playerSec = player->GetSession()->GetSecurity();
             if ((player->IsGameMaster() ||
-                 (!AccountMgr::IsPlayerAccount(playerSec) && playerSec <= AccountTypes(sWorld->getIntConfig(CONFIG_GM_LEVEL_IN_GM_LIST)))) &&
-                (!handler->GetSession() || player->IsVisibleGloballyFor(handler->GetSession()->GetPlayer())))
-            {
-                if (first)
-                {
-                    first = false;
+                 (!AccountMgr::IsPlayerAccount(playerSec) &&
+                  playerSec <= AccountTypes(sWorld->getIntConfig(
+                                   CONFIG_GM_LEVEL_IN_GM_LIST)))) &&
+                (!handler->GetSession() ||
+                 player->IsVisibleGloballyFor(
+                     handler->GetSession()->GetPlayer()))) {
+                if (first) {
+                    first  = false;
                     footer = true;
                     handler->SendSysMessage(LANG_GMS_ON_SRV);
                     handler->SendSysMessage("========================");
                 }
-                std::string const& name = player->GetName();
-                uint8 size = uint8(name.size());
-                uint8 security = playerSec;
-                uint8 max = ((16 - size) / 2);
-                uint8 max2 = max;
+                std::string const& name     = player->GetName();
+                uint8              size     = uint8(name.size());
+                uint8              security = playerSec;
+                uint8              max      = ((16 - size) / 2);
+                uint8              max2     = max;
                 if ((max + max2 + size) == 16)
                     max2 = max - 1;
                 if (handler->GetSession())
-                    handler->PSendSysMessage("|    %s GMLevel %u", name.c_str(), security);
+                    handler->PSendSysMessage(
+                        "|    %s GMLevel %u", name.c_str(), security);
                 else
-                    handler->PSendSysMessage("|%*s%s%*s|   %u  |", max, " ", name.c_str(), max2, " ", security);
+                    handler->PSendSysMessage("|%*s%s%*s|   %u  |",
+                                             max,
+                                             " ",
+                                             name.c_str(),
+                                             max2,
+                                             " ",
+                                             security);
             }
         }
         if (footer)
@@ -155,29 +159,35 @@ public:
     static bool HandleGMListFullCommand(ChatHandler* handler)
     {
         ///- Get the accounts with GM Level >0
-        LoginDatabasePreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_GM_ACCOUNTS);
+        LoginDatabasePreparedStatement* stmt =
+            LoginDatabase.GetPreparedStatement(LOGIN_SEL_GM_ACCOUNTS);
         stmt->SetData(0, uint8(SEC_MODERATOR));
         stmt->SetData(1, int32(realm.Id.Realm));
         PreparedQueryResult result = LoginDatabase.Query(stmt);
 
-        if (result)
-        {
+        if (result) {
             handler->SendSysMessage(LANG_GMLIST);
             handler->SendSysMessage("========================");
             ///- Cycle through them. Display username and GM level
-            do
-            {
-                Field* fields = result->Fetch();
-                std::string name = fields[0].Get<std::string>();
-                uint8 security = fields[1].Get<uint8>();
-                uint8 max = (16 - name.length()) / 2;
-                uint8 max2 = max;
+            do {
+                Field*      fields   = result->Fetch();
+                std::string name     = fields[0].Get<std::string>();
+                uint8       security = fields[1].Get<uint8>();
+                uint8       max      = (16 - name.length()) / 2;
+                uint8       max2     = max;
                 if ((max + max2 + name.length()) == 16)
                     max2 = max - 1;
                 if (handler->GetSession())
-                    handler->PSendSysMessage("|    %s GMLevel %u", name.c_str(), security);
+                    handler->PSendSysMessage(
+                        "|    %s GMLevel %u", name.c_str(), security);
                 else
-                    handler->PSendSysMessage("|%*s%s%*s|   %u  |", max, " ", name.c_str(), max2, " ", security);
+                    handler->PSendSysMessage("|%*s%s%*s|   %u  |",
+                                             max,
+                                             " ",
+                                             name.c_str(),
+                                             max2,
+                                             " ",
+                                             security);
             } while (result->NextRow());
             handler->SendSysMessage("========================");
         }
@@ -186,21 +196,24 @@ public:
         return true;
     }
 
-    //Enable\Disable Invisible mode
-    static bool HandleGMVisibleCommand(ChatHandler* handler, Optional<bool> visibleArg)
+    // Enable\Disable Invisible mode
+    static bool HandleGMVisibleCommand(ChatHandler*   handler,
+                                       Optional<bool> visibleArg)
     {
         Player* _player = handler->GetSession()->GetPlayer();
 
-        if (!visibleArg)
-        {
-            handler->PSendSysMessage(LANG_YOU_ARE, _player->isGMVisible() ? handler->GetAcoreString(LANG_VISIBLE) : handler->GetAcoreString(LANG_INVISIBLE));
+        if (!visibleArg) {
+            handler->PSendSysMessage(
+                LANG_YOU_ARE,
+                _player->isGMVisible()
+                    ? handler->GetAcoreString(LANG_VISIBLE)
+                    : handler->GetAcoreString(LANG_INVISIBLE));
             return true;
         }
 
         const uint32 VISUAL_AURA = 37800;
 
-        if (*visibleArg)
-        {
+        if (*visibleArg) {
             if (_player->HasAura(VISUAL_AURA))
                 _player->RemoveAurasDueToSpell(VISUAL_AURA);
 
@@ -208,8 +221,7 @@ public:
             _player->UpdateObjectVisibility();
             handler->GetSession()->SendNotification(LANG_INVISIBLE_VISIBLE);
         }
-        else
-        {
+        else {
             _player->AddAura(VISUAL_AURA, _player);
             _player->SetGMVisible(false);
             _player->UpdateObjectVisibility();
@@ -236,7 +248,4 @@ public:
     }
 };
 
-void AddSC_gm_commandscript()
-{
-    new gm_commandscript();
-}
+void AddSC_gm_commandscript() { new gm_commandscript(); }

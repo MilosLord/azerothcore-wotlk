@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,19 +21,19 @@
 
 #include "OutdoorPvP.h"
 
-enum OutdoorPvPSISpells
-{
+enum OutdoorPvPSISpells {
     SI_SILITHYST_FLAG_GO_SPELL = 29518,
-    SI_SILITHYST_FLAG = 29519,
-    SI_TRACES_OF_SILITHYST = 29534,
-    SI_CENARION_FAVOR = 30754
+    SI_SILITHYST_FLAG          = 29519,
+    SI_TRACES_OF_SILITHYST     = 29534,
+    SI_CENARION_FAVOR          = 30754
 };
 
 const uint32 SI_MAX_RESOURCES = 200;
 
 const uint8 OutdoorPvPSIBuffZonesNum = 3;
 
-const uint32 OutdoorPvPSIBuffZones[OutdoorPvPSIBuffZonesNum] = { 1377, 3428, 3429 };
+const uint32 OutdoorPvPSIBuffZones[OutdoorPvPSIBuffZonesNum] = {
+    1377, 3428, 3429};
 
 const uint32 SI_AREATRIGGER_H = 4168;
 
@@ -44,15 +45,13 @@ const uint32 SI_TURNIN_QUEST_CM_H = 18199;
 
 const uint32 SI_SILITHYST_MOUND = 181597;
 
-enum SI_WorldStates
-{
-    SI_GATHERED_A = 2313,
-    SI_GATHERED_H = 2314,
+enum SI_WorldStates {
+    SI_GATHERED_A    = 2313,
+    SI_GATHERED_H    = 2314,
     SI_SILITHYST_MAX = 2317
 };
 
-class OutdoorPvPSI : public OutdoorPvP
-{
+class OutdoorPvPSI : public OutdoorPvP {
 public:
     OutdoorPvPSI();
 
@@ -71,7 +70,8 @@ public:
 
     bool HandleDropFlag(Player* player, uint32 spellId) override;
 
-    bool HandleCustomSpell(Player* player, uint32 spellId, GameObject* go) override;
+    bool
+    HandleCustomSpell(Player* player, uint32 spellId, GameObject* go) override;
 
     void UpdateWorldState();
 

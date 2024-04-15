@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -23,10 +24,7 @@
 #include "World.h"
 #include "WorldPacket.h"
 
-UpdateData::UpdateData() : m_blockCount(0)
-{
-    m_outOfRangeGUIDs.reserve(15);
-}
+UpdateData::UpdateData() : m_blockCount(0) { m_outOfRangeGUIDs.reserve(15); }
 
 void UpdateData::AddOutOfRangeGUID(ObjectGuid guid)
 {
@@ -49,14 +47,17 @@ bool UpdateData::BuildPacket(WorldPacket& packet)
 {
     ASSERT(packet.empty());
 
-    packet.reserve(4 + (m_outOfRangeGUIDs.empty() ? 0 : 1 + 4 + 9 * m_outOfRangeGUIDs.size()) + m_data.wpos());
+    packet.reserve(
+        4 +
+        (m_outOfRangeGUIDs.empty() ? 0 : 1 + 4 + 9 * m_outOfRangeGUIDs.size()) +
+        m_data.wpos());
 
-    packet << (uint32) (!m_outOfRangeGUIDs.empty() ? m_blockCount + 1 : m_blockCount);
+    packet << (uint32)(!m_outOfRangeGUIDs.empty() ? m_blockCount + 1
+                                                  : m_blockCount);
 
-    if (!m_outOfRangeGUIDs.empty())
-    {
-        packet << (uint8) UPDATETYPE_OUT_OF_RANGE_OBJECTS;
-        packet << (uint32) m_outOfRangeGUIDs.size();
+    if (!m_outOfRangeGUIDs.empty()) {
+        packet << (uint8)UPDATETYPE_OUT_OF_RANGE_OBJECTS;
+        packet << (uint32)m_outOfRangeGUIDs.size();
 
         for (ObjectGuid const& guid : m_outOfRangeGUIDs)
             packet << guid.WriteAsPacked();

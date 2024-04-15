@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -36,25 +37,25 @@ EndContentData */
 ## npc_calvin_montague
 ######*/
 
-enum Calvin
-{
-    SAY_COMPLETE        = 0,
-    SPELL_DRINK         = 2639,                             // possibly not correct spell (but iconId is correct)
-    QUEST_590           = 590
+enum Calvin {
+    SAY_COMPLETE = 0,
+    SPELL_DRINK  = 2639, // possibly not correct spell (but iconId is correct)
+    QUEST_590    = 590
 };
 
-class npc_calvin_montague : public CreatureScript
-{
+class npc_calvin_montague : public CreatureScript {
 public:
-    npc_calvin_montague() : CreatureScript("npc_calvin_montague") { }
+    npc_calvin_montague() : CreatureScript("npc_calvin_montague") {}
 
-    bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest) override
+    bool OnQuestAccept(Player*      player,
+                       Creature*    creature,
+                       Quest const* quest) override
     {
-        if (quest->GetQuestId() == QUEST_590)
-        {
+        if (quest->GetQuestId() == QUEST_590) {
             creature->SetFaction(FACTION_ENEMY);
             creature->SetImmuneToPC(false);
-            CAST_AI(npc_calvin_montague::npc_calvin_montagueAI, creature->AI())->AttackStart(player);
+            CAST_AI(npc_calvin_montague::npc_calvin_montagueAI, creature->AI())
+                ->AttackStart(player);
         }
         return true;
     }
@@ -64,17 +65,16 @@ public:
         return new npc_calvin_montagueAI(creature);
     }
 
-    struct npc_calvin_montagueAI : public ScriptedAI
-    {
-        npc_calvin_montagueAI(Creature* creature) : ScriptedAI(creature) { }
+    struct npc_calvin_montagueAI : public ScriptedAI {
+        npc_calvin_montagueAI(Creature* creature) : ScriptedAI(creature) {}
 
-        uint32 m_uiPhase;
-        uint32 m_uiPhaseTimer;
+        uint32     m_uiPhase;
+        uint32     m_uiPhaseTimer;
         ObjectGuid m_uiPlayerGUID;
 
         void Reset() override
         {
-            m_uiPhase = 0;
+            m_uiPhase      = 0;
             m_uiPhaseTimer = 5000;
             m_uiPlayerGUID.Clear();
 
@@ -84,7 +84,7 @@ public:
                 me->SetImmuneToPC(true);
         }
 
-        void JustEngagedWith(Unit* /*who*/) override { }
+        void JustEngagedWith(Unit* /*who*/) override {}
 
         void AttackedBy(Unit* pAttacker) override
         {
@@ -94,13 +94,16 @@ public:
             AttackStart(pAttacker);
         }
 
-        void DamageTaken(Unit* pDoneBy, uint32& uiDamage, DamageEffectType, SpellSchoolMask) override
+        void DamageTaken(Unit*   pDoneBy,
+                         uint32& uiDamage,
+                         DamageEffectType,
+                         SpellSchoolMask) override
         {
             if (!pDoneBy)
                 return;
 
-            if (uiDamage >= me->GetHealth() || me->HealthBelowPctDamaged(15, uiDamage))
-            {
+            if (uiDamage >= me->GetHealth() ||
+                me->HealthBelowPctDamaged(15, uiDamage)) {
                 uiDamage = 0;
 
                 me->RestoreFaction();
@@ -109,17 +112,13 @@ public:
 
                 m_uiPhase = 1;
 
-                if (pDoneBy->GetTypeId() == TYPEID_PLAYER)
-                {
+                if (pDoneBy->GetTypeId() == TYPEID_PLAYER) {
                     m_uiPlayerGUID = pDoneBy->GetGUID();
                 }
-                else if (pDoneBy->IsPet())
-                {
-                    if (Unit* owner = pDoneBy->GetOwner())
-                    {
+                else if (pDoneBy->IsPet()) {
+                    if (Unit* owner = pDoneBy->GetOwner()) {
                         // not sure if this is needed.
-                        if (owner->GetTypeId() == TYPEID_PLAYER)
-                        {
+                        if (owner->GetTypeId() == TYPEID_PLAYER) {
                             m_uiPlayerGUID = owner->GetGUID();
                         }
                     }
@@ -129,32 +128,30 @@ public:
 
         void UpdateAI(uint32 diff) override
         {
-            if (m_uiPhase)
-            {
+            if (m_uiPhase) {
                 if (m_uiPhaseTimer <= diff)
                     m_uiPhaseTimer = 7500;
-                else
-                {
+                else {
                     m_uiPhaseTimer -= diff;
                     return;
                 }
 
-                switch (m_uiPhase)
-                {
-                    case 1:
-                        Talk(SAY_COMPLETE);
-                        ++m_uiPhase;
-                        break;
-                    case 2:
-                        if (Player* player = ObjectAccessor::GetPlayer(*me, m_uiPlayerGUID))
-                            player->AreaExploredOrEventHappens(QUEST_590);
+                switch (m_uiPhase) {
+                case 1:
+                    Talk(SAY_COMPLETE);
+                    ++m_uiPhase;
+                    break;
+                case 2:
+                    if (Player* player =
+                            ObjectAccessor::GetPlayer(*me, m_uiPlayerGUID))
+                        player->AreaExploredOrEventHappens(QUEST_590);
 
-                        DoCast(me, SPELL_DRINK, true);
-                        ++m_uiPhase;
-                        break;
-                    case 3:
-                        EnterEvadeMode();
-                        break;
+                    DoCast(me, SPELL_DRINK, true);
+                    ++m_uiPhase;
+                    break;
+                case 3:
+                    EnterEvadeMode();
+                    break;
                 }
 
                 return;
@@ -168,7 +165,4 @@ public:
     };
 };
 
-void AddSC_tirisfal_glades()
-{
-    new npc_calvin_montague();
-}
+void AddSC_tirisfal_glades() { new npc_calvin_montague(); }

@@ -6,38 +6,40 @@
 #ifndef G3D_UprightFrame_h
 #define G3D_UprightFrame_h
 
-#include "G3D/platform.h"
-#include "G3D/Spline.h"
 #include "G3D/Any.h"
 #include "G3D/CoordinateFrame.h"
+#include "G3D/Spline.h"
+#include "G3D/platform.h"
 
 namespace G3D {
 
 /**
     \brief  Coordinate frame expressed in Euler angles.
-            Unlike a G3D::Quat, UprightFrame always keeps the reference frame from rolling about its own z axis.
-            Particularly useful for cameras.
+            Unlike a G3D::Quat, UprightFrame always keeps the reference frame
+   from rolling about its own z axis. Particularly useful for cameras.
 
-    \sa G3D::CoordinateFrame, G3D::Matrix4, G3D::PhysicsFrame, G3D::UprightSpline, G3D::UprightSplineManipulator
+    \sa G3D::CoordinateFrame, G3D::Matrix4, G3D::PhysicsFrame,
+   G3D::UprightSpline, G3D::UprightSplineManipulator
  */
 class UprightFrame {
 public:
-
-    Vector3         translation;
+    Vector3 translation;
 
     /** -pi/2 < pitch < pi/2 in radians about the X-axis */
-    float           pitch;
+    float pitch;
 
     /** In radians about the Y-axis */
-    float           yaw;
+    float yaw;
 
-    UprightFrame(const Vector3& t = Vector3::zero(), float p = 0, float y = 0) 
-        : translation(t), pitch(p), yaw(y) {}
+    UprightFrame(const Vector3& t = Vector3::zero(), float p = 0, float y = 0)
+        : translation(t), pitch(p), yaw(y)
+    {
+    }
 
     UprightFrame(const CoordinateFrame& cframe);
 
     /** Constructs an UprightFrame from an Any object.
-        
+
         The Any format for UprightFrame is:
 
         pitch = ##,
@@ -45,15 +47,13 @@ public:
         yaw = ##
     */
     explicit UprightFrame(const Any& any);
-    
+
     Any toAny() const;
 
     UprightFrame& operator=(const Any& any);
 
     /** Supports implicit cast to CoordinateFrame */
-    operator CoordinateFrame() const {
-        return toCoordinateFrame();
-    }
+    operator CoordinateFrame() const { return toCoordinateFrame(); }
 
     CoordinateFrame toCoordinateFrame() const;
 
@@ -74,24 +74,24 @@ public:
     void deserialize(class BinaryInput& b);
 };
 
-/** 
-    \brief Shortest-path linear velocity spline for camera positions.  Always keeps the camera from rolling.
+/**
+    \brief Shortest-path linear velocity spline for camera positions.  Always
+   keeps the camera from rolling.
 
     \sa G3D::UprightSplineManipulator, G3D::UprightFrame
 */
 class UprightSpline : public Spline<UprightFrame> {
 protected:
-
-    virtual void ensureShortestPath(UprightFrame* A, int N) const {
+    virtual void ensureShortestPath(UprightFrame* A, int N) const
+    {
         UprightFrame::unwrapYaw(A, N);
     }
 
 public:
     UprightSpline();
 
-
     /** Constructs an UprightSpline from an Any object.
-        
+
         The Any format for UprightSpline is:
 
         controls = (UprightFrame, ...),
@@ -112,6 +112,6 @@ public:
     void deserialize(class BinaryInput& b);
 };
 
-}
+} // namespace G3D
 
 #endif

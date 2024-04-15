@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -18,7 +19,8 @@
 #include "DBCStore.h"
 #include "DBCDatabaseLoader.h"
 
-DBCStorageBase::DBCStorageBase(char const* fmt) : _fieldCount(0), _fileFormat(fmt), _dataTable(nullptr), _indexTableSize(0)
+DBCStorageBase::DBCStorageBase(char const* fmt)
+    : _fieldCount(0), _fileFormat(fmt), _dataTable(nullptr), _indexTableSize(0)
 {
 }
 
@@ -71,7 +73,10 @@ bool DBCStorageBase::LoadStringsFrom(char const* path, char** indexTable)
     return true;
 }
 
-void DBCStorageBase::LoadFromDB(char const* table, char const* format, char**& indexTable)
+void DBCStorageBase::LoadFromDB(char const* table,
+                                char const* format,
+                                char**&     indexTable)
 {
-    _stringPool.push_back(DBCDatabaseLoader(table, format, _stringPool).Load(_indexTableSize, indexTable));
+    _stringPool.push_back(DBCDatabaseLoader(table, format, _stringPool)
+                              .Load(_indexTableSize, indexTable));
 }

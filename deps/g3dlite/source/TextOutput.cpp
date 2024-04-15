@@ -10,71 +10,55 @@
  */
 
 #include "G3D/TextOutput.h"
+#include "G3D/FileSystem.h"
 #include "G3D/Log.h"
 #include "G3D/fileutils.h"
-#include "G3D/FileSystem.h"
 
 namespace G3D {
 
-TextOutput::TextOutput(const TextOutput::Settings& opt) :
-    startingNewLine(true),
-    currentColumn(0),
-    inDQuote(false),
-    filename(""),
-    indentLevel(0),
-    m_currentLine(0)
+TextOutput::TextOutput(const TextOutput::Settings& opt)
+    : startingNewLine(true), currentColumn(0), inDQuote(false), filename(""),
+      indentLevel(0), m_currentLine(0)
 {
     setOptions(opt);
 }
 
-
-TextOutput::TextOutput(const std::string& fil, const TextOutput::Settings& opt) :
-    startingNewLine(true),
-    currentColumn(0),
-    inDQuote(false),
-    filename(fil),
-    indentLevel(0),
-    m_currentLine(0)
+TextOutput::TextOutput(const std::string& fil, const TextOutput::Settings& opt)
+    : startingNewLine(true), currentColumn(0), inDQuote(false), filename(fil),
+      indentLevel(0), m_currentLine(0)
 {
 
     setOptions(opt);
 }
 
-
-void TextOutput::setIndentLevel(int i) {
+void TextOutput::setIndentLevel(int i)
+{
     indentLevel = i;
 
-    // If there were more pops than pushes, don't let that take us below 0 indent.
-    // Don't ever indent more than the number of columns.
-    indentSpaces = 
-        iClamp(option.spacesPerIndent * indentLevel, 
-               0, 
-               option.numColumns - 1);
+    // If there were more pops than pushes, don't let that take us below 0
+    // indent. Don't ever indent more than the number of columns.
+    indentSpaces =
+        iClamp(option.spacesPerIndent * indentLevel, 0, option.numColumns - 1);
 }
 
-
-void TextOutput::setOptions(const Settings& _opt) {
+void TextOutput::setOptions(const Settings& _opt)
+{
     option = _opt;
 
     debugAssert(option.numColumns > 1);
 
     setIndentLevel(indentLevel);
 
-    newline = (option.newlineStyle == Settings::NEWLINE_WINDOWS) ? "\r\n" : "\n";
+    newline =
+        (option.newlineStyle == Settings::NEWLINE_WINDOWS) ? "\r\n" : "\n";
 }
 
+void TextOutput::pushIndent() { setIndentLevel(indentLevel + 1); }
 
-void TextOutput::pushIndent() {
-    setIndentLevel(indentLevel + 1);
-}
+void TextOutput::popIndent() { setIndentLevel(indentLevel - 1); }
 
-
-void TextOutput::popIndent() {
-    setIndentLevel(indentLevel - 1);
-}
-
-
-static std::string escape(const std::string& string) {
+static std::string escape(const std::string& string)
+{
     std::string result = "";
 
     for (std::string::size_type i = 0; i < string.length(); ++i) {
@@ -108,12 +92,12 @@ static std::string escape(const std::string& string) {
     return result;
 }
 
-
-void TextOutput::writeString(const std::string& string) {
+void TextOutput::writeString(const std::string& string)
+{
     // Never break a line in a string
     const Settings::WordWrapMode old = option.wordWrap;
 
-    if (! option.allowWordWrapInsideDoubleQuotes) {
+    if (!option.allowWordWrapInsideDoubleQuotes) {
         option.wordWrap = Settings::WRAP_NONE;
     }
     // Convert special characters to escape sequences
@@ -121,38 +105,32 @@ void TextOutput::writeString(const std::string& string) {
     option.wordWrap = old;
 }
 
-
-void TextOutput::writeBoolean(bool b) {
-    this->printf("%s ", b ? option.trueSymbol.c_str() : option.falseSymbol.c_str());
+void TextOutput::writeBoolean(bool b)
+{
+    this->printf("%s ",
+                 b ? option.trueSymbol.c_str() : option.falseSymbol.c_str());
 }
 
-void TextOutput::writeNumber(double n) {
-    this->printf("%g ", n);
-}
+void TextOutput::writeNumber(double n) { this->printf("%g ", n); }
 
+void TextOutput::writeNumber(int n) { this->printf("%d ", n); }
 
-void TextOutput::writeNumber(int n) {
-    this->printf("%d ", n);
-}
-
-
-void TextOutput::writeSymbol(const std::string& string) {
+void TextOutput::writeSymbol(const std::string& string)
+{
     if (string.size() > 0) {
         this->printf("%s ", string.c_str());
     }
 }
 
-void TextOutput::writeSymbol(char c) {
-    this->printf("%c ", c);
-}
+void TextOutput::writeSymbol(char c) { this->printf("%c ", c); }
 
-void TextOutput::writeSymbols(
-    const std::string& a,
-    const std::string& b,
-    const std::string& c,
-    const std::string& d,
-    const std::string& e,
-    const std::string& f) {
+void TextOutput::writeSymbols(const std::string& a,
+                              const std::string& b,
+                              const std::string& c,
+                              const std::string& d,
+                              const std::string& e,
+                              const std::string& f)
+{
 
     writeSymbol(a);
     writeSymbol(b);
@@ -162,35 +140,36 @@ void TextOutput::writeSymbols(
     writeSymbol(f);
 }
 
-
-void TextOutput::printf(const std::string formatString, ...) {
+void TextOutput::printf(const std::string formatString, ...)
+{
     va_list argList;
     va_start(argList, formatString);
     this->vprintf(formatString.c_str(), argList);
     va_end(argList);
 }
 
-
-void TextOutput::printf(const char* formatString, ...) {
+void TextOutput::printf(const char* formatString, ...)
+{
     va_list argList;
     va_start(argList, formatString);
     this->vprintf(formatString, argList);
     va_end(argList);
 }
 
-
-bool TextOutput::deleteSpace() {
+bool TextOutput::deleteSpace()
+{
     if ((currentColumn > 0) && (data.last() == ' ')) {
         data.popDiscard();
         --currentColumn;
         return true;
-    } else {
+    }
+    else {
         return false;
     }
 }
 
-
-void TextOutput::convertNewlines(const std::string& in, std::string& out) {
+void TextOutput::convertNewlines(const std::string& in, std::string& out)
+{
     // TODO: can be significantly optimized in cases where
     // single characters are copied in order by walking through
     // the array and copying substrings as needed.
@@ -201,35 +180,39 @@ void TextOutput::convertNewlines(const std::string& in, std::string& out) {
             if (in[i] == '\n') {
                 // Unix newline
                 out += newline;
-            } else if ((in[i] == '\r') && (i + 1 < in.size()) && (in[i + 1] == '\n')) {
+            }
+            else if ((in[i] == '\r') && (i + 1 < in.size()) &&
+                     (in[i + 1] == '\n')) {
                 // Windows newline
                 out += newline;
                 ++i;
-            } else {
+            }
+            else {
                 out += in[i];
             }
         }
-    } else {
+    }
+    else {
         out = in;
     }
 }
 
-
-void TextOutput::writeNewline() {
+void TextOutput::writeNewline()
+{
     for (uint32 i = 0; i < newline.size(); ++i) {
         indentAppend(newline[i]);
     }
 }
 
-
-void TextOutput::writeNewlines(int numLines) {
+void TextOutput::writeNewlines(int numLines)
+{
     for (int i = 0; i < numLines; ++i) {
         writeNewline();
     }
 }
 
-
-void TextOutput::wordWrapIndentAppend(const std::string& str) {
+void TextOutput::wordWrapIndentAppend(const std::string& str)
+{
     // TODO: keep track of the last space character we saw so we don't
     // have to always search.
 
@@ -248,8 +231,8 @@ void TextOutput::wordWrapIndentAppend(const std::string& str) {
 
     // Number of columns to wrap against
     int cols = option.numColumns - indentSpaces;
-    
-    // Copy forward until we exceed the column size, 
+
+    // Copy forward until we exceed the column size,
     // and then back up and try to insert newlines as needed.
     for (uint32 i = 0; i < str.size(); ++i) {
 
@@ -261,11 +244,13 @@ void TextOutput::wordWrapIndentAppend(const std::string& str) {
         }
 
         if (currentColumn >= cols) {
-            debugAssertM(str[i] != '\n' && str[i] != '\r',
-                "Should never enter word-wrapping on a newline character");            
+            debugAssertM(
+                str[i] != '\n' && str[i] != '\r',
+                "Should never enter word-wrapping on a newline character");
 
             // True when we're allowed to treat a space as a space.
-            bool unquotedSpace = option.allowWordWrapInsideDoubleQuotes || ! inDQuote;
+            bool unquotedSpace =
+                option.allowWordWrapInsideDoubleQuotes || !inDQuote;
 
             // Cases:
             //
@@ -273,7 +258,8 @@ void TextOutput::wordWrapIndentAppend(const std::string& str) {
             //     strip all spaces and let the newline
             //     flow through.
             //
-            // 2. Currently in a series of spaces that does not end with a newline
+            // 2. Currently in a series of spaces that does not end with a
+            // newline
             //     strip all spaces and replace them with single newline
             //
             // 3. Not in a series of spaces
@@ -283,18 +269,18 @@ void TextOutput::wordWrapIndentAppend(const std::string& str) {
             size_t lastSpace = data.size() - 1;
 
             // How far back we had to look for a space
-            size_t k = 0;
+            size_t k               = 0;
             size_t maxLookBackward = currentColumn - indentSpaces;
 
             // Search backwards (from current character), looking for a space.
-            while ((k < maxLookBackward) &&
-                   (lastSpace > 0) &&
-                   (! ((data[(int)lastSpace] == ' ') && unquotedSpace))) {
+            while ((k < maxLookBackward) && (lastSpace > 0) &&
+                   (!((data[(int)lastSpace] == ' ') && unquotedSpace))) {
                 --lastSpace;
                 ++k;
 
-                if ((data[(int)lastSpace] == '\"') && !option.allowWordWrapInsideDoubleQuotes) {
-                    unquotedSpace = ! unquotedSpace;
+                if ((data[(int)lastSpace] == '\"') &&
+                    !option.allowWordWrapInsideDoubleQuotes) {
+                    unquotedSpace = !unquotedSpace;
                 }
             }
 
@@ -307,22 +293,23 @@ void TextOutput::wordWrapIndentAppend(const std::string& str) {
                     data.pop();
                     writeNewline();
                     indentAppend(str[i]);
-                } else {
+                }
+                else {
                     // Must be Settings::WRAP_WITHOUT_BREAKING
                     //
                     // Don't write the newline; we'll come back to
                     // the word wrap code after writing another character
                 }
-            } else {
-                // We found a series of spaces.  If they continue 
+            }
+            else {
+                // We found a series of spaces.  If they continue
                 // to the new string, strip spaces off both.  Otherwise
-                // strip spaces from data only and insert a newline.                
+                // strip spaces from data only and insert a newline.
 
                 // Find the start of the spaces.  firstSpace is the index of the
                 // first non-space, looking backwards from lastSpace.
                 size_t firstSpace = lastSpace;
-                while ((k < maxLookBackward) &&
-                    (firstSpace > 0) &&
+                while ((k < maxLookBackward) && (firstSpace > 0) &&
                        (data[(int)firstSpace] == ' ')) {
                     --firstSpace;
                     ++k;
@@ -341,13 +328,15 @@ void TextOutput::wordWrapIndentAppend(const std::string& str) {
                     while ((i < str.size() - 1) && (str[i + 1] == ' ')) {
                         ++i;
                     }
-                } else {
+                }
+                else {
                     // Spaces were somewhere in the middle of the old string.
                     // replace them with a newline.
 
                     // Copy over the characters that should be saved
                     Array<char> temp;
-                    for (size_t j = lastSpace + 1; j < (uint32)data.size(); ++j) {
+                    for (size_t j = lastSpace + 1; j < (uint32)data.size();
+                         ++j) {
                         char c = data[(int)j];
 
                         if (c == '\"') {
@@ -371,20 +360,20 @@ void TextOutput::wordWrapIndentAppend(const std::string& str) {
                     // new string, which may or may not begin with spaces.
 
                 } // if spaces included new string
-            } // if hit indent
-        } // if line exceeded
-    } // iterate over str
+            }     // if hit indent
+        }         // if line exceeded
+    }             // iterate over str
 }
 
-
-void TextOutput::indentAppend(char c) {
+void TextOutput::indentAppend(char c)
+{
 
     if (startingNewLine) {
         for (int j = 0; j < indentSpaces; ++j) {
             data.push(' ');
         }
         startingNewLine = false;
-        currentColumn = indentSpaces;
+        currentColumn   = indentSpaces;
     }
 
     data.push(c);
@@ -394,9 +383,9 @@ void TextOutput::indentAppend(char c) {
     if (c != '\r') {
         ++currentColumn;
     }
-    
+
     if (c == '\"') {
-        inDQuote = ! inDQuote;
+        inDQuote = !inDQuote;
     }
 
     startingNewLine = (c == '\n');
@@ -406,8 +395,8 @@ void TextOutput::indentAppend(char c) {
     }
 }
 
-
-void TextOutput::vprintf(const char* formatString, va_list argPtr) {
+void TextOutput::vprintf(const char* formatString, va_list argPtr)
+{
     const std::string& str = vformat(formatString, argPtr);
 
     std::string clean;
@@ -415,10 +404,10 @@ void TextOutput::vprintf(const char* formatString, va_list argPtr) {
     wordWrapIndentAppend(clean);
 }
 
-
-void TextOutput::commit(bool flush) {
+void TextOutput::commit(bool flush)
+{
     std::string p = filenamePath(filename);
-    if (! FileSystem::exists(p, false)) {
+    if (!FileSystem::exists(p, false)) {
         FileSystem::createDirectory(p);
     }
 
@@ -431,48 +420,34 @@ void TextOutput::commit(bool flush) {
     FileSystem::fclose(f);
 }
 
-
-void TextOutput::commitString(std::string& out) {
+void TextOutput::commitString(std::string& out)
+{
     // Null terminate
     data.push('\0');
     out = data.getCArray();
     data.pop();
 }
 
-
-std::string TextOutput::commitString() {
+std::string TextOutput::commitString()
+{
     std::string str;
     commitString(str);
     return str;
 }
 
-
-
 /////////////////////////////////////////////////////////////////////
 
-void serialize(const float& b, TextOutput& to) {
-    to.writeNumber(b);
-}
+void serialize(const float& b, TextOutput& to) { to.writeNumber(b); }
 
-
-void serialize(const bool& b, TextOutput& to) {
+void serialize(const bool& b, TextOutput& to)
+{
     to.writeSymbol(b ? "true" : "false");
 }
 
+void serialize(const int& b, TextOutput& to) { to.writeNumber(b); }
 
-void serialize(const int& b, TextOutput& to) {
-    to.writeNumber(b);
-}
+void serialize(const uint8& b, TextOutput& to) { to.writeNumber(b); }
 
+void serialize(const double& b, TextOutput& to) { to.writeNumber(b); }
 
-void serialize(const uint8& b, TextOutput& to) {
-    to.writeNumber(b);
-}
-
-
-void serialize(const double& b, TextOutput& to) {
-    to.writeNumber(b);
-}
-
-
-}
+} // namespace G3D

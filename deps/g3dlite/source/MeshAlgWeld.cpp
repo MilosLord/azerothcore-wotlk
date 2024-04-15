@@ -13,8 +13,8 @@
  */
 
 #include "G3D/MeshAlg.h"
-#include "G3D/Table.h"
 #include "G3D/Set.h"
+#include "G3D/Table.h"
 
 namespace G3D {
 
@@ -22,7 +22,6 @@ namespace _internal {
 
 class Welder {
 private:
-
     // Intentionally illegal
     Welder& operator=(const Welder& w);
 
@@ -30,7 +29,7 @@ public:
     /** Indices of newVertexArray elements in <B>or near</B> a grid cell. */
     typedef Array<int> List;
 
-    enum {GRID_RES = 32};
+    enum { GRID_RES = 32 };
 
     List grid[GRID_RES][GRID_RES][GRID_RES];
 
@@ -40,28 +39,27 @@ public:
     Array<int>&           toOld;
 
     /** Must be less than one grid cell, not checked */
-    const float           radius;
+    const float radius;
 
     /** (oldVertexArray[i] - offset) * scale is on the range [0, 1] */
-    Vector3               offset;
-    Vector3               scale;
+    Vector3 offset;
+    Vector3 scale;
 
-    Welder
-    (const Array<Vector3>& _oldVertexArray,
-     Array<Vector3>&       _newVertexArray,
-     Array<int>&           _toNew,
-     Array<int>&           _toOld,
-     float                 _radius);
-        
+    Welder(const Array<Vector3>& _oldVertexArray,
+           Array<Vector3>&       _newVertexArray,
+           Array<int>&           _toNew,
+           Array<int>&           _toOld,
+           float                 _radius);
+
     /**
      Computes the grid index from an ordinate.
      */
     void toGridCoords(Vector3 v, int& x, int& y, int& z) const;
 
-    /** Gets the index of a vertex, adding it to 
+    /** Gets the index of a vertex, adding it to
         newVertexArray if necessary. */
     int getIndex(const Vector3& vertex);
-    
+
     void weld();
 };
 
@@ -69,25 +67,25 @@ public:
 
 } // namespace G3D
 
-template<> struct HashTrait<G3D::_internal::Welder::List*> {
-    static size_t hashCode(const G3D::_internal::Welder::List* key) { return reinterpret_cast<size_t>(key); }
+template <>
+struct HashTrait<G3D::_internal::Welder::List*> {
+    static size_t hashCode(const G3D::_internal::Welder::List* key)
+    {
+        return reinterpret_cast<size_t>(key);
+    }
 };
-
 
 namespace G3D {
 namespace _internal {
 
-Welder::Welder(    
-    const Array<Vector3>& _oldVertexArray,
-    Array<Vector3>&       _newVertexArray,
-    Array<int>&           _toNew,
-    Array<int>&           _toOld,
-    float                 _radius) :
-    oldVertexArray(_oldVertexArray),
-    newVertexArray(_newVertexArray),
-    toNew(_toNew),
-    toOld(_toOld),
-    radius(_radius) {
+Welder::Welder(const Array<Vector3>& _oldVertexArray,
+               Array<Vector3>&       _newVertexArray,
+               Array<int>&           _toNew,
+               Array<int>&           _toOld,
+               float                 _radius)
+    : oldVertexArray(_oldVertexArray), newVertexArray(_newVertexArray),
+      toNew(_toNew), toOld(_toOld), radius(_radius)
+{
 
     // Compute a scale factor that moves the range
     // of all ordinates to [0, 1]
@@ -105,24 +103,25 @@ Welder::Welder(
         // The model might have zero extent along some axis
         if (fuzzyEq(scale[i], 0.0f)) {
             scale[i] = 1.0;
-        } else {
+        }
+        else {
             scale[i] = 1.0f / scale[i];
         }
     }
 }
 
-
-void Welder::toGridCoords(Vector3 v, int& x, int& y, int& z) const {
+void Welder::toGridCoords(Vector3 v, int& x, int& y, int& z) const
+{
     v = (v - offset) * scale;
     x = iClamp(iFloor(v.x * GRID_RES), 0, GRID_RES - 1);
     y = iClamp(iFloor(v.y * GRID_RES), 0, GRID_RES - 1);
     z = iClamp(iFloor(v.z * GRID_RES), 0, GRID_RES - 1);
 }
 
+int Welder::getIndex(const Vector3& vertex)
+{
 
-int Welder::getIndex(const Vector3& vertex) {
-
-    int closestIndex = -1;
+    int    closestIndex    = -1;
     double distanceSquared = inf();
 
     int ix, iy, iz;
@@ -136,15 +135,15 @@ int Welder::getIndex(const Vector3& vertex) {
 
         if (d < distanceSquared) {
             distanceSquared = d;
-            closestIndex = list[i];
+            closestIndex    = list[i];
         }
     }
 
     if (distanceSquared <= radius * radius) {
 
         return closestIndex;
-
-    } else {
+    }
+    else {
 
         // This is a new vertex
         int newIndex = newVertexArray.size();
@@ -159,7 +158,8 @@ int Welder::getIndex(const Vector3& vertex) {
             for (float dy = -1; dy <= +1; ++dy) {
                 for (float dz = -1; dz <= +1; ++dz) {
                     int ix, iy, iz;
-                    toGridCoords(vertex + Vector3(dx, dy, dz) * radius, ix, iy, iz);
+                    toGridCoords(
+                        vertex + Vector3(dx, dy, dz) * radius, ix, iy, iz);
                     neighbors.insert(&(grid[ix][iy][iz]));
                 }
             }
@@ -177,8 +177,8 @@ int Welder::getIndex(const Vector3& vertex) {
     }
 }
 
-
-void Welder::weld() {
+void Welder::weld()
+{
     newVertexArray.resize(0);
 
     // Prime the vertex positions
@@ -186,29 +186,30 @@ void Welder::weld() {
         getIndex(oldVertexArray[i]);
     }
 
-    // Now create the official remapping by snapping to 
+    // Now create the official remapping by snapping to
     // nearby vertices.
     toNew.resize(oldVertexArray.size());
     toOld.resize(newVertexArray.size());
 
     for (int oi = 0; oi < oldVertexArray.size(); ++oi) {
-        toNew[oi] = getIndex(oldVertexArray[oi]);
+        toNew[oi]        = getIndex(oldVertexArray[oi]);
         toOld[toNew[oi]] = oi;
     }
 }
 
-} // internal namespace
+} // namespace _internal
 
+void MeshAlg::computeWeld(const Array<Vector3>& oldVertexArray,
+                          Array<Vector3>&       newVertexArray,
+                          Array<int>&           toNew,
+                          Array<int>&           toOld,
+                          float                 radius)
+{
 
-void MeshAlg::computeWeld(
-    const Array<Vector3>& oldVertexArray,
-    Array<Vector3>&       newVertexArray,
-    Array<int>&           toNew,
-    Array<int>&           toOld,
-    float                 radius) {
-
-    shared_ptr<_internal::Welder> welder = shared_ptr<_internal::Welder> (new _internal::Welder(oldVertexArray, newVertexArray, toNew, toOld, radius));
+    shared_ptr<_internal::Welder> welder =
+        shared_ptr<_internal::Welder>(new _internal::Welder(
+            oldVertexArray, newVertexArray, toNew, toOld, radius));
     welder->weld();
 }
 
-} // G3D namespace
+} // namespace G3D

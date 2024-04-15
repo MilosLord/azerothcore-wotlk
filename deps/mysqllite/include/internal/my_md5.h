@@ -30,30 +30,30 @@
 typedef uint32 cvs_uint32;
 
 typedef struct {
-  cvs_uint32 buf[4];
-  cvs_uint32 bits[2];
-  unsigned char in[64];
+    cvs_uint32    buf[4];
+    cvs_uint32    bits[2];
+    unsigned char in[64];
 } my_MD5Context;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-void my_MD5Init (my_MD5Context *context);
-void my_MD5Update (my_MD5Context *context,
-                   unsigned char const *buf, unsigned len);
-void my_MD5Final (unsigned char digest[16],
-                  my_MD5Context *context);
+void my_MD5Init(my_MD5Context* context);
+void my_MD5Update(my_MD5Context*       context,
+                  unsigned char const* buf,
+                  unsigned             len);
+void my_MD5Final(unsigned char digest[16], my_MD5Context* context);
 
 #ifdef __cplusplus
 }
 #endif
 
-#define MY_MD5_HASH(digest,buf,len) \
-do { \
-  my_MD5Context ctx; \
-  my_MD5Init (&ctx); \
-  my_MD5Update (&ctx, buf, len); \
-  my_MD5Final (digest, &ctx); \
-} while (0)
+#define MY_MD5_HASH(digest, buf, len)                                          \
+    do {                                                                       \
+        my_MD5Context ctx;                                                     \
+        my_MD5Init(&ctx);                                                      \
+        my_MD5Update(&ctx, buf, len);                                          \
+        my_MD5Final(digest, &ctx);                                             \
+    } while (0)
 
 #endif /* MY_MD__INCLUDED */

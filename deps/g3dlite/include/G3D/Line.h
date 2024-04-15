@@ -1,10 +1,10 @@
 /**
  @file Line.h
- 
+
  Line class
- 
+
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
- 
+
  @created 2001-06-02
  @edited  2006-02-28
  */
@@ -12,8 +12,8 @@
 #ifndef G3D_LINE_H
 #define G3D_LINE_H
 
-#include "G3D/platform.h"
 #include "G3D/Vector3.h"
+#include "G3D/platform.h"
 
 namespace G3D {
 
@@ -24,17 +24,16 @@ class Plane;
  */
 class Line {
 protected:
-
     Vector3 _point;
     Vector3 _direction;
 
-    Line(const Vector3& point, const Vector3& direction) {
+    Line(const Vector3& point, const Vector3& direction)
+    {
         _point     = point;
         _direction = direction.direction();
     }
 
 public:
-
     /** Undefined (provided for creating Array<Line> only) */
     inline Line() {}
 
@@ -49,14 +48,17 @@ public:
     /**
       Constructs a line from two (not equal) points.
      */
-    static Line fromTwoPoints(const Vector3 &point1, const Vector3 &point2) {
+    static Line fromTwoPoints(const Vector3& point1, const Vector3& point2)
+    {
         return Line(point1, point2 - point1);
     }
 
     /**
       Creates a line from a point and a (nonzero) direction.
      */
-    static Line fromPointAndDirection(const Vector3& point, const Vector3& direction) {
+    static Line fromPointAndDirection(const Vector3& point,
+                                      const Vector3& direction)
+    {
         return Line(point, direction);
     }
 
@@ -68,7 +70,8 @@ public:
     /**
       Returns the distance between point and the line
      */
-    double distance(const Vector3& point) const {
+    double distance(const Vector3& point) const
+    {
         return (closestPoint(point) - point).magnitude();
     }
 
@@ -82,24 +85,24 @@ public:
      Returns the point where the line and plane intersect.  If there
      is no intersection, returns a point at infinity.
      */
-    Vector3 intersection(const Plane &plane) const;
-
+    Vector3 intersection(const Plane& plane) const;
 
     /** Finds the closest point to the two lines.
-        
+
         @param minDist Returns the minimum distance between the lines.
 
-        @cite http://objectmix.com/graphics/133793-coordinates-closest-points-pair-skew-lines.html
+        @cite
+       http://objectmix.com/graphics/133793-coordinates-closest-points-pair-skew-lines.html
     */
     Vector3 closestPoint(const Line& B, float& minDist) const;
 
-    inline Vector3 closestPoint(const Line& B) const {
+    inline Vector3 closestPoint(const Line& B) const
+    {
         float m;
         return closestPoint(B, m);
     }
 };
 
-};// namespace
-
+}; // namespace G3D
 
 #endif

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -28,22 +29,22 @@ class ProducerConsumerQueue;
 class MySQLConnection;
 class SQLOperation;
 
-class AC_DATABASE_API DatabaseWorker
-{
+class AC_DATABASE_API DatabaseWorker {
 public:
-    DatabaseWorker(ProducerConsumerQueue<SQLOperation*>* newQueue, MySQLConnection* connection);
+    DatabaseWorker(ProducerConsumerQueue<SQLOperation*>* newQueue,
+                   MySQLConnection*                      connection);
     ~DatabaseWorker();
 
 private:
     ProducerConsumerQueue<SQLOperation*>* _queue;
-    MySQLConnection* _connection;
+    MySQLConnection*                      _connection;
 
-    void WorkerThread();
+    void        WorkerThread();
     std::thread _workerThread;
 
     std::atomic<bool> _cancelationToken;
 
-    DatabaseWorker(DatabaseWorker const& right) = delete;
+    DatabaseWorker(DatabaseWorker const& right)            = delete;
     DatabaseWorker& operator=(DatabaseWorker const& right) = delete;
 };
 

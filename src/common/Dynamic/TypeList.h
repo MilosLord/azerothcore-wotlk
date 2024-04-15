@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -26,18 +27,18 @@
 
 class TypeNull;
 
-template<typename HEAD, typename TAIL>
-struct TypeList
-{
+template <typename HEAD, typename TAIL>
+struct TypeList {
     typedef HEAD Head;
     typedef TAIL Tail;
 };
 
 // enough for now.. can be expand at any point in time as needed
-#define TYPELIST_1(T1)                      TypeList<T1, TypeNull>
-#define TYPELIST_2(T1, T2)                  TypeList<T1, TYPELIST_1(T2) >
-#define TYPELIST_3(T1, T2, T3)              TypeList<T1, TYPELIST_2(T2, T3) >
-#define TYPELIST_4(T1, T2, T3, T4)          TypeList<T1, TYPELIST_3(T2, T3, T4) >
-#define TYPELIST_5(T1, T2, T3, T4, T5)      TypeList<T1, TYPELIST_4(T2, T3, T4, T5) >
-#define TYPELIST_6(T1, T2, T3, T4, T5, T6)  TypeList<T1, TYPELIST_5(T2, T3, T4, T5, T6) >
+#define TYPELIST_1(T1) TypeList<T1, TypeNull>
+#define TYPELIST_2(T1, T2) TypeList<T1, TYPELIST_1(T2)>
+#define TYPELIST_3(T1, T2, T3) TypeList<T1, TYPELIST_2(T2, T3)>
+#define TYPELIST_4(T1, T2, T3, T4) TypeList<T1, TYPELIST_3(T2, T3, T4)>
+#define TYPELIST_5(T1, T2, T3, T4, T5) TypeList<T1, TYPELIST_4(T2, T3, T4, T5)>
+#define TYPELIST_6(T1, T2, T3, T4, T5, T6)                                     \
+    TypeList<T1, TYPELIST_5(T2, T3, T4, T5, T6)>
 #endif

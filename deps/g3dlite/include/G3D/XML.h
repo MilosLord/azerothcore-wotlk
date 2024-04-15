@@ -1,9 +1,9 @@
 /**
  @file XML.h
-  
+
  @author Morgan McGuire
  @maintainer Morgan McGuire
-  
+
  @created 2010-02-11
  @edited  2010-02-24
 
@@ -14,10 +14,10 @@
 #ifndef G3D_XML_h
 #define G3D_XML_h
 
-#include "G3D/platform.h"
-#include "G3D/Table.h"
 #include "G3D/Array.h"
+#include "G3D/Table.h"
 #include "G3D/format.h"
+#include "G3D/platform.h"
 #include <string>
 
 namespace G3D {
@@ -25,7 +25,7 @@ namespace G3D {
 class TextInput;
 class TextOutput;
 
-/** 
+/**
 \brief Easy loading and saving of XML and HTML files.
 
 The XML class is intended primarily for interchange with other
@@ -64,21 +64,18 @@ end with "-->" e.g.,
 */
 class XML {
 public:
-
-    enum Type {VALUE, TAG};
+    enum Type { VALUE, TAG };
 
     typedef Table<std::string, XML> AttributeTable;
 
 private:
-
-    Type                      m_type;
-    std::string               m_name;
-    std::string               m_value;
-    AttributeTable            m_attribute;
-    Array<XML>                m_child;
+    Type           m_type;
+    std::string    m_name;
+    std::string    m_value;
+    AttributeTable m_attribute;
+    Array<XML>     m_child;
 
 public:
-
     XML() : m_type(VALUE) {}
 
     XML(const std::string& v) : m_type(VALUE), m_value(v) {}
@@ -89,14 +86,25 @@ public:
 
     XML(int v) : m_type(VALUE), m_value(format("%d", v)) {}
 
-    /** \param tagType Must be XML::TAG to dismbiguate from the string constructor */
-    XML(Type tagType, const std::string& name, const AttributeTable& at, const Array<XML>& ch = Array<XML>()) : m_type(TAG), m_name(name), m_attribute(at), m_child(ch) {
+    /** \param tagType Must be XML::TAG to dismbiguate from the string
+     * constructor */
+    XML(Type                  tagType,
+        const std::string&    name,
+        const AttributeTable& at,
+        const Array<XML>&     ch = Array<XML>())
+        : m_type(TAG), m_name(name), m_attribute(at), m_child(ch)
+    {
         (void)tagType;
         debugAssert(tagType == TAG);
     }
 
-    /** \param tagType Must be XML::TAG to dismbiguate from the string constructor */
-    XML(Type tagType, const std::string& name, const Array<XML>& ch = Array<XML>()) : m_type(TAG), m_name(name), m_child(ch) {
+    /** \param tagType Must be XML::TAG to dismbiguate from the string
+     * constructor */
+    XML(Type               tagType,
+        const std::string& name,
+        const Array<XML>&  ch = Array<XML>())
+        : m_type(TAG), m_name(name), m_child(ch)
+    {
         (void)tagType;
         debugAssert(tagType == TAG);
     }
@@ -111,96 +119,72 @@ public:
 
     void save(const std::string& filename) const;
 
-    void parse(const std::string &s);
+    void parse(const std::string& s);
 
     void unparse(std::string& s) const;
 
-    const AttributeTable& attributeTable() const {
-        return m_attribute;
-    }
+    const AttributeTable& attributeTable() const { return m_attribute; }
 
-    const Array<XML>& childArray() const {
-        return m_child;
-    }
-    
+    const Array<XML>& childArray() const { return m_child; }
+
     /** Array size; zero for a VALUE */
-    int numChildren() const {
-        return m_child.size();
-    }
+    int numChildren() const { return m_child.size(); }
 
     /** Attribute table size; zero for a TAG */
-    size_t numAttributes() const {
-        return m_attribute.size();
-    }
+    size_t numAttributes() const { return m_attribute.size(); }
 
     /** Return child \a i.  Children are nested tags and the unquoted
      strings of characters between tags.*/
-    const XML& operator[](int i) const {
-        return m_child[i];
-    }
+    const XML& operator[](int i) const { return m_child[i]; }
 
     /** Return the attribute with this name. */
-    const XML& operator[](const std::string& k) const {
-        return m_attribute[k];
-    }
+    const XML& operator[](const std::string& k) const { return m_attribute[k]; }
 
-    bool containsAttribute(const std::string& k) const {
+    bool containsAttribute(const std::string& k) const
+    {
         return m_attribute.containsKey(k);
     }
 
     /** Note that the result is always copied, making this inefficient
         for return values that are not VALUEs. */
-    XML get(const std::string& k, const XML& defaultVal) const {
+    XML get(const std::string& k, const XML& defaultVal) const
+    {
         const XML* x = m_attribute.getPointer(k);
         if (x) {
             return *x;
-        } else {
+        }
+        else {
             return defaultVal;
         }
     }
 
-    Type type() const {
-        return m_type;
-    }
+    Type type() const { return m_type; }
 
     /** The name, if this is a TAG. */
-    const std::string name() const {
-        return m_name;
-    }
+    const std::string name() const { return m_name; }
 
     /** Returns "" if a TAG. */
-    const std::string& string() const {
-        return m_value;
-    }
+    const std::string& string() const { return m_value; }
 
-    /** Parse as a number.  Returns nan() if a TAG or unparseable as a number. */
+    /** Parse as a number.  Returns nan() if a TAG or unparseable as a number.
+     */
     double number() const;
 
     /** Returns false if a TAG. */
     bool boolean() const;
 
-    operator std::string() const {
-        return m_value;
-    }
+    operator std::string() const { return m_value; }
 
-    operator bool() const {
-        return boolean();
-    }
+    operator bool() const { return boolean(); }
 
-    operator double() const {
-        return number();
-    }
+    operator double() const { return number(); }
 
-    operator float() const {
-        return float(number());
-    }
+    operator float() const { return float(number()); }
 
-    operator int() const {
-        return iRound(number());
-    }
+    operator int() const { return iRound(number()); }
 
-};    // class XML
+}; // class XML
 
-}    // namespace G3D
+} // namespace G3D
 
 #endif

@@ -7,28 +7,28 @@
 #ifndef G3D_Spline_h
 #define G3D_Spline_h
 
-#include "G3D/platform.h"
-#include "G3D/Array.h"
-#include "G3D/g3dmath.h"
-#include "G3D/Matrix4.h"
-#include "G3D/Vector4.h"
 #include "G3D/Any.h"
+#include "G3D/Array.h"
+#include "G3D/Matrix4.h"
 #include "G3D/SplineExtrapolationMode.h"
+#include "G3D/Vector4.h"
+#include "G3D/g3dmath.h"
+#include "G3D/platform.h"
 
 namespace G3D {
 
 /** Common implementation code for all G3D::Spline template parameters */
 class SplineBase {
 public:
-
     /** Times at which control points occur.  Must have the same
         number of elements as Spline::control. */
-    Array<float>            time;
+    Array<float> time;
 
     /** If CYCLIC, then the control points will be assumed to wrap around.
         If LINEAR, then the tangents at the ends of the spline
-        point to the final control points. If CONSTANT, the end control 
-        points will be treated as multiple contol points (so the value remains constant at the ends)
+        point to the final control points. If CONSTANT, the end control
+        points will be treated as multiple contol points (so the value remains
+       constant at the ends)
     */
     SplineExtrapolationMode extrapolationMode;
 
@@ -39,17 +39,18 @@ public:
         (time[0] - time[1] + .
          time[time.size() - 1] - time[time.size() - 2]) / 2.
     */
-    float                   finalInterval;
+    float finalInterval;
 
     SplineInterpolationMode interpolationMode;
-    
-    SplineBase() : 
-        extrapolationMode(SplineExtrapolationMode::CYCLIC), 
-        finalInterval(-1), 
-        interpolationMode(SplineInterpolationMode::CUBIC) {}
+
+    SplineBase()
+        : extrapolationMode(SplineExtrapolationMode::CYCLIC), finalInterval(-1),
+          interpolationMode(SplineInterpolationMode::CUBIC)
+    {
+    }
 
     virtual ~SplineBase() {}
-    
+
     /** See specification for Spline::finalInterval; this handles the
       non-positive case.  Returns 0 if not cyclic. */
     float getFinalInterval() const;
@@ -61,20 +62,18 @@ public:
 
     /** Computes the derivative spline basis from the control point version. */
     static Matrix4 computeBasis();
-    
-protected:
 
+protected:
     /** Assumes that t0 <= s < tn.  called by computeIndex. */
     void computeIndexInBounds(float s, int& i, float& u) const;
 
 public:
-    
     /**
        Given a time @a s, finds @a i and 0 <= @a u < 1 such that
        @a s = time[@a i] * @a u + time[@a i + 1] * (1 - @a u).  Note that
        @a i may be outside the bounds of the time and control arrays;
        use getControl to handle wraparound and extrapolation issues.
-       
+
        This function takes expected O(1) time for control points with
        uniform time sampled control points or for uniformly
        distributed random time samples, but may take O( log time.size() ) time
@@ -84,7 +83,6 @@ public:
     */
     void computeIndex(float s, int& i, float& u) const;
 };
-
 
 /**
  Smooth parameteric curve implemented using a piecewise 3rd-order
@@ -111,19 +109,19 @@ public:
 
  \sa G3D::UprightSpline
  */
-template<typename Control>
+template <typename Control>
 class Spline : public SplineBase {
 protected:
     /** The additive identity control point. */
-    Control                 zero;
+    Control zero;
 
 public:
-
     /** Control points. Must have the same number of elements as
         Spline::time.*/
-    Array<Control>          control;
+    Array<Control> control;
 
-    Spline() {
+    Spline()
+    {
         static Control x;
         // Hide the fact from C++ that we are using an
         // uninitialized variable here by pointer arithmetic.
@@ -134,19 +132,21 @@ public:
 
     /** Appends a control point at a specific time that must be
         greater than that of the previous point. */
-    void append(float t, const Control& c) {
-        debugAssertM((time.size() == 0) || (t > time.last()), 
-                     "Control points must have monotonically increasing times.");
+    void append(float t, const Control& c)
+    {
+        debugAssertM(
+            (time.size() == 0) || (t > time.last()),
+            "Control points must have monotonically increasing times.");
         time.append(t);
         control.append(c);
         debugAssert(control.size() == time.size());
     }
 
-
     /** Appends control point spaced in time based on the previous
         control point, or spaced at unit intervals if this is the
         first control point. */
-    void append(const Control& c) {
+    void append(const Control& c)
+    {
         switch (time.size()) {
         case 0:
             append(0, c);
@@ -162,21 +162,21 @@ public:
         debugAssert(control.size() == time.size());
     }
 
-    /** Erases all control points and times, but retains the state of 
+    /** Erases all control points and times, but retains the state of
         cyclic and finalInterval.
      */
-    void clear() {
+    void clear()
+    {
         control.clear();
         time.clear();
     }
 
-
     /** Number of control points */
-    int size() const {
+    int size() const
+    {
         debugAssert(time.size() == control.size());
         return control.size();
     }
-    
 
     /** Returns the requested control point and time sample based on
         array index.  If the array index is out of bounds, wraps (for
@@ -192,85 +192,93 @@ public:
         control point array; Spline::computeIndex to find the index
         given a time.
     */
-    void getControl(int i, float& t, Control& c) const {
+    void getControl(int i, float& t, Control& c) const
+    {
         int N = control.size();
         if (N == 0) {
             c = zero;
             t = 0;
-        } else if (extrapolationMode == SplineExtrapolationMode::CYCLIC) {
+        }
+        else if (extrapolationMode == SplineExtrapolationMode::CYCLIC) {
             c = control[iWrap(i, N)];
 
             if (i < 0) {
                 // Wrapped around bottom
 
                 // Number of times we wrapped around the cyclic array
-                int wraps = (N + 1 - i) / N;                    
-                int j = (i + wraps * N) % N;
-                t = time[j] - wraps * duration();
-
-            } else if (i < N) {
+                int wraps = (N + 1 - i) / N;
+                int j     = (i + wraps * N) % N;
+                t         = time[j] - wraps * duration();
+            }
+            else if (i < N) {
 
                 t = time[i];
-
-            } else {
+            }
+            else {
                 // Wrapped around top
 
                 // Number of times we wrapped around the cyclic array
-                int wraps = i / N;                    
-                int j = i % N;
-                t = time[j] + wraps * duration();
+                int wraps = i / N;
+                int j     = i % N;
+                t         = time[j] + wraps * duration();
             }
-
-        } else if (i < 0) {
+        }
+        else if (i < 0) {
             // Are there enough points to extrapolate?
             if (N >= 2) {
                 // Step away from control point 0
                 float dt = time[1] - time[0];
-                
+
                 if (extrapolationMode == SplineExtrapolationMode::LINEAR) {
                     // Extrapolate (note; i is negative)
                     c = control[1] * float(i) + control[0] * float(1 - i);
                     correct(c);
-                } else if (extrapolationMode == SplineExtrapolationMode::CLAMP){
+                }
+                else if (extrapolationMode == SplineExtrapolationMode::CLAMP) {
                     // Return the first, clamping
                     c = control[0];
-                } else {
+                }
+                else {
                     alwaysAssertM(false, "Invalid extrapolation mode");
                 }
                 t = dt * i + time[0];
-
-            } else {
+            }
+            else {
                 // Just clamp
                 c = control[0];
 
                 // Only 1 time; assume 1s intervals
                 t = time[0] + i;
             }
-
-        } else if (i >= N) {
+        }
+        else if (i >= N) {
             if (N >= 2) {
                 float dt = time[N - 1] - time[N - 2];
 
                 if (extrapolationMode == SplineExtrapolationMode::LINEAR) {
                     // Extrapolate (note; i is negative)
-                    c = control[N - 1] * float(i - N + 2) + control[N - 2] * -float(i - N + 1);
+                    c = control[N - 1] * float(i - N + 2) +
+                        control[N - 2] * -float(i - N + 1);
                     correct(c);
-                } else if (extrapolationMode == SplineExtrapolationMode::CLAMP){
+                }
+                else if (extrapolationMode == SplineExtrapolationMode::CLAMP) {
                     // Return the last, clamping
                     c = control.last();
-                } else {
+                }
+                else {
                     alwaysAssertM(false, "Invalid extrapolation mode");
                 }
                 // Extrapolate
                 t = time[N - 1] + dt * (i - N + 1);
-
-            } else {
+            }
+            else {
                 // Return the last, clamping
                 c = control.last();
                 // Only 1 time; assume 1s intervals
                 t = time[0] + i;
             }
-        } else {
+        }
+        else {
             // In bounds
             c = control[i];
             t = time[i];
@@ -278,11 +286,11 @@ public:
     }
 
 protected:
-
     /** Returns a series of N control points and times, fixing
         boundary issues.  The indices may be assumed to be treated
         cyclically. */
-    void getControls(int i, float* T, Control* A, int N) const {
+    void getControls(int i, float* T, Control* A, int N) const
+    {
         for (int j = 0; j < N; ++j) {
             getControl(i + j, T[j], A[j]);
         }
@@ -290,17 +298,23 @@ protected:
     }
 
     /**
-       Mutates the array of N control points that begins at \a A. It is useful to override this
-       method by one that wraps the values if they are angles or quaternions
-       for which "shortest path" interpolation is significant.
+       Mutates the array of N control points that begins at \a A. It is useful
+       to override this method by one that wraps the values if they are angles
+       or quaternions for which "shortest path" interpolation is significant.
      */
-    virtual void ensureShortestPath(Control* A, int N) const { (void)A; (void) N;}
+    virtual void ensureShortestPath(Control* A, int N) const
+    {
+        (void)A;
+        (void)N;
+    }
 
     /** Normalize or otherwise adjust this interpolated Control. */
     virtual void correct(Control& A) const { (void)A; }
 
-    /** Does not invoke verifyDone() on the propertyTable because subclasses may have more properties */
-    virtual void init(AnyTableReader& propertyTable) {
+    /** Does not invoke verifyDone() on the propertyTable because subclasses may
+     * have more properties */
+    virtual void init(AnyTableReader& propertyTable)
+    {
         propertyTable.getIfPresent("extrapolationMode", extrapolationMode);
         propertyTable.getIfPresent("interpolationMode", interpolationMode);
         propertyTable.getIfPresent("finalInterval", finalInterval);
@@ -308,52 +322,56 @@ protected:
         const bool hasTime = propertyTable.getIfPresent("time", time);
 
         if (propertyTable.getIfPresent("control", control)) {
-            if (! hasTime) {
+            if (!hasTime) {
                 // Assign unit times
                 time.resize(control.size());
                 for (int i = 0; i < time.size(); ++i) {
                     time[i] = float(i);
                 }
             } // if has time
-        } // if has control
-    } // init
+        }     // if has control
+    }         // init
 
 public:
-
-    /** Accepts a table of properties, or any valid PhysicsFrame specification for a single control*/
-    explicit Spline(const Any& any) {
+    /** Accepts a table of properties, or any valid PhysicsFrame specification
+     * for a single control*/
+    explicit Spline(const Any& any)
+    {
         AnyTableReader propertyTable(any);
         init(propertyTable);
         propertyTable.verifyDone();
     }
 
-    /** Note that invoking classes can call setName on the returned value instead of passing a name in. */
-    virtual Any toAny(const std::string& myName) const {
+    /** Note that invoking classes can call setName on the returned value
+     * instead of passing a name in. */
+    virtual Any toAny(const std::string& myName) const
+    {
         Any a(Any::TABLE, myName);
-    
+
         a["extrapolationMode"] = extrapolationMode;
         a["interpolationMode"] = interpolationMode;
-        a["control"] = Any(control);
-        a["time"] = Any(time);
-        a["finalInterval"] = finalInterval;
+        a["control"]           = Any(control);
+        a["time"]              = Any(time);
+        a["finalInterval"]     = finalInterval;
 
         return a;
     }
-
 
     /**
        Return the position at time s.  The spline is defined outside
        of the time samples by extrapolation or cycling.
      */
-    Control evaluate(float s) const {
-        debugAssertM(control.size() == time.size(), "Corrupt spline: wrong number of control points.");
+    Control evaluate(float s) const
+    {
+        debugAssertM(control.size() == time.size(),
+                     "Corrupt spline: wrong number of control points.");
 
         /*
-        @cite http://www.gamedev.net/reference/articles/article1497.asp 
+        @cite http://www.gamedev.net/reference/articles/article1497.asp
         Derivation of basis matrix follows.
-        
-        Given control points with positions p[i] at times t[i], 0 <= i <= 3, find the position 
-        at time t[1] <= s <= t[2].
+
+        Given control points with positions p[i] at times t[i], 0 <= i <= 3,
+        find the position at time t[1] <= s <= t[2].
 
         Let u = s - t[0]
         Let U = [u^0 u^1 u^2 u^3] = [1 u u^2 u^3]
@@ -383,7 +401,7 @@ public:
 
         if (interpolationMode == SplineInterpolationMode::LINEAR) {
             const float a = (s - t[1]) / (t[2] - t[1]);
-            sum = p1 * (1.0f - a) + p2 * a;
+            sum           = p1 * (1.0f - a) + p2 * a;
             correct(sum);
             return sum;
         }
@@ -395,42 +413,37 @@ public:
         static const Matrix4 basis = computeBasis();
 
         // Powers of u
-        Vector4 uvec((float)(u*u*u), (float)(u*u), (float)u, 1.0f);
+        Vector4 uvec((float)(u * u * u), (float)(u * u), (float)u, 1.0f);
 
         // Compute the weights on each of the control points.
         const Vector4& weights = uvec * basis;
-        
 
-        // The factor of 1/2 from averaging two time intervals is 
+        // The factor of 1/2 from averaging two time intervals is
         // already factored into the basis
-        
+
         // tan1 = (dp0 / dt0 + dp1 / dt1) * ((dt0 + dt1) * 0.5);
         // The last term normalizes for unequal time intervals
-        float x = (dt0 + dt1) * 0.5f;
+        float x  = (dt0 + dt1) * 0.5f;
         float n0 = x / dt0;
         float n1 = x / dt1;
         float n2 = x / dt2;
 
-        const Control& dp0 = p1 + (p0*-1.0f);
-        const Control& dp1 = p2 + (p1*-1.0f);
-        const Control& dp2 = p3 + (p2*-1.0f);
+        const Control& dp0 = p1 + (p0 * -1.0f);
+        const Control& dp1 = p2 + (p1 * -1.0f);
+        const Control& dp2 = p3 + (p2 * -1.0f);
 
         const Control& dp1n1 = dp1 * n1;
-        const Control& tan1 = dp0 * n0 + dp1n1;
-        const Control& tan2 = dp1n1 + dp2 * n2;
+        const Control& tan1  = dp0 * n0 + dp1n1;
+        const Control& tan2  = dp1n1 + dp2 * n2;
 
-        sum = 
-            tan1 * weights[0] +
-             p1  * weights[1] +
-             p2  * weights[2] +
-            tan2 * weights[3]; 
-            
+        sum = tan1 * weights[0] + p1 * weights[1] + p2 * weights[2] +
+              tan2 * weights[3];
 
         correct(sum);
         return sum;
     }
 };
 
-}
+} // namespace G3D
 
 #endif

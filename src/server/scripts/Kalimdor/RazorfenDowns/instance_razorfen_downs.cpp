@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,38 +22,39 @@
 #include "ObjectMgr.h"
 #include "razorfen_downs.h"
 
-class instance_razorfen_downs : public InstanceMapScript
-{
+class instance_razorfen_downs : public InstanceMapScript {
 public:
-    instance_razorfen_downs() : InstanceMapScript("instance_razorfen_downs", 129) { }
-
-    struct instance_razorfen_downs_InstanceMapScript : public InstanceScript
+    instance_razorfen_downs()
+        : InstanceMapScript("instance_razorfen_downs", 129)
     {
-        instance_razorfen_downs_InstanceMapScript(Map* map) : InstanceScript(map)
+    }
+
+    struct instance_razorfen_downs_InstanceMapScript : public InstanceScript {
+        instance_razorfen_downs_InstanceMapScript(Map* map)
+            : InstanceScript(map)
         {
         }
 
         void Initialize() override
         {
             SetHeaders(DataHeader);
-            _gongPhase = 0;
+            _gongPhase  = 0;
             _firesState = 0;
         }
 
         void OnGameObjectCreate(GameObject* gameobject) override
         {
-            switch (gameobject->GetEntry())
-            {
-                case GO_IDOL_OVEN_FIRE:
-                case GO_IDOL_CUP_FIRE:
-                case GO_IDOL_MOUTH_FIRE:
-                    if (_firesState == DONE)
-                        gameobject->Delete();
-                    break;
-                case GO_GONG:
-                    if (_gongPhase == DONE)
-                        gameobject->SetGameObjectFlag(GO_FLAG_NOT_SELECTABLE);
-                    break;
+            switch (gameobject->GetEntry()) {
+            case GO_IDOL_OVEN_FIRE:
+            case GO_IDOL_CUP_FIRE:
+            case GO_IDOL_MOUTH_FIRE:
+                if (_firesState == DONE)
+                    gameobject->Delete();
+                break;
+            case GO_GONG:
+                if (_gongPhase == DONE)
+                    gameobject->SetGameObjectFlag(GO_FLAG_NOT_SELECTABLE);
+                break;
             }
         }
 
@@ -94,7 +96,4 @@ public:
     }
 };
 
-void AddSC_instance_razorfen_downs()
-{
-    new instance_razorfen_downs();
-}
+void AddSC_instance_razorfen_downs() { new instance_razorfen_downs(); }

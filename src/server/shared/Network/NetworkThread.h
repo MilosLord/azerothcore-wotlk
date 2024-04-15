@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -34,19 +35,19 @@
 
 using boost::asio::ip::tcp;
 
-template<class SocketType>
-class NetworkThread
-{
+template <class SocketType>
+class NetworkThread {
 public:
-    NetworkThread() :
-        _ioContext(1), _acceptSocket(_ioContext), _updateTimer(_ioContext) { }
+    NetworkThread()
+        : _ioContext(1), _acceptSocket(_ioContext), _updateTimer(_ioContext)
+    {
+    }
 
     virtual ~NetworkThread()
     {
         Stop();
 
-        if (_thread)
-        {
+        if (_thread) {
             Wait();
         }
     }
@@ -62,7 +63,8 @@ public:
         if (_thread)
             return false;
 
-        _thread = std::make_unique<std::thread>([this]() { NetworkThread::Run(); });
+        _thread =
+            std::make_unique<std::thread>([this]() { NetworkThread::Run(); });
         return true;
     }
 
@@ -70,18 +72,14 @@ public:
     {
         ASSERT(_thread);
 
-        if (_thread->joinable())
-        {
+        if (_thread->joinable()) {
             _thread->join();
         }
 
         _thread.reset();
     }
 
-    [[nodiscard]] int32 GetConnectionCount() const
-    {
-        return _connections;
-    }
+    [[nodiscard]] int32 GetConnectionCount() const { return _connections; }
 
     virtual void AddSocket(std::shared_ptr<SocketType> sock)
     {
@@ -95,8 +93,8 @@ public:
     tcp::socket* GetSocketForAccept() { return &_acceptSocket; }
 
 protected:
-    virtual void SocketAdded(std::shared_ptr<SocketType> /*sock*/) { }
-    virtual void SocketRemoved(std::shared_ptr<SocketType> /*sock*/) { }
+    virtual void SocketAdded(std::shared_ptr<SocketType> /*sock*/) {}
+    virtual void SocketRemoved(std::shared_ptr<SocketType> /*sock*/) {}
 
     void AddNewSockets()
     {
@@ -105,15 +103,12 @@ protected:
         if (_newSockets.empty())
             return;
 
-        for (std::shared_ptr<SocketType> sock : _newSockets)
-        {
-            if (!sock->IsOpen())
-            {
+        for (std::shared_ptr<SocketType> sock : _newSockets) {
+            if (!sock->IsOpen()) {
                 SocketRemoved(sock);
                 --_connections;
             }
-            else
-            {
+            else {
                 _sockets.emplace_back(sock);
             }
         }
@@ -126,7 +121,8 @@ protected:
         LOG_DEBUG("misc", "Network Thread Starting");
 
         _updateTimer.expires_from_now(boost::posix_time::milliseconds(1));
-        _updateTimer.async_wait([this](boost::system::error_code const&) { Update(); });
+        _updateTimer.async_wait(
+            [this](boost::system::error_code const&) { Update(); });
         _ioContext.run();
 
         LOG_DEBUG("misc", "Network Thread exits");
@@ -140,42 +136,44 @@ protected:
             return;
 
         _updateTimer.expires_from_now(boost::posix_time::milliseconds(1));
-        _updateTimer.async_wait([this](boost::system::error_code const&) { Update(); });
+        _updateTimer.async_wait(
+            [this](boost::system::error_code const&) { Update(); });
 
         AddNewSockets();
 
-        _sockets.erase(std::remove_if(_sockets.begin(), _sockets.end(), [this](std::shared_ptr<SocketType> sock)
-        {
-            if (!sock->Update())
-            {
-                if (sock->IsOpen())
-                    sock->CloseSocket();
+        _sockets.erase(std::remove_if(_sockets.begin(),
+                                      _sockets.end(),
+                                      [this](std::shared_ptr<SocketType> sock) {
+                                          if (!sock->Update()) {
+                                              if (sock->IsOpen())
+                                                  sock->CloseSocket();
 
-                this->SocketRemoved(sock);
+                                              this->SocketRemoved(sock);
 
-                --this->_connections;
-                return true;
-            }
+                                              --this->_connections;
+                                              return true;
+                                          }
 
-            return false;
-        }), _sockets.end());
+                                          return false;
+                                      }),
+                       _sockets.end());
     }
 
 private:
     using SocketContainer = std::vector<std::shared_ptr<SocketType>>;
 
     std::atomic<int32> _connections{};
-    std::atomic<bool> _stopped{};
+    std::atomic<bool>  _stopped{};
 
     std::unique_ptr<std::thread> _thread;
 
     SocketContainer _sockets;
 
-    std::mutex _newSocketsLock;
+    std::mutex      _newSocketsLock;
     SocketContainer _newSockets;
 
-    Acore::Asio::IoContext _ioContext;
-    tcp::socket _acceptSocket;
+    Acore::Asio::IoContext     _ioContext;
+    tcp::socket                _acceptSocket;
     Acore::Asio::DeadlineTimer _updateTimer;
 };
 

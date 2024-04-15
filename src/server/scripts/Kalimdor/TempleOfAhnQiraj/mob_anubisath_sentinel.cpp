@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,91 +23,87 @@
 #include "SpellScriptLoader.h"
 #include "temple_of_ahnqiraj.h"
 
-enum Spells
-{
-    SPELL_MENDING_BUFF                  = 2147,
+enum Spells {
+    SPELL_MENDING_BUFF = 2147,
 
-    SPELL_KNOCK_BUFF                    = 21737,
-    SPELL_KNOCK                         = 25778,
-    SPELL_MANAB_BUFF                    = 812,
-    SPELL_MANAB                         = 25779,
+    SPELL_KNOCK_BUFF = 21737,
+    SPELL_KNOCK      = 25778,
+    SPELL_MANAB_BUFF = 812,
+    SPELL_MANAB      = 25779,
 
-    SPELL_REFLECTAF_BUFF                = 13022,
-    SPELL_REFLECTSFr_BUFF               = 19595,
-    SPELL_THORNS_BUFF                   = 25777,
+    SPELL_REFLECTAF_BUFF  = 13022,
+    SPELL_REFLECTSFr_BUFF = 19595,
+    SPELL_THORNS_BUFF     = 25777,
 
-    SPELL_THUNDER_BUFF                  = 2834,
-    SPELL_THUNDER                       = 8732,
+    SPELL_THUNDER_BUFF = 2834,
+    SPELL_THUNDER      = 8732,
 
-    SPELL_MSTRIKE_BUFF                  = 9347,
-    SPELL_MSTRIKE                       = 24573,
+    SPELL_MSTRIKE_BUFF = 9347,
+    SPELL_MSTRIKE      = 24573,
 
-    SPELL_STORM_BUFF                    = 2148,
-    SPELL_STORM                         = 26546,
+    SPELL_STORM_BUFF = 2148,
+    SPELL_STORM      = 26546,
 
-    SPELL_SUMMON_SMALL_OBSIDIAN_CHUNK   = 27627, // Server-side
+    SPELL_SUMMON_SMALL_OBSIDIAN_CHUNK = 27627, // Server-side
 
-    SPELL_TRANSFER_POWER                = 2400,
-    SPELL_HEAL_BRETHEN                  = 26565,
-    SPELL_ENRAGE                        = 8599,
+    SPELL_TRANSFER_POWER = 2400,
+    SPELL_HEAL_BRETHEN   = 26565,
+    SPELL_ENRAGE         = 8599,
 
-    TALK_ENRAGE                         = 0,
-    TALK_SHARE_BUFFS                    = 1
+    TALK_ENRAGE      = 0,
+    TALK_SHARE_BUFFS = 1
 };
 
-class npc_anubisath_sentinel : public CreatureScript
-{
+class npc_anubisath_sentinel : public CreatureScript {
 public:
-    npc_anubisath_sentinel() : CreatureScript("npc_anubisath_sentinel") { }
+    npc_anubisath_sentinel() : CreatureScript("npc_anubisath_sentinel") {}
 
     CreatureAI* GetAI(Creature* creature) const override
     {
         return new aqsentinelAI(creature);
     }
 
-    struct aqsentinelAI : public ScriptedAI
-    {
+    struct aqsentinelAI : public ScriptedAI {
         uint32 ability;
-        int abselected;
+        int    abselected;
 
         void selectAbility(int asel)
         {
-            switch (asel)
-            {
-                case 0:
-                    ability = SPELL_MENDING_BUFF;
-                    break;
-                case 1:
-                    ability = SPELL_KNOCK_BUFF;
-                    break;
-                case 2:
-                    ability = SPELL_MANAB_BUFF;
-                    break;
-                case 3:
-                    ability = SPELL_REFLECTAF_BUFF;
-                    break;
-                case 4:
-                    ability = SPELL_REFLECTSFr_BUFF;
-                    break;
-                case 5:
-                    ability = SPELL_THORNS_BUFF;
-                    break;
-                case 6:
-                    ability = SPELL_THUNDER_BUFF;
-                    break;
-                case 7:
-                    ability = SPELL_MSTRIKE_BUFF;
-                    break;
-                case 8:
-                    ability = SPELL_STORM_BUFF;
-                    break;
+            switch (asel) {
+            case 0:
+                ability = SPELL_MENDING_BUFF;
+                break;
+            case 1:
+                ability = SPELL_KNOCK_BUFF;
+                break;
+            case 2:
+                ability = SPELL_MANAB_BUFF;
+                break;
+            case 3:
+                ability = SPELL_REFLECTAF_BUFF;
+                break;
+            case 4:
+                ability = SPELL_REFLECTSFr_BUFF;
+                break;
+            case 5:
+                ability = SPELL_THORNS_BUFF;
+                break;
+            case 6:
+                ability = SPELL_THUNDER_BUFF;
+                break;
+            case 7:
+                ability = SPELL_MSTRIKE_BUFF;
+                break;
+            case 8:
+                ability = SPELL_STORM_BUFF;
+                break;
             }
         }
 
         aqsentinelAI(Creature* creature) : ScriptedAI(creature)
         {
             ClearBuddyList();
-            abselected = 0;                                     // just initialization of variable
+            abselected = 0; // just initialization of variable
         }
 
         ObjectGuid NearbyGUID[3];
@@ -122,12 +119,10 @@ public:
             if (CreatureGUID == me->GetGUID())
                 return;
 
-            for (int i = 0; i < 3; ++i)
-            {
+            for (int i = 0; i < 3; ++i) {
                 if (NearbyGUID[i] == CreatureGUID)
                     return;
-                if (!NearbyGUID[i])
-                {
+                if (!NearbyGUID[i]) {
                     NearbyGUID[i] = CreatureGUID;
                     return;
                 }
@@ -146,19 +141,17 @@ public:
         void SendMyListToBuddies()
         {
             for (int i = 0; i < 3; ++i)
-                if (Creature* pNearby = ObjectAccessor::GetCreature(*me, NearbyGUID[i]))
+                if (Creature* pNearby =
+                        ObjectAccessor::GetCreature(*me, NearbyGUID[i]))
                     GiveBuddyMyList(pNearby);
         }
 
         void CallBuddiesToAttack(Unit* who)
         {
-            for (int i = 0; i < 3; ++i)
-            {
+            for (int i = 0; i < 3; ++i) {
                 Creature* c = ObjectAccessor::GetCreature(*me, NearbyGUID[i]);
-                if (c)
-                {
-                    if (!c->IsInCombat())
-                    {
+                if (c) {
+                    if (!c->IsInCombat()) {
                         c->SetNoCallAssistance(true);
                         if (c->AI())
                             c->AI()->AttackStart(who);
@@ -175,24 +168,23 @@ public:
             if (assistList.empty())
                 return;
 
-            for (std::list<Creature*>::const_iterator iter = assistList.begin(); iter != assistList.end(); ++iter)
+            for (std::list<Creature*>::const_iterator iter = assistList.begin();
+                 iter != assistList.end();
+                 ++iter)
                 AddBuddyToList((*iter)->GetGUID());
         }
 
         int pickAbilityRandom(bool* chosenAbilities)
         {
-            for (int t = 0; t < 2; ++t)
-            {
-                for (int i = !t ? (rand() % 9) : 0; i < 9; ++i)
-                {
-                    if (!chosenAbilities[i])
-                    {
+            for (int t = 0; t < 2; ++t) {
+                for (int i = !t ? (rand() % 9) : 0; i < 9; ++i) {
+                    if (!chosenAbilities[i]) {
                         chosenAbilities[i] = true;
                         return i;
                     }
                 }
             }
-            return 0;                                           // should never happen
+            return 0; // should never happen
         }
 
         void GetOtherSentinels(Unit* who)
@@ -204,18 +196,20 @@ public:
             ClearBuddyList();
             AddSentinelsNear(me);
             int bli;
-            for (bli = 0; bli < 3; ++bli)
-            {
+            for (bli = 0; bli < 3; ++bli) {
                 if (!NearbyGUID[bli])
                     break;
 
-                Creature* pNearby = ObjectAccessor::GetCreature(*me, NearbyGUID[bli]);
+                Creature* pNearby =
+                    ObjectAccessor::GetCreature(*me, NearbyGUID[bli]);
                 if (!pNearby)
                     break;
 
                 AddSentinelsNear(pNearby);
-                CAST_AI(aqsentinelAI, pNearby->AI())->gatherOthersWhenAggro = false;
-                CAST_AI(aqsentinelAI, pNearby->AI())->selectAbility(pickAbilityRandom(chosenAbilities));
+                CAST_AI(aqsentinelAI, pNearby->AI())->gatherOthersWhenAggro =
+                    false;
+                CAST_AI(aqsentinelAI, pNearby->AI())
+                    ->selectAbility(pickAbilityRandom(chosenAbilities));
             }
             /*if (bli < 3)
                 DoYell("I dont have enough buddies.", LANG_NEUTRAL, 0);*/
@@ -229,14 +223,12 @@ public:
 
         void Reset() override
         {
-            if (!me->isDead())
-            {
-                for (int i = 0; i < 3; ++i)
-                {
+            if (!me->isDead()) {
+                for (int i = 0; i < 3; ++i) {
                     if (!NearbyGUID[i])
                         continue;
-                    if (Creature* pNearby = ObjectAccessor::GetCreature(*me, NearbyGUID[i]))
-                    {
+                    if (Creature* pNearby =
+                            ObjectAccessor::GetCreature(*me, NearbyGUID[i])) {
                         if (pNearby->isDead())
                             pNearby->Respawn();
                     }
@@ -244,13 +236,10 @@ public:
             }
             ClearBuddyList();
             gatherOthersWhenAggro = true;
-            _enraged = false;
+            _enraged              = false;
         }
 
-        void GainSentinelAbility(uint32 id)
-        {
-            me->AddAura(id, me);
-        }
+        void GainSentinelAbility(uint32 id) { me->AddAura(id, me); }
 
         void JustEngagedWith(Unit* who) override
         {
@@ -263,13 +252,11 @@ public:
 
         void SpellHitTarget(Unit* target, SpellInfo const* spellInfo) override
         {
-            if (spellInfo->Id == SPELL_TRANSFER_POWER)
-            {
-                if (Creature* sentinel = target->ToCreature())
-                {
-                    if (sentinel->IsAIEnabled)
-                    {
-                        CAST_AI(aqsentinelAI, sentinel->AI())->GainSentinelAbility(ability);
+            if (spellInfo->Id == SPELL_TRANSFER_POWER) {
+                if (Creature* sentinel = target->ToCreature()) {
+                    if (sentinel->IsAIEnabled) {
+                        CAST_AI(aqsentinelAI, sentinel->AI())
+                            ->GainSentinelAbility(ability);
                     }
                 }
             }
@@ -278,9 +265,9 @@ public:
         void JustDied(Unit* /*killer*/) override
         {
             bool cast = false;
-            for (int ni = 0; ni < 3; ++ni)
-            {
-                Creature* sent = ObjectAccessor::GetCreature(*me, NearbyGUID[ni]);
+            for (int ni = 0; ni < 3; ++ni) {
+                Creature* sent =
+                    ObjectAccessor::GetCreature(*me, NearbyGUID[ni]);
                 if (!sent)
                     continue;
                 if (sent->isDead())
@@ -290,20 +277,21 @@ public:
                 DoCast(sent, SPELL_TRANSFER_POWER, true);
             }
 
-            if (cast)
-            {
+            if (cast) {
                 Talk(TALK_SHARE_BUFFS);
             }
 
             DoCastSelf(SPELL_SUMMON_SMALL_OBSIDIAN_CHUNK, true);
         }
 
-        void DamageTaken(Unit* /*doneBy*/, uint32& damage, DamageEffectType /*damagetype*/, SpellSchoolMask /*damageSchoolMask*/) override
+        void DamageTaken(Unit* /*doneBy*/,
+                         uint32& damage,
+                         DamageEffectType /*damagetype*/,
+                         SpellSchoolMask /*damageSchoolMask*/) override
         {
-            if (!_enraged && me->HealthBelowPctDamaged(50, damage))
-            {
+            if (!_enraged && me->HealthBelowPctDamaged(50, damage)) {
                 _enraged = true;
-                damage = 0;
+                damage   = 0;
                 DoCastSelf(SPELL_ENRAGE, true);
                 Talk(TALK_ENRAGE);
             }
@@ -315,8 +303,7 @@ public:
 };
 
 // 9347: Mortal Strike
-class spell_anubisath_mortal_strike : public AuraScript
-{
+class spell_anubisath_mortal_strike : public AuraScript {
     PrepareAuraScript(spell_anubisath_mortal_strike);
 
     void OnPeriodic(AuraEffect const* /*aurEff*/)
@@ -325,18 +312,23 @@ class spell_anubisath_mortal_strike : public AuraScript
 
         if (Unit* target = GetUnitOwner()->GetVictim())
             if (target->IsWithinDist(GetUnitOwner(), 5.f))
-                GetUnitOwner()->CastSpell(target, GetSpellInfo()->Effects[EFFECT_0].TriggerSpell, true);
+                GetUnitOwner()->CastSpell(
+                    target,
+                    GetSpellInfo()->Effects[EFFECT_0].TriggerSpell,
+                    true);
     }
 
     void Register() override
     {
-        OnEffectPeriodic += AuraEffectPeriodicFn(spell_anubisath_mortal_strike::OnPeriodic, EFFECT_0, SPELL_AURA_PERIODIC_TRIGGER_SPELL);
+        OnEffectPeriodic +=
+            AuraEffectPeriodicFn(spell_anubisath_mortal_strike::OnPeriodic,
+                                 EFFECT_0,
+                                 SPELL_AURA_PERIODIC_TRIGGER_SPELL);
     }
 };
 
 // 26626 (Server-side): Mana Burn Area
-class spell_mana_burn_area : public SpellScript
-{
+class spell_mana_burn_area : public SpellScript {
     PrepareSpellScript(spell_mana_burn_area);
 
     void HandleDummy(SpellEffIndex /*effIndex*/)
@@ -347,7 +339,8 @@ class spell_mana_burn_area : public SpellScript
 
     void Register() override
     {
-        OnEffectHitTarget += SpellEffectFn(spell_mana_burn_area::HandleDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
+        OnEffectHitTarget += SpellEffectFn(
+            spell_mana_burn_area::HandleDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
     }
 };
 
@@ -357,4 +350,3 @@ void AddSC_npc_anubisath_sentinel()
     RegisterSpellScript(spell_anubisath_mortal_strike);
     RegisterSpellScript(spell_mana_burn_area);
 }
-

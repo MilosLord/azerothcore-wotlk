@@ -1,40 +1,38 @@
 #ifndef G3D_ThreadSet_h
 #define G3D_ThreadSet_h
 
-#include "G3D/platform.h"
 #include "G3D/Array.h"
-#include "G3D/ReferenceCount.h"
 #include "G3D/GMutex.h"
+#include "G3D/ReferenceCount.h"
 #include "G3D/SpawnBehavior.h"
+#include "G3D/platform.h"
 
 namespace G3D {
 
 class GThread;
 
 /** Manages a set of threads. All methods are threadsafe except for
-    the iterator begin/end. 
+    the iterator begin/end.
 
     @beta*/
 class ThreadSet : public ReferenceCountedObject {
 public:
     /** Intended to allow future use with a template parameter.*/
-    typedef GThread                                        Thread;
+    typedef GThread Thread;
 
-    typedef shared_ptr<Thread>                ThreadRef;
-    typedef shared_ptr<ThreadSet>             Ref;
-    typedef Array<ThreadRef>::Iterator                     Iterator;
-    typedef Array<ThreadRef>::ConstIterator                ConstIterator;
+    typedef shared_ptr<Thread>              ThreadRef;
+    typedef shared_ptr<ThreadSet>           Ref;
+    typedef Array<ThreadRef>::Iterator      Iterator;
+    typedef Array<ThreadRef>::ConstIterator ConstIterator;
 
 private:
-
     /** Protects m_thread */
-    GMutex                m_lock;
+    GMutex m_lock;
 
     /** Threads in the set */
-    Array<ThreadRef>      m_thread;
+    Array<ThreadRef> m_thread;
 
 public:
-    
     /** Total number of threads (some of which may be completed). */
     int size() const;
 
@@ -64,7 +62,7 @@ public:
     /** Removes completed threads and returns the new size.*/
     int removeCompleted();
 
-    /** Inserts a new thread, if it is not already present, and 
+    /** Inserts a new thread, if it is not already present, and
         returns the new number of threads.*/
     int insert(const ThreadRef& t);
 
@@ -73,7 +71,7 @@ public:
     bool remove(const ThreadRef& t);
 
     bool contains(const ThreadRef& t) const;
-   
+
     /** It is an error to mutate the ThreadSet while iterating through it. */
     Iterator begin();
 
@@ -83,7 +81,6 @@ public:
 
     ConstIterator end() const;
 };
-
 
 } // namespace G3D
 

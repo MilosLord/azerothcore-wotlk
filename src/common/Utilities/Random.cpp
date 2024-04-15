@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,12 +23,11 @@
 #include <random>
 
 static thread_local std::unique_ptr<SFMTRand> sfmtRand;
-static RandomEngine engine;
+static RandomEngine                           engine;
 
 static SFMTRand* GetRng()
 {
-    if (!sfmtRand)
-    {
+    if (!sfmtRand) {
         sfmtRand = std::make_unique<SFMTRand>();
     }
 
@@ -50,8 +50,10 @@ uint32 urand(uint32 min, uint32 max)
 
 uint32 urandms(uint32 min, uint32 max)
 {
-    ASSERT(std::numeric_limits<uint32>::max() / Milliseconds::period::den >= max);
-    return urand(min * Milliseconds::period::den, max * Milliseconds::period::den);
+    ASSERT(std::numeric_limits<uint32>::max() / Milliseconds::period::den >=
+           max);
+    return urand(min * Milliseconds::period::den,
+                 max * Milliseconds::period::den);
 }
 
 float frand(float min, float max)
@@ -65,14 +67,11 @@ Milliseconds randtime(Milliseconds min, Milliseconds max)
 {
     long long diff = max.count() - min.count();
     ASSERT(diff >= 0);
-    ASSERT(diff <= (uint32) - 1);
+    ASSERT(diff <= (uint32)-1);
     return min + Milliseconds(urand(0, diff));
 }
 
-uint32 rand32()
-{
-    return GetRng()->RandomUInt32();
-}
+uint32 rand32() { return GetRng()->RandomUInt32(); }
 
 double rand_norm()
 {
@@ -92,7 +91,4 @@ uint32 urandweighted(size_t count, double const* chances)
     return dd(engine);
 }
 
-RandomEngine& RandomEngine::Instance()
-{
-    return engine;
-}
+RandomEngine& RandomEngine::Instance() { return engine; }

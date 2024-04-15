@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,33 +22,22 @@
 #include "ScriptedCreature.h"
 #include "TaskScheduler.h"
 
-enum Spells
-{
-    SPELL_SOUL_CORRUPTION           = 25805,
-    SPELL_CREATURE_OF_NIGHTMARE     = 25806,
-    SPELL_SWELL_OF_SOULS            = 21307,
+enum Spells {
+    SPELL_SOUL_CORRUPTION       = 25805,
+    SPELL_CREATURE_OF_NIGHTMARE = 25806,
+    SPELL_SWELL_OF_SOULS        = 21307,
 };
 
-enum Misc
-{
-    ITEM_FRAGMENT                   = 21149,
-    NPC_TWILIGHT_CORRUPTER          = 15625
-};
+enum Misc { ITEM_FRAGMENT = 21149, NPC_TWILIGHT_CORRUPTER = 15625 };
 
-enum Say
-{
-    SAY_RESPAWN = 0,
-    SAY_AGGRO,
-    SAY_KILL
-};
+enum Say { SAY_RESPAWN = 0, SAY_AGGRO, SAY_KILL };
 
 /*######
 # boss_twilight_corrupter
 ######*/
 
-struct boss_twilight_corrupter : public ScriptedAI
-{
-    boss_twilight_corrupter(Creature* creature) : ScriptedAI(creature) { }
+struct boss_twilight_corrupter : public ScriptedAI {
+    boss_twilight_corrupter(Creature* creature) : ScriptedAI(creature) {}
 
     void Reset() override
     {
@@ -60,10 +50,8 @@ struct boss_twilight_corrupter : public ScriptedAI
         // Xinef: check if copy is summoned
         std::list<Creature*> cList;
         me->GetCreatureListWithEntryInGrid(cList, me->GetEntry(), 50.0f);
-        for (Creature* creature : cList)
-        {
-            if (creature->IsAlive() && me->GetGUID() != creature->GetGUID())
-            {
+        for (Creature* creature : cList) {
+            if (creature->IsAlive() && me->GetGUID() != creature->GetGUID()) {
                 me->DespawnOrUnsummon(1);
                 break;
             }
@@ -75,8 +63,7 @@ struct boss_twilight_corrupter : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who) override
     {
-        if (!_introSpoken && who->GetTypeId() == TYPEID_PLAYER)
-        {
+        if (!_introSpoken && who->GetTypeId() == TYPEID_PLAYER) {
             _introSpoken = true;
             Talk(SAY_RESPAWN, who);
             me->SetFaction(FACTION_MONSTER);
@@ -88,13 +75,14 @@ struct boss_twilight_corrupter : public ScriptedAI
     {
         Talk(SAY_AGGRO);
         _scheduler
-            .Schedule(12s, 18s, [this](TaskContext context)
-            {
-                DoCastRandomTarget(SPELL_CREATURE_OF_NIGHTMARE, 1, 100.f);
-                context.Repeat(35s, 45s);
-            })
-            .Schedule(9s, 16s, [this](TaskContext context)
-            {
+            .Schedule(12s,
+                      18s,
+                      [this](TaskContext context) {
+                          DoCastRandomTarget(
+                              SPELL_CREATURE_OF_NIGHTMARE, 1, 100.f);
+                          context.Repeat(35s, 45s);
+                      })
+            .Schedule(9s, 16s, [this](TaskContext context) {
                 DoCastVictim(SPELL_SOUL_CORRUPTION);
                 context.Repeat(5s, 9s);
             });
@@ -102,8 +90,7 @@ struct boss_twilight_corrupter : public ScriptedAI
 
     void KilledUnit(Unit* victim) override
     {
-        if (victim->GetTypeId() == TYPEID_PLAYER)
-        {
+        if (victim->GetTypeId() == TYPEID_PLAYER) {
             Talk(SAY_KILL, victim);
             DoCastSelf(SPELL_SWELL_OF_SOULS);
         }
@@ -114,14 +101,11 @@ struct boss_twilight_corrupter : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        _scheduler.Update(diff, [this]
-            {
-                DoMeleeAttackIfReady();
-            });
+        _scheduler.Update(diff, [this] { DoMeleeAttackIfReady(); });
     }
 
 private:
-    bool _introSpoken;
+    bool          _introSpoken;
     TaskScheduler _scheduler;
 };
 
@@ -129,15 +113,21 @@ private:
 # at_twilight_grove
 ######*/
 
-class at_twilight_grove : public AreaTriggerScript
-{
+class at_twilight_grove : public AreaTriggerScript {
 public:
-    at_twilight_grove() : AreaTriggerScript("at_twilight_grove") { }
+    at_twilight_grove() : AreaTriggerScript("at_twilight_grove") {}
 
     bool OnTrigger(Player* player, const AreaTrigger* /*at*/) override
     {
-        if (player->HasQuestForItem(ITEM_FRAGMENT) && !player->HasItemCount(ITEM_FRAGMENT))
-            player->SummonCreature(NPC_TWILIGHT_CORRUPTER, -10328.16f, -489.57f, 49.95f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 240000);
+        if (player->HasQuestForItem(ITEM_FRAGMENT) &&
+            !player->HasItemCount(ITEM_FRAGMENT))
+            player->SummonCreature(NPC_TWILIGHT_CORRUPTER,
+                                   -10328.16f,
+                                   -489.57f,
+                                   49.95f,
+                                   0,
+                                   TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,
+                                   240000);
 
         return false;
     };

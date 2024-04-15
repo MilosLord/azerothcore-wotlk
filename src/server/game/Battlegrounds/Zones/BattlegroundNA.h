@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,8 +21,7 @@
 
 #include "Arena.h"
 
-enum BattlegroundNAObjectTypes
-{
+enum BattlegroundNAObjectTypes {
     BG_NA_OBJECT_DOOR_1         = 0,
     BG_NA_OBJECT_DOOR_2         = 1,
     BG_NA_OBJECT_DOOR_3         = 2,
@@ -33,18 +33,16 @@ enum BattlegroundNAObjectTypes
     BG_NA_OBJECT_MAX            = 8
 };
 
-enum BattlegroundNAGameObjects
-{
-    BG_NA_OBJECT_TYPE_DOOR_1    = 183978,
-    BG_NA_OBJECT_TYPE_DOOR_2    = 183980,
-    BG_NA_OBJECT_TYPE_DOOR_3    = 183977,
-    BG_NA_OBJECT_TYPE_DOOR_4    = 183979,
-    BG_NA_OBJECT_TYPE_BUFF_1    = 184663,
-    BG_NA_OBJECT_TYPE_BUFF_2    = 184664
+enum BattlegroundNAGameObjects {
+    BG_NA_OBJECT_TYPE_DOOR_1 = 183978,
+    BG_NA_OBJECT_TYPE_DOOR_2 = 183980,
+    BG_NA_OBJECT_TYPE_DOOR_3 = 183977,
+    BG_NA_OBJECT_TYPE_DOOR_4 = 183979,
+    BG_NA_OBJECT_TYPE_BUFF_1 = 184663,
+    BG_NA_OBJECT_TYPE_BUFF_2 = 184664
 };
 
-class AC_GAME_API BattlegroundNA : public Arena
-{
+class AC_GAME_API BattlegroundNA : public Arena {
 public:
     BattlegroundNA();
 

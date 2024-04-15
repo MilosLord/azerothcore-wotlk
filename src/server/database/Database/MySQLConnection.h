@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -33,15 +34,13 @@ class DatabaseWorker;
 class MySQLPreparedStatement;
 class SQLOperation;
 
-enum ConnectionFlags
-{
+enum ConnectionFlags {
     CONNECTION_ASYNC = 0x1,
     CONNECTION_SYNCH = 0x2,
-    CONNECTION_BOTH = CONNECTION_ASYNC | CONNECTION_SYNCH
+    CONNECTION_BOTH  = CONNECTION_ASYNC | CONNECTION_SYNCH
 };
 
-struct AC_DATABASE_API MySQLConnectionInfo
-{
+struct AC_DATABASE_API MySQLConnectionInfo {
     explicit MySQLConnectionInfo(std::string_view infoString);
 
     std::string user;
@@ -52,36 +51,46 @@ struct AC_DATABASE_API MySQLConnectionInfo
     std::string ssl;
 };
 
-class AC_DATABASE_API MySQLConnection
-{
-template <class T>
-friend class DatabaseWorkerPool;
+class AC_DATABASE_API MySQLConnection {
+    template <class T>
+    friend class DatabaseWorkerPool;
 
-friend class PingOperation;
+    friend class PingOperation;
 
 public:
-    MySQLConnection(MySQLConnectionInfo& connInfo);                               //! Constructor for synchronous connections.
-    MySQLConnection(ProducerConsumerQueue<SQLOperation*>* queue, MySQLConnectionInfo& connInfo);  //! Constructor for asynchronous connections.
+    MySQLConnection(MySQLConnectionInfo&
+                        connInfo); //! Constructor for synchronous connections.
+    MySQLConnection(ProducerConsumerQueue<SQLOperation*>* queue,
+                    MySQLConnectionInfo&
+                        connInfo); //! Constructor for asynchronous connections.
     virtual ~MySQLConnection();
 
     virtual uint32 Open();
-    void Close();
+    void           Close();
 
     bool PrepareStatements();
 
-    bool Execute(std::string_view sql);
-    bool Execute(PreparedStatementBase* stmt);
-    ResultSet* Query(std::string_view sql);
+    bool               Execute(std::string_view sql);
+    bool               Execute(PreparedStatementBase* stmt);
+    ResultSet*         Query(std::string_view sql);
     PreparedResultSet* Query(PreparedStatementBase* stmt);
-    bool _Query(std::string_view sql, MySQLResult** pResult, MySQLField** pFields, uint64* pRowCount, uint32* pFieldCount);
-    bool _Query(PreparedStatementBase* stmt, MySQLPreparedStatement** mysqlStmt, MySQLResult** pResult, uint64* pRowCount, uint32* pFieldCount);
+    bool               _Query(std::string_view sql,
+                              MySQLResult**    pResult,
+                              MySQLField**     pFields,
+                              uint64*          pRowCount,
+                              uint32*          pFieldCount);
+    bool               _Query(PreparedStatementBase*   stmt,
+                              MySQLPreparedStatement** mysqlStmt,
+                              MySQLResult**            pResult,
+                              uint64*                  pRowCount,
+                              uint32*                  pFieldCount);
 
-    void BeginTransaction();
-    void RollbackTransaction();
-    void CommitTransaction();
-    int ExecuteTransaction(std::shared_ptr<TransactionBase> transaction);
+    void   BeginTransaction();
+    void   RollbackTransaction();
+    void   CommitTransaction();
+    int    ExecuteTransaction(std::shared_ptr<TransactionBase> transaction);
     size_t EscapeString(char* to, const char* from, size_t length);
-    void Ping();
+    void   Ping();
 
     uint32 GetLastError();
 
@@ -90,32 +99,38 @@ protected:
     /// the calling parent will just try another connection
     bool LockIfReady();
 
-    /// Called by parent databasepool. Will let other threads access this connection
+    /// Called by parent databasepool. Will let other threads access this
+    /// connection
     void Unlock();
 
-    [[nodiscard]] uint32 GetServerVersion() const;
+    [[nodiscard]] uint32      GetServerVersion() const;
     [[nodiscard]] std::string GetServerInfo() const;
-    MySQLPreparedStatement* GetPreparedStatement(uint32 index);
-    void PrepareStatement(uint32 index, std::string_view sql, ConnectionFlags flags);
+    MySQLPreparedStatement*   GetPreparedStatement(uint32 index);
+    void
+    PrepareStatement(uint32 index, std::string_view sql, ConnectionFlags flags);
 
     virtual void DoPrepareStatements() = 0;
     virtual bool _HandleMySQLErrno(uint32 errNo, uint8 attempts = 5);
 
-    typedef std::vector<std::unique_ptr<MySQLPreparedStatement>> PreparedStatementContainer;
+    typedef std::vector<std::unique_ptr<MySQLPreparedStatement>>
+        PreparedStatementContainer;
 
-    PreparedStatementContainer m_stmts; //! PreparedStatements storage
-    bool m_reconnecting;  //! Are we reconnecting?
+    PreparedStatementContainer m_stmts;        //! PreparedStatements storage
+    bool                       m_reconnecting; //! Are we reconnecting?
     bool m_prepareError;  //! Was there any error while preparing statements?
     MySQLHandle* m_Mysql; //! MySQL Handle.
 
 private:
-    ProducerConsumerQueue<SQLOperation*>* m_queue;      //! Queue shared with other asynchronous connections.
-    std::unique_ptr<DatabaseWorker> m_worker;           //! Core worker task.
-    MySQLConnectionInfo& m_connectionInfo;              //! Connection info (used for logging)
-    ConnectionFlags m_connectionFlags;                  //! Connection flags (for preparing relevant statements)
+    ProducerConsumerQueue<SQLOperation*>*
+        m_queue; //! Queue shared with other asynchronous connections.
+    std::unique_ptr<DatabaseWorker> m_worker; //! Core worker task.
+    MySQLConnectionInfo&
+                    m_connectionInfo;  //! Connection info (used for logging)
+    ConnectionFlags m_connectionFlags; //! Connection flags (for preparing
+                                       //! relevant statements)
     std::mutex m_Mutex;
 
-    MySQLConnection(MySQLConnection const& right) = delete;
+    MySQLConnection(MySQLConnection const& right)            = delete;
     MySQLConnection& operator=(MySQLConnection const& right) = delete;
 };
 

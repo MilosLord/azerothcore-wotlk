@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -37,26 +38,23 @@ WDTFile::WDTFile(char* file_name, char* file_name1) : _file(file_name)
 
 bool WDTFile::init(uint32 mapId)
 {
-    if (_file.isEof())
-    {
-        //printf("Can't find WDT file.\n");
+    if (_file.isEof()) {
+        // printf("Can't find WDT file.\n");
         return false;
     }
 
-    char fourcc[5];
+    char   fourcc[5];
     uint32 size;
 
     std::string dirname = std::string(szWorkDirWmo) + "/dir_bin";
-    FILE* dirfile;
+    FILE*       dirfile;
     dirfile = fopen(dirname.c_str(), "ab");
-    if (!dirfile)
-    {
+    if (!dirfile) {
         printf("Can't open dirfile!'%s'\n", dirname.c_str());
         return false;
     }
 
-    while (!_file.isEof())
-    {
+    while (!_file.isEof()) {
         _file.read(fourcc, 4);
         _file.read(&size, 4);
 
@@ -65,19 +63,15 @@ bool WDTFile::init(uint32 mapId)
 
         size_t nextpos = _file.getPos() + size;
 
-        if (!strcmp(fourcc, "MAIN"))
-        {
+        if (!strcmp(fourcc, "MAIN")) {
         }
-        if (!strcmp(fourcc, "MWMO"))
-        {
+        if (!strcmp(fourcc, "MWMO")) {
             // global map objects
-            if (size)
-            {
+            if (size) {
                 char* buf = new char[size];
                 _file.read(buf, size);
                 char* p = buf;
-                while (p < buf + size)
-                {
+                while (p < buf + size) {
                     std::string path(p);
 
                     char* s = wdtGetPlainName(p);
@@ -91,18 +85,25 @@ bool WDTFile::init(uint32 mapId)
                 delete[] buf;
             }
         }
-        else if (!strcmp(fourcc, "MODF"))
-        {
+        else if (!strcmp(fourcc, "MODF")) {
             // global wmo instance data
-            if (size)
-            {
+            if (size) {
                 uint32 mapObjectCount = size / sizeof(ADT::MODF);
-                for (uint32 i = 0; i < mapObjectCount; ++i)
-                {
+                for (uint32 i = 0; i < mapObjectCount; ++i) {
                     ADT::MODF mapObjDef;
                     _file.read(&mapObjDef, sizeof(ADT::MODF));
-                    MapObject::Extract(mapObjDef, _wmoNames[mapObjDef.Id].c_str(), mapId, 65, 65, dirfile);
-                    Doodad::ExtractSet(WmoDoodads[_wmoNames[mapObjDef.Id]], mapObjDef, mapId, 65, 65, dirfile);
+                    MapObject::Extract(mapObjDef,
+                                       _wmoNames[mapObjDef.Id].c_str(),
+                                       mapId,
+                                       65,
+                                       65,
+                                       dirfile);
+                    Doodad::ExtractSet(WmoDoodads[_wmoNames[mapObjDef.Id]],
+                                       mapObjDef,
+                                       mapId,
+                                       65,
+                                       65,
+                                       dirfile);
                 }
             }
         }
@@ -114,10 +115,7 @@ bool WDTFile::init(uint32 mapId)
     return true;
 }
 
-WDTFile::~WDTFile()
-{
-    _file.close();
-}
+WDTFile::~WDTFile() { _file.close(); }
 
 ADTFile* WDTFile::GetMap(int x, int z)
 {
@@ -126,6 +124,12 @@ ADTFile* WDTFile::GetMap(int x, int z)
 
     char name[512];
 
-    snprintf(name, sizeof(name), R"(World\Maps\%s\%s_%d_%d.adt)", filename.c_str(), filename.c_str(), x, z);
+    snprintf(name,
+             sizeof(name),
+             R"(World\Maps\%s\%s_%d_%d.adt)",
+             filename.c_str(),
+             filename.c_str(),
+             x,
+             z);
     return new ADTFile(name);
 }

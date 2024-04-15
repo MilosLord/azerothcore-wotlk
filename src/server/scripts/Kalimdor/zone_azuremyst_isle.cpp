@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -28,7 +29,8 @@
 /* ScriptData
 SDName: Azuremyst_Isle
 SD%Complete: 75
-SDComment: Quest support: 9283, 9537, 9582, 9554, 9531, ? (special flight path, proper model for mount missing). Injured Draenei cosmetic only, 9582.
+SDComment: Quest support: 9283, 9537, 9582, 9554, 9531, ? (special flight path,
+proper model for mount missing). Injured Draenei cosmetic only, 9582.
 SDCategory: Azuremyst Isle
 EndScriptData */
 
@@ -47,22 +49,19 @@ EndContentData */
 ## npc_draenei_survivor
 ######*/
 
-enum draeneiSurvivor
-{
-    SAY_HEAL            = 0,
-    SAY_HELP            = 1,
-    SPELL_IRRIDATION    = 35046,
-    SPELL_STUNNED       = 28630
+enum draeneiSurvivor {
+    SAY_HEAL         = 0,
+    SAY_HELP         = 1,
+    SPELL_IRRIDATION = 35046,
+    SPELL_STUNNED    = 28630
 };
 
-class npc_draenei_survivor : public CreatureScript
-{
+class npc_draenei_survivor : public CreatureScript {
 public:
-    npc_draenei_survivor() : CreatureScript("npc_draenei_survivor") { }
+    npc_draenei_survivor() : CreatureScript("npc_draenei_survivor") {}
 
-    struct npc_draenei_survivorAI : public ScriptedAI
-    {
-        npc_draenei_survivorAI(Creature* creature) : ScriptedAI(creature) { }
+    struct npc_draenei_survivorAI : public ScriptedAI {
+        npc_draenei_survivorAI(Creature* creature) : ScriptedAI(creature) {}
 
         ObjectGuid pCaster;
 
@@ -77,8 +76,8 @@ public:
             pCaster.Clear();
 
             SayThanksTimer = 0;
-            RunAwayTimer = 0;
-            SayHelpTimer = 10000;
+            RunAwayTimer   = 0;
+            SayHelpTimer   = 10000;
 
             CanSayHelp = true;
 
@@ -90,24 +89,23 @@ public:
             me->SetStandState(UNIT_STAND_STATE_SLEEP);
         }
 
-        void JustEngagedWith(Unit* /*who*/) override { }
+        void JustEngagedWith(Unit* /*who*/) override {}
 
         void MoveInLineOfSight(Unit* who) override
         {
-            if (CanSayHelp && who->GetTypeId() == TYPEID_PLAYER && me->IsFriendlyTo(who) && me->IsWithinDistInMap(who, 25.0f))
-            {
-                //Random switch between 4 texts
+            if (CanSayHelp && who->GetTypeId() == TYPEID_PLAYER &&
+                me->IsFriendlyTo(who) && me->IsWithinDistInMap(who, 25.0f)) {
+                // Random switch between 4 texts
                 Talk(SAY_HELP, who);
 
                 SayHelpTimer = 20000;
-                CanSayHelp = false;
+                CanSayHelp   = false;
             }
         }
 
         void SpellHit(Unit* Caster, SpellInfo const* Spell) override
         {
-            if (Spell->SpellFamilyFlags[2] & 0x080000000)
-            {
+            if (Spell->SpellFamilyFlags[2] & 0x080000000) {
                 me->RemoveUnitFlag(UNIT_FLAG_PLAYER_CONTROLLED);
                 me->SetStandState(UNIT_STAND_STATE_STAND);
 
@@ -121,32 +119,31 @@ public:
 
         void UpdateAI(uint32 diff) override
         {
-            if (SayThanksTimer)
-            {
-                if (SayThanksTimer <= diff)
-                {
+            if (SayThanksTimer) {
+                if (SayThanksTimer <= diff) {
                     me->RemoveAurasDueToSpell(SPELL_IRRIDATION);
 
-                    if (Player* player = ObjectAccessor::GetPlayer(*me, pCaster))
-                    {
+                    if (Player* player =
+                            ObjectAccessor::GetPlayer(*me, pCaster)) {
                         Talk(SAY_HEAL, player);
 
                         player->TalkedToCreature(me->GetEntry(), me->GetGUID());
                     }
 
                     me->GetMotionMaster()->Clear();
-                    me->GetMotionMaster()->MovePoint(0, -4115.053711f, -13754.831055f, 73.508949f);
+                    me->GetMotionMaster()->MovePoint(
+                        0, -4115.053711f, -13754.831055f, 73.508949f);
 
-                    RunAwayTimer = 10000;
+                    RunAwayTimer   = 10000;
                     SayThanksTimer = 0;
                 }
-                else SayThanksTimer -= diff;
+                else
+                    SayThanksTimer -= diff;
 
                 return;
             }
 
-            if (RunAwayTimer)
-            {
+            if (RunAwayTimer) {
                 if (RunAwayTimer <= diff)
                     me->DespawnOrUnsummon();
                 else
@@ -155,12 +152,12 @@ public:
                 return;
             }
 
-            if (SayHelpTimer <= diff)
-            {
-                CanSayHelp = true;
+            if (SayHelpTimer <= diff) {
+                CanSayHelp   = true;
                 SayHelpTimer = 20000;
             }
-            else SayHelpTimer -= diff;
+            else
+                SayHelpTimer -= diff;
         }
     };
 
@@ -174,36 +171,33 @@ public:
 ## npc_injured_draenei
 ######*/
 
-class npc_injured_draenei : public CreatureScript
-{
+class npc_injured_draenei : public CreatureScript {
 public:
-    npc_injured_draenei() : CreatureScript("npc_injured_draenei") { }
+    npc_injured_draenei() : CreatureScript("npc_injured_draenei") {}
 
-    struct npc_injured_draeneiAI : public ScriptedAI
-    {
-        npc_injured_draeneiAI(Creature* creature) : ScriptedAI(creature) { }
+    struct npc_injured_draeneiAI : public ScriptedAI {
+        npc_injured_draeneiAI(Creature* creature) : ScriptedAI(creature) {}
 
         void Reset() override
         {
             me->SetUnitFlag(UNIT_FLAG_IN_COMBAT);
             me->SetHealth(me->CountPctFromMaxHealth(15));
-            switch (urand(0, 1))
-            {
-                case 0:
-                    me->SetStandState(UNIT_STAND_STATE_SIT);
-                    break;
+            switch (urand(0, 1)) {
+            case 0:
+                me->SetStandState(UNIT_STAND_STATE_SIT);
+                break;
 
-                case 1:
-                    me->SetStandState(UNIT_STAND_STATE_SLEEP);
-                    break;
+            case 1:
+                me->SetStandState(UNIT_STAND_STATE_SLEEP);
+                break;
             }
         }
 
-        void JustEngagedWith(Unit* /*who*/) override { }
+        void JustEngagedWith(Unit* /*who*/) override {}
 
-        void MoveInLineOfSight(Unit* /*who*/) override { }
+        void MoveInLineOfSight(Unit* /*who*/) override {}
 
-        void UpdateAI(uint32 /*diff*/) override { }
+        void UpdateAI(uint32 /*diff*/) override {}
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -216,47 +210,37 @@ public:
 ## npc_magwin
 ######*/
 
-enum Magwin
-{
-    SAY_START                   = 0,
-    SAY_AGGRO                   = 1,
-    SAY_PROGRESS                = 2,
-    SAY_END1                    = 3,
-    SAY_END2                    = 4,
-    EMOTE_HUG                   = 5,
-    NPC_COWLEN                  = 17311,
-    SAY_COWLEN                  = 0,
-    EVENT_ACCEPT_QUEST          = 1,
-    EVENT_START_ESCORT          = 2,
-    EVENT_STAND                 = 3,
-    EVENT_TALK_END              = 4,
-    EVENT_COWLEN_TALK           = 5,
-    QUEST_A_CRY_FOR_HELP        = 9528
+enum Magwin {
+    SAY_START            = 0,
+    SAY_AGGRO            = 1,
+    SAY_PROGRESS         = 2,
+    SAY_END1             = 3,
+    SAY_END2             = 4,
+    EMOTE_HUG            = 5,
+    NPC_COWLEN           = 17311,
+    SAY_COWLEN           = 0,
+    EVENT_ACCEPT_QUEST   = 1,
+    EVENT_START_ESCORT   = 2,
+    EVENT_STAND          = 3,
+    EVENT_TALK_END       = 4,
+    EVENT_COWLEN_TALK    = 5,
+    QUEST_A_CRY_FOR_HELP = 9528
 };
 
-class npc_magwin : public CreatureScript
-{
+class npc_magwin : public CreatureScript {
 public:
-    npc_magwin() : CreatureScript("npc_magwin") { }
+    npc_magwin() : CreatureScript("npc_magwin") {}
 
-    struct npc_magwinAI : public npc_escortAI
-    {
-        npc_magwinAI(Creature* creature) : npc_escortAI(creature) { }
+    struct npc_magwinAI : public npc_escortAI {
+        npc_magwinAI(Creature* creature) : npc_escortAI(creature) {}
 
-        void Reset() override
-        {
-            _events.Reset();
-        }
+        void Reset() override { _events.Reset(); }
 
-        void JustEngagedWith(Unit* who) override
-        {
-            Talk(SAY_AGGRO, who);
-        }
+        void JustEngagedWith(Unit* who) override { Talk(SAY_AGGRO, who); }
 
         void sQuestAccept(Player* player, Quest const* quest) override
         {
-            if (quest->GetQuestId() == QUEST_A_CRY_FOR_HELP)
-            {
+            if (quest->GetQuestId() == QUEST_A_CRY_FOR_HELP) {
                 _player = player->GetGUID();
                 _events.ScheduleEvent(EVENT_ACCEPT_QUEST, 2s);
             }
@@ -264,25 +248,23 @@ public:
 
         void WaypointReached(uint32 waypointId) override
         {
-            if (Player* player = GetPlayerForEscort())
-            {
-                switch (waypointId)
-                {
-                    case 17:
-                        Talk(SAY_PROGRESS, player);
+            if (Player* player = GetPlayerForEscort()) {
+                switch (waypointId) {
+                case 17:
+                    Talk(SAY_PROGRESS, player);
+                    break;
+                case 28:
+                    player->GroupEventHappens(QUEST_A_CRY_FOR_HELP, me);
+                    _events.ScheduleEvent(EVENT_TALK_END, 2s);
+                    SetRun(true);
+                    break;
+                case 29:
+                    if (Creature* cowlen =
+                            me->FindNearestCreature(NPC_COWLEN, 50.0f, true)) {
+                        Talk(EMOTE_HUG, cowlen);
+                        Talk(SAY_END2, player);
                         break;
-                    case 28:
-                        player->GroupEventHappens(QUEST_A_CRY_FOR_HELP, me);
-                        _events.ScheduleEvent(EVENT_TALK_END, 2s);
-                        SetRun(true);
-                        break;
-                    case 29:
-                        if (Creature* cowlen = me->FindNearestCreature(NPC_COWLEN, 50.0f, true))
-                        {
-                            Talk(EMOTE_HUG, cowlen);
-                            Talk(SAY_END2, player);
-                            break;
-                        }
+                    }
                 }
             }
         }
@@ -290,47 +272,50 @@ public:
         void UpdateEscortAI(uint32 diff) override
         {
             _events.Update(diff);
-            if (uint32 eventId = _events.ExecuteEvent())
-            {
-                switch (eventId)
-                {
-                    case EVENT_ACCEPT_QUEST:
-                        if (Player* player = ObjectAccessor::GetPlayer(*me, _player))
-                        {
-                            Talk(SAY_START, player);
-                        }
-                        me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
-                        _events.ScheduleEvent(EVENT_START_ESCORT, 1s);
-                        break;
-                    case EVENT_START_ESCORT:
-                        if (Player* player = ObjectAccessor::GetPlayer(*me, _player))
-                        {
-                            npc_escortAI::Start(true, false, player->GetGUID());
-                        }
-                        _events.ScheduleEvent(EVENT_STAND, 2s);
-                        break;
-                    case EVENT_STAND: // Remove kneel standstate. Using a separate delayed event because it causes unwanted delay before starting waypoint movement.
-                        me->SetByteValue(UNIT_FIELD_BYTES_1, UNIT_BYTES_1_OFFSET_STAND_STATE, UNIT_STAND_STATE_STAND);
-                        break;
-                    case EVENT_TALK_END:
-                        if (Player* player = ObjectAccessor::GetPlayer(*me, _player))
-                        {
-                            Talk(SAY_END1, player);
-                        }
-                        _events.ScheduleEvent(EVENT_COWLEN_TALK, 2s);
-                        break;
-                    case EVENT_COWLEN_TALK:
-                        if (Creature* cowlen = me->FindNearestCreature(NPC_COWLEN, 50.0f, true))
-                        {
-                            cowlen->AI()->Talk(SAY_COWLEN);
-                        }
-                        break;
+            if (uint32 eventId = _events.ExecuteEvent()) {
+                switch (eventId) {
+                case EVENT_ACCEPT_QUEST:
+                    if (Player* player =
+                            ObjectAccessor::GetPlayer(*me, _player)) {
+                        Talk(SAY_START, player);
+                    }
+                    me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
+                    _events.ScheduleEvent(EVENT_START_ESCORT, 1s);
+                    break;
+                case EVENT_START_ESCORT:
+                    if (Player* player =
+                            ObjectAccessor::GetPlayer(*me, _player)) {
+                        npc_escortAI::Start(true, false, player->GetGUID());
+                    }
+                    _events.ScheduleEvent(EVENT_STAND, 2s);
+                    break;
+                case EVENT_STAND: // Remove kneel standstate. Using a separate
+                                  // delayed event because it causes unwanted
+                                  // delay before starting waypoint movement.
+                    me->SetByteValue(UNIT_FIELD_BYTES_1,
+                                     UNIT_BYTES_1_OFFSET_STAND_STATE,
+                                     UNIT_STAND_STATE_STAND);
+                    break;
+                case EVENT_TALK_END:
+                    if (Player* player =
+                            ObjectAccessor::GetPlayer(*me, _player)) {
+                        Talk(SAY_END1, player);
+                    }
+                    _events.ScheduleEvent(EVENT_COWLEN_TALK, 2s);
+                    break;
+                case EVENT_COWLEN_TALK:
+                    if (Creature* cowlen =
+                            me->FindNearestCreature(NPC_COWLEN, 50.0f, true)) {
+                        cowlen->AI()->Talk(SAY_COWLEN);
+                    }
+                    break;
                 }
             }
             npc_escortAI::UpdateEscortAI(diff);
         }
+
     private:
-        EventMap _events;
+        EventMap   _events;
         ObjectGuid _player;
     };
 
@@ -340,28 +325,26 @@ public:
     }
 };
 
-enum RavegerCage
-{
-    NPC_DEATH_RAVAGER       = 17556,
+enum RavegerCage {
+    NPC_DEATH_RAVAGER = 17556,
 
-    SPELL_REND              = 13443,
-    SPELL_ENRAGING_BITE     = 30736,
+    SPELL_REND          = 13443,
+    SPELL_ENRAGING_BITE = 30736,
 
-    QUEST_STRENGTH_ONE      = 9582
+    QUEST_STRENGTH_ONE = 9582
 };
 
-class go_ravager_cage : public GameObjectScript
-{
+class go_ravager_cage : public GameObjectScript {
 public:
-    go_ravager_cage() : GameObjectScript("go_ravager_cage") { }
+    go_ravager_cage() : GameObjectScript("go_ravager_cage") {}
 
     bool OnGossipHello(Player* player, GameObject* go) override
     {
         go->UseDoorOrButton();
-        if (player->GetQuestStatus(QUEST_STRENGTH_ONE) == QUEST_STATUS_INCOMPLETE)
-        {
-            if (Creature* ravager = go->FindNearestCreature(NPC_DEATH_RAVAGER, 5.0f, true))
-            {
+        if (player->GetQuestStatus(QUEST_STRENGTH_ONE) ==
+            QUEST_STATUS_INCOMPLETE) {
+            if (Creature* ravager =
+                    go->FindNearestCreature(NPC_DEATH_RAVAGER, 5.0f, true)) {
                 ravager->RemoveUnitFlag(UNIT_FLAG_NON_ATTACKABLE);
                 ravager->SetReactState(REACT_AGGRESSIVE);
                 ravager->AI()->AttackStart(player);
@@ -371,21 +354,19 @@ public:
     }
 };
 
-class npc_death_ravager : public CreatureScript
-{
+class npc_death_ravager : public CreatureScript {
 public:
-    npc_death_ravager() : CreatureScript("npc_death_ravager") { }
+    npc_death_ravager() : CreatureScript("npc_death_ravager") {}
 
-    struct npc_death_ravagerAI : public ScriptedAI
-    {
-        npc_death_ravagerAI(Creature* creature) : ScriptedAI(creature) { }
+    struct npc_death_ravagerAI : public ScriptedAI {
+        npc_death_ravagerAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint32 RendTimer;
         uint32 EnragingBiteTimer;
 
         void Reset() override
         {
-            RendTimer = 30000;
+            RendTimer         = 30000;
             EnragingBiteTimer = 20000;
 
             me->SetUnitFlag(UNIT_FLAG_NON_ATTACKABLE);
@@ -397,19 +378,19 @@ public:
             if (!UpdateVictim())
                 return;
 
-            if (RendTimer <= diff)
-            {
+            if (RendTimer <= diff) {
                 DoCastVictim(SPELL_REND);
                 RendTimer = 30000;
             }
-            else RendTimer -= diff;
+            else
+                RendTimer -= diff;
 
-            if (EnragingBiteTimer <= diff)
-            {
+            if (EnragingBiteTimer <= diff) {
                 DoCastVictim(SPELL_ENRAGING_BITE);
                 EnragingBiteTimer = 15000;
             }
-            else EnragingBiteTimer -= diff;
+            else
+                EnragingBiteTimer -= diff;
 
             DoMeleeAttackIfReady();
         }
@@ -425,31 +406,28 @@ public:
 ## Quest: The Prophecy of Akida
 ########*/
 
-enum BristlelimbCage
-{
-    QUEST_THE_PROPHECY_OF_AKIDA         = 9544,
-    NPC_STILLPINE_CAPITIVE              = 17375,
-    GO_BRISTELIMB_CAGE                  = 181714,
+enum BristlelimbCage {
+    QUEST_THE_PROPHECY_OF_AKIDA = 9544,
+    NPC_STILLPINE_CAPITIVE      = 17375,
+    GO_BRISTELIMB_CAGE          = 181714,
 
-    CAPITIVE_SAY                        = 0,
+    CAPITIVE_SAY = 0,
 
-    POINT_INIT                          = 1,
-    EVENT_DESPAWN                       = 1,
+    POINT_INIT    = 1,
+    EVENT_DESPAWN = 1,
 };
 
-class npc_stillpine_capitive : public CreatureScript
-{
+class npc_stillpine_capitive : public CreatureScript {
 public:
-    npc_stillpine_capitive() : CreatureScript("npc_stillpine_capitive") { }
+    npc_stillpine_capitive() : CreatureScript("npc_stillpine_capitive") {}
 
-    struct npc_stillpine_capitiveAI : public ScriptedAI
-    {
-        npc_stillpine_capitiveAI(Creature* creature) : ScriptedAI(creature) { }
+    struct npc_stillpine_capitiveAI : public ScriptedAI {
+        npc_stillpine_capitiveAI(Creature* creature) : ScriptedAI(creature) {}
 
         void Reset() override
         {
-            if (GameObject* cage = me->FindNearestGameObject(GO_BRISTELIMB_CAGE, 5.0f))
-            {
+            if (GameObject* cage =
+                    me->FindNearestGameObject(GO_BRISTELIMB_CAGE, 5.0f)) {
                 cage->SetLootState(GO_JUST_DEACTIVATED);
                 cage->SetGoState(GO_STATE_READY);
             }
@@ -460,8 +438,7 @@ public:
 
         void StartMoving(Player* owner)
         {
-            if (owner)
-            {
+            if (owner) {
                 Talk(CAPITIVE_SAY, owner);
                 _playerGUID = owner->GetGUID();
             }
@@ -494,8 +471,8 @@ public:
 
     private:
         ObjectGuid _playerGUID;
-        EventMap _events;
-        bool _movementComplete;
+        EventMap   _events;
+        bool       _movementComplete;
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -504,20 +481,21 @@ public:
     }
 };
 
-class go_bristlelimb_cage : public GameObjectScript
-{
+class go_bristlelimb_cage : public GameObjectScript {
 public:
-    go_bristlelimb_cage() : GameObjectScript("go_bristlelimb_cage") { }
+    go_bristlelimb_cage() : GameObjectScript("go_bristlelimb_cage") {}
 
     bool OnGossipHello(Player* player, GameObject* go) override
     {
         go->SetGoState(GO_STATE_READY);
-        if (player->GetQuestStatus(QUEST_THE_PROPHECY_OF_AKIDA) == QUEST_STATUS_INCOMPLETE)
-        {
-            if (Creature* capitive = go->FindNearestCreature(NPC_STILLPINE_CAPITIVE, 5.0f, true))
-            {
+        if (player->GetQuestStatus(QUEST_THE_PROPHECY_OF_AKIDA) ==
+            QUEST_STATUS_INCOMPLETE) {
+            if (Creature* capitive = go->FindNearestCreature(
+                    NPC_STILLPINE_CAPITIVE, 5.0f, true)) {
                 go->ResetDoorOrButton();
-                CAST_AI(npc_stillpine_capitive::npc_stillpine_capitiveAI, capitive->AI())->StartMoving(player);
+                CAST_AI(npc_stillpine_capitive::npc_stillpine_capitiveAI,
+                        capitive->AI())
+                    ->StartMoving(player);
                 return false;
             }
         }
@@ -525,43 +503,41 @@ public:
     }
 };
 
-enum NestlewoodOwlkin
-{
-    NPC_NESTLEWOOD_OWLKIN_ENTRY   = 16518,
-    NPC_INOCULATED_OWLKIN_ENTRY   = 16534,
+enum NestlewoodOwlkin {
+    NPC_NESTLEWOOD_OWLKIN_ENTRY = 16518,
+    NPC_INOCULATED_OWLKIN_ENTRY = 16534,
 
-    TALK_OWLKIN                   = 0
+    TALK_OWLKIN = 0
 };
 
-class spell_inoculate_nestlewood_owlkin : public AuraScript
-{
+class spell_inoculate_nestlewood_owlkin : public AuraScript {
 public:
     PrepareAuraScript(spell_inoculate_nestlewood_owlkin)
 
-    void HandleEffectApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+        void HandleEffectApply(AuraEffect const* /*aurEff*/,
+                               AuraEffectHandleModes /*mode*/)
     {
         if (Creature* owlkin = GetTarget()->ToCreature())
             if (owlkin->GetEntry() == NPC_NESTLEWOOD_OWLKIN_ENTRY)
                 owlkin->SetFacingToObject(GetCaster());
     }
 
-    void HandleEffectRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+    void HandleEffectRemove(AuraEffect const* /*aurEff*/,
+                            AuraEffectHandleModes /*mode*/)
     {
         if (GetTargetApplication()->GetRemoveMode() != AURA_REMOVE_BY_EXPIRE)
             return;
 
-        if (Creature* owlkin = GetTarget()->ToCreature())
-        {
-            if (owlkin->GetEntry() == NPC_NESTLEWOOD_OWLKIN_ENTRY)
-            {
+        if (Creature* owlkin = GetTarget()->ToCreature()) {
+            if (owlkin->GetEntry() == NPC_NESTLEWOOD_OWLKIN_ENTRY) {
                 Player* caster = GetCaster()->ToPlayer();
-                if (owlkin->UpdateEntry(NPC_INOCULATED_OWLKIN_ENTRY))
-                {
+                if (owlkin->UpdateEntry(NPC_INOCULATED_OWLKIN_ENTRY)) {
                     owlkin->AI()->Talk(TALK_OWLKIN);
                     owlkin->GetMotionMaster()->MoveRandom(15.0f);
                     owlkin->SetUnitFlag(UnitFlags(UNIT_FLAG_IMMUNE_TO_PC));
                     owlkin->DespawnOrUnsummon(15s, 0s);
-                    caster->RewardPlayerAndGroupAtEvent(NPC_INOCULATED_OWLKIN_ENTRY, caster);
+                    caster->RewardPlayerAndGroupAtEvent(
+                        NPC_INOCULATED_OWLKIN_ENTRY, caster);
                 }
             }
         }
@@ -569,8 +545,16 @@ public:
 
     void Register() override
     {
-        OnEffectApply += AuraEffectApplyFn(spell_inoculate_nestlewood_owlkin::HandleEffectApply, EFFECT_0, SPELL_AURA_PERIODIC_TRIGGER_SPELL, AURA_EFFECT_HANDLE_REAL);
-        AfterEffectRemove += AuraEffectRemoveFn(spell_inoculate_nestlewood_owlkin::HandleEffectRemove, EFFECT_0, SPELL_AURA_PERIODIC_TRIGGER_SPELL, AURA_EFFECT_HANDLE_REAL);
+        OnEffectApply += AuraEffectApplyFn(
+            spell_inoculate_nestlewood_owlkin::HandleEffectApply,
+            EFFECT_0,
+            SPELL_AURA_PERIODIC_TRIGGER_SPELL,
+            AURA_EFFECT_HANDLE_REAL);
+        AfterEffectRemove += AuraEffectRemoveFn(
+            spell_inoculate_nestlewood_owlkin::HandleEffectRemove,
+            EFFECT_0,
+            SPELL_AURA_PERIODIC_TRIGGER_SPELL,
+            AURA_EFFECT_HANDLE_REAL);
     }
 };
 
@@ -585,4 +569,3 @@ void AddSC_azuremyst_isle()
     new go_bristlelimb_cage();
     RegisterSpellScript(spell_inoculate_nestlewood_owlkin);
 }
-

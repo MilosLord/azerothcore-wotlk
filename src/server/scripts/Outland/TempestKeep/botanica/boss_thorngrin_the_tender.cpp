@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -19,49 +20,42 @@
 #include "ScriptedCreature.h"
 #include "the_botanica.h"
 
-enum Says
-{
-    SAY_AGGRO                   = 0,
-    SAY_20_PERCENT_HP           = 1,
-    SAY_KILL                    = 2,
-    SAY_CAST_SACRIFICE          = 3,
-    SAY_50_PERCENT_HP           = 4,
-    SAY_CAST_HELLFIRE           = 5,
-    SAY_DEATH                   = 6,
-    EMOTE_ENRAGE                = 7,
-    SAY_INTRO                   = 8
+enum Says {
+    SAY_AGGRO          = 0,
+    SAY_20_PERCENT_HP  = 1,
+    SAY_KILL           = 2,
+    SAY_CAST_SACRIFICE = 3,
+    SAY_50_PERCENT_HP  = 4,
+    SAY_CAST_HELLFIRE  = 5,
+    SAY_DEATH          = 6,
+    EMOTE_ENRAGE       = 7,
+    SAY_INTRO          = 8
 };
 
-enum Spells
-{
-    SPELL_SACRIFICE             = 34661,
-    SPELL_HELLFIRE              = 34659,
-    SPELL_ENRAGE                = 34670
+enum Spells {
+    SPELL_SACRIFICE = 34661,
+    SPELL_HELLFIRE  = 34659,
+    SPELL_ENRAGE    = 34670
 };
 
-struct boss_thorngrin_the_tender : public BossAI
-{
-    boss_thorngrin_the_tender(Creature* creature) : BossAI(creature, DATA_THORNGRIN_THE_TENDER)
+struct boss_thorngrin_the_tender : public BossAI {
+    boss_thorngrin_the_tender(Creature* creature)
+        : BossAI(creature, DATA_THORNGRIN_THE_TENDER)
     {
         me->m_SightDistance = 100.0f;
-        _intro = false;
+        _intro              = false;
     }
 
     void Reset() override
     {
         _Reset();
-        ScheduleHealthCheckEvent(20, [&]() {
-            Talk(SAY_20_PERCENT_HP);
-        });
-        ScheduleHealthCheckEvent(50, [&]() {
-            Talk(SAY_50_PERCENT_HP);
-        });
+        ScheduleHealthCheckEvent(20, [&]() { Talk(SAY_20_PERCENT_HP); });
+        ScheduleHealthCheckEvent(50, [&]() { Talk(SAY_50_PERCENT_HP); });
     }
 
     void MoveInLineOfSight(Unit* who) override
     {
-        if (!_intro && who->IsPlayer())
-        {
+        if (!_intro && who->IsPlayer()) {
             _intro = true;
             Talk(SAY_INTRO);
         }
@@ -73,31 +67,32 @@ struct boss_thorngrin_the_tender : public BossAI
         _JustEngagedWith();
         Talk(SAY_AGGRO);
 
-        scheduler.Schedule(6s, [this](TaskContext context)
-        {
-            if (DoCastRandomTarget(SPELL_SACRIFICE, 1) == SPELL_CAST_OK)
-            {
-                Talk(SAY_CAST_SACRIFICE);
-            }
-            context.Repeat(30s);
-        }).Schedule(18s, [this](TaskContext context)
-        {
-            if (roll_chance_i(50))
-                Talk(SAY_CAST_HELLFIRE);
-            DoCastAOE(SPELL_HELLFIRE);
-            context.Repeat(22s);
-        }).Schedule(15s, [this](TaskContext context)
-        {
-            Talk(EMOTE_ENRAGE);
-            DoCastSelf(SPELL_ENRAGE);
-            context.Repeat(30s);
-        });
+        scheduler
+            .Schedule(6s,
+                      [this](TaskContext context) {
+                          if (DoCastRandomTarget(SPELL_SACRIFICE, 1) ==
+                              SPELL_CAST_OK) {
+                              Talk(SAY_CAST_SACRIFICE);
+                          }
+                          context.Repeat(30s);
+                      })
+            .Schedule(18s,
+                      [this](TaskContext context) {
+                          if (roll_chance_i(50))
+                              Talk(SAY_CAST_HELLFIRE);
+                          DoCastAOE(SPELL_HELLFIRE);
+                          context.Repeat(22s);
+                      })
+            .Schedule(15s, [this](TaskContext context) {
+                Talk(EMOTE_ENRAGE);
+                DoCastSelf(SPELL_ENRAGE);
+                context.Repeat(30s);
+            });
     }
 
     void KilledUnit(Unit* victim) override
     {
-        if (victim->IsPlayer())
-        {
+        if (victim->IsPlayer()) {
             Talk(SAY_KILL);
         }
     }
@@ -108,8 +103,8 @@ struct boss_thorngrin_the_tender : public BossAI
         Talk(SAY_DEATH);
     }
 
-    private:
-        bool _intro;
+private:
+    bool _intro;
 };
 
 void AddSC_boss_thorngrin_the_tender()

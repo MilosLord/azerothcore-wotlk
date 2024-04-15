@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -25,88 +26,86 @@
 #include <iterator>
 #include <vector>
 
-namespace Acore::Impl
-{
-    struct CryptoGenericsImpl
+namespace Acore::Impl {
+struct CryptoGenericsImpl {
+    template <typename Cipher>
+    static typename Cipher::IV GenerateRandomIV()
     {
-        template <typename Cipher>
-        static typename Cipher::IV GenerateRandomIV()
-        {
-            typename Cipher::IV iv;
-            Acore::Crypto::GetRandomBytes(iv);
-            return iv;
-        }
+        typename Cipher::IV iv;
+        Acore::Crypto::GetRandomBytes(iv);
+        return iv;
+    }
 
-        template <typename Container>
-        static void AppendToBack(std::vector<uint8>& data, Container const& tail)
-        {
-            data.insert(data.end(), std::begin(tail), std::end(tail));
-        }
+    template <typename Container>
+    static void AppendToBack(std::vector<uint8>& data, Container const& tail)
+    {
+        data.insert(data.end(), std::begin(tail), std::end(tail));
+    }
 
-        template <typename Container>
-        static void SplitFromBack(std::vector<uint8>& data, Container& tail)
-        {
-            ASSERT(data.size() >= std::size(tail));
-            for (size_t i = 1, N = std::size(tail); i <= N; ++i)
-            {
-                tail[N - i] = data.back();
-                data.pop_back();
-            }
+    template <typename Container>
+    static void SplitFromBack(std::vector<uint8>& data, Container& tail)
+    {
+        ASSERT(data.size() >= std::size(tail));
+        for (size_t i = 1, N = std::size(tail); i <= N; ++i) {
+            tail[N - i] = data.back();
+            data.pop_back();
         }
-    };
+    }
+};
+} // namespace Acore::Impl
+
+namespace Acore::Crypto {
+template <typename Cipher>
+void AEEncryptWithRandomIV(std::vector<uint8>&         data,
+                           typename Cipher::Key const& key)
+{
+    using IV  = typename Cipher::IV;
+    using Tag = typename Cipher::Tag;
+    // select random IV
+    IV  iv = Acore::Impl::CryptoGenericsImpl::GenerateRandomIV<Cipher>();
+    Tag tag;
+
+    // encrypt data
+    Cipher cipher(true);
+    cipher.Init(key);
+    bool success = cipher.Process(iv, data.data(), data.size(), tag);
+    ASSERT(success);
+
+    // append trailing IV and tag
+    Acore::Impl::CryptoGenericsImpl::AppendToBack(data, iv);
+    Acore::Impl::CryptoGenericsImpl::AppendToBack(data, tag);
 }
 
-namespace Acore::Crypto
+template <typename Cipher>
+void AEEncryptWithRandomIV(std::vector<uint8>& data, BigNumber const& key)
 {
-    template <typename Cipher>
-    void AEEncryptWithRandomIV(std::vector<uint8>& data, typename Cipher::Key const& key)
-    {
-        using IV = typename Cipher::IV;
-        using Tag = typename Cipher::Tag;
-        // select random IV
-        IV iv = Acore::Impl::CryptoGenericsImpl::GenerateRandomIV<Cipher>();
-        Tag tag;
-
-        // encrypt data
-        Cipher cipher(true);
-        cipher.Init(key);
-        bool success = cipher.Process(iv, data.data(), data.size(), tag);
-        ASSERT(success);
-
-        // append trailing IV and tag
-        Acore::Impl::CryptoGenericsImpl::AppendToBack(data, iv);
-        Acore::Impl::CryptoGenericsImpl::AppendToBack(data, tag);
-    }
-
-    template <typename Cipher>
-    void AEEncryptWithRandomIV(std::vector<uint8>& data, BigNumber const& key)
-    {
-        AEEncryptWithRandomIV<Cipher>(data, key.ToByteArray<Cipher::KEY_SIZE_BYTES>());
-    }
-
-    template <typename Cipher>
-    bool AEDecrypt(std::vector<uint8>& data, typename Cipher::Key const& key)
-    {
-        using IV = typename Cipher::IV;
-        using Tag = typename Cipher::Tag;
-
-        // extract trailing IV and tag
-        IV iv;
-        Tag tag;
-        Acore::Impl::CryptoGenericsImpl::SplitFromBack(data, tag);
-        Acore::Impl::CryptoGenericsImpl::SplitFromBack(data, iv);
-
-        // decrypt data
-        Cipher cipher(false);
-        cipher.Init(key);
-        return cipher.Process(iv, data.data(), data.size(), tag);
-    }
-
-    template <typename Cipher>
-    bool AEDecrypt(std::vector<uint8>& data, BigNumber const& key)
-    {
-        return AEDecrypt<Cipher>(data, key.ToByteArray<Cipher::KEY_SIZE_BYTES>());
-    }
+    AEEncryptWithRandomIV<Cipher>(data,
+                                  key.ToByteArray<Cipher::KEY_SIZE_BYTES>());
 }
+
+template <typename Cipher>
+bool AEDecrypt(std::vector<uint8>& data, typename Cipher::Key const& key)
+{
+    using IV  = typename Cipher::IV;
+    using Tag = typename Cipher::Tag;
+
+    // extract trailing IV and tag
+    IV  iv;
+    Tag tag;
+    Acore::Impl::CryptoGenericsImpl::SplitFromBack(data, tag);
+    Acore::Impl::CryptoGenericsImpl::SplitFromBack(data, iv);
+
+    // decrypt data
+    Cipher cipher(false);
+    cipher.Init(key);
+    return cipher.Process(iv, data.data(), data.size(), tag);
+}
+
+template <typename Cipher>
+bool AEDecrypt(std::vector<uint8>& data, BigNumber const& key)
+{
+    return AEDecrypt<Cipher>(data, key.ToByteArray<Cipher::KEY_SIZE_BYTES>());
+}
+} // namespace Acore::Crypto
 
 #endif

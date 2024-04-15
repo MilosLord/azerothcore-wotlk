@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,10 +22,7 @@
 
 // StopMoving is needed to make unit stop if its last movement generator expires
 // But it should not be sent otherwise there are many redundent packets
-void IdleMovementGenerator::Initialize(Unit* owner)
-{
-    Reset(owner);
-}
+void IdleMovementGenerator::Initialize(Unit* owner) { Reset(owner); }
 
 void IdleMovementGenerator::Reset(Unit* owner)
 {
@@ -48,15 +46,15 @@ void RotateMovementGenerator::Initialize(Unit* owner)
 bool RotateMovementGenerator::Update(Unit* owner, uint32 diff)
 {
     float angle = owner->GetOrientation();
-    if (m_direction == ROTATE_DIRECTION_LEFT)
-    {
+    if (m_direction == ROTATE_DIRECTION_LEFT) {
         angle += (float)diff * static_cast<float>(M_PI * 2) / m_maxDuration;
-        while (angle >= static_cast<float>(M_PI * 2)) angle -= static_cast<float>(M_PI * 2);
+        while (angle >= static_cast<float>(M_PI * 2))
+            angle -= static_cast<float>(M_PI * 2);
     }
-    else
-    {
+    else {
         angle -= (float)diff * static_cast<float>(M_PI * 2) / m_maxDuration;
-        while (angle < 0) angle += static_cast<float>(M_PI * 2);
+        while (angle < 0)
+            angle += static_cast<float>(M_PI * 2);
     }
 
     owner->SetFacingTo(angle);
@@ -89,9 +87,9 @@ void DistractMovementGenerator::Finalize(Unit* owner)
 {
     owner->ClearUnitState(UNIT_STATE_DISTRACTED);
 
-    // If this is a creature, then return orientation to original position (for idle movement creatures)
-    if (owner->GetTypeId() == TYPEID_UNIT && owner->ToCreature())
-    {
+    // If this is a creature, then return orientation to original position (for
+    // idle movement creatures)
+    if (owner->GetTypeId() == TYPEID_UNIT && owner->ToCreature()) {
         float angle = owner->ToCreature()->GetHomePosition().GetOrientation();
         owner->SetFacingTo(angle);
     }

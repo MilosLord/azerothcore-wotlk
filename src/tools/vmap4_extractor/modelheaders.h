@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -25,12 +26,11 @@ typedef short int16;
 typedef unsigned int uint32;
 typedef int int32; */
 
-#pragma pack(push,1)
+#pragma pack(push, 1)
 
-struct ModelHeader
-{
-    char id[4];
-    uint8 version[4];
+struct ModelHeader {
+    char   id[4];
+    uint8  version[4];
     uint32 nameLength;
     uint32 nameOfs;
     uint32 type;
@@ -69,7 +69,7 @@ struct ModelHeader
     uint32 ofsTransLookup;
     uint32 nTexAnimLookup;
     uint32 ofsTexAnimLookup;
-    float floats[14];
+    float  floats[14];
     uint32 nBoundingTriangles;
     uint32 ofsBoundingTriangles;
     uint32 nBoundingVertices;

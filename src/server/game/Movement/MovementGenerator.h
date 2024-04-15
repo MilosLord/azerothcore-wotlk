@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -26,13 +27,12 @@
 
 class Unit;
 
-class MovementGenerator
-{
+class MovementGenerator {
 public:
     virtual ~MovementGenerator();
 
     virtual void Initialize(Unit*) = 0;
-    virtual void Finalize(Unit*) = 0;
+    virtual void Finalize(Unit*)   = 0;
 
     virtual void Reset(Unit*) = 0;
 
@@ -40,69 +40,72 @@ public:
 
     virtual MovementGeneratorType GetMovementGeneratorType() = 0;
 
-    virtual uint32 GetSplineId() const { return 0; }  // Xinef: Escort system
+    virtual uint32 GetSplineId() const { return 0; } // Xinef: Escort system
 
-    virtual void unitSpeedChanged() { }
+    virtual void unitSpeedChanged() {}
 
     // timer in ms
     virtual void Pause(uint32 /* timer = 0*/) {}
     // timer in ms
     virtual void Resume(uint32 /* overrideTimer = 0*/) {}
 
-    // used by Evade code for select point to evade with expected restart default movement
-    virtual bool GetResetPosition(float& /*x*/, float& /*y*/, float& /*z*/) { return false; }
+    // used by Evade code for select point to evade with expected restart
+    // default movement
+    virtual bool GetResetPosition(float& /*x*/, float& /*y*/, float& /*z*/)
+    {
+        return false;
+    }
 };
 
-template<class T, class D>
-class MovementGeneratorMedium : public MovementGenerator
-{
+template <class T, class D>
+class MovementGeneratorMedium : public MovementGenerator {
 public:
     void Initialize(Unit* u) override
     {
-        //u->AssertIsType<T>();
+        // u->AssertIsType<T>();
         (static_cast<D*>(this))->DoInitialize(static_cast<T*>(u));
     }
 
     void Finalize(Unit* u) override
     {
-        //u->AssertIsType<T>();
+        // u->AssertIsType<T>();
         (static_cast<D*>(this))->DoFinalize(static_cast<T*>(u));
     }
 
     void Reset(Unit* u) override
     {
-        //u->AssertIsType<T>();
+        // u->AssertIsType<T>();
         (static_cast<D*>(this))->DoReset(static_cast<T*>(u));
     }
 
     bool Update(Unit* u, uint32 time_diff) override
     {
-        //u->AssertIsType<T>();
+        // u->AssertIsType<T>();
         return (static_cast<D*>(this))->DoUpdate(static_cast<T*>(u), time_diff);
     }
 };
 
-typedef FactoryHolder<MovementGenerator, Unit, MovementGeneratorType> MovementGeneratorCreator;
+typedef FactoryHolder<MovementGenerator, Unit, MovementGeneratorType>
+    MovementGeneratorCreator;
 
-template<class Movement>
-struct MovementGeneratorFactory : public MovementGeneratorCreator
-{
-    MovementGeneratorFactory(MovementGeneratorType movementGeneratorType) : MovementGeneratorCreator(movementGeneratorType) { }
-
-    MovementGenerator* Create(Unit* /*object*/) const
+template <class Movement>
+struct MovementGeneratorFactory : public MovementGeneratorCreator {
+    MovementGeneratorFactory(MovementGeneratorType movementGeneratorType)
+        : MovementGeneratorCreator(movementGeneratorType)
     {
-        return new Movement();
     }
+
+    MovementGenerator* Create(Unit* /*object*/) const { return new Movement(); }
 };
 
-struct IdleMovementFactory : public MovementGeneratorCreator
-{
-    IdleMovementFactory() : MovementGeneratorCreator(IDLE_MOTION_TYPE) { }
+struct IdleMovementFactory : public MovementGeneratorCreator {
+    IdleMovementFactory() : MovementGeneratorCreator(IDLE_MOTION_TYPE) {}
 
     MovementGenerator* Create(Unit* object) const override;
 };
 
-typedef MovementGeneratorCreator::FactoryHolderRegistry MovementGeneratorRegistry;
+typedef MovementGeneratorCreator::FactoryHolderRegistry
+    MovementGeneratorRegistry;
 
 #define sMovementGeneratorRegistry MovementGeneratorRegistry::instance()
 

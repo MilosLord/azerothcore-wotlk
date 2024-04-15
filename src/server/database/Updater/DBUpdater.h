@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -26,19 +27,16 @@
 template <class T>
 class DatabaseWorkerPool;
 
-namespace boost
-{
-    namespace filesystem
-    {
-        class path;
-    }
+namespace boost {
+namespace filesystem {
+class path;
 }
+} // namespace boost
 
-class AC_DATABASE_API UpdateException : public std::exception
-{
+class AC_DATABASE_API UpdateException : public std::exception {
 public:
-    UpdateException(std::string const& msg) : _msg(msg) { }
-    ~UpdateException() throw() { }
+    UpdateException(std::string const& msg) : _msg(msg) {}
+    ~UpdateException() throw() {}
 
     char const* what() const throw() override { return _msg.c_str(); }
 
@@ -46,14 +44,9 @@ private:
     std::string const _msg;
 };
 
-enum BaseLocation
-{
-    LOCATION_REPOSITORY,
-    LOCATION_DOWNLOAD
-};
+enum BaseLocation { LOCATION_REPOSITORY, LOCATION_DOWNLOAD };
 
-class AC_DATABASE_API DBUpdaterUtil
-{
+class AC_DATABASE_API DBUpdaterUtil {
 public:
     static std::string GetCorrectedMySQLExecutable();
 
@@ -64,30 +57,38 @@ private:
 };
 
 template <class T>
-class AC_DATABASE_API DBUpdater
-{
+class AC_DATABASE_API DBUpdater {
 public:
     using Path = std::filesystem::path;
 
     static inline std::string GetConfigEntry();
     static inline std::string GetTableName();
-    static std::string GetBaseFilesDirectory();
-    static bool IsEnabled(uint32 const updateMask);
-    static BaseLocation GetBaseLocationType();
-    static bool Create(DatabaseWorkerPool<T>& pool);
-    static bool Update(DatabaseWorkerPool<T>& pool, std::string_view modulesList = {});
-    static bool Update(DatabaseWorkerPool<T>& pool, std::vector<std::string> const* setDirectories);
-    static bool Populate(DatabaseWorkerPool<T>& pool);
+    static std::string        GetBaseFilesDirectory();
+    static bool               IsEnabled(uint32 const updateMask);
+    static BaseLocation       GetBaseLocationType();
+    static bool               Create(DatabaseWorkerPool<T>& pool);
+    static bool               Update(DatabaseWorkerPool<T>& pool,
+                                     std::string_view       modulesList = {});
+    static bool               Update(DatabaseWorkerPool<T>&          pool,
+                                     std::vector<std::string> const* setDirectories);
+    static bool               Populate(DatabaseWorkerPool<T>& pool);
 
     // module
     static std::string GetDBModuleName();
 
 private:
-    static QueryResult Retrieve(DatabaseWorkerPool<T>& pool, std::string const& query);
+    static QueryResult Retrieve(DatabaseWorkerPool<T>& pool,
+                                std::string const&     query);
     static void Apply(DatabaseWorkerPool<T>& pool, std::string const& query);
     static void ApplyFile(DatabaseWorkerPool<T>& pool, Path const& path);
-    static void ApplyFile(DatabaseWorkerPool<T>& pool, std::string const& host, std::string const& user,
-                          std::string const& password, std::string const& port_or_socket, std::string const& database, std::string const& ssl, Path const& path);
+    static void ApplyFile(DatabaseWorkerPool<T>& pool,
+                          std::string const&     host,
+                          std::string const&     user,
+                          std::string const&     password,
+                          std::string const&     port_or_socket,
+                          std::string const&     database,
+                          std::string const&     ssl,
+                          Path const&            path);
 };
 
 #endif // DBUpdater_h__

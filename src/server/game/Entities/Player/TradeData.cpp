@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -18,10 +19,7 @@
 #include "Player.h"
 #include "WorldSession.h"
 
-TradeData* TradeData::GetTraderData() const
-{
-    return m_trader->GetTradeData();
-}
+TradeData* TradeData::GetTraderData() const { return m_trader->GetTradeData(); }
 
 Item* TradeData::GetItem(TradeSlots slot) const
 {
@@ -80,14 +78,14 @@ void TradeData::SetSpell(uint32 spell_id, Item* castItem /*= nullptr*/)
     if (m_spell == spell_id && m_spellCastItem == itemGuid)
         return;
 
-    m_spell = spell_id;
+    m_spell         = spell_id;
     m_spellCastItem = itemGuid;
 
     SetAccepted(false);
     GetTraderData()->SetAccepted(false);
 
-    Update(true);                                           // send spell info to item owner
-    Update(false);                                          // send spell info to caster self
+    Update(true);  // send spell info to item owner
+    Update(false); // send spell info to caster self
 }
 
 void TradeData::SetMoney(uint32 money)
@@ -95,8 +93,7 @@ void TradeData::SetMoney(uint32 money)
     if (m_money == money)
         return;
 
-    if (!m_player->HasEnoughMoney(money))
-    {
+    if (!m_player->HasEnoughMoney(money)) {
         m_player->GetSession()->SendTradeStatus(TRADE_STATUS_BUSY);
         return;
     }
@@ -112,17 +109,18 @@ void TradeData::SetMoney(uint32 money)
 void TradeData::Update(bool forTarget /*= true*/)
 {
     if (forTarget)
-        m_trader->GetSession()->SendUpdateTrade(true);      // player state for trader
+        m_trader->GetSession()->SendUpdateTrade(
+            true); // player state for trader
     else
-        m_player->GetSession()->SendUpdateTrade(false);     // player state for player
+        m_player->GetSession()->SendUpdateTrade(
+            false); // player state for player
 }
 
 void TradeData::SetAccepted(bool state, bool crosssend /*= false*/)
 {
     m_accepted = state;
 
-    if (!state)
-    {
+    if (!state) {
         if (crosssend)
             m_trader->GetSession()->SendTradeStatus(TRADE_STATUS_BACK_TO_TRADE);
         else

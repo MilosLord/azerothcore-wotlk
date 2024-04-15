@@ -22,9 +22,9 @@
 #define _my_attribute_h
 
 #if defined(__GNUC__)
-# ifndef GCC_VERSION
-#  define GCC_VERSION (__GNUC__ * 1000 + __GNUC_MINOR__)
-# endif
+#ifndef GCC_VERSION
+#define GCC_VERSION (__GNUC__ * 1000 + __GNUC_MINOR__)
+#endif
 #endif
 
 /*
@@ -34,13 +34,13 @@
   compilation warnings.
 */
 #ifndef __attribute__
-# if !defined(__GNUC__)
-#  define __attribute__(A)
-# elif GCC_VERSION < 2008
-#  define __attribute__(A)
-# elif defined(__cplusplus) && GCC_VERSION < 3004
-#  define __attribute__(A)
-# endif
+#if !defined(__GNUC__)
+#define __attribute__(A)
+#elif GCC_VERSION < 2008
+#define __attribute__(A)
+#elif defined(__cplusplus) && GCC_VERSION < 3004
+#define __attribute__(A)
+#endif
 #endif
 
 /*
@@ -49,7 +49,7 @@
   just a convenience macro.
 */
 #ifndef ATTRIBUTE_FORMAT
-# define ATTRIBUTE_FORMAT(style, m, n) __attribute__((format(style, m, n)))
+#define ATTRIBUTE_FORMAT(style, m, n) __attribute__((format(style, m, n)))
 #endif
 
 /*
@@ -58,12 +58,11 @@
    until  gcc 3.1
 */
 #ifndef ATTRIBUTE_FORMAT_FPTR
-# if (GCC_VERSION >= 3001)
-#  define ATTRIBUTE_FORMAT_FPTR(style, m, n) ATTRIBUTE_FORMAT(style, m, n)
-# else
-#  define ATTRIBUTE_FORMAT_FPTR(style, m, n)
-# endif /* GNUC >= 3.1 */
+#if (GCC_VERSION >= 3001)
+#define ATTRIBUTE_FORMAT_FPTR(style, m, n) ATTRIBUTE_FORMAT(style, m, n)
+#else
+#define ATTRIBUTE_FORMAT_FPTR(style, m, n)
+#endif /* GNUC >= 3.1 */
 #endif
-
 
 #endif

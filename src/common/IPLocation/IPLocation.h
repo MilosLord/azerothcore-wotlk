@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -19,28 +20,32 @@
 #include <string>
 #include <vector>
 
-struct IpLocationRecord
-{
-    IpLocationRecord() :
-        IpFrom(0), IpTo(0) { }
-    IpLocationRecord(uint32 ipFrom, uint32 ipTo, std::string countryCode, std::string countryName) :
-        IpFrom(ipFrom), IpTo(ipTo), CountryCode(std::move(countryCode)), CountryName(std::move(countryName)) { }
+struct IpLocationRecord {
+    IpLocationRecord() : IpFrom(0), IpTo(0) {}
+    IpLocationRecord(uint32      ipFrom,
+                     uint32      ipTo,
+                     std::string countryCode,
+                     std::string countryName)
+        : IpFrom(ipFrom), IpTo(ipTo), CountryCode(std::move(countryCode)),
+          CountryName(std::move(countryName))
+    {
+    }
 
-    uint32 IpFrom;
-    uint32 IpTo;
+    uint32      IpFrom;
+    uint32      IpTo;
     std::string CountryCode;
     std::string CountryName;
 };
 
-class AC_COMMON_API IpLocationStore
-{
+class AC_COMMON_API IpLocationStore {
 public:
     IpLocationStore();
     ~IpLocationStore();
     static IpLocationStore* instance();
 
     void Load();
-    IpLocationRecord const* GetLocationRecord(std::string const& ipAddress) const;
+    IpLocationRecord const*
+    GetLocationRecord(std::string const& ipAddress) const;
 
 private:
     std::vector<IpLocationRecord> _ipLocationStore;

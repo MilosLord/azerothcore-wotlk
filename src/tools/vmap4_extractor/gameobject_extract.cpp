@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -28,14 +29,14 @@ bool ExtractSingleModel(std::string& fname)
         return false;
 
     std::string extension = fname.substr(fname.length() - 4, 4);
-    if (extension == ".mdx" || extension == ".MDX" || extension == ".mdl" || extension == ".MDL")
-    {
+    if (extension == ".mdx" || extension == ".MDX" || extension == ".mdl" ||
+        extension == ".MDL") {
         // replace .mdx -> .m2
         fname.erase(fname.length() - 2, 2);
         fname.append("2");
     }
-    // >= 3.1.0 ADT MMDX section store filename.m2 filenames for corresponded .m2 file
-    // nothing do
+    // >= 3.1.0 ADT MMDX section store filename.m2 filenames for corresponded
+    // .m2 file nothing do
 
     std::string originalName = fname;
 
@@ -61,8 +62,7 @@ void ExtractGameobjectModels()
 {
     printf("Extracting GameObject models...");
     DBCFile dbc("DBFilesClient\\GameObjectDisplayInfo.dbc");
-    if (!dbc.open())
-    {
+    if (!dbc.open()) {
         printf("Fatal error: Invalid GameObjectDisplayInfo.dbc file format!\n");
         exit(1);
     }
@@ -72,17 +72,15 @@ void ExtractGameobjectModels()
     std::string path;
 
     std::string modelListPath = basepath + "temp_gameobject_models";
-    FILE* model_list = fopen(modelListPath.c_str(), "wb");
-    if (!model_list)
-    {
+    FILE*       model_list    = fopen(modelListPath.c_str(), "wb");
+    if (!model_list) {
         printf("Fatal error: Could not open file %s\n", modelListPath.c_str());
         return;
     }
 
     fwrite(VMAP::RAW_VMAP_MAGIC, 1, 8, model_list);
 
-    for (const auto & it : dbc)
-    {
+    for (const auto& it : dbc) {
         path = it.getString(1);
 
         if (path.length() < 4)
@@ -98,26 +96,23 @@ void ExtractGameobjectModels()
 
         strToLower(ch_ext);
 
-        bool result = false;
-        uint8 isWmo = 0;
-        if (!strcmp(ch_ext, ".wmo"))
-        {
-            isWmo = 1;
+        bool  result = false;
+        uint8 isWmo  = 0;
+        if (!strcmp(ch_ext, ".wmo")) {
+            isWmo  = 1;
             result = ExtractSingleWmo(path);
         }
-        else if (!strcmp(ch_ext, ".mdl"))
-        {
+        else if (!strcmp(ch_ext, ".mdl")) {
             /// @todo: extract .mdl files, if needed
             continue;
         }
-        else //if (!strcmp(ch_ext, ".mdx") || !strcmp(ch_ext, ".m2"))
+        else // if (!strcmp(ch_ext, ".mdx") || !strcmp(ch_ext, ".m2"))
         {
             result = ExtractSingleModel(path);
         }
 
-        if (result)
-        {
-            uint32 displayId = it.getUInt(0);
+        if (result) {
+            uint32 displayId   = it.getUInt(0);
             uint32 path_length = strlen(name);
             fwrite(&displayId, sizeof(uint32), 1, model_list);
             fwrite(&isWmo, sizeof(uint8), 1, model_list);

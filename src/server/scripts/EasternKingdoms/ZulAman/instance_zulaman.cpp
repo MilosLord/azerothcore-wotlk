@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -28,54 +29,40 @@ EndScriptData */
 #include "TemporarySummon.h"
 #include "zulaman.h"
 
-enum Misc
-{
-    MAX_ENCOUNTER                  = 7,
-    RAND_VENDOR                    = 2,
-    WORLDSTATE_SHOW_TIMER          = 3104,
-    WORLDSTATE_TIME_TO_SACRIFICE   = 3106
+enum Misc {
+    MAX_ENCOUNTER                = 7,
+    RAND_VENDOR                  = 2,
+    WORLDSTATE_SHOW_TIMER        = 3104,
+    WORLDSTATE_TIME_TO_SACRIFICE = 3106
 };
 
 // Chests spawn at bear/eagle/dragonhawk/lynx bosses
-// The loots depend on how many bosses have been killed, but not the entries of the chests
-// But we cannot add loots to gameobject, so we have to use the fixed loot_template
-struct SHostageInfo
-{
+// The loots depend on how many bosses have been killed, but not the entries of
+// the chests But we cannot add loots to gameobject, so we have to use the fixed
+// loot_template
+struct SHostageInfo {
     uint32 npc, go; // FIXME go Not used
-    float x, y, z, o;
+    float  x, y, z, o;
 };
 
-static SHostageInfo HostageInfo[] =
-{
+static SHostageInfo HostageInfo[] = {
     {23790, 186648, -57, 1343, 40.77f, 3.2f}, // bear
     {23999, 187021, 400, 1414, 74.36f, 3.3f}, // eagle
     {24001, 186672, -35, 1134, 18.71f, 1.9f}, // dragonhawk
-    {24024, 186667, 413, 1117,  6.32f, 3.1f}  // lynx
+    {24024, 186667, 413, 1117, 6.32f, 3.1f}   // lynx
 };
 
 Position const HarrisonJonesLoc = {120.687f, 1674.0f, 42.0217f, 1.59044f};
 
-ObjectData const creatureData[] =
-{
-    { NPC_SPIRIT_LYNX, DATA_SPIRIT_LYNX },
-    { 0,               0                }
-};
+ObjectData const creatureData[] = {{NPC_SPIRIT_LYNX, DATA_SPIRIT_LYNX}, {0, 0}};
 
-ObjectData const gameObjectData[] =
-{
-    { 0,               0                }
-};
+ObjectData const gameObjectData[] = {{0, 0}};
 
-class instance_zulaman : public InstanceMapScript
-{
+class instance_zulaman : public InstanceMapScript {
 public:
-    instance_zulaman()
-        : InstanceMapScript("instance_zulaman", 568)
-    {
-    }
+    instance_zulaman() : InstanceMapScript("instance_zulaman", 568) {}
 
-    struct instance_zulaman_InstanceMapScript : public InstanceScript
-    {
+    struct instance_zulaman_InstanceMapScript : public InstanceScript {
         instance_zulaman_InstanceMapScript(Map* map) : InstanceScript(map) {}
 
         ObjectGuid HarkorsSatchelGUID;
@@ -106,9 +93,9 @@ public:
             LoadObjectData(creatureData, gameObjectData);
             memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
 
-            QuestTimer = 0;
+            QuestTimer  = 0;
             QuestMinute = 0;
-            BossKilled = 0;
+            BossKilled  = 0;
             ChestLooted = 0;
 
             for (uint8 i = 0; i < RAND_VENDOR; ++i)
@@ -134,62 +121,60 @@ public:
 
         void OnCreatureCreate(Creature* creature) override
         {
-            switch (creature->GetEntry())
-            {
-                case NPC_HARRISON_JONES:
-                    HarrisonJonesGUID = creature->GetGUID();
-                    break;
-                case NPC_JANALAI:
-                case NPC_ZULJIN:
-                case NPC_HEXLORD:
-                case NPC_HALAZZI:
-                case NPC_NALORAKK:
-                default:
-                    break;
+            switch (creature->GetEntry()) {
+            case NPC_HARRISON_JONES:
+                HarrisonJonesGUID = creature->GetGUID();
+                break;
+            case NPC_JANALAI:
+            case NPC_ZULJIN:
+            case NPC_HEXLORD:
+            case NPC_HALAZZI:
+            case NPC_NALORAKK:
+            default:
+                break;
             }
             InstanceScript::OnCreatureCreate(creature);
         }
 
         void OnGameObjectCreate(GameObject* go) override
         {
-            switch (go->GetEntry())
-            {
-                case GO_DOOR_HALAZZI:
-                    HalazziDoorGUID = go->GetGUID();
-                    break;
-                case GO_GATE_ZULJIN:
-                    ZulJinGateGUID = go->GetGUID();
-                    break;
-                case GO_GATE_HEXLORD:
-                    HexLordGateGUID = go->GetGUID();
-                    break;
-                case GO_MASSIVE_GATE:
-                    MassiveGateGUID = go->GetGUID();
-                    break;
-                case GO_DOOR_AKILZON:
-                    AkilzonDoorGUID = go->GetGUID();
-                    break;
-                case GO_DOOR_ZULJIN:
-                    ZulJinDoorGUID = go->GetGUID();
-                    break;
+            switch (go->GetEntry()) {
+            case GO_DOOR_HALAZZI:
+                HalazziDoorGUID = go->GetGUID();
+                break;
+            case GO_GATE_ZULJIN:
+                ZulJinGateGUID = go->GetGUID();
+                break;
+            case GO_GATE_HEXLORD:
+                HexLordGateGUID = go->GetGUID();
+                break;
+            case GO_MASSIVE_GATE:
+                MassiveGateGUID = go->GetGUID();
+                break;
+            case GO_DOOR_AKILZON:
+                AkilzonDoorGUID = go->GetGUID();
+                break;
+            case GO_DOOR_ZULJIN:
+                ZulJinDoorGUID = go->GetGUID();
+                break;
 
-                case GO_HARKORS_SATCHEL:
-                    HarkorsSatchelGUID = go->GetGUID();
-                    break;
-                case GO_TANZARS_TRUNK:
-                    TanzarsTrunkGUID = go->GetGUID();
-                    break;
-                case GO_ASHLIS_BAG:
-                    AshlisBagGUID = go->GetGUID();
-                    break;
-                case GO_KRAZS_PACKAGE:
-                    KrazsPackageGUID = go->GetGUID();
-                    break;
-                case GO_STRANGE_GONG:
-                    StrangeGongGUID = go->GetGUID();
-                    break;
-                default:
-                    break;
+            case GO_HARKORS_SATCHEL:
+                HarkorsSatchelGUID = go->GetGUID();
+                break;
+            case GO_TANZARS_TRUNK:
+                TanzarsTrunkGUID = go->GetGUID();
+                break;
+            case GO_ASHLIS_BAG:
+                AshlisBagGUID = go->GetGUID();
+                break;
+            case GO_KRAZS_PACKAGE:
+                KrazsPackageGUID = go->GetGUID();
+                break;
+            case GO_STRANGE_GONG:
+                StrangeGongGUID = go->GetGUID();
+                break;
+            default:
+                break;
             }
             CheckInstanceStatus();
         }
@@ -204,10 +189,15 @@ public:
                 return;
 
             Map::PlayerList::const_iterator i = PlayerList.begin();
-            if (Player* i_pl = i->GetSource())
-            {
-                if (Unit* Hostage = i_pl->SummonCreature(HostageInfo[num].npc, HostageInfo[num].x, HostageInfo[num].y, HostageInfo[num].z, HostageInfo[num].o, TEMPSUMMON_DEAD_DESPAWN, 0))
-                {
+            if (Player* i_pl = i->GetSource()) {
+                if (Unit* Hostage =
+                        i_pl->SummonCreature(HostageInfo[num].npc,
+                                             HostageInfo[num].x,
+                                             HostageInfo[num].y,
+                                             HostageInfo[num].z,
+                                             HostageInfo[num].o,
+                                             TEMPSUMMON_DEAD_DESPAWN,
+                                             0)) {
                     Hostage->SetUnitFlag(UNIT_FLAG_NON_ATTACKABLE);
                     Hostage->SetNpcFlag(UNIT_NPC_FLAG_GOSSIP);
                 }
@@ -228,7 +218,8 @@ public:
             OUT_SAVE_INST_DATA;
 
             std::ostringstream ss;
-            ss << "S " << BossKilled << ' ' << ChestLooted << ' ' << QuestMinute;
+            ss << "S " << BossKilled << ' ' << ChestLooted << ' '
+               << QuestMinute;
 
             OUT_SAVE_INST_DATA_COMPLETE;
             return ss.str();
@@ -240,102 +231,96 @@ public:
                 return;
 
             std::istringstream ss(load);
-            char dataHead; // S
-            uint16 data1, data2, data3;
+            char               dataHead; // S
+            uint16             data1, data2, data3;
             ss >> dataHead >> data1 >> data2 >> data3;
 
-            if (dataHead == 'S')
-            {
-                BossKilled = data1;
+            if (dataHead == 'S') {
+                BossKilled  = data1;
                 ChestLooted = data2;
                 QuestMinute = data3;
             }
-            else
-            {
+            else {
                 LOG_ERROR("misc", "Zul'aman: corrupted save data.");
             }
         }
 
         void SetData(uint32 type, uint32 data) override
         {
-            switch (type)
-            {
-                case DATA_GONGEVENT:
-                    m_auiEncounter[DATA_GONGEVENT] = data;
-                    if (data == IN_PROGRESS)
-                        SaveToDB();
-                    else if (data == DONE)
-                        QuestMinute = 21;
-                    break;
-                case DATA_NALORAKKEVENT:
-                    m_auiEncounter[DATA_NALORAKKEVENT] = data;
-                    if (data == DONE)
-                    {
-                        if (QuestMinute)
-                        {
-                            QuestMinute += 15;
-                            DoUpdateWorldState(WORLDSTATE_TIME_TO_SACRIFICE, QuestMinute);
-                        }
-                        SummonHostage(0);
-                        SaveToDB();
+            switch (type) {
+            case DATA_GONGEVENT:
+                m_auiEncounter[DATA_GONGEVENT] = data;
+                if (data == IN_PROGRESS)
+                    SaveToDB();
+                else if (data == DONE)
+                    QuestMinute = 21;
+                break;
+            case DATA_NALORAKKEVENT:
+                m_auiEncounter[DATA_NALORAKKEVENT] = data;
+                if (data == DONE) {
+                    if (QuestMinute) {
+                        QuestMinute += 15;
+                        DoUpdateWorldState(WORLDSTATE_TIME_TO_SACRIFICE,
+                                           QuestMinute);
                     }
-                    break;
-                case DATA_AKILZONEVENT:
-                    m_auiEncounter[DATA_AKILZONEVENT] = data;
-                    HandleGameObject(AkilzonDoorGUID, data != IN_PROGRESS);
-                    if (data == DONE)
-                    {
-                        if (QuestMinute)
-                        {
-                            QuestMinute += 10;
-                            DoUpdateWorldState(WORLDSTATE_TIME_TO_SACRIFICE, QuestMinute);
-                        }
-                        SummonHostage(1);
-                        SaveToDB();
+                    SummonHostage(0);
+                    SaveToDB();
+                }
+                break;
+            case DATA_AKILZONEVENT:
+                m_auiEncounter[DATA_AKILZONEVENT] = data;
+                HandleGameObject(AkilzonDoorGUID, data != IN_PROGRESS);
+                if (data == DONE) {
+                    if (QuestMinute) {
+                        QuestMinute += 10;
+                        DoUpdateWorldState(WORLDSTATE_TIME_TO_SACRIFICE,
+                                           QuestMinute);
                     }
-                    break;
-                case DATA_JANALAIEVENT:
-                    m_auiEncounter[DATA_JANALAIEVENT] = data;
-                    if (data == DONE)
-                        SummonHostage(2);
+                    SummonHostage(1);
                     SaveToDB();
-                    break;
-                case DATA_HALAZZIEVENT:
-                    m_auiEncounter[DATA_HALAZZIEVENT] = data;
-                    HandleGameObject(HalazziDoorGUID, data != IN_PROGRESS);
-                    if (data == DONE) SummonHostage(3);
-                    SaveToDB();
-                    break;
-                case DATA_HEXLORDEVENT:
-                    m_auiEncounter[DATA_HEXLORDEVENT] = data;
-                    if (data == IN_PROGRESS)
-                        HandleGameObject(HexLordGateGUID, false);
-                    else if (data == NOT_STARTED)
-                        CheckInstanceStatus();
-                    SaveToDB();
-                    break;
-                case DATA_ZULJINEVENT:
-                    m_auiEncounter[DATA_ZULJINEVENT] = data;
-                    HandleGameObject(ZulJinDoorGUID, data != IN_PROGRESS);
-                    SaveToDB();
-                    break;
-                case DATA_CHESTLOOTED:
-                    ++ChestLooted;
-                    SaveToDB();
-                    break;
-                case TYPE_RAND_VENDOR_1:
-                    RandVendor[0] = data;
-                    break;
-                case TYPE_RAND_VENDOR_2:
-                    RandVendor[1] = data;
-                    break;
+                }
+                break;
+            case DATA_JANALAIEVENT:
+                m_auiEncounter[DATA_JANALAIEVENT] = data;
+                if (data == DONE)
+                    SummonHostage(2);
+                SaveToDB();
+                break;
+            case DATA_HALAZZIEVENT:
+                m_auiEncounter[DATA_HALAZZIEVENT] = data;
+                HandleGameObject(HalazziDoorGUID, data != IN_PROGRESS);
+                if (data == DONE)
+                    SummonHostage(3);
+                SaveToDB();
+                break;
+            case DATA_HEXLORDEVENT:
+                m_auiEncounter[DATA_HEXLORDEVENT] = data;
+                if (data == IN_PROGRESS)
+                    HandleGameObject(HexLordGateGUID, false);
+                else if (data == NOT_STARTED)
+                    CheckInstanceStatus();
+                SaveToDB();
+                break;
+            case DATA_ZULJINEVENT:
+                m_auiEncounter[DATA_ZULJINEVENT] = data;
+                HandleGameObject(ZulJinDoorGUID, data != IN_PROGRESS);
+                SaveToDB();
+                break;
+            case DATA_CHESTLOOTED:
+                ++ChestLooted;
+                SaveToDB();
+                break;
+            case TYPE_RAND_VENDOR_1:
+                RandVendor[0] = data;
+                break;
+            case TYPE_RAND_VENDOR_2:
+                RandVendor[1] = data;
+                break;
             }
 
-            if (data == DONE)
-            {
+            if (data == DONE) {
                 ++BossKilled;
-                if (QuestMinute && BossKilled >= DATA_HALAZZIEVENT)
-                {
+                if (QuestMinute && BossKilled >= DATA_HALAZZIEVENT) {
                     QuestMinute = 0;
                     DoUpdateWorldState(WORLDSTATE_SHOW_TIMER, 0);
                 }
@@ -346,48 +331,46 @@ public:
 
         uint32 GetData(uint32 type) const override
         {
-            switch (type)
-            {
-                case DATA_GONGEVENT:
-                    return m_auiEncounter[DATA_GONGEVENT];
-                case DATA_NALORAKKEVENT:
-                    return m_auiEncounter[DATA_NALORAKKEVENT];
-                case DATA_AKILZONEVENT:
-                    return m_auiEncounter[DATA_AKILZONEVENT];
-                case DATA_JANALAIEVENT:
-                    return m_auiEncounter[DATA_JANALAIEVENT];
-                case DATA_HALAZZIEVENT:
-                    return m_auiEncounter[DATA_HALAZZIEVENT];
-                case DATA_HEXLORDEVENT:
-                    return m_auiEncounter[DATA_HEXLORDEVENT];
-                case DATA_ZULJINEVENT:
-                    return m_auiEncounter[DATA_ZULJINEVENT];
-                case DATA_CHESTLOOTED:
-                    return ChestLooted;
-                case TYPE_RAND_VENDOR_1:
-                    return RandVendor[0];
-                case TYPE_RAND_VENDOR_2:
-                    return RandVendor[1];
-                default:
-                    return 0;
+            switch (type) {
+            case DATA_GONGEVENT:
+                return m_auiEncounter[DATA_GONGEVENT];
+            case DATA_NALORAKKEVENT:
+                return m_auiEncounter[DATA_NALORAKKEVENT];
+            case DATA_AKILZONEVENT:
+                return m_auiEncounter[DATA_AKILZONEVENT];
+            case DATA_JANALAIEVENT:
+                return m_auiEncounter[DATA_JANALAIEVENT];
+            case DATA_HALAZZIEVENT:
+                return m_auiEncounter[DATA_HALAZZIEVENT];
+            case DATA_HEXLORDEVENT:
+                return m_auiEncounter[DATA_HEXLORDEVENT];
+            case DATA_ZULJINEVENT:
+                return m_auiEncounter[DATA_ZULJINEVENT];
+            case DATA_CHESTLOOTED:
+                return ChestLooted;
+            case TYPE_RAND_VENDOR_1:
+                return RandVendor[0];
+            case TYPE_RAND_VENDOR_2:
+                return RandVendor[1];
+            default:
+                return 0;
             }
         }
 
         void Update(uint32 diff) override
         {
-            if (QuestMinute)
-            {
-                if (QuestTimer <= diff)
-                {
+            if (QuestMinute) {
+                if (QuestTimer <= diff) {
                     QuestMinute--;
                     SaveToDB();
                     QuestTimer += 60000;
-                    if (QuestMinute)
-                    {
+                    if (QuestMinute) {
                         DoUpdateWorldState(WORLDSTATE_SHOW_TIMER, 1);
-                        DoUpdateWorldState(WORLDSTATE_TIME_TO_SACRIFICE, QuestMinute);
+                        DoUpdateWorldState(WORLDSTATE_TIME_TO_SACRIFICE,
+                                           QuestMinute);
                     }
-                    else DoUpdateWorldState(WORLDSTATE_SHOW_TIMER, 0);
+                    else
+                        DoUpdateWorldState(WORLDSTATE_SHOW_TIMER, 0);
                 }
                 QuestTimer -= diff;
             }
@@ -395,12 +378,11 @@ public:
 
         ObjectGuid GetGuidData(uint32 type) const override
         {
-            switch (type)
-            {
-                case GO_STRANGE_GONG:
-                    return StrangeGongGUID;
-                case GO_MASSIVE_GATE:
-                    return MassiveGateGUID;
+            switch (type) {
+            case GO_STRANGE_GONG:
+                return StrangeGongGUID;
+            case GO_MASSIVE_GATE:
+                return MassiveGateGUID;
             }
 
             return ObjectGuid::Empty;
@@ -413,7 +395,4 @@ public:
     }
 };
 
-void AddSC_instance_zulaman()
-{
-    new instance_zulaman();
-}
+void AddSC_instance_zulaman() { new instance_zulaman(); }

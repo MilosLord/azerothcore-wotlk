@@ -20,7 +20,7 @@
   @file include/mysql/service_thd_wait.h
   This service provides functions for plugins and storage engines to report
   when they are going to sleep/stall.
-  
+
   SYNOPSIS
   thd_wait_begin() - call just before a wait begins
   thd                     Thread object
@@ -51,21 +51,21 @@ extern "C" {
 #endif
 
 typedef enum _thd_wait_type_e {
-  THD_WAIT_MUTEX= 1,
-  THD_WAIT_DISKIO= 2,
-  THD_WAIT_ROW_TABLE_LOCK= 3,
-  THD_WAIT_GLOBAL_LOCK= 4
+    THD_WAIT_MUTEX          = 1,
+    THD_WAIT_DISKIO         = 2,
+    THD_WAIT_ROW_TABLE_LOCK = 3,
+    THD_WAIT_GLOBAL_LOCK    = 4
 } thd_wait_type;
 
 extern struct thd_wait_service_st {
-  void (*thd_wait_begin_func)(MYSQL_THD, thd_wait_type);
-  void (*thd_wait_end_func)(MYSQL_THD);
-} *thd_wait_service;
+    void (*thd_wait_begin_func)(MYSQL_THD, thd_wait_type);
+    void (*thd_wait_end_func)(MYSQL_THD);
+}* thd_wait_service;
 
 #ifdef MYSQL_DYNAMIC_PLUGIN
 
-#define thd_wait_begin(_THD, _WAIT_TYPE) \
-  thd_wait_service->thd_wait_begin_func(_THD, _WAIT_TYPE)
+#define thd_wait_begin(_THD, _WAIT_TYPE)                                       \
+    thd_wait_service->thd_wait_begin_func(_THD, _WAIT_TYPE)
 #define thd_wait_end(_THD) thd_wait_service->thd_wait_end_func(_THD)
 
 #else
@@ -80,4 +80,3 @@ void thd_wait_end(MYSQL_THD thd);
 #endif
 
 #endif
-

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,8 +23,7 @@
 #include <mutex>
 
 template <class T, typename StorageType = std::deque<T>>
-class LockedQueue
-{
+class LockedQueue {
     //! Lock access to the queue.
     std::mutex _lock;
 
@@ -34,7 +34,6 @@ class LockedQueue
     volatile bool _canceled{false};
 
 public:
-
     //! Create a LockedQueue.
     LockedQueue() = default;
 
@@ -52,7 +51,7 @@ public:
     }
 
     //! Adds items back to front of the queue
-    template<class Iterator>
+    template <class Iterator>
     void readd(Iterator begin, Iterator end)
     {
         std::lock_guard<std::mutex> lock(_lock);
@@ -64,8 +63,7 @@ public:
     {
         std::lock_guard<std::mutex> lock(_lock);
 
-        if (_queue.empty())
-        {
+        if (_queue.empty()) {
             return false;
         }
 
@@ -75,19 +73,17 @@ public:
         return true;
     }
 
-    template<class Checker>
+    template <class Checker>
     bool next(T& result, Checker& check)
     {
         std::lock_guard<std::mutex> lock(_lock);
 
-        if (_queue.empty())
-        {
+        if (_queue.empty()) {
             return false;
         }
 
         result = _queue.front();
-        if (!check.Process(result))
-        {
+        if (!check.Process(result)) {
             return false;
         }
 
@@ -95,15 +91,15 @@ public:
         return true;
     }
 
-    //! Peeks at the top of the queue. Check if the queue is empty before calling! Remember to unlock after use if autoUnlock == false.
+    //! Peeks at the top of the queue. Check if the queue is empty before
+    //! calling! Remember to unlock after use if autoUnlock == false.
     T& peek(bool autoUnlock = false)
     {
         lock();
 
         T& result = _queue.front();
 
-        if (autoUnlock)
-        {
+        if (autoUnlock) {
             unlock();
         }
 
@@ -126,16 +122,10 @@ public:
     }
 
     //! Locks the queue for access.
-    void lock()
-    {
-        this->_lock.lock();
-    }
+    void lock() { this->_lock.lock(); }
 
     //! Unlocks the queue.
-    void unlock()
-    {
-        this->_lock.unlock();
-    }
+    void unlock() { this->_lock.unlock(); }
 
     ///! Calls pop_front of the queue
     void pop_front()

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -24,8 +25,7 @@
 
 class WorldPacket;
 
-enum ScoreType
-{
+enum ScoreType {
     SCORE_KILLING_BLOWS = 1,
     SCORE_DEATHS,
     SCORE_HONORABLE_KILLS,
@@ -47,48 +47,46 @@ enum ScoreType
     SCORE_TOWERS_ASSAULTED,
     SCORE_TOWERS_DEFENDED,
     SCORE_MINES_CAPTURED,
-    //SCORE_LEADERS_KILLED,
-    //SCORE_SECONDARY_OBJECTIVES,
+    // SCORE_LEADERS_KILLED,
+    // SCORE_SECONDARY_OBJECTIVES,
 
     // SOTA
     SCORE_DESTROYED_DEMOLISHER,
     SCORE_DESTROYED_WALL
 };
 
-struct AC_GAME_API BattlegroundScore
-{
+struct AC_GAME_API BattlegroundScore {
     friend class Arena;
     friend class Battleground;
 
 protected:
-    BattlegroundScore(ObjectGuid playerGuid) : PlayerGuid(playerGuid) { }
+    BattlegroundScore(ObjectGuid playerGuid) : PlayerGuid(playerGuid) {}
     virtual ~BattlegroundScore() = default;
 
     virtual void UpdateScore(uint32 type, uint32 value)
     {
-        switch (type)
-        {
-            case SCORE_KILLING_BLOWS:   // Killing blows
-                KillingBlows += value;
-                break;
-            case SCORE_DEATHS:          // Deaths
-                Deaths += value;
-                break;
-            case SCORE_HONORABLE_KILLS: // Honorable kills
-                HonorableKills += value;
-                break;
-            case SCORE_BONUS_HONOR:     // Honor bonus
-                BonusHonor += value;
-                break;
-            case SCORE_DAMAGE_DONE:     // Damage Done
-                DamageDone += value;
-                break;
-            case SCORE_HEALING_DONE:    // Healing Done
-                HealingDone += value;
-                break;
-            default:
-                ABORT("Not implemented Battleground score type!");
-                break;
+        switch (type) {
+        case SCORE_KILLING_BLOWS: // Killing blows
+            KillingBlows += value;
+            break;
+        case SCORE_DEATHS: // Deaths
+            Deaths += value;
+            break;
+        case SCORE_HONORABLE_KILLS: // Honorable kills
+            HonorableKills += value;
+            break;
+        case SCORE_BONUS_HONOR: // Honor bonus
+            BonusHonor += value;
+            break;
+        case SCORE_DAMAGE_DONE: // Damage Done
+            DamageDone += value;
+            break;
+        case SCORE_HEALING_DONE: // Healing Done
+            HealingDone += value;
+            break;
+        default:
+            ABORT("Not implemented Battleground score type!");
+            break;
         }
     }
 
@@ -98,12 +96,12 @@ protected:
     // For Logging purpose
     virtual std::string ToString() const { return ""; }
 
-    [[nodiscard]] uint32 GetKillingBlows() const    { return KillingBlows; }
-    [[nodiscard]] uint32 GetDeaths() const          { return Deaths; }
-    [[nodiscard]] uint32 GetHonorableKills() const  { return HonorableKills; }
-    [[nodiscard]] uint32 GetBonusHonor() const      { return BonusHonor; }
-    [[nodiscard]] uint32 GetDamageDone() const      { return DamageDone; }
-    [[nodiscard]] uint32 GetHealingDone() const     { return HealingDone; }
+    [[nodiscard]] uint32 GetKillingBlows() const { return KillingBlows; }
+    [[nodiscard]] uint32 GetDeaths() const { return Deaths; }
+    [[nodiscard]] uint32 GetHonorableKills() const { return HonorableKills; }
+    [[nodiscard]] uint32 GetBonusHonor() const { return BonusHonor; }
+    [[nodiscard]] uint32 GetDamageDone() const { return DamageDone; }
+    [[nodiscard]] uint32 GetHealingDone() const { return HealingDone; }
 
     [[nodiscard]] virtual uint32 GetAttr1() const { return 0; }
     [[nodiscard]] virtual uint32 GetAttr2() const { return 0; }
@@ -114,12 +112,12 @@ protected:
     ObjectGuid PlayerGuid;
 
     // Default score, present in every type
-    uint32 KillingBlows = 0;
-    uint32 Deaths = 0;
+    uint32 KillingBlows   = 0;
+    uint32 Deaths         = 0;
     uint32 HonorableKills = 0;
-    uint32 BonusHonor = 0;
-    uint32 DamageDone = 0;
-    uint32 HealingDone = 0;
+    uint32 BonusHonor     = 0;
+    uint32 DamageDone     = 0;
+    uint32 HealingDone    = 0;
 };
 
 #endif // _BATTLEGROUND_SCORE_H

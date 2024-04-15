@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,24 +22,23 @@
 #include "Packet.h"
 #include "Player.h"
 
-namespace WorldPackets
-{
-    namespace CombatLog
+namespace WorldPackets {
+namespace CombatLog {
+class EnvironmentalDamageLog final : public ServerPacket {
+public:
+    EnvironmentalDamageLog() : ServerPacket(SMSG_ENVIRONMENTAL_DAMAGE_LOG, 21)
     {
-        class EnvironmentalDamageLog final : public ServerPacket
-        {
-        public:
-            EnvironmentalDamageLog() : ServerPacket(SMSG_ENVIRONMENTAL_DAMAGE_LOG, 21) { }
-
-            WorldPacket const* Write() override;
-
-            ObjectGuid Victim;
-            EnviromentalDamage Type = DAMAGE_EXHAUSTED;
-            uint32 Amount = 0;
-            uint32 Resisted = 0;
-            uint32 Absorbed = 0;
-        };
     }
-}
+
+    WorldPacket const* Write() override;
+
+    ObjectGuid         Victim;
+    EnviromentalDamage Type     = DAMAGE_EXHAUSTED;
+    uint32             Amount   = 0;
+    uint32             Resisted = 0;
+    uint32             Absorbed = 0;
+};
+} // namespace CombatLog
+} // namespace WorldPackets
 
 #endif // CombatLogPackets_h__

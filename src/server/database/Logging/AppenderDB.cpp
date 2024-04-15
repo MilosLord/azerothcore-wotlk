@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,10 +21,16 @@
 #include "LogMessage.h"
 #include "PreparedStatement.h"
 
-AppenderDB::AppenderDB(uint8 id, std::string const& name, LogLevel level, AppenderFlags /*flags*/, std::vector<std::string_view> const& /*args*/)
-    : Appender(id, name, level), realmId(0), enabled(false) { }
+AppenderDB::AppenderDB(uint8              id,
+                       std::string const& name,
+                       LogLevel           level,
+                       AppenderFlags /*flags*/,
+                       std::vector<std::string_view> const& /*args*/)
+    : Appender(id, name, level), realmId(0), enabled(false)
+{
+}
 
-AppenderDB::~AppenderDB() { }
+AppenderDB::~AppenderDB() {}
 
 void AppenderDB::_write(LogMessage const* message)
 {
@@ -31,7 +38,8 @@ void AppenderDB::_write(LogMessage const* message)
     if (!enabled || (message->type.find("sql") != std::string::npos))
         return;
 
-    LoginDatabasePreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_INS_LOG);
+    LoginDatabasePreparedStatement* stmt =
+        LoginDatabase.GetPreparedStatement(LOGIN_INS_LOG);
     stmt->SetData(0, message->mtime.count());
     stmt->SetData(1, realmId);
     stmt->SetData(2, message->type);

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -34,12 +35,14 @@ using boost::asio::ip::tcp;
 #define AC_SOCKET_USE_IOCP
 #endif
 
-template<class T>
-class Socket : public std::enable_shared_from_this<T>
-{
+template <class T>
+class Socket : public std::enable_shared_from_this<T> {
 public:
-    explicit Socket(tcp::socket&& socket) : _socket(std::move(socket)), _remoteAddress(_socket.remote_endpoint().address()),
-        _remotePort(_socket.remote_endpoint().port()), _readBuffer(), _closed(false), _closing(false), _isWritingAsync(false)
+    explicit Socket(tcp::socket&& socket)
+        : _socket(std::move(socket)),
+          _remoteAddress(_socket.remote_endpoint().address()),
+          _remotePort(_socket.remote_endpoint().port()), _readBuffer(),
+          _closed(false), _closing(false), _isWritingAsync(false)
     {
         _readBuffer.Resize(READ_BLOCK_SIZE);
     }
@@ -55,14 +58,12 @@ public:
 
     virtual bool Update()
     {
-        if (_closed)
-        {
+        if (_closed) {
             return false;
         }
 
 #ifndef AC_SOCKET_USE_IOCP
-        if (_isWritingAsync || (_writeQueue.empty() && !_closing))
-        {
+        if (_isWritingAsync || (_writeQueue.empty() && !_closing)) {
             return true;
         }
 
@@ -78,37 +79,43 @@ public:
         return _remoteAddress;
     }
 
-    [[nodiscard]] uint16 GetRemotePort() const
-    {
-        return _remotePort;
-    }
+    [[nodiscard]] uint16 GetRemotePort() const { return _remotePort; }
 
     void AsyncRead()
     {
-        if (!IsOpen())
-        {
+        if (!IsOpen()) {
             return;
         }
 
         _readBuffer.Normalize();
         _readBuffer.EnsureFreeSpace();
 
-        _socket.async_read_some(boost::asio::buffer(_readBuffer.GetWritePointer(), _readBuffer.GetRemainingSpace()),
-            std::bind(&Socket<T>::ReadHandlerInternal, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+        _socket.async_read_some(
+            boost::asio::buffer(_readBuffer.GetWritePointer(),
+                                _readBuffer.GetRemainingSpace()),
+            std::bind(&Socket<T>::ReadHandlerInternal,
+                      this->shared_from_this(),
+                      std::placeholders::_1,
+                      std::placeholders::_2));
     }
 
-    void AsyncReadWithCallback(void (T::*callback)(boost::system::error_code, std::size_t))
+    void AsyncReadWithCallback(void (T::*callback)(boost::system::error_code,
+                                                   std::size_t))
     {
-        if (!IsOpen())
-        {
+        if (!IsOpen()) {
             return;
         }
 
         _readBuffer.Normalize();
         _readBuffer.EnsureFreeSpace();
 
-        _socket.async_read_some(boost::asio::buffer(_readBuffer.GetWritePointer(), _readBuffer.GetRemainingSpace()),
-            std::bind(callback, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+        _socket.async_read_some(
+            boost::asio::buffer(_readBuffer.GetWritePointer(),
+                                _readBuffer.GetRemainingSpace()),
+            std::bind(callback,
+                      this->shared_from_this(),
+                      std::placeholders::_1,
+                      std::placeholders::_2));
     }
 
     void QueuePacket(MessageBuffer&& buffer)
@@ -128,11 +135,16 @@ public:
             return;
 
         boost::system::error_code shutdownError;
-        _socket.shutdown(boost::asio::socket_base::shutdown_send, shutdownError);
+        _socket.shutdown(boost::asio::socket_base::shutdown_send,
+                         shutdownError);
 
         if (shutdownError)
-            LOG_DEBUG("network", "Socket::CloseSocket: {} errored when shutting down socket: {} ({})", GetRemoteIpAddress().to_string(),
-                shutdownError.value(), shutdownError.message());
+            LOG_DEBUG("network",
+                      "Socket::CloseSocket: {} errored when shutting down "
+                      "socket: {} ({})",
+                      GetRemoteIpAddress().to_string(),
+                      shutdownError.value(),
+                      shutdownError.message());
 
         OnClose();
     }
@@ -143,7 +155,7 @@ public:
     MessageBuffer& GetReadBuffer() { return _readBuffer; }
 
 protected:
-    virtual void OnClose() { }
+    virtual void OnClose() {}
     virtual void ReadHandler() = 0;
 
     [[nodiscard]] bool AsyncProcessQueue()
@@ -155,11 +167,18 @@ protected:
 
 #ifdef AC_SOCKET_USE_IOCP
         MessageBuffer& buffer = _writeQueue.front();
-        _socket.async_write_some(boost::asio::buffer(buffer.GetReadPointer(), buffer.GetActiveSize()), std::bind(&Socket<T>::WriteHandler,
-            this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+        _socket.async_write_some(boost::asio::buffer(buffer.GetReadPointer(),
+                                                     buffer.GetActiveSize()),
+                                 std::bind(&Socket<T>::WriteHandler,
+                                           this->shared_from_this(),
+                                           std::placeholders::_1,
+                                           std::placeholders::_2));
 #else
-        _socket.async_write_some(boost::asio::null_buffers(), std::bind(&Socket<T>::WriteHandlerWrapper,
-            this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+        _socket.async_write_some(boost::asio::null_buffers(),
+                                 std::bind(&Socket<T>::WriteHandlerWrapper,
+                                           this->shared_from_this(),
+                                           std::placeholders::_1,
+                                           std::placeholders::_2));
 #endif
         return false;
     }
@@ -170,15 +189,20 @@ protected:
         _socket.set_option(tcp::no_delay(enable), err);
 
         if (err)
-            LOG_DEBUG("network", "Socket::SetNoDelay: failed to set_option(boost::asio::ip::tcp::no_delay) for {} - {} ({})",
-                GetRemoteIpAddress().to_string(), err.value(), err.message());
+            LOG_DEBUG(
+                "network",
+                "Socket::SetNoDelay: failed to "
+                "set_option(boost::asio::ip::tcp::no_delay) for {} - {} ({})",
+                GetRemoteIpAddress().to_string(),
+                err.value(),
+                err.message());
     }
 
 private:
-    void ReadHandlerInternal(boost::system::error_code error, size_t transferredBytes)
+    void ReadHandlerInternal(boost::system::error_code error,
+                             size_t                    transferredBytes)
     {
-        if (error)
-        {
+        if (error) {
             CloseSocket();
             return;
         }
@@ -188,10 +212,10 @@ private:
     }
 
 #ifdef AC_SOCKET_USE_IOCP
-    void WriteHandler(boost::system::error_code error, std::size_t transferedBytes)
+    void WriteHandler(boost::system::error_code error,
+                      std::size_t               transferedBytes)
     {
-        if (!error)
-        {
+        if (!error) {
             _isWritingAsync = false;
             _writeQueue.front().ReadCompleted(transferedBytes);
 
@@ -209,7 +233,8 @@ private:
 
 #else
 
-    void WriteHandlerWrapper(boost::system::error_code /*error*/, std::size_t /*transferedBytes*/)
+    void WriteHandlerWrapper(boost::system::error_code /*error*/,
+                             std::size_t /*transferedBytes*/)
     {
         _isWritingAsync = false;
         HandleQueue();
@@ -225,30 +250,28 @@ private:
         std::size_t bytesToSend = queuedMessage.GetActiveSize();
 
         boost::system::error_code error;
-        std::size_t bytesSent = _socket.write_some(boost::asio::buffer(queuedMessage.GetReadPointer(), bytesToSend), error);
+        std::size_t               bytesSent = _socket.write_some(
+            boost::asio::buffer(queuedMessage.GetReadPointer(), bytesToSend),
+            error);
 
-        if (error)
-        {
-            if (error == boost::asio::error::would_block || error == boost::asio::error::try_again)
-            {
+        if (error) {
+            if (error == boost::asio::error::would_block ||
+                error == boost::asio::error::try_again) {
                 return AsyncProcessQueue();
             }
 
             _writeQueue.pop();
 
-            if (_closing && _writeQueue.empty())
-            {
+            if (_closing && _writeQueue.empty()) {
                 CloseSocket();
             }
 
             return false;
         }
-        else if (bytesSent == 0)
-        {
+        else if (bytesSent == 0) {
             _writeQueue.pop();
 
-            if (_closing && _writeQueue.empty())
-            {
+            if (_closing && _writeQueue.empty()) {
                 CloseSocket();
             }
 
@@ -262,8 +285,7 @@ private:
 
         _writeQueue.pop();
 
-        if (_closing && _writeQueue.empty())
-        {
+        if (_closing && _writeQueue.empty()) {
             CloseSocket();
         }
 
@@ -274,9 +296,9 @@ private:
     tcp::socket _socket;
 
     boost::asio::ip::address _remoteAddress;
-    uint16 _remotePort;
+    uint16                   _remotePort;
 
-    MessageBuffer _readBuffer;
+    MessageBuffer             _readBuffer;
     std::queue<MessageBuffer> _writeQueue;
 
     std::atomic<bool> _closed;

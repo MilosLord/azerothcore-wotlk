@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -44,8 +45,7 @@ void WorldSession::HandleLearnPreviewTalents(WorldPacket& recvPacket)
     // Client has max 44 talents for tree for 3 trees, rounded up : 150
     uint32 const MaxTalentsCount = 150;
 
-    for (uint32 i = 0; i < talentsCount && i < MaxTalentsCount; ++i)
-    {
+    for (uint32 i = 0; i < talentsCount && i < MaxTalentsCount; ++i) {
         recvPacket >> talentId >> talentRank;
 
         _player->LearnTalent(talentId, talentRank);
@@ -62,10 +62,13 @@ void WorldSession::HandleTalentWipeConfirmOpcode(WorldPacket& recvData)
     ObjectGuid guid;
     recvData >> guid;
 
-    Creature* unit = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_TRAINER);
-    if (!unit)
-    {
-        LOG_DEBUG("network", "WORLD: HandleTalentWipeConfirmOpcode - Unit ({}) not found or you can't interact with him.", guid.ToString());
+    Creature* unit =
+        GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_TRAINER);
+    if (!unit) {
+        LOG_DEBUG("network",
+                  "WORLD: HandleTalentWipeConfirmOpcode - Unit ({}) not found "
+                  "or you can't interact with him.",
+                  guid.ToString());
         return;
     }
 
@@ -76,9 +79,9 @@ void WorldSession::HandleTalentWipeConfirmOpcode(WorldPacket& recvData)
     if (GetPlayer()->HasUnitState(UNIT_STATE_DIED))
         GetPlayer()->RemoveAurasByType(SPELL_AURA_FEIGN_DEATH);
 
-    if (!(_player->resetTalents()))
-    {
-        WorldPacket data(MSG_TALENT_WIPE_CONFIRM, 8 + 4);  //you have not any talent
+    if (!(_player->resetTalents())) {
+        WorldPacket data(MSG_TALENT_WIPE_CONFIRM,
+                         8 + 4); // you have not any talent
         data << uint64(0);
         data << uint32(0);
         SendPacket(&data);
@@ -86,7 +89,7 @@ void WorldSession::HandleTalentWipeConfirmOpcode(WorldPacket& recvData)
     }
 
     _player->SendTalentsInfoData(false);
-    unit->CastSpell(_player, 14867, true);                  //spell: "Untalent Visual Effect"
+    unit->CastSpell(_player, 14867, true); // spell: "Untalent Visual Effect"
 }
 
 void WorldSession::HandleUnlearnSkillOpcode(WorldPacket& recvData)

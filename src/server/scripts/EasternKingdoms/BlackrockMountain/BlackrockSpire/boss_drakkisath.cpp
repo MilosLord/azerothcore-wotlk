@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -19,19 +20,18 @@
 #include "ScriptedCreature.h"
 #include "blackrock_spire.h"
 
-enum Spells
-{
-    SPELL_FLAMESTRIKE               = 16419,
-    SPELL_CLEAVE                    = 15284,
-    SPELL_CONFLAGRATION             = 16805,
-    SPELL_THUNDERCLAP               = 15548, //Not sure if right ID. 23931 would be a harder possibility.
-    SPELL_RAGE                      = 16789,
-    SPELL_PIERCE_ARMOR              = 12097
+enum Spells {
+    SPELL_FLAMESTRIKE   = 16419,
+    SPELL_CLEAVE        = 15284,
+    SPELL_CONFLAGRATION = 16805,
+    SPELL_THUNDERCLAP =
+        15548, // Not sure if right ID. 23931 would be a harder possibility.
+    SPELL_RAGE         = 16789,
+    SPELL_PIERCE_ARMOR = 12097
 };
 
-enum Events
-{
-    EVENT_FLAMESTRIKE               = 1,
+enum Events {
+    EVENT_FLAMESTRIKE = 1,
     EVENT_CLEAVE,
     EVENT_CONFLAGRATION,
     EVENT_THUNDERCLAP,
@@ -40,14 +40,13 @@ enum Events
     EVENT_CHECK_CONFLAGRATION_TARGET
 };
 
-class boss_drakkisath : public CreatureScript
-{
+class boss_drakkisath : public CreatureScript {
 public:
-    boss_drakkisath() : CreatureScript("boss_drakkisath") { }
+    boss_drakkisath() : CreatureScript("boss_drakkisath") {}
 
-    struct boss_drakkisathAI : public BossAI
-    {
-        boss_drakkisathAI(Creature* creature) : BossAI(creature, DATA_GENERAL_DRAKKISATH)
+    struct boss_drakkisathAI : public BossAI {
+        boss_drakkisathAI(Creature* creature)
+            : BossAI(creature, DATA_GENERAL_DRAKKISATH)
         {
             _conflagrateThreat = 0.0f;
         }
@@ -73,56 +72,55 @@ public:
             if (me->HasUnitState(UNIT_STATE_CASTING))
                 return;
 
-            while (uint32 eventId = events.ExecuteEvent())
-            {
-                switch (eventId)
-                {
-                    case EVENT_FLAMESTRIKE:
-                        DoCastAOE(SPELL_FLAMESTRIKE);
-                        events.ScheduleEvent(EVENT_FLAMESTRIKE, 10s);
-                        break;
-                    case EVENT_CLEAVE:
-                        DoCastVictim(SPELL_CLEAVE);
-                        events.ScheduleEvent(EVENT_CLEAVE, 8s);
-                        break;
-                    case EVENT_CONFLAGRATION:
-                        DoCastVictim(SPELL_CONFLAGRATION);
+            while (uint32 eventId = events.ExecuteEvent()) {
+                switch (eventId) {
+                case EVENT_FLAMESTRIKE:
+                    DoCastAOE(SPELL_FLAMESTRIKE);
+                    events.ScheduleEvent(EVENT_FLAMESTRIKE, 10s);
+                    break;
+                case EVENT_CLEAVE:
+                    DoCastVictim(SPELL_CLEAVE);
+                    events.ScheduleEvent(EVENT_CLEAVE, 8s);
+                    break;
+                case EVENT_CONFLAGRATION:
+                    DoCastVictim(SPELL_CONFLAGRATION);
 
-                        if (Unit* target = me->GetVictim())
-                        {
-                            _conflagrateTarget = me->GetVictim()->GetGUID();
-                            _conflagrateThreat = me->GetThreatMgr().GetThreat(me->GetVictim());
-                            me->GetThreatMgr().ModifyThreatByPercent(target, -100);
-                        }
-                        events.ScheduleEvent(EVENT_CONFLAGRATION, 10s, 13s);
-                        events.ScheduleEvent(EVENT_CHECK_CONFLAGRATION_TARGET, 10s);
-                        break;
-                    case EVENT_THUNDERCLAP:
-                        DoCastVictim(SPELL_THUNDERCLAP);
-                        events.ScheduleEvent(EVENT_THUNDERCLAP, 20s);
-                        break;
-                    case EVENT_PIERCE_ARMOR:
-                        DoCastVictim(SPELL_PIERCE_ARMOR);
-                        events.ScheduleEvent(EVENT_PIERCE_ARMOR, 40s);
-                        break;
-                    case EVENT_RAGE:
-                        DoCastSelf(SPELL_RAGE);
-                        events.ScheduleEvent(EVENT_RAGE, 35s);
-                        break;
-                    case EVENT_CHECK_CONFLAGRATION_TARGET:
-                        if (Unit* target = ObjectAccessor::GetUnit(*me, _conflagrateTarget))
-                        {
-                            me->GetThreatMgr().AddThreat(target, _conflagrateThreat);
-                        }
-                        break;
+                    if (Unit* target = me->GetVictim()) {
+                        _conflagrateTarget = me->GetVictim()->GetGUID();
+                        _conflagrateThreat =
+                            me->GetThreatMgr().GetThreat(me->GetVictim());
+                        me->GetThreatMgr().ModifyThreatByPercent(target, -100);
+                    }
+                    events.ScheduleEvent(EVENT_CONFLAGRATION, 10s, 13s);
+                    events.ScheduleEvent(EVENT_CHECK_CONFLAGRATION_TARGET, 10s);
+                    break;
+                case EVENT_THUNDERCLAP:
+                    DoCastVictim(SPELL_THUNDERCLAP);
+                    events.ScheduleEvent(EVENT_THUNDERCLAP, 20s);
+                    break;
+                case EVENT_PIERCE_ARMOR:
+                    DoCastVictim(SPELL_PIERCE_ARMOR);
+                    events.ScheduleEvent(EVENT_PIERCE_ARMOR, 40s);
+                    break;
+                case EVENT_RAGE:
+                    DoCastSelf(SPELL_RAGE);
+                    events.ScheduleEvent(EVENT_RAGE, 35s);
+                    break;
+                case EVENT_CHECK_CONFLAGRATION_TARGET:
+                    if (Unit* target =
+                            ObjectAccessor::GetUnit(*me, _conflagrateTarget)) {
+                        me->GetThreatMgr().AddThreat(target,
+                                                     _conflagrateThreat);
+                    }
+                    break;
                 }
             }
             DoMeleeAttackIfReady();
         }
 
-        private:
-            float _conflagrateThreat;
-            ObjectGuid _conflagrateTarget;
+    private:
+        float      _conflagrateThreat;
+        ObjectGuid _conflagrateTarget;
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -131,7 +129,4 @@ public:
     }
 };
 
-void AddSC_boss_drakkisath()
-{
-    new boss_drakkisath();
-}
+void AddSC_boss_drakkisath() { new boss_drakkisath(); }

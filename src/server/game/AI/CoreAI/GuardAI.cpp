@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -27,9 +28,7 @@ int32 GuardAI::Permissible(Creature const* creature)
     return PERMIT_BASE_NO;
 }
 
-GuardAI::GuardAI(Creature* creature) : ScriptedAI(creature)
-{
-}
+GuardAI::GuardAI(Creature* creature) : ScriptedAI(creature) {}
 
 void GuardAI::Reset()
 {
@@ -39,22 +38,24 @@ void GuardAI::Reset()
 
 void GuardAI::EnterEvadeMode(EvadeReason /*why*/)
 {
-    if (!me->IsAlive())
-    {
+    if (!me->IsAlive()) {
         me->GetMotionMaster()->MoveIdle();
         me->CombatStop(true);
         me->GetThreatMgr().ClearAllThreat();
         return;
     }
 
-    LOG_DEBUG("entities.unit", "Guard entry: {} enters evade mode.", me->GetEntry());
+    LOG_DEBUG(
+        "entities.unit", "Guard entry: {} enters evade mode.", me->GetEntry());
 
     me->RemoveAllAuras();
     me->GetThreatMgr().ClearAllThreat();
     me->CombatStop(true);
 
-    // Remove ChaseMovementGenerator from MotionMaster stack list, and add HomeMovementGenerator instead
-    if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() == CHASE_MOTION_TYPE)
+    // Remove ChaseMovementGenerator from MotionMaster stack list, and add
+    // HomeMovementGenerator instead
+    if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() ==
+        CHASE_MOTION_TYPE)
         me->GetMotionMaster()->MoveTargetedHome();
 }
 

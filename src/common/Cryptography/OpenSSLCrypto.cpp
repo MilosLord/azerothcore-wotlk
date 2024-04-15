@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,13 +21,14 @@
 #include <openssl/crypto.h> // NOTE: this import is NEEDED (even though some IDEs report it as unused)
 
 #if defined(OPENSSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER < 0x1010000fL
-#include <vector>
-#include <thread>
 #include <mutex>
+#include <thread>
+#include <vector>
 
 std::vector<std::mutex*> cryptoLocks;
 
-static void lockingCallback(int mode, int type, char const* /*file*/, int /*line*/)
+static void
+lockingCallback(int mode, int type, char const* /*file*/, int /*line*/)
 {
     if (mode & CRYPTO_LOCK)
         cryptoLocks[type]->lock();
@@ -34,10 +36,11 @@ static void lockingCallback(int mode, int type, char const* /*file*/, int /*line
         cryptoLocks[type]->unlock();
 }
 
-static void threadIdCallback(CRYPTO_THREADID * id)
+static void threadIdCallback(CRYPTO_THREADID* id)
 {
     (void)id;
-    CRYPTO_THREADID_set_numeric(id, std::hash<std::thread::id>()(std::this_thread::get_id()));
+    CRYPTO_THREADID_set_numeric(
+        id, std::hash<std::thread::id>()(std::this_thread::get_id()));
 }
 #elif OPENSSL_VERSION_NUMBER >= 0x30000000L
 #include <openssl/provider.h>
@@ -53,11 +56,18 @@ void SetupLibrariesForWindows()
 {
     namespace fs = std::filesystem;
 
-    fs::path programLocation{ boost::dll::program_location().remove_filename().string() };
-    fs::path libLegacy{ boost::dll::program_location().remove_filename().string() + "/legacy.dll" };
+    fs::path programLocation{
+        boost::dll::program_location().remove_filename().string()};
+    fs::path libLegacy{
+        boost::dll::program_location().remove_filename().string() +
+        "/legacy.dll"};
 
-    ASSERT(fs::exists(libLegacy), "Not found 'legacy.dll'. Please copy library 'legacy.dll' from OpenSSL default dir to '{}'", programLocation.generic_string());
-    OSSL_PROVIDER_set_default_search_path(nullptr, programLocation.generic_string().c_str());
+    ASSERT(fs::exists(libLegacy),
+           "Not found 'legacy.dll'. Please copy library 'legacy.dll' from "
+           "OpenSSL default dir to '{}'",
+           programLocation.generic_string());
+    OSSL_PROVIDER_set_default_search_path(
+        nullptr, programLocation.generic_string().c_str());
 }
 #endif
 
@@ -66,8 +76,7 @@ void OpenSSLCrypto::threadsSetup()
 #if defined(OPENSSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER < 0x1010000fL
     cryptoLocks.resize(CRYPTO_num_locks());
 
-    for (int i = 0 ; i < CRYPTO_num_locks(); ++i)
-    {
+    for (int i = 0; i < CRYPTO_num_locks(); ++i) {
         cryptoLocks[i] = new std::mutex();
     }
 
@@ -80,7 +89,7 @@ void OpenSSLCrypto::threadsSetup()
 #if AC_PLATFORM == AC_PLATFORM_WINDOWS
     SetupLibrariesForWindows();
 #endif
-    LegacyProvider = OSSL_PROVIDER_load(nullptr, "legacy");
+    LegacyProvider  = OSSL_PROVIDER_load(nullptr, "legacy");
     DefaultProvider = OSSL_PROVIDER_load(nullptr, "default");
 #endif
 }
@@ -91,8 +100,7 @@ void OpenSSLCrypto::threadsCleanup()
     CRYPTO_set_locking_callback(nullptr);
     CRYPTO_THREADID_set_callback(nullptr);
 
-    for (int i = 0 ; i < CRYPTO_num_locks(); ++i)
-    {
+    for (int i = 0; i < CRYPTO_num_locks(); ++i) {
         delete cryptoLocks[i];
     }
 

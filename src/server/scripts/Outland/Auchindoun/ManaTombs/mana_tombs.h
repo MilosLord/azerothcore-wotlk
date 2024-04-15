@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -25,13 +26,12 @@
 
 uint32 const EncounterCount = 4;
 
-enum MTDataTypes
-{
+enum MTDataTypes {
     // Encounter States/Boss GUIDs
-    DATA_PANDEMONIUS            = 0,
-    DATA_TAVAROK                = 1,
-    DATA_NEXUSPRINCE_SHAFFAR    = 2,
-    DATA_YOR                    = 3
+    DATA_PANDEMONIUS         = 0,
+    DATA_TAVAROK             = 1,
+    DATA_NEXUSPRINCE_SHAFFAR = 2,
+    DATA_YOR                 = 3
 };
 
 template <class AI, class T>
@@ -40,6 +40,7 @@ inline AI* GetManaTombsAI(T* obj)
     return GetInstanceAI<AI>(obj, MTScriptName);
 }
 
-#define RegisterManaTombsCreatureAI(ai_name) RegisterCreatureAIWithFactory(ai_name, GetManaTombsAI)
+#define RegisterManaTombsCreatureAI(ai_name)                                   \
+    RegisterCreatureAIWithFactory(ai_name, GetManaTombsAI)
 
 #endif // MANA_TOMBS_H_

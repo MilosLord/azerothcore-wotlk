@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -18,16 +19,18 @@
 #include "ConditionScript.h"
 #include "ScriptMgr.h"
 
-bool ScriptMgr::OnConditionCheck(Condition* condition, ConditionSourceInfo& sourceInfo)
+bool ScriptMgr::OnConditionCheck(Condition*           condition,
+                                 ConditionSourceInfo& sourceInfo)
 {
     ASSERT(condition);
 
-    auto tempScript = ScriptRegistry<ConditionScript>::GetScriptById(condition->ScriptId);
-    return tempScript ? tempScript->OnConditionCheck(condition, sourceInfo) : true;
+    auto tempScript =
+        ScriptRegistry<ConditionScript>::GetScriptById(condition->ScriptId);
+    return tempScript ? tempScript->OnConditionCheck(condition, sourceInfo)
+                      : true;
 }
 
-ConditionScript::ConditionScript(const char* name)
-    : ScriptObject(name)
+ConditionScript::ConditionScript(const char* name) : ScriptObject(name)
 {
     ScriptRegistry<ConditionScript>::AddScript(this);
 }

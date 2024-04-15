@@ -19,7 +19,7 @@
   Permission to use, copy, modify, distribute and sell this software
    and its documentation for any purpose is hereby granted without fee,
    provided that the above copyright notice appear in all copies.
-   Smaphan Raruenrom and Pruet Boonma makes no representations about 
+   Smaphan Raruenrom and Pruet Boonma makes no representations about
    the suitability of this software for any purpose.  It is provided
     "as is" without express or implied warranty.
 */
@@ -30,10 +30,9 @@
 #define _t_ctype_h
 
 #define TOT_LEVELS 5
-#define LAST_LEVEL 4  /* TOT_LEVELS - 1 */
+#define LAST_LEVEL 4 /* TOT_LEVELS - 1 */
 
 #define IGNORE 0
-
 
 /* level 1 symbols & order */
 enum l1_symbols {
@@ -153,7 +152,7 @@ enum l2_symbols {
 
 /* level 3 symbols & order */
 enum l3_symbols {
-	L3_BLANK = TOT_LEVELS,
+    L3_BLANK = TOT_LEVELS,
     L3_SPACE,
     L3_NB_SACE,
     L3_LOW_LINE,
@@ -197,58 +196,48 @@ enum l3_symbols {
 };
 
 /* level 4 symbols & order */
-enum l4_symbols {
-    L4_BLANK = TOT_LEVELS,
-    L4_MIN,
-    L4_CAP,
-    L4_EXT
-};
+enum l4_symbols { L4_BLANK = TOT_LEVELS, L4_MIN, L4_CAP, L4_EXT };
 
-enum level_symbols {
-    L_UPRUPR = TOT_LEVELS,
-    L_UPPER,
-    L_MIDDLE,
-    L_LOWER
-};
+enum level_symbols { L_UPRUPR = TOT_LEVELS, L_UPPER, L_MIDDLE, L_LOWER };
 
-#define	_is(c)			(t_ctype[(c)][LAST_LEVEL])
-#define _level			8
-#define _consnt			16
-#define _ldvowel		32
-#define _fllwvowel		64
-#define _uprvowel		128
-#define _lwrvowel		256
-#define _tone			512
-#define _diacrt1		1024
-#define _diacrt2		2048
-#define _combine		4096
-#define _stone			8192
-#define _tdig			16384
-#define _rearvowel		(_fllwvowel | _uprvowel | _lwrvowel)
-#define _diacrt			(_diacrt1 | _diacrt2)
-#define levelof(c)		( _is(c) & _level )
-#define isthai(c)		( (c) >= 128 )
-#define istalpha(c)		( _is(c) & (_consnt|_ldvowel|_rearvowel|\
-                         _tone|_diacrt1|_diacrt2) )
-#define isconsnt(c)		( _is(c) & _consnt )
-#define isldvowel(c)	( _is(c) & _ldvowel )
-#define isfllwvowel(c)	( _is(c) & _fllwvowel )
-#define ismidvowel(c)	( _is(c) & (_ldvowel|_fllwvowel) )
-#define isuprvowel(c)	( _is(c) & _uprvowel )
-#define islwrvowel(c)	( _is(c) & _lwrvowel )
-#define isuprlwrvowel(c) ( _is(c) & (_lwrvowel | _uprvowel))
-#define isrearvowel(c)	( _is(c) & _rearvowel )
-#define isvowel(c)      ( _is(c) & (_ldvowel|_rearvowel) )
-#define istone(c)       ( _is(c) & _tone )
-#define isunldable(c)   ( _is(c) & (_rearvowel|_tone|_diacrt1|_diacrt2) )
-#define iscombinable(c) ( _is(c) & _combine )
-#define istdigit(c)     ( _is(c) & _tdig )
-#define isstone(c)      ( _is(c) & _stone )
-#define isdiacrt1(c)	( _is(c) & _diacrt1)
-#define isdiacrt2(c)	( _is(c) & _diacrt2)
-#define isdiacrt(c)		( _is(c) & _diacrt) 
+#define _is(c) (t_ctype[(c)][LAST_LEVEL])
+#define _level 8
+#define _consnt 16
+#define _ldvowel 32
+#define _fllwvowel 64
+#define _uprvowel 128
+#define _lwrvowel 256
+#define _tone 512
+#define _diacrt1 1024
+#define _diacrt2 2048
+#define _combine 4096
+#define _stone 8192
+#define _tdig 16384
+#define _rearvowel (_fllwvowel | _uprvowel | _lwrvowel)
+#define _diacrt (_diacrt1 | _diacrt2)
+#define levelof(c) (_is(c) & _level)
+#define isthai(c) ((c) >= 128)
+#define istalpha(c)                                                            \
+    (_is(c) & (_consnt | _ldvowel | _rearvowel | _tone | _diacrt1 | _diacrt2))
+#define isconsnt(c) (_is(c) & _consnt)
+#define isldvowel(c) (_is(c) & _ldvowel)
+#define isfllwvowel(c) (_is(c) & _fllwvowel)
+#define ismidvowel(c) (_is(c) & (_ldvowel | _fllwvowel))
+#define isuprvowel(c) (_is(c) & _uprvowel)
+#define islwrvowel(c) (_is(c) & _lwrvowel)
+#define isuprlwrvowel(c) (_is(c) & (_lwrvowel | _uprvowel))
+#define isrearvowel(c) (_is(c) & _rearvowel)
+#define isvowel(c) (_is(c) & (_ldvowel | _rearvowel))
+#define istone(c) (_is(c) & _tone)
+#define isunldable(c) (_is(c) & (_rearvowel | _tone | _diacrt1 | _diacrt2))
+#define iscombinable(c) (_is(c) & _combine)
+#define istdigit(c) (_is(c) & _tdig)
+#define isstone(c) (_is(c) & _stone)
+#define isdiacrt1(c) (_is(c) & _diacrt1)
+#define isdiacrt2(c) (_is(c) & _diacrt2)
+#define isdiacrt(c) (_is(c) & _diacrt)
 
 /* Function prototype called by sql/field.cc */
 void ThNormalize(uchar* ptr, uint field_length, const uchar* from, uint length);
 
-#endif  
+#endif

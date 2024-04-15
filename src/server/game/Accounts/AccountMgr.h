@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,8 +22,7 @@
 #include "Define.h"
 #include <string>
 
-enum AccountOpResult
-{
+enum AccountOpResult {
     AOR_OK,
     AOR_NAME_TOO_LONG,
     AOR_PASS_TOO_LONG,
@@ -34,23 +34,24 @@ enum AccountOpResult
 #define MAX_ACCOUNT_STR 20
 #define MAX_PASS_STR 16
 
-namespace AccountMgr
-{
-    AccountOpResult CreateAccount(std::string username, std::string password);
-    AccountOpResult DeleteAccount(uint32 accountId);
-    AccountOpResult ChangeUsername(uint32 accountId, std::string newUsername, std::string newPassword);
-    AccountOpResult ChangePassword(uint32 accountId, std::string newPassword);
-    bool CheckPassword(uint32 accountId, std::string password);
+namespace AccountMgr {
+AccountOpResult CreateAccount(std::string username, std::string password);
+AccountOpResult DeleteAccount(uint32 accountId);
+AccountOpResult ChangeUsername(uint32      accountId,
+                               std::string newUsername,
+                               std::string newPassword);
+AccountOpResult ChangePassword(uint32 accountId, std::string newPassword);
+bool            CheckPassword(uint32 accountId, std::string password);
 
-    uint32 GetId(std::string const& username);
-    uint32 GetSecurity(uint32 accountId);
-    uint32 GetSecurity(uint32 accountId, int32 realmId);
-    bool GetName(uint32 accountId, std::string& name);
-    uint32 GetCharactersCount(uint32 accountId);
+uint32 GetId(std::string const& username);
+uint32 GetSecurity(uint32 accountId);
+uint32 GetSecurity(uint32 accountId, int32 realmId);
+bool   GetName(uint32 accountId, std::string& name);
+uint32 GetCharactersCount(uint32 accountId);
 
-    bool IsPlayerAccount(uint32 gmlevel);
-    bool IsAdminAccount(uint32 gmlevel);
-    bool IsConsoleAccount(uint32 gmlevel);
-};
+bool IsPlayerAccount(uint32 gmlevel);
+bool IsAdminAccount(uint32 gmlevel);
+bool IsConsoleAccount(uint32 gmlevel);
+}; // namespace AccountMgr
 
 #endif

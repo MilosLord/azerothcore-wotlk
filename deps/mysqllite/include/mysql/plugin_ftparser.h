@@ -24,41 +24,40 @@
 #define MYSQL_FTPARSER_INTERFACE_VERSION 0x0100
 
 /* Parsing modes. Set in  MYSQL_FTPARSER_PARAM::mode */
-enum enum_ftparser_mode
-{
-/*
-  Fast and simple mode.  This mode is used for indexing, and natural
-  language queries.
+enum enum_ftparser_mode {
+    /*
+      Fast and simple mode.  This mode is used for indexing, and natural
+      language queries.
 
-  The parser is expected to return only those words that go into the
-  index. Stopwords or too short/long words should not be returned. The
-  'boolean_info' argument of mysql_add_word() does not have to be set.
-*/
-  MYSQL_FTPARSER_SIMPLE_MODE= 0,
+      The parser is expected to return only those words that go into the
+      index. Stopwords or too short/long words should not be returned. The
+      'boolean_info' argument of mysql_add_word() does not have to be set.
+    */
+    MYSQL_FTPARSER_SIMPLE_MODE = 0,
 
-/*
-  Parse with stopwords mode.  This mode is used in boolean searches for
-  "phrase matching."
+    /*
+      Parse with stopwords mode.  This mode is used in boolean searches for
+      "phrase matching."
 
-  The parser is not allowed to ignore words in this mode.  Every word
-  should be returned, including stopwords and words that are too short
-  or long.  The 'boolean_info' argument of mysql_add_word() does not
-  have to be set.
-*/
-  MYSQL_FTPARSER_WITH_STOPWORDS= 1,
+      The parser is not allowed to ignore words in this mode.  Every word
+      should be returned, including stopwords and words that are too short
+      or long.  The 'boolean_info' argument of mysql_add_word() does not
+      have to be set.
+    */
+    MYSQL_FTPARSER_WITH_STOPWORDS = 1,
 
-/*
-  Parse in boolean mode.  This mode is used to parse a boolean query string.
+    /*
+      Parse in boolean mode.  This mode is used to parse a boolean query string.
 
-  The parser should provide a valid MYSQL_FTPARSER_BOOLEAN_INFO
-  structure in the 'boolean_info' argument to mysql_add_word().
-  Usually that means that the parser should recognize boolean operators
-  in the parsing stream and set appropriate fields in
-  MYSQL_FTPARSER_BOOLEAN_INFO structure accordingly.  As for
-  MYSQL_FTPARSER_WITH_STOPWORDS mode, no word should be ignored.
-  Instead, use FT_TOKEN_STOPWORD for the token type of such a word.
-*/
-  MYSQL_FTPARSER_FULL_BOOLEAN_INFO= 2
+      The parser should provide a valid MYSQL_FTPARSER_BOOLEAN_INFO
+      structure in the 'boolean_info' argument to mysql_add_word().
+      Usually that means that the parser should recognize boolean operators
+      in the parsing stream and set appropriate fields in
+      MYSQL_FTPARSER_BOOLEAN_INFO structure accordingly.  As for
+      MYSQL_FTPARSER_WITH_STOPWORDS mode, no word should be ignored.
+      Instead, use FT_TOKEN_STOPWORD for the token type of such a word.
+    */
+    MYSQL_FTPARSER_FULL_BOOLEAN_INFO = 2
 };
 
 /*
@@ -72,13 +71,12 @@ enum enum_ftparser_mode
   FT_TOKEN_STOPWORD: Stopword.
 */
 
-enum enum_ft_token_type
-{
-  FT_TOKEN_EOF= 0,
-  FT_TOKEN_WORD= 1,
-  FT_TOKEN_LEFT_PAREN= 2,
-  FT_TOKEN_RIGHT_PAREN= 3,
-  FT_TOKEN_STOPWORD= 4
+enum enum_ft_token_type {
+    FT_TOKEN_EOF         = 0,
+    FT_TOKEN_WORD        = 1,
+    FT_TOKEN_LEFT_PAREN  = 2,
+    FT_TOKEN_RIGHT_PAREN = 3,
+    FT_TOKEN_STOPWORD    = 4
 };
 
 /*
@@ -112,16 +110,15 @@ enum enum_ft_token_type
   ft_boolean_syntax system variable.
 */
 
-typedef struct st_mysql_ftparser_boolean_info
-{
-  enum enum_ft_token_type type;
-  int yesno;
-  int weight_adjust;
-  char wasign;
-  char trunc;
-  /* These are parser state and must be removed. */
-  char prev;
-  char *quot;
+typedef struct st_mysql_ftparser_boolean_info {
+    enum enum_ft_token_type type;
+    int                     yesno;
+    int                     weight_adjust;
+    char                    wasign;
+    char                    trunc;
+    /* These are parser state and must be removed. */
+    char  prev;
+    char* quot;
 } MYSQL_FTPARSER_BOOLEAN_INFO;
 
 /*
@@ -174,20 +171,19 @@ typedef struct st_mysql_ftparser_boolean_info
   nothing.  See  enum_ftparser_mode above.
 */
 
-typedef struct st_mysql_ftparser_param
-{
-  int (*mysql_parse)(struct st_mysql_ftparser_param *,
-                     char *doc, int doc_len);
-  int (*mysql_add_word)(struct st_mysql_ftparser_param *,
-                        char *word, int word_len,
-                        MYSQL_FTPARSER_BOOLEAN_INFO *boolean_info);
-  void *ftparser_state;
-  void *mysql_ftparam;
-  struct charset_info_st *cs;
-  char *doc;
-  int length;
-  int flags;
-  enum enum_ftparser_mode mode;
+typedef struct st_mysql_ftparser_param {
+    int (*mysql_parse)(struct st_mysql_ftparser_param*, char* doc, int doc_len);
+    int (*mysql_add_word)(struct st_mysql_ftparser_param*,
+                          char*                        word,
+                          int                          word_len,
+                          MYSQL_FTPARSER_BOOLEAN_INFO* boolean_info);
+    void*                   ftparser_state;
+    void*                   mysql_ftparam;
+    struct charset_info_st* cs;
+    char*                   doc;
+    int                     length;
+    int                     flags;
+    enum enum_ftparser_mode mode;
 } MYSQL_FTPARSER_PARAM;
 
 /*
@@ -198,14 +194,11 @@ typedef struct st_mysql_ftparser_param
   invoked per SQL statement for which the parser is used.
 */
 
-struct st_mysql_ftparser
-{
-  int interface_version;
-  int (*parse)(MYSQL_FTPARSER_PARAM *param);
-  int (*init)(MYSQL_FTPARSER_PARAM *param);
-  int (*deinit)(MYSQL_FTPARSER_PARAM *param);
+struct st_mysql_ftparser {
+    int interface_version;
+    int (*parse)(MYSQL_FTPARSER_PARAM* param);
+    int (*init)(MYSQL_FTPARSER_PARAM* param);
+    int (*deinit)(MYSQL_FTPARSER_PARAM* param);
 };
 
-
 #endif
-

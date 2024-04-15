@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,71 +22,61 @@
 #include "SpellInfo.h"
 #include "halls_of_lightning.h"
 
-enum IonarSpells
-{
-    SPELL_BALL_LIGHTNING_N          = 52780,
-    SPELL_BALL_LIGHTNING_H          = 59800,
-    SPELL_STATIC_OVERLOAD_N         = 52658,
-    SPELL_STATIC_OVERLOAD_H         = 59795,
+enum IonarSpells {
+    SPELL_BALL_LIGHTNING_N  = 52780,
+    SPELL_BALL_LIGHTNING_H  = 59800,
+    SPELL_STATIC_OVERLOAD_N = 52658,
+    SPELL_STATIC_OVERLOAD_H = 59795,
 
-    SPELL_DISPERSE                  = 52770,
-    SPELL_SUMMON_SPARK              = 52746,
-    SPELL_SPARK_DESPAWN             = 52776,
+    SPELL_DISPERSE      = 52770,
+    SPELL_SUMMON_SPARK  = 52746,
+    SPELL_SPARK_DESPAWN = 52776,
 
-    //Spark of Ionar
-    SPELL_SPARK_VISUAL_TRIGGER_N    = 52667,
-    SPELL_SPARK_VISUAL_TRIGGER_H    = 59833,
-    SPELL_RANDOM_LIGHTNING          = 52663,
+    // Spark of Ionar
+    SPELL_SPARK_VISUAL_TRIGGER_N = 52667,
+    SPELL_SPARK_VISUAL_TRIGGER_H = 59833,
+    SPELL_RANDOM_LIGHTNING       = 52663,
 };
 
-enum IonarOther
-{
+enum IonarOther {
     // NPCs
-    NPC_SPARK_OF_IONAR              = 28926,
+    NPC_SPARK_OF_IONAR = 28926,
 
     // Actions
-    ACTION_CALLBACK                 = 1,
-    ACTION_SPARK_DESPAWN            = 2,
+    ACTION_CALLBACK      = 1,
+    ACTION_SPARK_DESPAWN = 2,
 };
 
-enum Yells
-{
-    SAY_AGGRO                       = 0,
-    SAY_SPLIT                       = 1,
-    SAY_SLAY                        = 2,
-    SAY_DEATH                       = 3
+enum Yells { SAY_AGGRO = 0, SAY_SPLIT = 1, SAY_SLAY = 2, SAY_DEATH = 3 };
+
+enum IonarEvents {
+    EVENT_BALL_LIGHTNING  = 1,
+    EVENT_STATIC_OVERLOAD = 2,
+    EVENT_CHECK_HEALTH    = 3,
+    EVENT_CALL_SPARKS     = 4,
+    EVENT_RESTORE         = 5,
 };
 
-enum IonarEvents
-{
-    EVENT_BALL_LIGHTNING            = 1,
-    EVENT_STATIC_OVERLOAD           = 2,
-    EVENT_CHECK_HEALTH              = 3,
-    EVENT_CALL_SPARKS               = 4,
-    EVENT_RESTORE                   = 5,
-};
-
-class boss_ionar : public CreatureScript
-{
+class boss_ionar : public CreatureScript {
 public:
-    boss_ionar() : CreatureScript("boss_ionar") { }
+    boss_ionar() : CreatureScript("boss_ionar") {}
 
     CreatureAI* GetAI(Creature* creature) const override
     {
         return GetHallsOfLightningAI<boss_ionarAI>(creature);
     }
 
-    struct boss_ionarAI : public ScriptedAI
-    {
-        boss_ionarAI(Creature* creature) : ScriptedAI(creature), summons(creature)
+    struct boss_ionarAI : public ScriptedAI {
+        boss_ionarAI(Creature* creature)
+            : ScriptedAI(creature), summons(creature)
         {
             m_pInstance = creature->GetInstanceScript();
         }
 
         InstanceScript* m_pInstance;
-        EventMap events;
-        SummonList summons;
-        uint8 HealthCheck;
+        EventMap        events;
+        SummonList      summons;
+        uint8           HealthCheck;
 
         void Reset() override
         {
@@ -149,18 +140,32 @@ public:
             Talk(SAY_SPLIT);
 
             Creature* spark;
-            for (uint8 i = 0; i < 5; ++i)
-            {
-                if ((spark = me->SummonCreature(NPC_SPARK_OF_IONAR, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 20000)))
-                {
+            for (uint8 i = 0; i < 5; ++i) {
+                if ((spark = me->SummonCreature(NPC_SPARK_OF_IONAR,
+                                                me->GetPositionX(),
+                                                me->GetPositionY(),
+                                                me->GetPositionZ(),
+                                                0,
+                                                TEMPSUMMON_TIMED_DESPAWN,
+                                                20000))) {
                     summons.Summon(spark);
-                    spark->CastSpell(spark, me->GetMap()->IsHeroic() ? SPELL_SPARK_VISUAL_TRIGGER_H : SPELL_SPARK_VISUAL_TRIGGER_N, true);
+                    spark->CastSpell(spark,
+                                     me->GetMap()->IsHeroic()
+                                         ? SPELL_SPARK_VISUAL_TRIGGER_H
+                                         : SPELL_SPARK_VISUAL_TRIGGER_N,
+                                     true);
                     spark->CastSpell(spark, SPELL_RANDOM_LIGHTNING, true);
-                    spark->SetUnitFlag(UNIT_FLAG_PACIFIED | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
-                    spark->SetHomePosition(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0);
+                    spark->SetUnitFlag(UNIT_FLAG_PACIFIED |
+                                       UNIT_FLAG_NOT_SELECTABLE |
+                                       UNIT_FLAG_NON_ATTACKABLE);
+                    spark->SetHomePosition(me->GetPositionX(),
+                                           me->GetPositionY(),
+                                           me->GetPositionZ(),
+                                           0);
 
                     if (Player* tgt = SelectTargetFromPlayerList(100))
-                        spark->GetMotionMaster()->MoveFollow(tgt, 0.0f, 0.0f, MOTION_SLOT_CONTROLLED);
+                        spark->GetMotionMaster()->MoveFollow(
+                            tgt, 0.0f, 0.0f, MOTION_SLOT_CONTROLLED);
                 }
             }
 
@@ -181,41 +186,47 @@ public:
             if (me->HasUnitState(UNIT_STATE_CASTING))
                 return;
 
-            switch (events.ExecuteEvent())
-            {
-                case EVENT_BALL_LIGHTNING:
-                    if (Unit* target = SelectTarget(SelectTargetMethod::Random))
-                        me->CastSpell(target, me->GetMap()->IsHeroic() ? SPELL_BALL_LIGHTNING_H : SPELL_BALL_LIGHTNING_N, false);
+            switch (events.ExecuteEvent()) {
+            case EVENT_BALL_LIGHTNING:
+                if (Unit* target = SelectTarget(SelectTargetMethod::Random))
+                    me->CastSpell(target,
+                                  me->GetMap()->IsHeroic()
+                                      ? SPELL_BALL_LIGHTNING_H
+                                      : SPELL_BALL_LIGHTNING_N,
+                                  false);
 
-                    events.Repeat(10s, 11s);
-                    break;
-                case EVENT_STATIC_OVERLOAD:
-                    if (Unit* target = SelectTarget(SelectTargetMethod::Random))
-                        me->CastSpell(target, me->GetMap()->IsHeroic() ? SPELL_STATIC_OVERLOAD_H : SPELL_STATIC_OVERLOAD_N, false);
+                events.Repeat(10s, 11s);
+                break;
+            case EVENT_STATIC_OVERLOAD:
+                if (Unit* target = SelectTarget(SelectTargetMethod::Random))
+                    me->CastSpell(target,
+                                  me->GetMap()->IsHeroic()
+                                      ? SPELL_STATIC_OVERLOAD_H
+                                      : SPELL_STATIC_OVERLOAD_N,
+                                  false);
 
-                    events.Repeat(5s, 6s);
-                    break;
-                case EVENT_CHECK_HEALTH:
-                    if (HealthBelowPct(HealthCheck))
-                        me->CastSpell(me, SPELL_DISPERSE, false);
+                events.Repeat(5s, 6s);
+                break;
+            case EVENT_CHECK_HEALTH:
+                if (HealthBelowPct(HealthCheck))
+                    me->CastSpell(me, SPELL_DISPERSE, false);
 
-                    events.Repeat(1s);
-                    return;
-                case EVENT_CALL_SPARKS:
-                    {
-                        EntryCheckPredicate pred(NPC_SPARK_OF_IONAR);
-                        summons.DoAction(ACTION_CALLBACK, pred);
-                        events.ScheduleEvent(EVENT_RESTORE, 2s, 0, 2);
-                        return;
-                    }
-                case EVENT_RESTORE:
-                    EntryCheckPredicate pred(NPC_SPARK_OF_IONAR);
-                    summons.DoAction(ACTION_SPARK_DESPAWN, pred);
+                events.Repeat(1s);
+                return;
+            case EVENT_CALL_SPARKS: {
+                EntryCheckPredicate pred(NPC_SPARK_OF_IONAR);
+                summons.DoAction(ACTION_CALLBACK, pred);
+                events.ScheduleEvent(EVENT_RESTORE, 2s, 0, 2);
+                return;
+            }
+            case EVENT_RESTORE:
+                EntryCheckPredicate pred(NPC_SPARK_OF_IONAR);
+                summons.DoAction(ACTION_SPARK_DESPAWN, pred);
 
-                    me->SetVisible(true);
-                    me->SetControlled(false, UNIT_STATE_STUNNED);
-                    ScheduleEvents(true);
-                    return;
+                me->SetVisible(true);
+                me->SetControlled(false, UNIT_STATE_STUNNED);
+                ScheduleEvents(true);
+                return;
             }
 
             DoMeleeAttackIfReady();
@@ -223,45 +234,44 @@ public:
     };
 };
 
-class npc_spark_of_ionar : public CreatureScript
-{
+class npc_spark_of_ionar : public CreatureScript {
 public:
-    npc_spark_of_ionar() : CreatureScript("npc_spark_of_ionar") { }
+    npc_spark_of_ionar() : CreatureScript("npc_spark_of_ionar") {}
 
     CreatureAI* GetAI(Creature* creature) const override
     {
         return GetHallsOfLightningAI<npc_spark_of_ionarAI>(creature);
     }
 
-    struct npc_spark_of_ionarAI : public ScriptedAI
-    {
-        npc_spark_of_ionarAI(Creature* creature) : ScriptedAI(creature) { }
+    struct npc_spark_of_ionarAI : public ScriptedAI {
+        npc_spark_of_ionarAI(Creature* creature) : ScriptedAI(creature) {}
 
         bool returning;
 
-        void MoveInLineOfSight(Unit*) override { }
-        void UpdateAI(uint32) override { }
-        void AttackStart(Unit*  /*who*/) override { }
+        void MoveInLineOfSight(Unit*) override {}
+        void UpdateAI(uint32) override {}
+        void AttackStart(Unit* /*who*/) override {}
 
         void Reset() override { returning = false; }
 
-        void DamageTaken(Unit*, uint32& damage, DamageEffectType, SpellSchoolMask) override
+        void DamageTaken(Unit*,
+                         uint32& damage,
+                         DamageEffectType,
+                         SpellSchoolMask) override
         {
             damage = 0;
         }
 
         void DoAction(int32 param) override
         {
-            if (param == ACTION_CALLBACK)
-            {
+            if (param == ACTION_CALLBACK) {
                 me->SetSpeed(MOVE_RUN, 2.5f);
                 me->GetThreatMgr().ClearAllThreat();
                 me->CombatStop(true);
                 me->GetMotionMaster()->MoveTargetedHome();
                 returning = true;
             }
-            else if (param == ACTION_SPARK_DESPAWN)
-            {
+            else if (param == ACTION_SPARK_DESPAWN) {
                 me->GetMotionMaster()->MoveIdle();
 
                 me->RemoveAllAuras();

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,52 +21,57 @@
 
 #include "WorldPacket.h"
 
-namespace WorldPackets
-{
-    class AC_GAME_API Packet
+namespace WorldPackets {
+class AC_GAME_API Packet {
+public:
+    Packet(WorldPacket&& worldPacket);
+
+    virtual ~Packet() = default;
+
+    Packet(Packet const& right)            = delete;
+    Packet& operator=(Packet const& right) = delete;
+
+    virtual WorldPacket const* Write() = 0;
+    virtual void               Read()  = 0;
+
+    [[nodiscard]] WorldPacket const* GetRawPacket() const
     {
-    public:
-        Packet(WorldPacket&& worldPacket);
+        return &_worldPacket;
+    }
+    [[nodiscard]] size_t GetSize() const { return _worldPacket.size(); }
 
-        virtual ~Packet() = default;
+protected:
+    WorldPacket _worldPacket;
+};
 
-        Packet(Packet const& right) = delete;
-        Packet& operator=(Packet const& right) = delete;
+class AC_GAME_API ServerPacket : public Packet {
+public:
+    ServerPacket(OpcodeServer opcode, size_t initialSize = 200);
 
-        virtual WorldPacket const* Write() = 0;
-        virtual void Read() = 0;
+    void Read() final;
 
-        [[nodiscard]] WorldPacket const* GetRawPacket() const { return &_worldPacket; }
-        [[nodiscard]] size_t GetSize() const { return _worldPacket.size(); }
+    void          Clear() { _worldPacket.clear(); }
+    WorldPacket&& Move() { return std::move(_worldPacket); }
+    void          ShrinkToFit() { _worldPacket.shrink_to_fit(); }
 
-    protected:
-        WorldPacket _worldPacket;
-    };
-
-    class AC_GAME_API ServerPacket : public Packet
+    [[nodiscard]] OpcodeServer GetOpcode() const
     {
-    public:
-        ServerPacket(OpcodeServer opcode, size_t initialSize = 200);
+        return OpcodeServer(_worldPacket.GetOpcode());
+    }
+};
 
-        void Read() final;
+class AC_GAME_API ClientPacket : public Packet {
+public:
+    ClientPacket(WorldPacket&& packet);
+    ClientPacket(OpcodeClient expectedOpcode, WorldPacket&& packet);
 
-        void Clear() { _worldPacket.clear(); }
-        WorldPacket&& Move() { return std::move(_worldPacket); }
-        void ShrinkToFit() { _worldPacket.shrink_to_fit(); }
+    WorldPacket const* Write() final;
 
-        [[nodiscard]] OpcodeServer GetOpcode() const { return OpcodeServer(_worldPacket.GetOpcode()); }
-    };
-
-    class AC_GAME_API ClientPacket : public Packet
+    [[nodiscard]] OpcodeClient GetOpcode() const
     {
-    public:
-        ClientPacket(WorldPacket&& packet);
-        ClientPacket(OpcodeClient expectedOpcode, WorldPacket&& packet);
-
-        WorldPacket const* Write() final;
-
-        [[nodiscard]] OpcodeClient GetOpcode() const { return OpcodeClient(_worldPacket.GetOpcode()); }
-    };
-}
+        return OpcodeClient(_worldPacket.GetOpcode());
+    }
+};
+} // namespace WorldPackets
 
 #endif // PacketBaseWorld_h__

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -23,86 +24,89 @@
 #define isnan std::isnan
 #endif
 
-void BIH::buildHierarchy(std::vector<uint32>& tempTree, buildData& dat, BuildStats& stats)
+void BIH::buildHierarchy(std::vector<uint32>& tempTree,
+                         buildData&           dat,
+                         BuildStats&          stats)
 {
     // create space for the first node
     // cppcheck-suppress integerOverflow
     tempTree.push_back(uint32(3 << 30)); // dummy leaf
     tempTree.insert(tempTree.end(), 2, 0);
-    //tempTree.add(0);
+    // tempTree.add(0);
 
     // seed bbox
-    AABound gridBox = { bounds.low(), bounds.high() };
+    AABound gridBox = {bounds.low(), bounds.high()};
     AABound nodeBox = gridBox;
     // seed subdivide function
-    subdivide(0, dat.numPrims - 1, tempTree, dat, gridBox, nodeBox, 0, 1, stats);
+    subdivide(
+        0, dat.numPrims - 1, tempTree, dat, gridBox, nodeBox, 0, 1, stats);
 }
 
-void BIH::subdivide(int left, int right, std::vector<uint32>& tempTree, buildData& dat, AABound& gridBox, AABound& nodeBox, int nodeIndex, int depth, BuildStats& stats)
+void BIH::subdivide(int                  left,
+                    int                  right,
+                    std::vector<uint32>& tempTree,
+                    buildData&           dat,
+                    AABound&             gridBox,
+                    AABound&             nodeBox,
+                    int                  nodeIndex,
+                    int                  depth,
+                    BuildStats&          stats)
 {
-    if ((right - left + 1) <= dat.maxPrims || depth >= MAX_STACK_SIZE)
-    {
+    if ((right - left + 1) <= dat.maxPrims || depth >= MAX_STACK_SIZE) {
         // write leaf node
         stats.updateLeaf(depth, right - left + 1);
         createNode(tempTree, nodeIndex, left, right);
         return;
     }
     // calculate extents
-    int axis = -1, prevAxis, rightOrig;
+    int   axis  = -1, prevAxis, rightOrig;
     float clipL = G3D::fnan(), clipR = G3D::fnan(), prevClip = G3D::fnan();
-    float split = G3D::fnan(), prevSplit;
-    bool wasLeft = true;
-    while (true)
-    {
-        prevAxis = axis;
+    float split   = G3D::fnan(), prevSplit;
+    bool  wasLeft = true;
+    while (true) {
+        prevAxis  = axis;
         prevSplit = split;
         // perform quick consistency checks
-        G3D::Vector3 d( gridBox.hi - gridBox.lo );
-        if (d.x < 0 || d.y < 0 || d.z < 0)
-        {
+        G3D::Vector3 d(gridBox.hi - gridBox.lo);
+        if (d.x < 0 || d.y < 0 || d.z < 0) {
             throw std::logic_error("negative node extents");
         }
-        for (int i = 0; i < 3; i++)
-        {
-            if (nodeBox.hi[i] < gridBox.lo[i] || nodeBox.lo[i] > gridBox.hi[i])
-            {
-                //UI.printError(Module.ACCEL, "Reached tree area in error - discarding node with: %d objects", right - left + 1);
+        for (int i = 0; i < 3; i++) {
+            if (nodeBox.hi[i] < gridBox.lo[i] ||
+                nodeBox.lo[i] > gridBox.hi[i]) {
+                // UI.printError(Module.ACCEL, "Reached tree area in error -
+                // discarding node with: %d objects", right - left + 1);
                 throw std::logic_error("invalid node overlap");
             }
         }
         // find longest axis
-        axis = d.primaryAxis();
+        axis  = d.primaryAxis();
         split = 0.5f * (gridBox.lo[axis] + gridBox.hi[axis]);
         // partition L/R subsets
-        clipL = -G3D::inf();
-        clipR = G3D::inf();
-        rightOrig = right; // save this for later
+        clipL       = -G3D::inf();
+        clipR       = G3D::inf();
+        rightOrig   = right; // save this for later
         float nodeL = G3D::inf();
         float nodeR = -G3D::inf();
-        for (int i = left; i <= right;)
-        {
-            int obj = dat.indices[i];
-            float minb = dat.primBound[obj].low()[axis];
-            float maxb = dat.primBound[obj].high()[axis];
+        for (int i = left; i <= right;) {
+            int   obj    = dat.indices[i];
+            float minb   = dat.primBound[obj].low()[axis];
+            float maxb   = dat.primBound[obj].high()[axis];
             float center = (minb + maxb) * 0.5f;
-            if (center <= split)
-            {
+            if (center <= split) {
                 // stay left
                 i++;
-                if (clipL < maxb)
-                {
+                if (clipL < maxb) {
                     clipL = maxb;
                 }
             }
-            else
-            {
+            else {
                 // move to the right most
-                int t = dat.indices[i];
-                dat.indices[i] = dat.indices[right];
+                int t              = dat.indices[i];
+                dat.indices[i]     = dat.indices[right];
                 dat.indices[right] = t;
                 right--;
-                if (clipR > minb)
-                {
+                if (clipR > minb) {
                     clipR = minb;
                 }
             }
@@ -110,13 +114,11 @@ void BIH::subdivide(int left, int right, std::vector<uint32>& tempTree, buildDat
             nodeR = std::max(nodeR, maxb);
         }
         // check for empty space
-        if (nodeL > nodeBox.lo[axis] && nodeR < nodeBox.hi[axis])
-        {
+        if (nodeL > nodeBox.lo[axis] && nodeR < nodeBox.hi[axis]) {
             float nodeBoxW = nodeBox.hi[axis] - nodeBox.lo[axis];
             float nodeNewW = nodeR - nodeL;
             // node box is too big compare to space occupied by primitives?
-            if (1.3f * nodeNewW < nodeBoxW)
-            {
+            if (1.3f * nodeNewW < nodeBoxW) {
                 stats.updateBVH2();
                 int nextIndex = tempTree.size();
                 // allocate child
@@ -131,59 +133,59 @@ void BIH::subdivide(int left, int right, std::vector<uint32>& tempTree, buildDat
                 // update nodebox and recurse
                 nodeBox.lo[axis] = nodeL;
                 nodeBox.hi[axis] = nodeR;
-                subdivide(left, rightOrig, tempTree, dat, gridBox, nodeBox, nextIndex, depth + 1, stats);
+                subdivide(left,
+                          rightOrig,
+                          tempTree,
+                          dat,
+                          gridBox,
+                          nodeBox,
+                          nextIndex,
+                          depth + 1,
+                          stats);
                 return;
             }
         }
         // ensure we are making progress in the subdivision
-        if (right == rightOrig)
-        {
+        if (right == rightOrig) {
             // all left
-            if (prevAxis == axis && G3D::fuzzyEq(prevSplit, split))
-            {
+            if (prevAxis == axis && G3D::fuzzyEq(prevSplit, split)) {
                 // we are stuck here - create a leaf
                 stats.updateLeaf(depth, right - left + 1);
                 createNode(tempTree, nodeIndex, left, right);
                 return;
             }
-            if (clipL <= split)
-            {
+            if (clipL <= split) {
                 // keep looping on left half
                 gridBox.hi[axis] = split;
-                prevClip = clipL;
-                wasLeft = true;
+                prevClip         = clipL;
+                wasLeft          = true;
                 continue;
             }
             gridBox.hi[axis] = split;
-            prevClip = G3D::fnan();
+            prevClip         = G3D::fnan();
         }
-        else if (left > right)
-        {
+        else if (left > right) {
             // all right
             right = rightOrig;
-            if (prevAxis == axis && G3D::fuzzyEq(prevSplit, split))
-            {
+            if (prevAxis == axis && G3D::fuzzyEq(prevSplit, split)) {
                 // we are stuck here - create a leaf
                 stats.updateLeaf(depth, right - left + 1);
                 createNode(tempTree, nodeIndex, left, right);
                 return;
             }
-            if (clipR >= split)
-            {
+            if (clipR >= split) {
                 // keep looping on right half
                 gridBox.lo[axis] = split;
-                prevClip = clipR;
-                wasLeft = false;
+                prevClip         = clipR;
+                wasLeft          = false;
                 continue;
             }
             gridBox.lo[axis] = split;
-            prevClip = G3D::fnan();
+            prevClip         = G3D::fnan();
         }
-        else
-        {
+        else {
             // we are actually splitting stuff
-            if (prevAxis != -1 && !isnan(prevClip))
-            {
+            if (prevAxis != -1 && !isnan(prevClip)) {
                 // second time through - lets create the previous split
                 // since it produced empty space
                 int nextIndex = tempTree.size();
@@ -191,8 +193,7 @@ void BIH::subdivide(int left, int right, std::vector<uint32>& tempTree, buildDat
                 tempTree.push_back(0);
                 tempTree.push_back(0);
                 tempTree.push_back(0);
-                if (wasLeft)
-                {
+                if (wasLeft) {
                     // create a node with a left child
                     // write leaf node
                     stats.updateInner();
@@ -200,12 +201,12 @@ void BIH::subdivide(int left, int right, std::vector<uint32>& tempTree, buildDat
                     tempTree[nodeIndex + 1] = floatToRawIntBits(prevClip);
                     tempTree[nodeIndex + 2] = floatToRawIntBits(G3D::inf());
                 }
-                else
-                {
+                else {
                     // create a node with a right child
                     // write leaf node
                     stats.updateInner();
-                    tempTree[nodeIndex + 0] = (prevAxis << 30) | (nextIndex - 3);
+                    tempTree[nodeIndex + 0] =
+                        (prevAxis << 30) | (nextIndex - 3);
                     tempTree[nodeIndex + 1] = floatToRawIntBits(-G3D::inf());
                     tempTree[nodeIndex + 2] = floatToRawIntBits(prevClip);
                 }
@@ -223,19 +224,16 @@ void BIH::subdivide(int left, int right, std::vector<uint32>& tempTree, buildDat
     // allocate left node
     int nl = right - left + 1;
     int nr = rightOrig - (right + 1) + 1;
-    if (nl > 0)
-    {
+    if (nl > 0) {
         tempTree.push_back(0);
         tempTree.push_back(0);
         tempTree.push_back(0);
     }
-    else
-    {
+    else {
         nextIndex -= 3;
     }
     // allocate right node
-    if (nr > 0)
-    {
+    if (nr > 0) {
         tempTree.push_back(0);
         tempTree.push_back(0);
         tempTree.push_back(0);
@@ -249,23 +247,35 @@ void BIH::subdivide(int left, int right, std::vector<uint32>& tempTree, buildDat
     AABound gridBoxL(gridBox), gridBoxR(gridBox);
     AABound nodeBoxL(nodeBox), nodeBoxR(nodeBox);
     gridBoxL.hi[axis] = gridBoxR.lo[axis] = split;
-    nodeBoxL.hi[axis] = clipL;
-    nodeBoxR.lo[axis] = clipR;
+    nodeBoxL.hi[axis]                     = clipL;
+    nodeBoxR.lo[axis]                     = clipR;
     // recurse
-    if (nl > 0)
-    {
-        subdivide(left, right, tempTree, dat, gridBoxL, nodeBoxL, nextIndex, depth + 1, stats);
+    if (nl > 0) {
+        subdivide(left,
+                  right,
+                  tempTree,
+                  dat,
+                  gridBoxL,
+                  nodeBoxL,
+                  nextIndex,
+                  depth + 1,
+                  stats);
     }
-    else
-    {
+    else {
         stats.updateLeaf(depth + 1, 0);
     }
-    if (nr > 0)
-    {
-        subdivide(right + 1, rightOrig, tempTree, dat, gridBoxR, nodeBoxR, nextIndex + 3, depth + 1, stats);
+    if (nr > 0) {
+        subdivide(right + 1,
+                  rightOrig,
+                  tempTree,
+                  dat,
+                  gridBoxR,
+                  nodeBoxR,
+                  nextIndex + 3,
+                  depth + 1,
+                  stats);
     }
-    else
-    {
+    else {
         stats.updateLeaf(depth + 1, 0);
     }
 }
@@ -273,7 +283,7 @@ void BIH::subdivide(int left, int right, std::vector<uint32>& tempTree, buildDat
 bool BIH::writeToFile(FILE* wf) const
 {
     uint32 treeSize = tree.size();
-    uint32 check = 0, count;
+    uint32 check    = 0, count;
     check += fwrite(&bounds.low(), sizeof(float), 3, wf);
     check += fwrite(&bounds.high(), sizeof(float), 3, wf);
     check += fwrite(&treeSize, sizeof(uint32), 1, wf);
@@ -286,9 +296,9 @@ bool BIH::writeToFile(FILE* wf) const
 
 bool BIH::readFromFile(FILE* rf)
 {
-    uint32 treeSize;
+    uint32       treeSize;
     G3D::Vector3 lo, hi;
-    uint32 check = 0, count = 0;
+    uint32       check = 0, count = 0;
     check += fread(&lo, sizeof(float), 3, rf);
     check += fread(&hi, sizeof(float), 3, rf);
     bounds = G3D::AABox(lo, hi);
@@ -298,7 +308,8 @@ bool BIH::readFromFile(FILE* rf)
     check += fread(&count, sizeof(uint32), 1, rf);
     objects.resize(count); // = new uint32[nObjects];
     check += fread(&objects[0], sizeof(uint32), count, rf);
-    return uint64(check) == uint64(3 + 3 + 1 + 1 + uint64(treeSize) + uint64(count));
+    return uint64(check) ==
+           uint64(3 + 3 + 1 + 1 + uint64(treeSize) + uint64(count));
 }
 
 void BIH::BuildStats::updateLeaf(int depth, int n)
@@ -320,11 +331,12 @@ void BIH::BuildStats::printStats()
     printf("  * Nodes:          %d\n", numNodes);
     printf("  * Leaves:         %d\n", numLeaves);
     printf("  * Objects: min    %d\n", minObjects);
-    printf("             avg    %.2f\n", (float) sumObjects / numLeaves);
-    printf("           avg(n>0) %.2f\n", (float) sumObjects / (numLeaves - numLeavesN[0]));
+    printf("             avg    %.2f\n", (float)sumObjects / numLeaves);
+    printf("           avg(n>0) %.2f\n",
+           (float)sumObjects / (numLeaves - numLeavesN[0]));
     printf("             max    %d\n", maxObjects);
     printf("  * Depth:   min    %d\n", minDepth);
-    printf("             avg    %.2f\n", (float) sumDepth / numLeaves);
+    printf("             avg    %.2f\n", (float)sumDepth / numLeaves);
     printf("             max    %d\n", maxDepth);
     printf("  * Leaves w/: N=0  %3d%%\n", 100 * numLeavesN[0] / numLeaves);
     printf("               N=1  %3d%%\n", 100 * numLeavesN[1] / numLeaves);
@@ -332,5 +344,7 @@ void BIH::BuildStats::printStats()
     printf("               N=3  %3d%%\n", 100 * numLeavesN[3] / numLeaves);
     printf("               N=4  %3d%%\n", 100 * numLeavesN[4] / numLeaves);
     printf("               N>4  %3d%%\n", 100 * numLeavesN[5] / numLeaves);
-    printf("  * BVH2 nodes:     %d (%3d%%)\n", numBVH2, 100 * numBVH2 / (numNodes + numLeaves - 2 * numBVH2));
+    printf("  * BVH2 nodes:     %d (%3d%%)\n",
+           numBVH2,
+           100 * numBVH2 / (numNodes + numLeaves - 2 * numBVH2));
 }

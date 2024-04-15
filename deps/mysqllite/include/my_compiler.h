@@ -24,7 +24,7 @@
   specific to a target compiler.
 */
 
-#include <my_global.h>                          /* stddef.h offsetof */
+#include <my_global.h> /* stddef.h offsetof */
 
 /**
   Compiler-dependent internal convenience macros.
@@ -33,44 +33,44 @@
 /* GNU C/C++ */
 #if defined __GNUC__
 /* Convenience macro to test the minimum required GCC version. */
-# define MY_GNUC_PREREQ(maj, min) \
+#define MY_GNUC_PREREQ(maj, min)                                               \
     ((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
 /* Any after 2.95... */
-# define MY_ALIGN_EXT
+#define MY_ALIGN_EXT
 /* Comunicate to the compiler the unreachability of the code. */
-# if MY_GNUC_PREREQ(4,5)
-#   define MY_ASSERT_UNREACHABLE()   __builtin_unreachable()
-# endif
+#if MY_GNUC_PREREQ(4, 5)
+#define MY_ASSERT_UNREACHABLE() __builtin_unreachable()
+#endif
 
 /* Microsoft Visual C++ */
 #elif defined _MSC_VER
-# define MY_ALIGNOF(type)   __alignof(type)
-# define MY_ALIGNED(n)      __declspec(align(n))
+#define MY_ALIGNOF(type) __alignof(type)
+#define MY_ALIGNED(n) __declspec(align(n))
 
 /* Oracle Solaris Studio */
 #elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
-# if __SUNPRO_C >= 0x590
-#   define MY_ALIGN_EXT
-# endif
+#if __SUNPRO_C >= 0x590
+#define MY_ALIGN_EXT
+#endif
 
 /* IBM XL C/C++ */
 #elif defined __xlC__
-# if __xlC__ >= 0x0600
-#   define MY_ALIGN_EXT
-# endif
+#if __xlC__ >= 0x0600
+#define MY_ALIGN_EXT
+#endif
 
 /* HP aCC */
 #elif defined(__HP_aCC) || defined(__HP_cc)
-# if (__HP_aCC >= 60000) || (__HP_cc >= 60000)
-#   define MY_ALIGN_EXT
-# endif
+#if (__HP_aCC >= 60000) || (__HP_cc >= 60000)
+#define MY_ALIGN_EXT
+#endif
 #endif
 
 #ifdef MY_ALIGN_EXT
 /** Specifies the minimum alignment of a type. */
-# define MY_ALIGNOF(type)   __alignof__(type)
+#define MY_ALIGNOF(type) __alignof__(type)
 /** Determine the alignment requirement of a type. */
-# define MY_ALIGNED(n)      __attribute__((__aligned__((n))))
+#define MY_ALIGNED(n) __attribute__((__aligned__((n))))
 #endif
 
 /**
@@ -78,21 +78,34 @@
 */
 
 #ifndef MY_GNUC_PREREQ
-# define MY_GNUC_PREREQ(maj, min) (0)
+#define MY_GNUC_PREREQ(maj, min) (0)
 #endif
 
 #ifndef MY_ALIGNOF
-# ifdef __cplusplus
-    template<typename type> struct my_alignof_helper { char m1; type m2; };
-    /* Invalid for non-POD types, but most compilers give the right answer. */
-#   define MY_ALIGNOF(type)   offsetof(my_alignof_helper<type>, m2)
-# else
-#   define MY_ALIGNOF(type)   offsetof(struct { char m1; type m2; }, m2)
-# endif
+#ifdef __cplusplus
+template <typename type>
+struct my_alignof_helper {
+    char m1;
+    type m2;
+};
+/* Invalid for non-POD types, but most compilers give the right answer. */
+#define MY_ALIGNOF(type) offsetof(my_alignof_helper<type>, m2)
+#else
+#define MY_ALIGNOF(type)                                                       \
+    offsetof(                                                                  \
+        struct {                                                               \
+            char m1;                                                           \
+            type m2;                                                           \
+        },                                                                     \
+        m2)
+#endif
 #endif
 
 #ifndef MY_ASSERT_UNREACHABLE
-# define MY_ASSERT_UNREACHABLE()  do { assert(0); } while (0)
+#define MY_ASSERT_UNREACHABLE()                                                \
+    do {                                                                       \
+        assert(0);                                                             \
+    } while (0)
 #endif
 
 /**
@@ -104,19 +117,27 @@
 /**
   Opaque storage with a particular alignment.
 */
-# if defined(MY_ALIGNED)
+#if defined(MY_ALIGNED)
 /* Partial specialization used due to MSVC++. */
-template<size_t alignment> struct my_alignment_imp;
-template<> struct MY_ALIGNED(1) my_alignment_imp<1> {};
-template<> struct MY_ALIGNED(2) my_alignment_imp<2> {};
-template<> struct MY_ALIGNED(4) my_alignment_imp<4> {};
-template<> struct MY_ALIGNED(8) my_alignment_imp<8> {};
-template<> struct MY_ALIGNED(16) my_alignment_imp<16> {};
+template <size_t alignment>
+struct my_alignment_imp;
+template <>
+struct MY_ALIGNED(1) my_alignment_imp<1> {};
+template <>
+struct MY_ALIGNED(2) my_alignment_imp<2> {};
+template <>
+struct MY_ALIGNED(4) my_alignment_imp<4> {};
+template <>
+struct MY_ALIGNED(8) my_alignment_imp<8> {};
+template <>
+struct MY_ALIGNED(16) my_alignment_imp<16> {};
 /* ... expand as necessary. */
-# else
-template<size_t alignment>
-struct my_alignment_imp { double m1; };
-# endif
+#else
+template <size_t alignment>
+struct my_alignment_imp {
+    double m1;
+};
+#endif
 
 /**
   A POD type with a given size and alignment.
@@ -129,13 +150,11 @@ struct my_alignment_imp { double m1; };
   @tparam alignment   The desired alignment: 1, 2, 4, 8 or 16.
 */
 template <size_t size, size_t alignment>
-struct my_aligned_storage
-{
-  union
-  {
-    char data[size];
-    my_alignment_imp<alignment> align;
-  };
+struct my_aligned_storage {
+    union {
+        char                        data[size];
+        my_alignment_imp<alignment> align;
+    };
 };
 
 #endif /* __cplusplus */

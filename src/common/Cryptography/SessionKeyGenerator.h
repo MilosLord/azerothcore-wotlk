@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,15 +23,13 @@
 #include <cstring>
 
 template <typename Hash>
-class SessionKeyGenerator
-{
+class SessionKeyGenerator {
 public:
     template <typename C>
-    SessionKeyGenerator(C const& buf) :
-        o0it(o0.begin())
+    SessionKeyGenerator(C const& buf) : o0it(o0.begin())
     {
-        uint8 const* data = std::data(buf);
-        size_t const len = std::size(buf);
+        uint8 const* data    = std::data(buf);
+        size_t const len     = std::size(buf);
         size_t const halflen = (len / 2);
 
         o1 = Hash::GetDigestOf(data, halflen);
@@ -40,11 +39,9 @@ public:
 
     void Generate(uint8* buf, uint32 sz)
     {
-        for (uint32 i = 0; i < sz; ++i)
-        {
-            if (o0it == o0.end())
-            {
-                o0 = Hash::GetDigestOf(o1, o0, o2);
+        for (uint32 i = 0; i < sz; ++i) {
+            if (o0it == o0.end()) {
+                o0   = Hash::GetDigestOf(o1, o0, o2);
                 o0it = o0.begin();
             }
 
@@ -53,9 +50,9 @@ public:
     }
 
 private:
-    typename Hash::Digest o0{};
-    typename Hash::Digest o1{};
-    typename Hash::Digest o2{};
+    typename Hash::Digest                 o0{};
+    typename Hash::Digest                 o1{};
+    typename Hash::Digest                 o2{};
     typename Hash::Digest::const_iterator o0it;
 };
 

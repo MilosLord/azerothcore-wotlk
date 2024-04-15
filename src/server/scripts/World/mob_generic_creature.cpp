@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -19,27 +20,25 @@
 #include "PassiveAI.h"
 #include "ScriptedCreature.h"
 
-class trigger_periodic : public CreatureScript
-{
+class trigger_periodic : public CreatureScript {
 public:
-    trigger_periodic() : CreatureScript("trigger_periodic") { }
+    trigger_periodic() : CreatureScript("trigger_periodic") {}
 
-    struct trigger_periodicAI : public NullCreatureAI
-    {
+    struct trigger_periodicAI : public NullCreatureAI {
         trigger_periodicAI(Creature* creature) : NullCreatureAI(creature)
         {
-            spell = me->m_spells[0] ? sSpellMgr->GetSpellInfo(me->m_spells[0]) : nullptr;
+            spell = me->m_spells[0] ? sSpellMgr->GetSpellInfo(me->m_spells[0])
+                                    : nullptr;
             interval = me->GetAttackTime(BASE_ATTACK);
-            timer = interval;
+            timer    = interval;
         }
 
-        uint32 timer, interval;
+        uint32           timer, interval;
         SpellInfo const* spell;
 
         void UpdateAI(uint32 diff) override
         {
-            if (timer <= diff)
-            {
+            if (timer <= diff) {
                 if (spell)
                     me->CastSpell(me, spell, true);
                 timer = interval;
@@ -55,7 +54,4 @@ public:
     }
 };
 
-void AddSC_generic_creature()
-{
-    new trigger_periodic;
-}
+void AddSC_generic_creature() { new trigger_periodic; }

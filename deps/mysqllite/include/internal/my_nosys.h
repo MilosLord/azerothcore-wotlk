@@ -19,7 +19,7 @@
 */
 #ifndef _my_nosys_h
 #define _my_nosys_h
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -33,20 +33,20 @@ extern "C" {
 #undef my_read
 #undef my_write
 #undef my_seek
-#define my_read(a,b,c,d) my_quick_read(a,b,c,d)
-#define my_write(a,b,c,d) my_quick_write(a,b,c)
-extern size_t my_quick_read(File Filedes,uchar *Buffer,size_t Count,
-                            myf myFlags);
-extern size_t my_quick_write(File Filedes,const uchar *Buffer,size_t Count);
+#define my_read(a, b, c, d) my_quick_read(a, b, c, d)
+#define my_write(a, b, c, d) my_quick_write(a, b, c)
+extern size_t
+my_quick_read(File Filedes, uchar* Buffer, size_t Count, myf myFlags);
+extern size_t my_quick_write(File Filedes, const uchar* Buffer, size_t Count);
 
 #if defined(USE_HALLOC)
-#define my_malloc(a,b) halloc(a,1)
+#define my_malloc(a, b) halloc(a, 1)
 #define my_no_flags_free(a) hfree(a)
 #endif
 
 #endif /* __MY_NOSYS__ */
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif
 #endif

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,18 +23,11 @@
 #include <memory>
 #include <openssl/bn.h>
 
-BigNumber::BigNumber()
-    : _bn(BN_new())
-{ }
+BigNumber::BigNumber() : _bn(BN_new()) {}
 
-BigNumber::BigNumber(BigNumber const& bn)
-    : _bn(BN_dup(bn.BN()))
-{ }
+BigNumber::BigNumber(BigNumber const& bn) : _bn(BN_dup(bn.BN())) {}
 
-BigNumber::~BigNumber()
-{
-    BN_free(_bn);
-}
+BigNumber::~BigNumber() { BN_free(_bn); }
 
 void BigNumber::SetDword(int32 val)
 {
@@ -42,10 +36,7 @@ void BigNumber::SetDword(int32 val)
         BN_set_negative(_bn, 1);
 }
 
-void BigNumber::SetDword(uint32 val)
-{
-    BN_set_word(_bn, val);
-}
+void BigNumber::SetDword(uint32 val) { BN_set_word(_bn, val); }
 
 void BigNumber::SetQword(uint64 val)
 {
@@ -56,8 +47,7 @@ void BigNumber::SetQword(uint64 val)
 
 void BigNumber::SetBinary(uint8 const* bytes, int32 len, bool littleEndian)
 {
-    if (littleEndian)
-    {
+    if (littleEndian) {
 #if defined(OPENSSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER < 0x10100000L
         uint8* array = new uint8[len];
 
@@ -81,10 +71,7 @@ bool BigNumber::SetHexStr(char const* str)
     return (n > 0);
 }
 
-void BigNumber::SetRand(int32 numbits)
-{
-    BN_rand(_bn, numbits, 0, 1);
-}
+void BigNumber::SetRand(int32 numbits) { BN_rand(_bn, numbits, 0, 1); }
 
 BigNumber& BigNumber::operator=(BigNumber const& bn)
 {
@@ -109,7 +96,7 @@ BigNumber& BigNumber::operator-=(BigNumber const& bn)
 
 BigNumber& BigNumber::operator*=(BigNumber const& bn)
 {
-    BN_CTX *bnctx;
+    BN_CTX* bnctx;
 
     bnctx = BN_CTX_new();
     BN_mul(_bn, _bn, bn._bn, bnctx);
@@ -120,7 +107,7 @@ BigNumber& BigNumber::operator*=(BigNumber const& bn)
 
 BigNumber& BigNumber::operator/=(BigNumber const& bn)
 {
-    BN_CTX *bnctx;
+    BN_CTX* bnctx;
 
     bnctx = BN_CTX_new();
     BN_div(_bn, nullptr, _bn, bn._bn, bnctx);
@@ -131,7 +118,7 @@ BigNumber& BigNumber::operator/=(BigNumber const& bn)
 
 BigNumber& BigNumber::operator%=(BigNumber const& bn)
 {
-    BN_CTX *bnctx;
+    BN_CTX* bnctx;
 
     bnctx = BN_CTX_new();
     BN_mod(_bn, _bn, bn._bn, bnctx);
@@ -154,7 +141,7 @@ int BigNumber::CompareTo(BigNumber const& bn) const
 BigNumber BigNumber::Exp(BigNumber const& bn) const
 {
     BigNumber ret;
-    BN_CTX *bnctx;
+    BN_CTX*   bnctx;
 
     bnctx = BN_CTX_new();
     BN_exp(ret._bn, _bn, bn._bn, bnctx);
@@ -166,7 +153,7 @@ BigNumber BigNumber::Exp(BigNumber const& bn) const
 BigNumber BigNumber::ModExp(BigNumber const& bn1, BigNumber const& bn2) const
 {
     BigNumber ret;
-    BN_CTX *bnctx;
+    BN_CTX*   bnctx;
 
     bnctx = BN_CTX_new();
     BN_mod_exp(ret._bn, _bn, bn1._bn, bn2._bn, bnctx);
@@ -175,25 +162,13 @@ BigNumber BigNumber::ModExp(BigNumber const& bn1, BigNumber const& bn2) const
     return ret;
 }
 
-int32 BigNumber::GetNumBytes() const
-{
-    return BN_num_bytes(_bn);
-}
+int32 BigNumber::GetNumBytes() const { return BN_num_bytes(_bn); }
 
-uint32 BigNumber::AsDword() const
-{
-    return (uint32)BN_get_word(_bn);
-}
+uint32 BigNumber::AsDword() const { return (uint32)BN_get_word(_bn); }
 
-bool BigNumber::IsZero() const
-{
-    return BN_is_zero(_bn);
-}
+bool BigNumber::IsZero() const { return BN_is_zero(_bn); }
 
-bool BigNumber::IsNegative() const
-{
-    return BN_is_negative(_bn);
-}
+bool BigNumber::IsNegative() const { return BN_is_negative(_bn); }
 
 void BigNumber::GetBytes(uint8* buf, size_t bufsize, bool littleEndian) const
 {
@@ -203,7 +178,10 @@ void BigNumber::GetBytes(uint8* buf, size_t bufsize, bool littleEndian) const
     std::size_t numBytes = static_cast<std::size_t>(nBytes);
 
     // too large to store
-    ASSERT(numBytes <= bufsize, "Buffer of size {} is too small to hold bignum with {} bytes.\n", bufsize, numBytes);
+    ASSERT(numBytes <= bufsize,
+           "Buffer of size {} is too small to hold bignum with {} bytes.\n",
+           bufsize,
+           numBytes);
 
     // If we need more bytes than length of BigNumber set the rest to 0
     if (numBytes < bufsize)
@@ -211,18 +189,24 @@ void BigNumber::GetBytes(uint8* buf, size_t bufsize, bool littleEndian) const
 
     BN_bn2bin(_bn, buf + (bufsize - numBytes));
 
-    // openssl's BN stores data internally in big endian format, reverse if little endian desired
+    // openssl's BN stores data internally in big endian format, reverse if
+    // little endian desired
     if (littleEndian)
         std::reverse(buf, buf + bufsize);
 #else
-    int res = littleEndian ? BN_bn2lebinpad(_bn, buf, bufsize) : BN_bn2binpad(_bn, buf, bufsize);
-    ASSERT(res > 0, "Buffer of size {} is too small to hold bignum with {} bytes.\n", bufsize, BN_num_bytes(_bn));
+    int res = littleEndian ? BN_bn2lebinpad(_bn, buf, bufsize)
+                           : BN_bn2binpad(_bn, buf, bufsize);
+    ASSERT(res > 0,
+           "Buffer of size {} is too small to hold bignum with {} bytes.\n",
+           bufsize,
+           BN_num_bytes(_bn));
 #endif
 }
 
-std::vector<uint8> BigNumber::ToByteVector(int32 minSize, bool littleEndian) const
+std::vector<uint8> BigNumber::ToByteVector(int32 minSize,
+                                           bool  littleEndian) const
 {
-    std::size_t length = std::max(GetNumBytes(), minSize);
+    std::size_t        length = std::max(GetNumBytes(), minSize);
     std::vector<uint8> v;
     v.resize(length);
     GetBytes(v.data(), length, littleEndian);
@@ -231,7 +215,7 @@ std::vector<uint8> BigNumber::ToByteVector(int32 minSize, bool littleEndian) con
 
 std::string BigNumber::AsHexStr() const
 {
-    char* ch = BN_bn2hex(_bn);
+    char*       ch  = BN_bn2hex(_bn);
     std::string ret = ch;
     OPENSSL_free(ch);
     return ret;
@@ -239,7 +223,7 @@ std::string BigNumber::AsHexStr() const
 
 std::string BigNumber::AsDecStr() const
 {
-    char* ch = BN_bn2dec(_bn);
+    char*       ch  = BN_bn2dec(_bn);
     std::string ret = ch;
     OPENSSL_free(ch);
     return ret;

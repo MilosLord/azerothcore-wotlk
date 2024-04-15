@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -18,29 +19,22 @@
 #include "CreatureScript.h"
 #include "ScriptedCreature.h"
 
-enum Spells
-{
-    SPELL_CLEAVE                                  = 15284,
-    SPELL_FRIGHTENING_SHOUT                       = 19134,
-    SPELL_WHIRLWIND1                              = 15589,
-    SPELL_WHIRLWIND2                              = 13736,
-    SPELL_MORTAL_STRIKE                           = 16856
+enum Spells {
+    SPELL_CLEAVE            = 15284,
+    SPELL_FRIGHTENING_SHOUT = 19134,
+    SPELL_WHIRLWIND1        = 15589,
+    SPELL_WHIRLWIND2        = 13736,
+    SPELL_MORTAL_STRIKE     = 16856
 };
 
-enum Yells
-{
-    YELL_AGGRO                                    = 0,
-    YELL_EVADE                                    = 1
-};
+enum Yells { YELL_AGGRO = 0, YELL_EVADE = 1 };
 
-class boss_galvangar : public CreatureScript
-{
+class boss_galvangar : public CreatureScript {
 public:
-    boss_galvangar() : CreatureScript("boss_galvangar") { }
+    boss_galvangar() : CreatureScript("boss_galvangar") {}
 
-    struct boss_galvangarAI : public ScriptedAI
-    {
-        boss_galvangarAI(Creature* creature) : ScriptedAI(creature) { }
+    struct boss_galvangarAI : public ScriptedAI {
+        boss_galvangarAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint32 CleaveTimer;
         uint32 FrighteningShoutTimer;
@@ -51,75 +45,76 @@ public:
 
         void Reset() override
         {
-            CleaveTimer                     = urand(1 * IN_MILLISECONDS, 9 * IN_MILLISECONDS);
-            FrighteningShoutTimer           = urand(2 * IN_MILLISECONDS, 19 * IN_MILLISECONDS);
-            Whirlwind1Timer                 = urand(1 * IN_MILLISECONDS, 13 * IN_MILLISECONDS);
-            Whirlwind2Timer                 = urand(5 * IN_MILLISECONDS, 20 * IN_MILLISECONDS);
-            MortalStrikeTimer               = urand(5 * IN_MILLISECONDS, 20 * IN_MILLISECONDS);
-            ResetTimer                      = 5 * IN_MILLISECONDS;
+            CleaveTimer = urand(1 * IN_MILLISECONDS, 9 * IN_MILLISECONDS);
+            FrighteningShoutTimer =
+                urand(2 * IN_MILLISECONDS, 19 * IN_MILLISECONDS);
+            Whirlwind1Timer = urand(1 * IN_MILLISECONDS, 13 * IN_MILLISECONDS);
+            Whirlwind2Timer = urand(5 * IN_MILLISECONDS, 20 * IN_MILLISECONDS);
+            MortalStrikeTimer =
+                urand(5 * IN_MILLISECONDS, 20 * IN_MILLISECONDS);
+            ResetTimer = 5 * IN_MILLISECONDS;
         }
 
-        void JustEngagedWith(Unit* /*who*/) override
-        {
-            Talk(YELL_AGGRO);
-        }
+        void JustEngagedWith(Unit* /*who*/) override { Talk(YELL_AGGRO); }
 
-        void JustRespawned() override
-        {
-            Reset();
-        }
+        void JustRespawned() override { Reset(); }
 
         void UpdateAI(uint32 diff) override
         {
             if (!UpdateVictim())
                 return;
 
-            if (CleaveTimer <= diff)
-            {
+            if (CleaveTimer <= diff) {
                 DoCastVictim(SPELL_CLEAVE);
-                CleaveTimer =  urand(10 * IN_MILLISECONDS, 16 * IN_MILLISECONDS);
+                CleaveTimer = urand(10 * IN_MILLISECONDS, 16 * IN_MILLISECONDS);
             }
-            else CleaveTimer -= diff;
+            else
+                CleaveTimer -= diff;
 
-            if (FrighteningShoutTimer <= diff)
-            {
+            if (FrighteningShoutTimer <= diff) {
                 DoCastVictim(SPELL_FRIGHTENING_SHOUT);
-                FrighteningShoutTimer = urand(10 * IN_MILLISECONDS, 15 * IN_MILLISECONDS);
+                FrighteningShoutTimer =
+                    urand(10 * IN_MILLISECONDS, 15 * IN_MILLISECONDS);
             }
-            else FrighteningShoutTimer -= diff;
+            else
+                FrighteningShoutTimer -= diff;
 
-            if (Whirlwind1Timer <= diff)
-            {
+            if (Whirlwind1Timer <= diff) {
                 DoCastVictim(SPELL_WHIRLWIND1);
-                Whirlwind1Timer = urand(6 * IN_MILLISECONDS, 10 * IN_MILLISECONDS);
+                Whirlwind1Timer =
+                    urand(6 * IN_MILLISECONDS, 10 * IN_MILLISECONDS);
             }
-            else Whirlwind1Timer -= diff;
+            else
+                Whirlwind1Timer -= diff;
 
-            if (Whirlwind2Timer <= diff)
-            {
+            if (Whirlwind2Timer <= diff) {
                 DoCastVictim(SPELL_WHIRLWIND2);
-                Whirlwind2Timer = urand(10 * IN_MILLISECONDS, 25 * IN_MILLISECONDS);
+                Whirlwind2Timer =
+                    urand(10 * IN_MILLISECONDS, 25 * IN_MILLISECONDS);
             }
-            else Whirlwind2Timer -= diff;
+            else
+                Whirlwind2Timer -= diff;
 
-            if (MortalStrikeTimer <= diff)
-            {
+            if (MortalStrikeTimer <= diff) {
                 DoCastVictim(SPELL_MORTAL_STRIKE);
-                MortalStrikeTimer = urand(10 * IN_MILLISECONDS, 30 * IN_MILLISECONDS);
+                MortalStrikeTimer =
+                    urand(10 * IN_MILLISECONDS, 30 * IN_MILLISECONDS);
             }
-            else MortalStrikeTimer -= diff;
+            else
+                MortalStrikeTimer -= diff;
 
             // check if creature is not outside of building
-            if (ResetTimer <= diff)
-            {
-                if (me->GetDistance2d(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY()) > 50)
-                {
+            if (ResetTimer <= diff) {
+                if (me->GetDistance2d(me->GetHomePosition().GetPositionX(),
+                                      me->GetHomePosition().GetPositionY()) >
+                    50) {
                     EnterEvadeMode();
                     Talk(YELL_EVADE);
                 }
                 ResetTimer = 5 * IN_MILLISECONDS;
             }
-            else ResetTimer -= diff;
+            else
+                ResetTimer -= diff;
 
             DoMeleeAttackIfReady();
         }
@@ -131,7 +126,4 @@ public:
     }
 };
 
-void AddSC_boss_galvangar()
-{
-    new boss_galvangar;
-}
+void AddSC_boss_galvangar() { new boss_galvangar; }

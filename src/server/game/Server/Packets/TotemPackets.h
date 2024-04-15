@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,34 +22,32 @@
 #include "ObjectGuid.h"
 #include "Packet.h"
 
-namespace WorldPackets
-{
-    namespace Totem
+namespace WorldPackets {
+namespace Totem {
+class TotemDestroyed final : public ClientPacket {
+public:
+    TotemDestroyed(WorldPacket&& packet)
+        : ClientPacket(CMSG_TOTEM_DESTROYED, std::move(packet))
     {
-        class TotemDestroyed final : public ClientPacket
-        {
-        public:
-            TotemDestroyed(WorldPacket&& packet) : ClientPacket(CMSG_TOTEM_DESTROYED, std::move(packet)) { }
-
-            void Read() override;
-
-            uint8 Slot = 0;
-        };
-
-        class TotemCreated final : public ServerPacket
-        {
-        public:
-            TotemCreated() : ServerPacket(SMSG_TOTEM_CREATED, 1 + 8 + 4 + 4) { }
-
-            WorldPacket const* Write() override;
-
-            uint8 Slot = 0;
-            ObjectGuid Totem;
-            uint32 Duration = 0;
-            uint32 SpellID = 0;
-
-        };
     }
-}
+
+    void Read() override;
+
+    uint8 Slot = 0;
+};
+
+class TotemCreated final : public ServerPacket {
+public:
+    TotemCreated() : ServerPacket(SMSG_TOTEM_CREATED, 1 + 8 + 4 + 4) {}
+
+    WorldPacket const* Write() override;
+
+    uint8      Slot = 0;
+    ObjectGuid Totem;
+    uint32     Duration = 0;
+    uint32     SpellID  = 0;
+};
+} // namespace Totem
+} // namespace WorldPackets
 
 #endif // TotemPackets_h__

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -25,8 +26,7 @@
 
 struct bignum_st;
 
-class AC_COMMON_API BigNumber
-{
+class AC_COMMON_API BigNumber {
 public:
     BigNumber();
     BigNumber(BigNumber const& bn);
@@ -35,7 +35,11 @@ public:
     BigNumber(std::string const& v) : BigNumber() { SetHexStr(v); }
 
     template <size_t Size>
-    BigNumber(std::array<uint8, Size> const& v, bool littleEndian = true) : BigNumber() { SetBinary(v.data(), Size, littleEndian); }
+    BigNumber(std::array<uint8, Size> const& v, bool littleEndian = true)
+        : BigNumber()
+    {
+        SetBinary(v.data(), Size, littleEndian);
+    }
 
     ~BigNumber();
 
@@ -45,7 +49,11 @@ public:
     void SetBinary(uint8 const* bytes, int32 len, bool littleEndian = true);
 
     template <typename Container>
-    auto SetBinary(Container const& c, bool littleEndian = true) -> std::enable_if_t<!std::is_pointer_v<std::decay_t<Container>>> { SetBinary(std::data(c), std::size(c), littleEndian); }
+    auto SetBinary(Container const& c, bool littleEndian = true)
+        -> std::enable_if_t<!std::is_pointer_v<std::decay_t<Container>>>
+    {
+        SetBinary(std::data(c), std::size(c), littleEndian);
+    }
 
     bool SetHexStr(char const* str);
     bool SetHexStr(std::string const& str) { return SetHexStr(str.c_str()); }
@@ -55,42 +63,42 @@ public:
     BigNumber& operator=(BigNumber const& bn);
 
     BigNumber& operator+=(BigNumber const& bn);
-    BigNumber operator+(BigNumber const& bn) const
+    BigNumber  operator+(BigNumber const& bn) const
     {
         BigNumber t(*this);
         return t += bn;
     }
 
     BigNumber& operator-=(BigNumber const& bn);
-    BigNumber operator-(BigNumber const& bn) const
+    BigNumber  operator-(BigNumber const& bn) const
     {
         BigNumber t(*this);
         return t -= bn;
     }
 
     BigNumber& operator*=(BigNumber const& bn);
-    BigNumber operator*(BigNumber const& bn) const
+    BigNumber  operator*(BigNumber const& bn) const
     {
         BigNumber t(*this);
         return t *= bn;
     }
 
     BigNumber& operator/=(BigNumber const& bn);
-    BigNumber operator/(BigNumber const& bn) const
+    BigNumber  operator/(BigNumber const& bn) const
     {
         BigNumber t(*this);
         return t /= bn;
     }
 
     BigNumber& operator%=(BigNumber const& bn);
-    BigNumber operator%(BigNumber const& bn) const
+    BigNumber  operator%(BigNumber const& bn) const
     {
         BigNumber t(*this);
         return t %= bn;
     }
 
     BigNumber& operator<<=(int n);
-    BigNumber operator<<(int n) const
+    BigNumber  operator<<(int n) const
     {
         BigNumber t(*this);
         return t <<= n;
@@ -106,18 +114,20 @@ public:
     [[nodiscard]] bool IsZero() const;
     [[nodiscard]] bool IsNegative() const;
 
-    [[nodiscard]] BigNumber ModExp(BigNumber const& bn1, BigNumber const& bn2) const;
+    [[nodiscard]] BigNumber ModExp(BigNumber const& bn1,
+                                   BigNumber const& bn2) const;
     [[nodiscard]] BigNumber Exp(BigNumber const&) const;
 
     [[nodiscard]] int32 GetNumBytes() const;
 
-    struct bignum_st* BN() { return _bn; }
+    struct bignum_st*                     BN() { return _bn; }
     [[nodiscard]] struct bignum_st const* BN() const { return _bn; }
 
     [[nodiscard]] uint32 AsDword() const;
 
     void GetBytes(uint8* buf, size_t bufsize, bool littleEndian = true) const;
-    [[nodiscard]] std::vector<uint8> ToByteVector(int32 minSize = 0, bool littleEndian = true) const;
+    [[nodiscard]] std::vector<uint8>
+    ToByteVector(int32 minSize = 0, bool littleEndian = true) const;
 
     template <std::size_t Size>
     std::array<uint8, Size> ToByteArray(bool littleEndian = true) const
@@ -132,6 +142,5 @@ public:
 
 private:
     struct bignum_st* _bn;
-
 };
 #endif

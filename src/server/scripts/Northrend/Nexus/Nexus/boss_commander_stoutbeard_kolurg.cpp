@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -19,50 +20,39 @@
 #include "ScriptedCreature.h"
 #include "nexus.h"
 
-enum Spells
-{
-    SPELL_BATTLE_SHOUT              = 31403,
-    SPELL_CHARGE                    = 60067,
-    SPELL_FRIGHTENING_SHOUT         = 19134,
-    SPELL_WHIRLWIND                 = 38618
+enum Spells {
+    SPELL_BATTLE_SHOUT      = 31403,
+    SPELL_CHARGE            = 60067,
+    SPELL_FRIGHTENING_SHOUT = 19134,
+    SPELL_WHIRLWIND         = 38618
 };
 
-enum Events
-{
-    EVENT_BATTLE_SHOUT              = 1,
-    EVENT_FRIGHTENING_SHOUT         = 2,
-    EVENT_WHIRLWIND                 = 3,
-    EVENT_COMMANDER_CHARGE          = 4,
-    EVENT_KILL_TALK                 = 5
+enum Events {
+    EVENT_BATTLE_SHOUT      = 1,
+    EVENT_FRIGHTENING_SHOUT = 2,
+    EVENT_WHIRLWIND         = 3,
+    EVENT_COMMANDER_CHARGE  = 4,
+    EVENT_KILL_TALK         = 5
 };
 
-enum Says
-{
-    SAY_AGGRO                       = 0,
-    SAY_DEATH                       = 1,
-    SAY_KILL                        = 2
-};
+enum Says { SAY_AGGRO = 0, SAY_DEATH = 1, SAY_KILL = 2 };
 
-class boss_commander_stoutbeard : public CreatureScript
-{
+class boss_commander_stoutbeard : public CreatureScript {
 public:
-    boss_commander_stoutbeard() : CreatureScript("boss_commander_stoutbeard") { }
+    boss_commander_stoutbeard() : CreatureScript("boss_commander_stoutbeard") {}
 
     CreatureAI* GetAI(Creature* creature) const override
     {
         return GetNexusAI<boss_commander_stoutbeardAI>(creature);
     }
 
-    struct boss_commander_stoutbeardAI : public BossAI
-    {
-        boss_commander_stoutbeardAI(Creature* creature) : BossAI(creature, DATA_COMMANDER_EVENT)
+    struct boss_commander_stoutbeardAI : public BossAI {
+        boss_commander_stoutbeardAI(Creature* creature)
+            : BossAI(creature, DATA_COMMANDER_EVENT)
         {
         }
 
-        void Reset() override
-        {
-            BossAI::Reset();
-        }
+        void Reset() override { BossAI::Reset(); }
 
         void JustEngagedWith(Unit* who) override
         {
@@ -78,8 +68,7 @@ public:
 
         void KilledUnit(Unit*) override
         {
-            if (events.GetNextEventTime(EVENT_KILL_TALK) == 0)
-            {
+            if (events.GetNextEventTime(EVENT_KILL_TALK) == 0) {
                 Talk(SAY_KILL);
                 events.ScheduleEvent(EVENT_KILL_TALK, 6s);
             }
@@ -100,25 +89,25 @@ public:
             if (me->HasUnitState(UNIT_STATE_CASTING))
                 return;
 
-            switch (events.ExecuteEvent())
-            {
-                case EVENT_BATTLE_SHOUT:
-                    me->CastSpell(me, SPELL_BATTLE_SHOUT, true);
-                    events.ScheduleEvent(EVENT_BATTLE_SHOUT, 2min);
-                    break;
-                case EVENT_FRIGHTENING_SHOUT:
-                    me->CastSpell(me->GetVictim(), SPELL_FRIGHTENING_SHOUT, false);
-                    events.ScheduleEvent(EVENT_FRIGHTENING_SHOUT, 15s, 20s);
-                    break;
-                case EVENT_WHIRLWIND:
-                    me->CastSpell(me, SPELL_WHIRLWIND, false);
-                    events.ScheduleEvent(EVENT_WHIRLWIND, 16s);
-                    break;
-                case EVENT_COMMANDER_CHARGE:
-                    if (Unit* target = SelectTarget(SelectTargetMethod::MinDistance, 0, 25.0f))
-                        me->CastSpell(target, SPELL_CHARGE, false);
-                    events.ScheduleEvent(EVENT_COMMANDER_CHARGE, 20s);
-                    break;
+            switch (events.ExecuteEvent()) {
+            case EVENT_BATTLE_SHOUT:
+                me->CastSpell(me, SPELL_BATTLE_SHOUT, true);
+                events.ScheduleEvent(EVENT_BATTLE_SHOUT, 2min);
+                break;
+            case EVENT_FRIGHTENING_SHOUT:
+                me->CastSpell(me->GetVictim(), SPELL_FRIGHTENING_SHOUT, false);
+                events.ScheduleEvent(EVENT_FRIGHTENING_SHOUT, 15s, 20s);
+                break;
+            case EVENT_WHIRLWIND:
+                me->CastSpell(me, SPELL_WHIRLWIND, false);
+                events.ScheduleEvent(EVENT_WHIRLWIND, 16s);
+                break;
+            case EVENT_COMMANDER_CHARGE:
+                if (Unit* target =
+                        SelectTarget(SelectTargetMethod::MinDistance, 0, 25.0f))
+                    me->CastSpell(target, SPELL_CHARGE, false);
+                events.ScheduleEvent(EVENT_COMMANDER_CHARGE, 20s);
+                break;
             }
 
             DoMeleeAttackIfReady();
@@ -126,7 +115,4 @@ public:
     };
 };
 
-void AddSC_boss_commander_stoutbeard()
-{
-    new boss_commander_stoutbeard();
-}
+void AddSC_boss_commander_stoutbeard() { new boss_commander_stoutbeard(); }

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,21 +23,22 @@
 #include <string>
 #include <vector>
 
-struct DBCDatabaseLoader
-{
-    DBCDatabaseLoader(char const* dbTable, char const* dbcFormatString, std::vector<char*>& stringPool);
+struct DBCDatabaseLoader {
+    DBCDatabaseLoader(char const*         dbTable,
+                      char const*         dbcFormatString,
+                      std::vector<char*>& stringPool);
 
     char* Load(uint32& records, char**& indexTable);
 
 private:
-    char const* _sqlTableName;
-    char const* _dbcFormat;
-    int32 _sqlIndexPos;
-    uint32 _recordSize;
+    char const*         _sqlTableName;
+    char const*         _dbcFormat;
+    int32               _sqlIndexPos;
+    uint32              _recordSize;
     std::vector<char*>& _stringPool;
-    char* CloneStringToPool(std::string const& str);
+    char*               CloneStringToPool(std::string const& str);
 
-    DBCDatabaseLoader(DBCDatabaseLoader const& right) = delete;
+    DBCDatabaseLoader(DBCDatabaseLoader const& right)            = delete;
     DBCDatabaseLoader& operator=(DBCDatabaseLoader const& right) = delete;
 };
 

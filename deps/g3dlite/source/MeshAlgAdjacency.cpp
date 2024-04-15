@@ -10,19 +10,18 @@
 
  */
 
-#include "G3D/Table.h"
+#include "G3D/AreaMemoryManager.h"
 #include "G3D/MeshAlg.h"
 #include "G3D/Set.h"
-#include "G3D/Stopwatch.h"
 #include "G3D/SmallArray.h"
-#include "G3D/AreaMemoryManager.h"
+#include "G3D/Stopwatch.h"
+#include "G3D/Table.h"
 
 namespace G3D {
 
 /** Two-level table mapping index 0 -> index 1 -> list of face indices */
 class MeshEdgeTable {
 public:
-
     /** We  expect 2 faces per edge. */
     typedef SmallArray<int, 2> FaceIndexArray;
 
@@ -33,29 +32,25 @@ public:
         FaceIndexArray faceIndexArray;
     };
 
-    /** We expect at most 6 edges per vertex; that matches a typical regular grid mesh */
+    /** We expect at most 6 edges per vertex; that matches a typical regular
+     * grid mesh */
     typedef SmallArray<Edge, 6> EdgeArray;
 
-    typedef Array< EdgeArray > ET;
+    typedef Array<EdgeArray> ET;
 
 private:
-    
-    ET                   table;
+    ET table;
 
 public:
-
-    MeshEdgeTable() {
+    MeshEdgeTable()
+    {
         AreaMemoryManager::Ref mm = AreaMemoryManager::create();
         table.clearAndSetMemoryManager(mm);
     }
 
-    void clear() {
-        table.clear();
-    }
-    
-    void resize(int maxV) {
-        table.resize(maxV);
-    }
+    void clear() { table.clear(); }
+
+    void resize(int maxV) { table.resize(maxV); }
 
     /**
      Inserts the faceIndex into the edge's face list.
@@ -64,8 +59,9 @@ public:
      \param v0 Vertex index 0
      \param v1 Vertex index 1
      */
-    void insert(int v0, int v1, int faceIndex) {
-        
+    void insert(int v0, int v1, int faceIndex)
+    {
+
         debugAssert(v0 <= v1);
         EdgeArray& edgeArray = table[v0];
         for (int i = 0; i < edgeArray.size(); ++i) {
@@ -76,48 +72,47 @@ public:
         }
 
         Edge& p = edgeArray.next();
-        p.i1 = v1;
+        p.i1    = v1;
         p.faceIndexArray.push(faceIndex);
     }
 
     class Iterator {
         friend class MeshEdgeTable;
-    private:
 
-        int                                   m_i0;
+    private:
+        int m_i0;
         /** Pair index */
-        int                                   m_p;
-        ET&                                   m_array;
-        EdgeArray*                            m_edgeArray;
-        bool                                  m_end;
+        int        m_p;
+        ET&        m_array;
+        EdgeArray* m_edgeArray;
+        bool       m_end;
 
     public:
+        int i0() const { return m_i0; }
 
-        int i0() const {
-            return m_i0;
-        }
+        int i1() const { return (*m_edgeArray)[m_p].i1; }
 
-        int i1() const {
-            return (*m_edgeArray)[m_p].i1;
-        }
-
-        FaceIndexArray& faceIndex() {
+        FaceIndexArray& faceIndex()
+        {
             return (*m_edgeArray)[m_p].faceIndexArray;
         }
 
-        Iterator& operator++() {
+        Iterator& operator++()
+        {
             if ((m_i0 >= 0) && (m_p < m_edgeArray->size() - 1)) {
                 ++m_p;
-            } else {
+            }
+            else {
                 // Skip over elements with no face array
                 do {
                     ++m_i0;
                     if (m_i0 == m_array.size()) {
                         m_end = true;
                         return *this;
-                    } else {
+                    }
+                    else {
                         m_edgeArray = &m_array[m_i0];
-                        m_p = 0;
+                        m_p         = 0;
                     }
                 } while (m_edgeArray->size() == 0);
             }
@@ -125,35 +120,29 @@ public:
             return *this;
         }
 
-        bool isValid() const {
-            return ! m_end;
-        }
+        bool isValid() const { return !m_end; }
 
         /** @deprecated  Use isValid */
-        bool hasMore() const {
-            return ! m_end;
-        }
+        bool hasMore() const { return !m_end; }
 
     private:
-
-        Iterator(ET& a) : m_i0(-1), m_p(-1),  m_array(a), m_edgeArray(NULL), m_end(false) {
+        Iterator(ET& a)
+            : m_i0(-1), m_p(-1), m_array(a), m_edgeArray(NULL), m_end(false)
+        {
             ++(*this);
         }
-
     };
 
-    Iterator begin() {
-        return Iterator(table);
-    }
+    Iterator begin() { return Iterator(table); }
 };
-
 
 /**
  Assigns the edge index into the next unassigned edge
  index.  The edge index may be negative, indicating
  a reverse edge.
  */
-static void assignEdgeIndex(MeshAlg::Face& face, int e) {
+static void assignEdgeIndex(MeshAlg::Face& face, int e)
+{
     for (int i = 0; i < 3; ++i) {
         if (face.edgeIndex[i] == MeshAlg::Face::NONE) {
             face.edgeIndex[i] = e;
@@ -164,24 +153,24 @@ static void assignEdgeIndex(MeshAlg::Face& face, int e) {
     debugAssertM(false, "Face has already been assigned 3 edges");
 }
 
-
-void MeshAlg::computeAdjacency(
-    const Array<Vector3>&   vertexGeometry,
-    const Array<int>&       indexArray,
-    Array<Face>&            faceArray,
-    Array<Edge>&            edgeArray,
-    Array< Array<int> >&    adjacentFaceArray) {
+void MeshAlg::computeAdjacency(const Array<Vector3>& vertexGeometry,
+                               const Array<int>&     indexArray,
+                               Array<Face>&          faceArray,
+                               Array<Edge>&          edgeArray,
+                               Array<Array<int>>&    adjacentFaceArray)
+{
 
     Array<Vertex> vertexArray;
 
-    computeAdjacency(vertexGeometry, indexArray, faceArray, edgeArray, vertexArray);
+    computeAdjacency(
+        vertexGeometry, indexArray, faceArray, edgeArray, vertexArray);
 
     // Convert the vertexArray into adjacentFaceArray
     adjacentFaceArray.clear();
     adjacentFaceArray.resize(vertexArray.size());
     for (int v = 0; v < adjacentFaceArray.size(); ++v) {
         const SmallArray<int, 6>& src = vertexArray[v].faceIndex;
-        Array<int>& dst = adjacentFaceArray[v];
+        Array<int>&               dst = adjacentFaceArray[v];
         dst.resize(src.size());
         for (int f = 0; f < dst.size(); ++f) {
             dst[f] = src[f];
@@ -189,20 +178,19 @@ void MeshAlg::computeAdjacency(
     }
 }
 
+void MeshAlg::computeAdjacency(const Array<Vector3>& vertexGeometry,
+                               const Array<int>&     indexArray,
+                               Array<Face>&          faceArray,
+                               Array<Edge>&          edgeArray,
+                               Array<Vertex>&        vertexArray)
+{
 
-void MeshAlg::computeAdjacency(
-    const Array<Vector3>&   vertexGeometry,
-    const Array<int>&       indexArray,
-    Array<Face>&            faceArray,
-    Array<Edge>&            edgeArray,
-    Array<Vertex>&          vertexArray) {
-
-    MeshEdgeTable           edgeTable;
+    MeshEdgeTable edgeTable;
 
     edgeArray.clear();
     vertexArray.clear();
     faceArray.clear();
-    
+
     // Face normals
     Array<Vector3> faceNormal;
     faceNormal.resize(indexArray.size() / 3);
@@ -216,12 +204,12 @@ void MeshAlg::computeAdjacency(
     // Iterate through the triangle list
     for (int q = 0, f = 0; q < indexArray.size(); ++f, q += 3) {
 
-        Vector3 vertex[3];
+        Vector3        vertex[3];
         MeshAlg::Face& face = faceArray[f];
 
         // Construct the face
         for (int j = 0; j < 3; ++j) {
-            int v = indexArray[q + j];
+            int v               = indexArray[q + j];
             face.vertexIndex[j] = v;
             face.edgeIndex[j]   = Face::NONE;
 
@@ -229,24 +217,25 @@ void MeshAlg::computeAdjacency(
             vertexArray[v].faceIndex.append(f);
 
             // We'll need these vertices to find the face normal
-            vertex[j]           = vertexGeometry[v];
+            vertex[j] = vertexGeometry[v];
         }
 
         // Compute the face normal
         const Vector3& N = (vertex[1] - vertex[0]).cross(vertex[2] - vertex[0]);
-        faceNormal[f] = N.directionOrZero();
+        faceNormal[f]    = N.directionOrZero();
 
         static const int nextIndex[] = {1, 2, 0};
 
         // Add each edge to the edge table.
         for (int j = 0; j < 3; ++j) {
-            const int      i0 = indexArray[q + j];
-            const int      i1 = indexArray[q + nextIndex[j]];
+            const int i0 = indexArray[q + j];
+            const int i1 = indexArray[q + nextIndex[j]];
 
             if (i0 < i1) {
                 // The edge was directed in the same manner as in the face
                 edgeTable.insert(i0, i1, f);
-            } else {
+            }
+            else {
                 // The edge was directed in the opposite manner as in the face
                 edgeTable.insert(i1, i0, ~f);
             }
@@ -277,8 +266,8 @@ void MeshAlg::computeAdjacency(
             // normal.  This ensures that we don't introduce a lot
             // of artificial ridges into flat parts of a mesh.
             float ndotn = -2;
-            int f1 = -1, i1 = -1;
-            
+            int   f1 = -1, i1 = -1;
+
             // Try to find the face with the matching edge
             for (int i = faceIndexArray.size() - 1; i >= 0; --i) {
                 int f = faceIndexArray[i];
@@ -288,7 +277,7 @@ void MeshAlg::computeAdjacency(
                     // and has not been assigned too many edges
 
                     const Vector3& n1 = faceNormal[(f >= 0) ? f : ~f];
-                    float d = n1.dot(n0);
+                    float          d  = n1.dot(n0);
 
                     if (found) {
                         // We previously found a good face; see if this
@@ -299,7 +288,8 @@ void MeshAlg::computeAdjacency(
                             f1    = f;
                             i1    = i;
                         }
-                    } else {
+                    }
+                    else {
                         // This is the first face we've found
                         found = true;
                         ndotn = d;
@@ -310,17 +300,18 @@ void MeshAlg::computeAdjacency(
             }
 
             // Create the new edge
-            int e = tempEdgeArray.size();
+            int   e    = tempEdgeArray.size();
             Edge& edge = tempEdgeArray.next();
-            
+
             edge.vertexIndex[0] = cur.i0();
             edge.vertexIndex[1] = cur.i1();
 
             if (f0 >= 0) {
                 edge.faceIndex[0] = f0;
                 edge.faceIndex[1] = Face::NONE;
-                assignEdgeIndex(faceArray[f0], e); 
-            } else {
+                assignEdgeIndex(faceArray[f0], e);
+            }
+            else {
                 // The face indices above are two's complemented.
                 // this code restores them to regular indices.
                 debugAssert((~f0) >= 0);
@@ -328,7 +319,7 @@ void MeshAlg::computeAdjacency(
                 edge.faceIndex[0] = Face::NONE;
 
                 // The edge index *does* need to be inverted, however.
-                assignEdgeIndex(faceArray[~f0], ~e); 
+                assignEdgeIndex(faceArray[~f0], ~e);
             }
 
             if (found) {
@@ -338,10 +329,11 @@ void MeshAlg::computeAdjacency(
 
                 if (f1 >= 0) {
                     edge.faceIndex[0] = f1;
-                    assignEdgeIndex(faceArray[f1], e); 
-                } else {
+                    assignEdgeIndex(faceArray[f1], e);
+                }
+                else {
                     edge.faceIndex[1] = ~f1;
-                    assignEdgeIndex(faceArray[~f1], ~e); 
+                    assignEdgeIndex(faceArray[~f1], ~e);
                 }
             }
         }
@@ -367,14 +359,16 @@ void MeshAlg::computeAdjacency(
             if (tempEdgeArray[e].boundary()) {
                 newIndex[e] = j;
                 --j;
-            } else {
+            }
+            else {
                 newIndex[e] = i;
                 ++i;
             }
             edgeArray[newIndex[e]] = tempEdgeArray[e];
         }
 
-        debugAssertM(i == j + 1, "Counting from front and back of array did not match");
+        debugAssertM(i == j + 1,
+                     "Counting from front and back of array did not match");
 
         // Fix the faces
         for (int f = 0; f < faceArray.size(); ++f) {
@@ -384,7 +378,8 @@ void MeshAlg::computeAdjacency(
                 if (e < 0) {
                     // Backwards edge; twiddle before and after conversion
                     face.edgeIndex[q] = ~newIndex[~e];
-                } else {
+                }
+                else {
                     // Regular edge; remap the index
                     face.edgeIndex[q] = newIndex[e];
                 }
@@ -395,21 +390,19 @@ void MeshAlg::computeAdjacency(
     // Now order the edge indices inside the faces correctly.
     for (int f = 0; f < faceArray.size(); ++f) {
         Face& face = faceArray[f];
-        int e0 = face.edgeIndex[0];
-        int e1 = face.edgeIndex[1];
-        int e2 = face.edgeIndex[2];
+        int   e0   = face.edgeIndex[0];
+        int   e1   = face.edgeIndex[1];
+        int   e2   = face.edgeIndex[2];
 
-        // e0 will always remain first.  The only 
+        // e0 will always remain first.  The only
         // question is whether e1 and e2 should be swapped.
-    
-        // See if e1 begins at the vertex where e1 ends.
-        const int e0End = (e0 < 0) ? 
-            edgeArray[~e0].vertexIndex[0] :
-            edgeArray[e0].vertexIndex[1];
 
-        const int e1Begin = (e1 < 0) ? 
-            edgeArray[~e1].vertexIndex[1] :
-            edgeArray[e1].vertexIndex[0];
+        // See if e1 begins at the vertex where e1 ends.
+        const int e0End = (e0 < 0) ? edgeArray[~e0].vertexIndex[0]
+                                   : edgeArray[e0].vertexIndex[1];
+
+        const int e1Begin = (e1 < 0) ? edgeArray[~e1].vertexIndex[1]
+                                     : edgeArray[e1].vertexIndex[0];
 
         if (e0End != e1Begin) {
             // We must swap e1 and e2
@@ -426,11 +419,10 @@ void MeshAlg::computeAdjacency(
     }
 }
 
-
-void MeshAlg::weldBoundaryEdges(
-    Array<Face>&       faceArray,
-    Array<Edge>&       edgeArray,
-    Array<Vertex>&     vertexArray) {
+void MeshAlg::weldBoundaryEdges(Array<Face>&   faceArray,
+                                Array<Edge>&   edgeArray,
+                                Array<Vertex>& vertexArray)
+{
 
     // Copy over the original edge array
     Array<Edge> oldEdgeArray = edgeArray;
@@ -442,45 +434,44 @@ void MeshAlg::weldBoundaryEdges(
     newEdgeIndex.resize(edgeArray.size());
     edgeArray.resize(0);
 
-    // boundaryEdgeIndices[v_low] is an array of the indices of 
+    // boundaryEdgeIndices[v_low] is an array of the indices of
     // all boundary edges whose lower vertex is v_low.
-    Table<int, Array<int> > boundaryEdgeIndices;
+    Table<int, Array<int>> boundaryEdgeIndices;
 
     // Copy over non-boundary edges to the new array
     for (int e = 0; e < oldEdgeArray.size(); ++e) {
         if (oldEdgeArray[e].boundary()) {
 
             // Add to the boundary table
-            const int v_low = iMin(oldEdgeArray[e].vertexIndex[0], oldEdgeArray[e].vertexIndex[1]);
-            if (! boundaryEdgeIndices.containsKey(v_low)) {
+            const int v_low = iMin(oldEdgeArray[e].vertexIndex[0],
+                                   oldEdgeArray[e].vertexIndex[1]);
+            if (!boundaryEdgeIndices.containsKey(v_low)) {
                 boundaryEdgeIndices.set(v_low, Array<int>());
             }
             boundaryEdgeIndices[v_low].append(e);
 
             // We'll fill out newEdgeIndex[e] later, when we find pairs
-
-        } else {
+        }
+        else {
 
             // Copy the edge to the new array
             newEdgeIndex[e] = edgeArray.size();
             edgeArray.append(oldEdgeArray[e]);
-
         }
     }
 
-
     // Remove all edges from the table that have pairs.
-    Table<int, Array<int> >::Iterator cur = boundaryEdgeIndices.begin();
-    Table<int, Array<int> >::Iterator end = boundaryEdgeIndices.end();
+    Table<int, Array<int>>::Iterator cur = boundaryEdgeIndices.begin();
+    Table<int, Array<int>>::Iterator end = boundaryEdgeIndices.end();
     while (cur != end) {
-        Array<int>&     boundaryEdge = cur->value;
+        Array<int>& boundaryEdge = cur->value;
 
         for (int i = 0; i < boundaryEdge.size(); ++i) {
-            int ei = boundaryEdge[i];
+            int         ei    = boundaryEdge[i];
             const Edge& edgei = oldEdgeArray[ei];
 
             for (int j = i + 1; j < boundaryEdge.size(); ++j) {
-                int ej = boundaryEdge[j];
+                int         ej    = boundaryEdge[j];
                 const Edge& edgej = oldEdgeArray[ej];
 
                 // See if edge ei is the reverse (match) of edge ej.
@@ -491,7 +482,7 @@ void MeshAlg::weldBoundaryEdges(
                 // True if edgej's vertex indices are reversed from
                 // edgei's (usually true).
                 bool reversej = false;
-                
+
                 int u = edgei.vertexIndex[0];
                 int v = edgei.vertexIndex[1];
 
@@ -500,30 +491,37 @@ void MeshAlg::weldBoundaryEdges(
                     // edgei = [u v A /]
 
                     if (edgej.faceIndex[0] != Face::NONE) {
-                        if ((edgej.vertexIndex[0] == v) && (edgej.vertexIndex[1] == u)) {
+                        if ((edgej.vertexIndex[0] == v) &&
+                            (edgej.vertexIndex[1] == u)) {
                             // This is the most common of the four cases
 
                             // edgej = [v u B /]
-                            match = true;
+                            match    = true;
                             reversej = true;
                         }
-                    } else {
-                        if ((edgej.vertexIndex[0] == u) && (edgej.vertexIndex[1] == v)) {
+                    }
+                    else {
+                        if ((edgej.vertexIndex[0] == u) &&
+                            (edgej.vertexIndex[1] == v)) {
                             // edgej = [u v / B]
                             match = true;
                         }
                     }
-                } else {
+                }
+                else {
                     // edgei = [u v / A]
                     if (edgej.faceIndex[0] != Face::NONE) {
-                        if ((edgej.vertexIndex[0] == u) && (edgej.vertexIndex[1] == v)) {
+                        if ((edgej.vertexIndex[0] == u) &&
+                            (edgej.vertexIndex[1] == v)) {
                             // edgej = [u v B /]
                             match = true;
                         }
-                    } else {
-                        if ((edgej.vertexIndex[0] == v) && (edgej.vertexIndex[1] == u)) {
+                    }
+                    else {
+                        if ((edgej.vertexIndex[0] == v) &&
+                            (edgej.vertexIndex[1] == u)) {
                             // edgej = [v u / B]
-                            match = true;
+                            match    = true;
                             reversej = true;
                         }
                     }
@@ -531,11 +529,11 @@ void MeshAlg::weldBoundaryEdges(
 
                 if (match) {
                     // ei and ej can be paired as a single edge
-                    int e = edgeArray.size();
+                    int   e    = edgeArray.size();
                     Edge& edge = edgeArray.next();
 
                     // Follow the direction of edgei.
-                    edge = edgei;
+                    edge             = edgei;
                     newEdgeIndex[ei] = e;
 
                     // Insert the face index for edgej.
@@ -543,23 +541,25 @@ void MeshAlg::weldBoundaryEdges(
                     if (fj == Face::NONE) {
                         fj = edgej.faceIndex[1];
                     }
-                    
+
                     if (edge.faceIndex[0] == Face::NONE) {
                         edge.faceIndex[0] = fj;
-                    } else {
+                    }
+                    else {
                         edge.faceIndex[1] = fj;
                     }
-                    
+
                     if (reversej) {
                         // The new edge is backwards of the old edge for ej
                         newEdgeIndex[ej] = ~e;
-                    } else {
+                    }
+                    else {
                         newEdgeIndex[ej] = e;
                     }
 
-                    // Remove both ei and ej from being candidates for future pairing.
-                    // Remove ej first since it comes later in the list (removing
-                    // ei would decrease the index of ej to j - 1).
+                    // Remove both ei and ej from being candidates for future
+                    // pairing. Remove ej first since it comes later in the list
+                    // (removing ei would decrease the index of ej to j - 1).
                     boundaryEdge.fastRemove(j);
                     boundaryEdge.fastRemove(i);
 
@@ -579,7 +579,7 @@ void MeshAlg::weldBoundaryEdges(
     cur = boundaryEdgeIndices.begin();
     end = boundaryEdgeIndices.end();
     while (cur != end) {
-        Array<int>&     boundaryEdge = cur->value;
+        Array<int>& boundaryEdge = cur->value;
 
         for (int b = 0; b < boundaryEdge.size(); ++b) {
             const int e = boundaryEdge[b];
@@ -599,7 +599,8 @@ void MeshAlg::weldBoundaryEdges(
 
             if (e < 0) {
                 face.edgeIndex[i] = ~newEdgeIndex[~e];
-            } else {
+            }
+            else {
                 face.edgeIndex[i] = newEdgeIndex[e];
             }
         }
@@ -612,20 +613,20 @@ void MeshAlg::weldBoundaryEdges(
 
             if (e < 0) {
                 vertex.edgeIndex[i] = ~newEdgeIndex[~e];
-            } else {
+            }
+            else {
                 vertex.edgeIndex[i] = newEdgeIndex[e];
             }
         }
     }
 }
 
-
-void MeshAlg::weldAdjacency(
-    const Array<Vector3>& originalGeometry,
-    Array<Face>&          faceArray,
-    Array<Edge>&          edgeArray,
-    Array<Vertex>&        vertexArray,
-    float                 radius) {
+void MeshAlg::weldAdjacency(const Array<Vector3>& originalGeometry,
+                            Array<Face>&          faceArray,
+                            Array<Edge>&          edgeArray,
+                            Array<Vertex>&        vertexArray,
+                            float                 radius)
+{
 
     // Num vertices
     const int n = originalGeometry.size();
@@ -689,11 +690,10 @@ void MeshAlg::weldAdjacency(
     }
 }
 
-
-void MeshAlg::debugCheckConsistency(
-    const Array<Face>&      faceArray,
-    const Array<Edge>&      edgeArray,
-    const Array<Vertex>&    vertexArray) {
+void MeshAlg::debugCheckConsistency(const Array<Face>&   faceArray,
+                                    const Array<Edge>&   edgeArray,
+                                    const Array<Vertex>& vertexArray)
+{
 
 #ifdef _DEBUG
     for (int v = 0; v < vertexArray.size(); ++v) {
@@ -708,7 +708,6 @@ void MeshAlg::debugCheckConsistency(
             const int f = vertex.faceIndex[i];
             debugAssert(faceArray[f].containsVertex(v));
         }
-
     }
 
     for (int e = 0; e < edgeArray.size(); ++e) {
@@ -716,24 +715,25 @@ void MeshAlg::debugCheckConsistency(
 
         for (int i = 0; i < 2; ++i) {
             debugAssert((edge.faceIndex[i] == MeshAlg::Face::NONE) ||
-                faceArray[edge.faceIndex[i]].containsEdge(e));
+                        faceArray[edge.faceIndex[i]].containsEdge(e));
 
             debugAssert(vertexArray[edge.vertexIndex[i]].inEdge(e));
-        }        
+        }
     }
 
     // Every face's edge must be on that face
     for (int f = 0; f < faceArray.size(); ++f) {
         const MeshAlg::Face& face = faceArray[f];
         for (int i = 0; i < 3; ++i) {
-            int e = face.edgeIndex[i];
+            int e  = face.edgeIndex[i];
             int ei = (e >= 0) ? e : ~e;
             debugAssert(edgeArray[ei].inFace(f));
 
-            // Make sure the edge is oriented appropriately 
+            // Make sure the edge is oriented appropriately
             if (e >= 0) {
                 debugAssert(edgeArray[ei].faceIndex[0] == (int)f);
-            } else {
+            }
+            else {
                 debugAssert(edgeArray[ei].faceIndex[1] == (int)f);
             }
 
@@ -747,4 +747,4 @@ void MeshAlg::debugCheckConsistency(
 #endif // _DEBUG
 }
 
-} // G3D namespace
+} // namespace G3D

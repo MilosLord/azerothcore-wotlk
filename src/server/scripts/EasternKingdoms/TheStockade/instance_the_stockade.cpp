@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -18,23 +19,20 @@
 #include "InstanceMapScript.h"
 #include "InstanceScript.h"
 
-class instance_the_stockade : public InstanceMapScript
-{
+class instance_the_stockade : public InstanceMapScript {
 public:
-    instance_the_stockade() : InstanceMapScript("instance_the_stockade", 34) { }
+    instance_the_stockade() : InstanceMapScript("instance_the_stockade", 34) {}
 
     InstanceScript* GetInstanceScript(InstanceMap* map) const override
     {
         return new instance_the_stockade_InstanceMapScript(map);
     }
 
-    struct instance_the_stockade_InstanceMapScript : public InstanceScript
-    {
-        instance_the_stockade_InstanceMapScript(Map* map) : InstanceScript(map) { }
+    struct instance_the_stockade_InstanceMapScript : public InstanceScript {
+        instance_the_stockade_InstanceMapScript(Map* map) : InstanceScript(map)
+        {
+        }
     };
 };
 
-void AddSC_instance_the_stockade()
-{
-    new instance_the_stockade();
-}
+void AddSC_instance_the_stockade() { new instance_the_stockade(); }

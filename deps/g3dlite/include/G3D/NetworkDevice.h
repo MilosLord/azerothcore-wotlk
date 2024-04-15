@@ -4,7 +4,7 @@
  serialized messaging style that is more appropriate for games.  The
  performance has been tuned for sending many small messages.  The
  message protocol contains a header that prevents them from being used
- with raw UDP/TCP (e.g. connecting to an HTTP server). 
+ with raw UDP/TCP (e.g. connecting to an HTTP server).
 
  LightweightConduit and ReliableConduits have different interfaces
  because they have different semantics.  You would never want to
@@ -39,16 +39,16 @@
 #ifndef G3D_NETWORKDEVICE_H
 #define G3D_NETWORKDEVICE_H
 
-#include "G3D/platform.h"
 #include "G3D/NetAddress.h"
+#include "G3D/platform.h"
 
-#include <string>
-#include <iostream>
 #include "G3D/g3dmath.h"
+#include <iostream>
+#include <string>
 
-#include "G3D/ReferenceCount.h"
 #include "G3D/Array.h"
 #include "G3D/BinaryOutput.h"
+#include "G3D/ReferenceCount.h"
 
 namespace G3D {
 
@@ -59,23 +59,22 @@ protected:
     friend class NetworkDevice;
     friend class NetListener;
 
-    uint64                          mSent;
-    uint64                          mReceived;
-    uint64                          bSent;
-    uint64                          bReceived;
+    uint64 mSent;
+    uint64 mReceived;
+    uint64 bSent;
+    uint64 bReceived;
 
-    SOCKET                          sock;
+    SOCKET sock;
 
     /**
      Used for serialization.  One per socket
      to make this threadsafe.
      */
-    BinaryOutput                    binaryOutput;
+    BinaryOutput binaryOutput;
 
     Conduit();
 
 public:
-
     virtual ~Conduit();
     uint64 bytesSent() const;
     uint64 messagesSent() const;
@@ -136,7 +135,7 @@ public:
 typedef shared_ptr<class ReliableConduit> ReliableConduitRef;
 
 #ifdef __GNUC__
-// Workaround for a known bug in gcc 4.x where htonl produces 
+// Workaround for a known bug in gcc 4.x where htonl produces
 // a spurrious warning.
 // http://gcc.gnu.org/ml/gcc-bugs/2005-10/msg03270.html
 uint32 gcchtonl(uint32);
@@ -154,12 +153,12 @@ uint32 gcchtonl(uint32);
 
  To construct a ReliableConduit:
  <OL>
-   <LI> Create a G3D::NetworkDevice (if you are using G3D::GApp, it creates 
+   <LI> Create a G3D::NetworkDevice (if you are using G3D::GApp, it creates
         one for you) on the client and on the server.
-   <LI> On the server, create a G3D::NetListener using 
+   <LI> On the server, create a G3D::NetListener using
         G3D::NetworkDevice::createListener
    <LI> On the server, invoke G3D::NetListener::waitForConnection.
-   <LI> On the client, call G3D::NetworkDevice::createReliableConduit.  
+   <LI> On the client, call G3D::NetworkDevice::createReliableConduit.
         You will need the server's G3D::NetAddress.  Consider using
         G3D::Discovery::Client to find it via broadcasting.
  </OL>
@@ -170,38 +169,38 @@ private:
     friend class NetworkDevice;
     friend class NetListener;
 
-    enum State {RECEIVING, HOLDING, NO_MESSAGE} state;
+    enum State { RECEIVING, HOLDING, NO_MESSAGE } state;
 
-    NetAddress                      addr;
-    
+    NetAddress addr;
+
     /**
      Type of the incoming message.
      */
-    uint32                          messageType;
+    uint32 messageType;
 
-    /** 
+    /**
      Total size of the incoming message (read from the header).
      */
-    uint32                          messageSize;
+    uint32 messageSize;
 
     /** Shared buffer for receiving messages. */
-    void*                           receiveBuffer;
+    void* receiveBuffer;
 
     /** Total size of the receiveBuffer. */
-    size_t                          receiveBufferTotalSize;
+    size_t receiveBufferTotalSize;
 
     /** Size occupied by the current message... so far.  This will be
-        equal to messageSize when the whole message has arrived. 
+        equal to messageSize when the whole message has arrived.
       */
-    size_t                          receiveBufferUsedSize;
+    size_t receiveBufferUsedSize;
 
     ReliableConduit(const NetAddress& addr);
 
-    ReliableConduit(const SOCKET& sock, 
-                    const NetAddress& addr);
+    ReliableConduit(const SOCKET& sock, const NetAddress& addr);
 
-    template<typename T> static void serializeMessage
-              (uint32 t, const T& m, BinaryOutput& b) {
+    template <typename T>
+    static void serializeMessage(uint32 t, const T& m, BinaryOutput& b)
+    {
 
         b.writeUInt32(t);
 
@@ -216,22 +215,21 @@ private:
             // a zero length message is an error.
             b.writeUInt8(0xFF);
         }
-    
+
         uint32 len = (uint32)b.size() - 8;
-    
+
         // We send the length first to tell recv how much data to read.
         // Here we abuse BinaryOutput a bit and write directly into
         // its buffer, violating the abstraction.
         // Note that we write to the second set of 4 bytes, which is
         // the size field.
         uint32* lenPtr = ((uint32*)b.getCArray()) + 1;
-        #if defined(__GNUC__)
-            *lenPtr = gcchtonl(len);
-        #else
-            *lenPtr = htonl(len);
-        #endif
+#if defined(__GNUC__)
+        *lenPtr = gcchtonl(len);
+#else
+        *lenPtr = htonl(len);
+#endif
     }
-
 
     void sendBuffer(const BinaryOutput& b);
 
@@ -246,9 +244,8 @@ private:
     void receiveHeader();
 
 public:
-
     /**
-     Client invokes this to connect to a server.  The call blocks until the 
+     Client invokes this to connect to a server.  The call blocks until the
      conduit is opened.  The conduit will not be ok() if it fails.
      */
     static ReliableConduitRef create(const NetAddress& address);
@@ -256,9 +253,8 @@ public:
     /** Closes the socket. */
     ~ReliableConduit();
 
-
-    /** The message is actually copied from the socket to an internal buffer during
-     this call.  Receive only deserializes.*/
+    /** The message is actually copied from the socket to an internal buffer
+     during this call.  Receive only deserializes.*/
     virtual bool messageWaiting();
 
     /**
@@ -274,24 +270,25 @@ public:
      integer.  The size is sent because TCP is a stream protocol and
      doesn't have a concept of discrete messages.
      */
-    template<typename T> inline void send(uint32 type, const T& message) {
+    template <typename T>
+    inline void send(uint32 type, const T& message)
+    {
         binaryOutput.reset();
         serializeMessage(type, message, binaryOutput);
         sendBuffer(binaryOutput);
     }
-    
-    /** Sends an empty message with the given type.  Useful for sending 
+
+    /** Sends an empty message with the given type.  Useful for sending
         commands that have no parameters. */
     void send(uint32 type);
 
     /** Send the same message to a number of conduits.  Useful for sending
         data from a server to many clients (only serializes once). */
-    template<typename T>
-    inline static void multisend(
-        const Array<ReliableConduitRef>& array, 
-        uint32                          type,
-        const T&                        m) {
-        
+    template <typename T>
+    inline static void
+    multisend(const Array<ReliableConduitRef>& array, uint32 type, const T& m)
+    {
+
         if (array.size() > 0) {
             array[0]->binaryOutput.reset();
             serializeMessage(type, m, array[0]->binaryOutput);
@@ -304,28 +301,33 @@ public:
 
     virtual uint32 waitingMessageType();
 
-    /** 
+    /**
         If a message is waiting, deserializes the waiting message into
         message and returns true, otherwise returns false.  You can
         determine the type of the message (and therefore, the class
         of message) using G3D::ReliableConduit::waitingMessageType().
      */
-    template<typename T> inline bool receive(T& message) {
-        if (! messageWaiting()) {
+    template <typename T>
+    inline bool receive(T& message)
+    {
+        if (!messageWaiting()) {
             return false;
         }
 
         debugAssert(state == HOLDING);
         // Deserialize
-        BinaryInput b((uint8*)receiveBuffer, receiveBufferUsedSize, G3D_LITTLE_ENDIAN, BinaryInput::NO_COPY);
+        BinaryInput b((uint8*)receiveBuffer,
+                      receiveBufferUsedSize,
+                      G3D_LITTLE_ENDIAN,
+                      BinaryInput::NO_COPY);
         message.deserialize(b);
-        
+
         // Don't let anyone read this message again.  We leave the buffer
         // allocated for the next caller, however.
         receiveBufferUsedSize = 0;
-        state = NO_MESSAGE;
-        messageType = 0;
-        messageSize = 0;
+        state                 = NO_MESSAGE;
+        messageType           = 0;
+        messageSize           = 0;
 
         // Potentially read the next message.
         messageWaiting();
@@ -334,14 +336,15 @@ public:
     }
 
     /** Removes the current message from the queue. */
-    inline void receive() {
-        if (! messageWaiting()) {
+    inline void receive()
+    {
+        if (!messageWaiting()) {
             return;
         }
         receiveBufferUsedSize = 0;
-        state = NO_MESSAGE;
-        messageType = 0;
-        messageSize = 0;
+        state                 = NO_MESSAGE;
+        messageType           = 0;
+        messageSize           = 0;
 
         // Potentially read the next message.
         messageWaiting();
@@ -350,7 +353,6 @@ public:
     /** The address of the other end of the conduit */
     NetAddress address() const;
 };
-
 
 typedef shared_ptr<class LightweightConduit> LightweightConduitRef;
 
@@ -362,42 +364,42 @@ typedef shared_ptr<class LightweightConduit> LightweightConduitRef;
  corrupted, however.  LightweightConduit requires a little less setup
  and overhead than ReliableConduit.  ReliableConduit guarantees
  message delivery and order but requires a persistent connection.
- 
+
  To set up a LightweightConduit (assuming you have already made
  subclasses of G3D::NetMessage based on your application's
  pcommunication protocol):
 
 [Server Side]
 <OL>
-<LI> Call LightweightConduit::create(port, true, false), 
+<LI> Call LightweightConduit::create(port, true, false),
 where port is the port on which you will receive messages.
 
-<LI> Poll LightweightConduit::messageWaiting from your main loop.  When 
+<LI> Poll LightweightConduit::messageWaiting from your main loop.  When
 it is true (or, equivalently, when LightweightConduit::waitingMessageType
 is non-zero) there is an incoming message.
 
-<LI> To read the incoming message, call LightweightConduit::receive with 
+<LI> To read the incoming message, call LightweightConduit::receive with
 the appropriate class type, which mist have a deserialize method.
-LightweightConduit::waitingMessageType tells you what class is 
-needed (you make up your own message constants for your program; numbers 
+LightweightConduit::waitingMessageType tells you what class is
+needed (you make up your own message constants for your program; numbers
 under 1000 are reserved for G3D's internal use).
 
-<LI> When done, simply set the G3D::LightweightConduitRef to NULL or let 
+<LI> When done, simply set the G3D::LightweightConduitRef to NULL or let
 it go out of scope and the conduit cleans itself up automatically.
 </OL>
 
 [Client Side]
 <OL>
-<LI> Call G3D::LightweightConduit::create().  If you will 
-broadcast to all servers on a LAN, set the third optional argument to 
+<LI> Call G3D::LightweightConduit::create().  If you will
+broadcast to all servers on a LAN, set the third optional argument to
 true (the default is false for no broadcast).  You can also set up the
-receive port as if it was a server to send and receive from a single 
+receive port as if it was a server to send and receive from a single
 LightweightConduit.
 
-<LI> To send, call G3D::LightweightConduit::send with the target address 
+<LI> To send, call G3D::LightweightConduit::send with the target address
 and a pointer to an instance of the message you want to send.
 
-<LI> When done, simply set the G3D::LightweightConduitRef to NULL or let 
+<LI> When done, simply set the G3D::LightweightConduitRef to NULL or let
 it go out of scope and the conduit cleans itself up automatically.
 
 </OL>
@@ -412,72 +414,73 @@ private:
      True when waitingForMessageType has read the message
      from the network into messageType/messageStream.
      */
-    bool                    alreadyReadMessage;
+    bool alreadyReadMessage;
 
     /**
      Origin of the received message.
      */
-    NetAddress              messageSender;
+    NetAddress messageSender;
 
     /**
      The type of the last message received.
      */
-    uint32                  messageType;
+    uint32 messageType;
 
     /**
      The message received (the type has already been read off).
      */
-    Array<uint8>            messageBuffer;
+    Array<uint8> messageBuffer;
 
-    LightweightConduit(uint16 receivePort, bool enableReceive, bool enableBroadcast);
-    
+    LightweightConduit(uint16 receivePort,
+                       bool   enableReceive,
+                       bool   enableBroadcast);
+
     void sendBuffer(const NetAddress& a, BinaryOutput& b);
 
     /** Maximum transmission unit (packet size in bytes) for this socket.
         May vary between sockets. */
-    int                    MTU;
+    int MTU;
 
-
-    template<typename T> 
-    void serializeMessage(
-        uint32 type, 
-        const T& m, 
-        BinaryOutput& b) const {
+    template <typename T>
+    void serializeMessage(uint32 type, const T& m, BinaryOutput& b) const
+    {
 
         debugAssert(type != 0);
         b.writeUInt32(type);
         m.serialize(b);
         b.writeUInt32(1);
-    
-        debugAssertM(b.size() < MTU, 
-                    format("This LightweightConduit is limited to messages of "
-                           "%d bytes (Ethernet hardware limit; this is the "
-                           "'UDP MTU')", maxMessageSize()));
+
+        debugAssertM(b.size() < MTU,
+                     format("This LightweightConduit is limited to messages of "
+                            "%d bytes (Ethernet hardware limit; this is the "
+                            "'UDP MTU')",
+                            maxMessageSize()));
 
         if (b.size() >= MTU) {
             throw LightweightConduit::PacketSizeException(
-                    format("This LightweightConduit is limited to messages of "
-                           "%d bytes (Ethernet hardware limit; this is the "
-                           "'UDP MTU')", maxMessageSize()),
-                           (int)b.size() - 4, // Don't count the type header
-                           maxMessageSize());
+                format("This LightweightConduit is limited to messages of "
+                       "%d bytes (Ethernet hardware limit; this is the "
+                       "'UDP MTU')",
+                       maxMessageSize()),
+                (int)b.size() - 4, // Don't count the type header
+                maxMessageSize());
         }
     }
 
 public:
-
-    static LightweightConduitRef create(uint16 receivePort, bool enableReceive, bool enableBroadcast);
+    static LightweightConduitRef
+    create(uint16 receivePort, bool enableReceive, bool enableBroadcast);
 
     class PacketSizeException {
     public:
-        std::string            message;
-        int                    serializedPacketSize;
-        int                    maxMessageSize;
+        std::string message;
+        int         serializedPacketSize;
+        int         maxMessageSize;
 
-        inline PacketSizeException(const std::string& m, int s, int b) :
-            message(m),
-            serializedPacketSize(s),
-            maxMessageSize(b) {}
+        inline PacketSizeException(const std::string& m, int s, int b)
+            : message(m), serializedPacketSize(s), maxMessageSize(b)
+        {
+        }
     };
 
     /** Closes the socket. */
@@ -487,12 +490,11 @@ public:
         (G3D places a small header at the front of each UDP packet;
         this is already taken into account by the value returned).
      */
-    inline int maxMessageSize() const {
-        return MTU - 4;
-    }
+    inline int maxMessageSize() const { return MTU - 4; }
 
-
-    template<typename T> inline void send(const NetAddress& a, uint32 type, const T& msg) {
+    template <typename T>
+    inline void send(const NetAddress& a, uint32 type, const T& msg)
+    {
         binaryOutput.reset();
         serializeMessage(type, msg, binaryOutput);
         sendBuffer(a, binaryOutput);
@@ -501,7 +503,9 @@ public:
     /** Send the same message to multiple addresses (only serializes once).
         Useful when server needs to send to a known list of addresses
         (unlike direct UDP broadcast to all addresses on the subnet) */
-    template<typename T> inline void send(const Array<NetAddress>& a, uint32 type, const T& m) {
+    template <typename T>
+    inline void send(const Array<NetAddress>& a, uint32 type, const T& m)
+    {
         binaryOutput.reset();
         serializeMessage(type, m, binaryOutput);
 
@@ -512,25 +516,28 @@ public:
 
     bool receive(NetAddress& sender);
 
-    template<typename T> inline bool receive(NetAddress& sender, T& message) {
+    template <typename T>
+    inline bool receive(NetAddress& sender, T& message)
+    {
         bool r = receive(sender);
         if (r) {
-            BinaryInput b((messageBuffer.getCArray() + 4), 
-                          messageBuffer.size() - 4, 
-                          G3D_LITTLE_ENDIAN, BinaryInput::NO_COPY);
+            BinaryInput b((messageBuffer.getCArray() + 4),
+                          messageBuffer.size() - 4,
+                          G3D_LITTLE_ENDIAN,
+                          BinaryInput::NO_COPY);
             message.deserialize(b);
         }
 
         return r;
     }
 
-    inline bool receive() {
+    inline bool receive()
+    {
         static NetAddress ignore;
         return receive(ignore);
     }
 
     virtual uint32 waitingMessageType();
-
 
     virtual bool messageWaiting();
 };
@@ -546,21 +553,19 @@ typedef shared_ptr<class NetListener> NetListenerRef;
  */
 class NetListener : public ReferenceCountedObject {
 private:
-
     friend class NetworkDevice;
 
-    SOCKET                          sock;
+    SOCKET sock;
 
     /** Port is in host byte order. */
     NetListener(uint16 port);
 
 public:
-
     static NetListenerRef create(const uint16 port);
 
     ~NetListener();
 
-    /** Block until a connection is received.  Returns NULL if 
+    /** Block until a connection is received.  Returns NULL if
         something went wrong. */
     ReliableConduitRef waitForConnection();
 
@@ -571,7 +576,6 @@ public:
     bool ok() const;
 };
 
-
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -580,21 +584,21 @@ public:
    An abstraction over sockets that provides a message-based network
    infrastructure optimized for sending many small (~500 bytes) messages.
    All functions always return immediately.
-   
+
    Create only one NetworkDevice per process (a WinSock restriction).
-   
+
    NetworkDevice is technically not thread safe.  However, as long as
    you use different conduits on different threads (or lock conduits
    before sending), you will encounter no problems sharing the single
    NetworkDevice across multiple threads.  That is, do not invoke the same
    Conduit's send or receive method on two threads at once.
-   
+
    This assumes that the underlying WinSock/BSD sockets implementation
    is thread safe.  That is not guaranteed, but in practice seems
    to always be true (see
    http://tangentsoft.net/wskfaq/intermediate.html#threadsafety)
 
-   <hr> 
+   <hr>
 
    IP networks use "network byte order" (big-endian) for
    communicating integers.  "Host byte order" is the endian-ness of
@@ -607,27 +611,26 @@ public:
  */
 class NetworkDevice {
 public:
-
     /** @brief Description of an ethernet or wireless ethernet adapter.*/
     class EthernetAdapter {
     public:
         /** Reverse-DNS of the ip address.*/
-        std::string     hostname;
+        std::string hostname;
 
         /** Name of the adapter */
-        std::string     name;
+        std::string name;
 
         /** IP address in host byte order.*/
-        uint32          ip;
+        uint32 ip;
 
         /** Subnet mask in host byte order.*/
-        uint32          subnet;
+        uint32 subnet;
 
         /** UDP broadcast address in host byte order.*/
-        uint32          broadcast;
+        uint32 broadcast;
 
         /** MAC (hardware) address, if known */
-        uint8           mac[6];
+        uint8 mac[6];
 
         EthernetAdapter();
 
@@ -636,19 +639,18 @@ public:
     };
 
 private:
-
     friend class Conduit;
     friend class LightweightConduit;
     friend class ReliableConduit;
     friend class NetListener;
 
-    bool                        initialized;
+    bool initialized;
 
-    Array<EthernetAdapter>      m_adapterArray;
+    Array<EthernetAdapter> m_adapterArray;
 
     /** Broadcast addresses available on this machine,
      extracted from m_adapterArray.*/
-    Array<uint32>               m_broadcastAddresses;
+    Array<uint32> m_broadcastAddresses;
 
     /** Utility method. */
     void closesocket(SOCKET& sock) const;
@@ -670,7 +672,6 @@ private:
     void addAdapter(const EthernetAdapter& a);
 
 public:
-
     /** Prints an IP address to a string.
         @param ip In host byte order.*/
     static std::string formatIP(uint32 ip);
@@ -683,13 +684,15 @@ public:
     /** Returns the available ethernet adapters for the current
         machine that are online. Does not include the loopback adapter
         for localhost.*/
-    inline const Array<EthernetAdapter>& adapterArray() const {
+    inline const Array<EthernetAdapter>& adapterArray() const
+    {
         return m_adapterArray;
     }
 
     /** Returns the (unique) IP addresses for UDP broadcasting
         extracted from adapterArray(). All are in host byte order. */
-    inline const Array<uint32>& broadcastAddressArray() const {
+    inline const Array<uint32>& broadcastAddressArray() const
+    {
         return m_broadcastAddresses;
     }
 
@@ -707,33 +710,31 @@ public:
      Prints a human-readable description of this machine
      to the text output stream.
      */
-    void describeSystem(
-        TextOutput& t);
+    void describeSystem(TextOutput& t);
 
-    void describeSystem(
-        std::string&        s);
+    void describeSystem(std::string& s);
 
     /** Returns the name (or one of the names) of this computer */
     std::string localHostName() const;
 
     /** There is often more than one address for the local host. This
-        returns all of them. 
+        returns all of them.
         @deprecated Use adapterArray()
     */
     void localHostAddresses(Array<NetAddress>& array) const;
 };
 
-
 #ifdef __GNUC__
-inline uint32 gcchtonl(uint32 x) {
+inline uint32 gcchtonl(uint32 x)
+{
     // This pragma fools gcc into surpressing all error messages,
     // including the bogus one that it creates for htonl
-#   pragma GCC system_header
+#pragma GCC system_header
     return htonl(x);
 }
 #endif
 
-} // G3D namespace
+} // namespace G3D
 
 #ifndef _WIN32
 #undef SOCKADDR_IN

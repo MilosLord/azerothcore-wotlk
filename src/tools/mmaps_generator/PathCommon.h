@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -34,92 +35,86 @@
 #include <cerrno>
 #endif
 
-namespace MMAP
+namespace MMAP {
+inline bool matchWildcardFilter(const char* filter, const char* str)
 {
-    inline bool matchWildcardFilter(const char* filter, const char* str)
-    {
-        if (!filter || !str)
-            return false;
+    if (!filter || !str)
+        return false;
 
-        // end on null character
-        while (*filter && *str)
-        {
-            if (*filter == '*')
-            {
-                if (*++filter == '\0')   // wildcard at end of filter means all remaing chars match
-                    return true;
+    // end on null character
+    while (*filter && *str) {
+        if (*filter == '*') {
+            if (*++filter ==
+                '\0') // wildcard at end of filter means all remaing chars match
+                return true;
 
-                for (;;)
-                {
-                    if (*filter == *str)
-                        break;
-                    if (*str == '\0')
-                        return false;   // reached end of string without matching next filter character
-                    str++;
-                }
+            for (;;) {
+                if (*filter == *str)
+                    break;
+                if (*str == '\0')
+                    return false; // reached end of string without matching next
+                                  // filter character
+                str++;
             }
-            else if (*filter != *str)
-                return false;           // mismatch
-
-            filter++;
-            str++;
         }
+        else if (*filter != *str)
+            return false; // mismatch
 
-        return ((*filter == '\0' || (*filter == '*' && *++filter == '\0')) && *str == '\0');
+        filter++;
+        str++;
     }
 
-    enum ListFilesResult
-    {
-        LISTFILE_DIRECTORY_NOT_FOUND = 0,
-        LISTFILE_OK = 1
-    };
+    return ((*filter == '\0' || (*filter == '*' && *++filter == '\0')) &&
+            *str == '\0');
+}
 
-    inline ListFilesResult getDirContents(std::vector<std::string>& fileList, std::string dirpath = ".", std::string filter = "*")
-    {
+enum ListFilesResult { LISTFILE_DIRECTORY_NOT_FOUND = 0, LISTFILE_OK = 1 };
+
+inline ListFilesResult getDirContents(std::vector<std::string>& fileList,
+                                      std::string               dirpath = ".",
+                                      std::string               filter  = "*")
+{
 #ifdef WIN32
-        HANDLE hFind;
-        WIN32_FIND_DATA findFileInfo;
-        std::string directory;
+    HANDLE          hFind;
+    WIN32_FIND_DATA findFileInfo;
+    std::string     directory;
 
-        directory = dirpath + "/" + filter;
+    directory = dirpath + "/" + filter;
 
-        hFind = FindFirstFile(directory.c_str(), &findFileInfo);
+    hFind = FindFirstFile(directory.c_str(), &findFileInfo);
 
-        if (hFind == INVALID_HANDLE_VALUE)
-            return LISTFILE_DIRECTORY_NOT_FOUND;
-        do
-        {
-            if ((findFileInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
-                fileList.push_back(std::string(findFileInfo.cFileName));
-        } while (FindNextFile(hFind, &findFileInfo));
+    if (hFind == INVALID_HANDLE_VALUE)
+        return LISTFILE_DIRECTORY_NOT_FOUND;
+    do {
+        if ((findFileInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
+            fileList.push_back(std::string(findFileInfo.cFileName));
+    } while (FindNextFile(hFind, &findFileInfo));
 
-        FindClose(hFind);
+    FindClose(hFind);
 
 #else
-        const char* p = dirpath.c_str();
-        DIR* dirp = opendir(p);
-        struct dirent* dp;
+    const char*    p    = dirpath.c_str();
+    DIR*           dirp = opendir(p);
+    struct dirent* dp;
 
-        while (dirp)
-        {
-            errno = 0;
-            if ((dp = readdir(dirp)) != nullptr)
-            {
-                if (matchWildcardFilter(filter.c_str(), dp->d_name))
-                    fileList.emplace_back(dp->d_name);
-            }
-            else
-                break;
+    while (dirp) {
+        errno = 0;
+        if ((dp = readdir(dirp)) != nullptr) {
+            if (matchWildcardFilter(filter.c_str(), dp->d_name))
+                fileList.emplace_back(dp->d_name);
         }
-
-        if (dirp)
-            closedir(dirp);
         else
-            return LISTFILE_DIRECTORY_NOT_FOUND;
+            break;
+    }
+
+    if (dirp)
+        closedir(dirp);
+    else
+        return LISTFILE_DIRECTORY_NOT_FOUND;
 #endif
 
-        return LISTFILE_OK;
-    }
+    return LISTFILE_OK;
 }
+} // namespace MMAP
 
 #endif

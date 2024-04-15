@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,20 +23,22 @@
 
 #pragma pack(push, 1)
 
-struct ServerPktHeader
-{
+struct ServerPktHeader {
     /**
      * size is the length of the payload _plus_ the length of the opcode
      */
     ServerPktHeader(uint32 size, uint16 cmd) : size(size)
     {
-        uint8 headerIndex=0;
-        if (isLargePacket())
-        {
-            LOG_DEBUG("network", "initializing large server to client packet. Size: {}, cmd: {}", size, cmd);
+        uint8 headerIndex = 0;
+        if (isLargePacket()) {
+            LOG_DEBUG(
+                "network",
+                "initializing large server to client packet. Size: {}, cmd: {}",
+                size,
+                cmd);
             header[headerIndex++] = 0x80 | (0xFF & (size >> 16));
         }
-        header[headerIndex++] = 0xFF &(size >> 8);
+        header[headerIndex++] = 0xFF & (size >> 8);
         header[headerIndex++] = 0xFF & size;
 
         header[headerIndex++] = 0xFF & cmd;
@@ -48,13 +51,10 @@ struct ServerPktHeader
         return 2 + (isLargePacket() ? 3 : 2);
     }
 
-    bool isLargePacket() const
-    {
-        return size > 0x7FFF;
-    }
+    bool isLargePacket() const { return size > 0x7FFF; }
 
     const uint32 size;
-    uint8 header[5];
+    uint8        header[5];
 };
 
 #pragma pack(pop)

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,8 +21,7 @@
 #include "ObjectMgr.h"
 #include "Player.h"
 
-constexpr std::array<std::string_view, MAX_ITEM_QUALITY> itemQualityToString =
-{
+constexpr std::array<std::string_view, MAX_ITEM_QUALITY> itemQualityToString = {
     "poor",
     "normal",
     "uncommon",
@@ -29,65 +29,55 @@ constexpr std::array<std::string_view, MAX_ITEM_QUALITY> itemQualityToString =
     "epic",
     "legendary",
     "artifact",
-    "all"
-};
+    "all"};
 
 using namespace Acore::ChatCommands;
 
-class bg_commandscript : public CommandScript
-{
+class bg_commandscript : public CommandScript {
 public:
-    bg_commandscript() : CommandScript("bg_commandscript") { }
+    bg_commandscript() : CommandScript("bg_commandscript") {}
 
     ChatCommandTable GetCommands() const override
     {
-        static ChatCommandTable commandTable =
-        {
-            { "bags clear",  HandleBagsClearCommand, SEC_GAMEMASTER, Console::No },
+        static ChatCommandTable commandTable = {
+            {"bags clear", HandleBagsClearCommand, SEC_GAMEMASTER, Console::No},
         };
 
         return commandTable;
     }
 
-    static bool HandleBagsClearCommand(ChatHandler* handler, std::string_view args)
+    static bool HandleBagsClearCommand(ChatHandler*     handler,
+                                       std::string_view args)
     {
-        if (args.empty())
-        {
+        if (args.empty()) {
             return false;
         }
 
         Player* player = handler->GetSession()->GetPlayer();
-        if (!player)
-        {
+        if (!player) {
             return false;
         }
 
         uint8 itemQuality = MAX_ITEM_QUALITY;
-        for (uint8 i = ITEM_QUALITY_POOR; i < MAX_ITEM_QUALITY; ++i)
-        {
-            if (args == itemQualityToString[i])
-            {
+        for (uint8 i = ITEM_QUALITY_POOR; i < MAX_ITEM_QUALITY; ++i) {
+            if (args == itemQualityToString[i]) {
                 itemQuality = i;
                 break;
             }
         }
 
-        if (itemQuality == MAX_ITEM_QUALITY)
-        {
+        if (itemQuality == MAX_ITEM_QUALITY) {
             return false;
         }
 
-        std::array<uint32, MAX_ITEM_QUALITY> removedItems = { };
+        std::array<uint32, MAX_ITEM_QUALITY> removedItems = {};
 
         // in inventory
-        for (uint8 i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; ++i)
-        {
-            if (Item* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, i))
-            {
-                if (ItemTemplate const* itemTemplate = item->GetTemplate())
-                {
-                    if (itemTemplate->Quality <= itemQuality)
-                    {
+        for (uint8 i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END;
+             ++i) {
+            if (Item* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, i)) {
+                if (ItemTemplate const* itemTemplate = item->GetTemplate()) {
+                    if (itemTemplate->Quality <= itemQuality) {
                         player->DestroyItem(INVENTORY_SLOT_BAG_0, i, true);
                         ++removedItems[itemTemplate->Quality];
                     }
@@ -96,18 +86,14 @@ public:
         }
 
         // in inventory bags
-        for (uint8 i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; i++)
-        {
-            if (Bag* bag = player->GetBagByPos(i))
-            {
-                for (uint32 j = 0; j < bag->GetBagSize(); j++)
-                {
-                    if (Item* item = bag->GetItemByPos(j))
-                    {
-                        if (ItemTemplate const* itemTemplate = item->GetTemplate())
-                        {
-                            if (itemTemplate->Quality <= itemQuality)
-                            {
+        for (uint8 i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END;
+             i++) {
+            if (Bag* bag = player->GetBagByPos(i)) {
+                for (uint32 j = 0; j < bag->GetBagSize(); j++) {
+                    if (Item* item = bag->GetItemByPos(j)) {
+                        if (ItemTemplate const* itemTemplate =
+                                item->GetTemplate()) {
+                            if (itemTemplate->Quality <= itemQuality) {
                                 player->DestroyItem(i, j, true);
                                 ++removedItems[itemTemplate->Quality];
                             }
@@ -119,21 +105,16 @@ public:
 
         std::ostringstream str;
         str << "Removed ";
-        if (itemQuality == ITEM_QUALITY_HEIRLOOM)
-        {
+        if (itemQuality == ITEM_QUALITY_HEIRLOOM) {
             str << "all";
         }
-        else
-        {
+        else {
             bool initialize = true;
-            for (uint8 i = ITEM_QUALITY_POOR; i < MAX_ITEM_QUALITY; ++i)
-            {
-                if (uint32 itemCount = removedItems[i])
-                {
+            for (uint8 i = ITEM_QUALITY_POOR; i < MAX_ITEM_QUALITY; ++i) {
+                if (uint32 itemCount = removedItems[i]) {
                     std::string_view itemQualityString = itemQualityToString[i];
 
-                    if (!initialize)
-                    {
+                    if (!initialize) {
                         str << ", ";
                     }
 
@@ -154,7 +135,4 @@ public:
     };
 };
 
-void AddSC_bag_commandscript()
-{
-    new bg_commandscript();
-}
+void AddSC_bag_commandscript() { new bg_commandscript(); }

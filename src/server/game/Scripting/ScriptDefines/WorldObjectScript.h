@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,8 +22,7 @@
 #include "ScriptObject.h"
 #include <vector>
 
-enum WorldObjectHook
-{
+enum WorldObjectHook {
     WORLDOBJECTHOOK_ON_WORLD_OBJECT_DESTROY,
     WORLDOBJECTHOOK_ON_WORLD_OBJECT_CREATE,
     WORLDOBJECTHOOK_ON_WORLD_OBJECT_SET_MAP,
@@ -31,10 +31,10 @@ enum WorldObjectHook
     WORLDOBJECTHOOK_END
 };
 
-class WorldObjectScript : public ScriptObject
-{
+class WorldObjectScript : public ScriptObject {
 protected:
-    WorldObjectScript(const char* name, std::vector<uint16> enabledHooks = std::vector<uint16>());
+    WorldObjectScript(const char*         name,
+                      std::vector<uint16> enabledHooks = std::vector<uint16>());
 
 public:
     [[nodiscard]] bool IsDatabaseBound() const override { return false; }
@@ -44,28 +44,28 @@ public:
      *
      * @param object Contains information about the WorldObject
      */
-    virtual void OnWorldObjectDestroy(WorldObject* /*object*/) { }
+    virtual void OnWorldObjectDestroy(WorldObject* /*object*/) {}
 
     /**
      * @brief This hook called after create world object
      *
      * @param object Contains information about the WorldObject
      */
-    virtual void OnWorldObjectCreate(WorldObject* /*object*/) { }
+    virtual void OnWorldObjectCreate(WorldObject* /*object*/) {}
 
     /**
      * @brief This hook called after world object set to map
      *
      * @param object Contains information about the WorldObject
      */
-    virtual void OnWorldObjectSetMap(WorldObject* /*object*/, Map* /*map*/ ) { }
+    virtual void OnWorldObjectSetMap(WorldObject* /*object*/, Map* /*map*/) {}
 
     /**
      * @brief This hook called after world object reset
      *
      * @param object Contains information about the WorldObject
      */
-    virtual void OnWorldObjectResetMap(WorldObject* /*object*/) { }
+    virtual void OnWorldObjectResetMap(WorldObject* /*object*/) {}
 
     /**
      * @brief This hook called after world object update
@@ -73,7 +73,9 @@ public:
      * @param object Contains information about the WorldObject
      * @param diff Contains information about the diff time
      */
-    virtual void OnWorldObjectUpdate(WorldObject* /*object*/, uint32 /*diff*/) { }
+    virtual void OnWorldObjectUpdate(WorldObject* /*object*/, uint32 /*diff*/)
+    {
+    }
 };
 
 #endif

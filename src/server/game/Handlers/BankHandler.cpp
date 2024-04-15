@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -30,11 +31,12 @@ bool WorldSession::CanUseBank(ObjectGuid bankerGUID) const
     if (!bankerGUID)
         bankerGUID = m_currentBankerGUID;
 
-    bool isUsingBankCommand = (bankerGUID == GetPlayer()->GetGUID() && bankerGUID == m_currentBankerGUID);
+    bool isUsingBankCommand = (bankerGUID == GetPlayer()->GetGUID() &&
+                               bankerGUID == m_currentBankerGUID);
 
-    if (!isUsingBankCommand)
-    {
-        Creature* creature = GetPlayer()->GetNPCIfCanInteractWith(bankerGUID, UNIT_NPC_FLAG_BANKER);
+    if (!isUsingBankCommand) {
+        Creature* creature = GetPlayer()->GetNPCIfCanInteractWith(
+            bankerGUID, UNIT_NPC_FLAG_BANKER);
         if (!creature)
             return false;
     }
@@ -48,10 +50,13 @@ void WorldSession::HandleBankerActivateOpcode(WorldPacket& recvData)
 
     recvData >> guid;
 
-    Creature* unit = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_BANKER);
-    if (!unit)
-    {
-        LOG_DEBUG("network", "WORLD: HandleBankerActivateOpcode - Unit ({}) not found or you can not interact with him.", guid.ToString());
+    Creature* unit =
+        GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_BANKER);
+    if (!unit) {
+        LOG_DEBUG("network",
+                  "WORLD: HandleBankerActivateOpcode - Unit ({}) not found or "
+                  "you can not interact with him.",
+                  guid.ToString());
         return;
     }
 
@@ -62,13 +67,19 @@ void WorldSession::HandleBankerActivateOpcode(WorldPacket& recvData)
     SendShowBank(guid);
 }
 
-void WorldSession::HandleAutoBankItemOpcode(WorldPackets::Bank::AutoBankItem& packet)
+void WorldSession::HandleAutoBankItemOpcode(
+    WorldPackets::Bank::AutoBankItem& packet)
 {
-    LOG_DEBUG("network", "STORAGE: receive bag = {}, slot = {}", packet.Bag, packet.Slot);
+    LOG_DEBUG("network",
+              "STORAGE: receive bag = {}, slot = {}",
+              packet.Bag,
+              packet.Slot);
 
-    if (!CanUseBank())
-    {
-        LOG_DEBUG("network", "WORLD: HandleAutoBankItemOpcode - Unit ({}) not found or you can't interact with him.", m_currentBankerGUID.ToString());
+    if (!CanUseBank()) {
+        LOG_DEBUG("network",
+                  "WORLD: HandleAutoBankItemOpcode - Unit ({}) not found or "
+                  "you can't interact with him.",
+                  m_currentBankerGUID.ToString());
         return;
     }
 
@@ -77,15 +88,14 @@ void WorldSession::HandleAutoBankItemOpcode(WorldPackets::Bank::AutoBankItem& pa
         return;
 
     ItemPosCountVec dest;
-    InventoryResult msg = _player->CanBankItem(NULL_BAG, NULL_SLOT, dest, item, false);
-    if (msg != EQUIP_ERR_OK)
-    {
+    InventoryResult msg =
+        _player->CanBankItem(NULL_BAG, NULL_SLOT, dest, item, false);
+    if (msg != EQUIP_ERR_OK) {
         _player->SendEquipError(msg, item, nullptr);
         return;
     }
 
-    if (dest.size() == 1 && dest[0].pos == item->GetPos())
-    {
+    if (dest.size() == 1 && dest[0].pos == item->GetPos()) {
         _player->SendEquipError(EQUIP_ERR_NONE, item, nullptr);
         return;
     }
@@ -96,13 +106,19 @@ void WorldSession::HandleAutoBankItemOpcode(WorldPackets::Bank::AutoBankItem& pa
     _player->UpdateTitansGrip();
 }
 
-void WorldSession::HandleAutoStoreBankItemOpcode(WorldPackets::Bank::AutoStoreBankItem& packet)
+void WorldSession::HandleAutoStoreBankItemOpcode(
+    WorldPackets::Bank::AutoStoreBankItem& packet)
 {
-    LOG_DEBUG("network", "STORAGE: receive bag = {}, slot = {}", packet.Bag, packet.Slot);
+    LOG_DEBUG("network",
+              "STORAGE: receive bag = {}, slot = {}",
+              packet.Bag,
+              packet.Slot);
 
-    if (!CanUseBank())
-    {
-        LOG_DEBUG("network", "WORLD: HandleAutoStoreBankItemOpcode - Unit ({}) not found or you can't interact with him.", m_currentBankerGUID.ToString());
+    if (!CanUseBank()) {
+        LOG_DEBUG("network",
+                  "WORLD: HandleAutoStoreBankItemOpcode - Unit ({}) not found "
+                  "or you can't interact with him.",
+                  m_currentBankerGUID.ToString());
         return;
     }
 
@@ -110,26 +126,28 @@ void WorldSession::HandleAutoStoreBankItemOpcode(WorldPackets::Bank::AutoStoreBa
     if (!item)
         return;
 
-    if (_player->IsBankPos(packet.Bag, packet.Slot))                    // moving from bank to inventory
+    if (_player->IsBankPos(packet.Bag,
+                           packet.Slot)) // moving from bank to inventory
     {
         ItemPosCountVec dest;
-        InventoryResult msg = _player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, item, false);
-        if (msg != EQUIP_ERR_OK)
-        {
+        InventoryResult msg =
+            _player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, item, false);
+        if (msg != EQUIP_ERR_OK) {
             _player->SendEquipError(msg, item, nullptr);
             return;
         }
 
         _player->RemoveItem(packet.Bag, packet.Slot, true);
         if (Item const* storedItem = _player->StoreItem(dest, item, true))
-            _player->ItemAddedQuestCheck(storedItem->GetEntry(), storedItem->GetCount());
+            _player->ItemAddedQuestCheck(storedItem->GetEntry(),
+                                         storedItem->GetCount());
     }
-    else                                                    // moving from inventory to bank
+    else // moving from inventory to bank
     {
         ItemPosCountVec dest;
-        InventoryResult msg = _player->CanBankItem(NULL_BAG, NULL_SLOT, dest, item, false);
-        if (msg != EQUIP_ERR_OK)
-        {
+        InventoryResult msg =
+            _player->CanBankItem(NULL_BAG, NULL_SLOT, dest, item, false);
+        if (msg != EQUIP_ERR_OK) {
             _player->SendEquipError(msg, item, nullptr);
             return;
         }
@@ -141,14 +159,17 @@ void WorldSession::HandleAutoStoreBankItemOpcode(WorldPackets::Bank::AutoStoreBa
     }
 }
 
-void WorldSession::HandleBuyBankSlotOpcode(WorldPackets::Bank::BuyBankSlot& buyBankSlot)
+void WorldSession::HandleBuyBankSlotOpcode(
+    WorldPackets::Bank::BuyBankSlot& buyBankSlot)
 {
     WorldPackets::Bank::BuyBankSlotResult packet;
-    if (!CanUseBank(buyBankSlot.Banker))
-    {
+    if (!CanUseBank(buyBankSlot.Banker)) {
         packet.Result = ERR_BANKSLOT_NOTBANKER;
         SendPacket(packet.Write());
-        LOG_DEBUG("network", "WORLD: HandleBuyBankSlotOpcode - {} not found or you can't interact with him.", buyBankSlot.Banker.ToString());
+        LOG_DEBUG("network",
+                  "WORLD: HandleBuyBankSlotOpcode - {} not found or you can't "
+                  "interact with him.",
+                  buyBankSlot.Banker.ToString());
         return;
     }
 
@@ -159,10 +180,10 @@ void WorldSession::HandleBuyBankSlotOpcode(WorldPackets::Bank::BuyBankSlot& buyB
 
     LOG_INFO("network", "PLAYER: Buy bank bag slot, slot number = {}", slot);
 
-    BankBagSlotPricesEntry const* slotEntry = sBankBagSlotPricesStore.LookupEntry(slot);
+    BankBagSlotPricesEntry const* slotEntry =
+        sBankBagSlotPricesStore.LookupEntry(slot);
 
-    if (!slotEntry)
-    {
+    if (!slotEntry) {
         packet.Result = ERR_BANKSLOT_FAILED_TOO_MANY;
         SendPacket(packet.Write());
         return;
@@ -170,8 +191,7 @@ void WorldSession::HandleBuyBankSlotOpcode(WorldPackets::Bank::BuyBankSlot& buyB
 
     uint32 price = slotEntry->price;
 
-    if (!_player->HasEnoughMoney(price))
-    {
+    if (!_player->HasEnoughMoney(price)) {
         packet.Result = ERR_BANKSLOT_INSUFFICIENT_FUNDS;
         SendPacket(packet.Write());
         return;

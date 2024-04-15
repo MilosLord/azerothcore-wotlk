@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -41,13 +42,14 @@ std::string CreateConfigWithMap(std::map<std::string, std::string> const& map)
 
 class ConfigEnvTest : public testing::Test {
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
         std::map<std::string, std::string> config;
-        config["Int.Nested"] = "4242";
-        config["lower"] = "simpleString";
-        config["UPPER"] = "simpleString";
+        config["Int.Nested"]                          = "4242";
+        config["lower"]                               = "simpleString";
+        config["UPPER"]                               = "simpleString";
         config["SomeLong.NestedNameWithNumber.Like1"] = "1";
-        config["GM.InGMList.Level"] = "50";
+        config["GM.InGMList.Level"]                   = "50";
 
         confFilePath = CreateConfigWithMap(config);
 
@@ -55,9 +57,7 @@ protected:
         sConfigMgr->LoadAppConfigs();
     }
 
-    void TearDown() override {
-        std::remove(confFilePath.c_str());
-    }
+    void TearDown() override { std::remove(confFilePath.c_str()); }
 
     std::string confFilePath;
 };
@@ -83,15 +83,20 @@ TEST_F(ConfigEnvTest, SimpleUpperString)
     EXPECT_EQ(sConfigMgr->GetOption<std::string>("UPPER", ""), "simpleString");
     setenv("AC_UPPER", "envupperstring", 1);
     EXPECT_EQ(sConfigMgr->OverrideWithEnvVariablesIfAny().empty(), false);
-    EXPECT_EQ(sConfigMgr->GetOption<std::string>("UPPER", ""), "envupperstring");
+    EXPECT_EQ(sConfigMgr->GetOption<std::string>("UPPER", ""),
+              "envupperstring");
 }
 
 TEST_F(ConfigEnvTest, LongNestedNameWithNumber)
 {
-    EXPECT_EQ(sConfigMgr->GetOption<float>("SomeLong.NestedNameWithNumber.Like1", 0), 1);
+    EXPECT_EQ(
+        sConfigMgr->GetOption<float>("SomeLong.NestedNameWithNumber.Like1", 0),
+        1);
     setenv("AC_SOME_LONG_NESTED_NAME_WITH_NUMBER_LIKE_1", "42", 1);
     EXPECT_EQ(sConfigMgr->OverrideWithEnvVariablesIfAny().empty(), false);
-    EXPECT_EQ(sConfigMgr->GetOption<float>("SomeLong.NestedNameWithNumber.Like1", 0), 42);
+    EXPECT_EQ(
+        sConfigMgr->GetOption<float>("SomeLong.NestedNameWithNumber.Like1", 0),
+        42);
 }
 
 TEST_F(ConfigEnvTest, ValueWithSeveralUpperlLaters)
@@ -105,7 +110,8 @@ TEST_F(ConfigEnvTest, ValueWithSeveralUpperlLaters)
 TEST_F(ConfigEnvTest, StringThatNotExistInConfig)
 {
     setenv("AC_UNIQUE_STRING", "somevalue", 1);
-    EXPECT_EQ(sConfigMgr->GetOption<std::string>("Unique.String", ""), "somevalue");
+    EXPECT_EQ(sConfigMgr->GetOption<std::string>("Unique.String", ""),
+              "somevalue");
 }
 
 TEST_F(ConfigEnvTest, IntThatNotExistInConfig)
@@ -116,7 +122,8 @@ TEST_F(ConfigEnvTest, IntThatNotExistInConfig)
 
 TEST_F(ConfigEnvTest, NotExistingString)
 {
-    EXPECT_EQ(sConfigMgr->GetOption<std::string>("NotFound.String", "none"), "none");
+    EXPECT_EQ(sConfigMgr->GetOption<std::string>("NotFound.String", "none"),
+              "none");
 }
 
 TEST_F(ConfigEnvTest, NotExistingInt)

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -23,23 +24,22 @@
 
 /// Provides helper functions to access built-in values
 /// which can be overwritten in config
-namespace BuiltInConfig
-{
-    /// Returns the CMake command when any is specified in the config,
-    /// returns the built-in path otherwise
-    AC_COMMON_API std::string GetCMakeCommand();
+namespace BuiltInConfig {
+/// Returns the CMake command when any is specified in the config,
+/// returns the built-in path otherwise
+AC_COMMON_API std::string GetCMakeCommand();
 
-    /// Returns the build directory path when any is specified in the config,
-    /// returns the built-in one otherwise
-    AC_COMMON_API std::string GetBuildDirectory();
+/// Returns the build directory path when any is specified in the config,
+/// returns the built-in one otherwise
+AC_COMMON_API std::string GetBuildDirectory();
 
-    /// Returns the source directory path when any is specified in the config,
-    /// returns the built-in one otherwise
-    AC_COMMON_API std::string GetSourceDirectory();
+/// Returns the source directory path when any is specified in the config,
+/// returns the built-in one otherwise
+AC_COMMON_API std::string GetSourceDirectory();
 
-    /// Returns the path to the mysql executable (`mysql`) when any is specified
-    /// in the config, returns the built-in one otherwise
-    AC_COMMON_API std::string GetMySQLExecutable();
+/// Returns the path to the mysql executable (`mysql`) when any is specified
+/// in the config, returns the built-in one otherwise
+AC_COMMON_API std::string GetMySQLExecutable();
 
 } // namespace BuiltInConfig
 

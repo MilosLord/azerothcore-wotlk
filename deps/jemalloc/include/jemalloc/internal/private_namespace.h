@@ -41,29 +41,37 @@
 #define arena_bin_choose_lock JEMALLOC_N(arena_bin_choose_lock)
 #define arena_boot JEMALLOC_N(arena_boot)
 #define arena_choose_huge JEMALLOC_N(arena_choose_huge)
-#define arena_dalloc_bin_junked_locked JEMALLOC_N(arena_dalloc_bin_junked_locked)
+#define arena_dalloc_bin_junked_locked                                         \
+    JEMALLOC_N(arena_dalloc_bin_junked_locked)
 #define arena_dalloc_junk_small JEMALLOC_N(arena_dalloc_junk_small)
 #define arena_dalloc_promoted JEMALLOC_N(arena_dalloc_promoted)
 #define arena_dalloc_small JEMALLOC_N(arena_dalloc_small)
 #define arena_decay JEMALLOC_N(arena_decay)
 #define arena_destroy JEMALLOC_N(arena_destroy)
-#define arena_dirty_decay_ms_default_get JEMALLOC_N(arena_dirty_decay_ms_default_get)
-#define arena_dirty_decay_ms_default_set JEMALLOC_N(arena_dirty_decay_ms_default_set)
+#define arena_dirty_decay_ms_default_get                                       \
+    JEMALLOC_N(arena_dirty_decay_ms_default_get)
+#define arena_dirty_decay_ms_default_set                                       \
+    JEMALLOC_N(arena_dirty_decay_ms_default_set)
 #define arena_dirty_decay_ms_get JEMALLOC_N(arena_dirty_decay_ms_get)
 #define arena_dirty_decay_ms_set JEMALLOC_N(arena_dirty_decay_ms_set)
 #define arena_dss_prec_get JEMALLOC_N(arena_dss_prec_get)
 #define arena_dss_prec_set JEMALLOC_N(arena_dss_prec_set)
 #define arena_extent_alloc_large JEMALLOC_N(arena_extent_alloc_large)
-#define arena_extent_dalloc_large_prep JEMALLOC_N(arena_extent_dalloc_large_prep)
-#define arena_extent_ralloc_large_expand JEMALLOC_N(arena_extent_ralloc_large_expand)
-#define arena_extent_ralloc_large_shrink JEMALLOC_N(arena_extent_ralloc_large_shrink)
+#define arena_extent_dalloc_large_prep                                         \
+    JEMALLOC_N(arena_extent_dalloc_large_prep)
+#define arena_extent_ralloc_large_expand                                       \
+    JEMALLOC_N(arena_extent_ralloc_large_expand)
+#define arena_extent_ralloc_large_shrink                                       \
+    JEMALLOC_N(arena_extent_ralloc_large_shrink)
 #define arena_extents_dirty_dalloc JEMALLOC_N(arena_extents_dirty_dalloc)
 #define arena_extent_sn_next JEMALLOC_N(arena_extent_sn_next)
 #define arena_init_huge JEMALLOC_N(arena_init_huge)
 #define arena_is_huge JEMALLOC_N(arena_is_huge)
 #define arena_malloc_hard JEMALLOC_N(arena_malloc_hard)
-#define arena_muzzy_decay_ms_default_get JEMALLOC_N(arena_muzzy_decay_ms_default_get)
-#define arena_muzzy_decay_ms_default_set JEMALLOC_N(arena_muzzy_decay_ms_default_set)
+#define arena_muzzy_decay_ms_default_get                                       \
+    JEMALLOC_N(arena_muzzy_decay_ms_default_get)
+#define arena_muzzy_decay_ms_default_set                                       \
+    JEMALLOC_N(arena_muzzy_decay_ms_default_set)
 #define arena_muzzy_decay_ms_get JEMALLOC_N(arena_muzzy_decay_ms_get)
 #define arena_muzzy_decay_ms_set JEMALLOC_N(arena_muzzy_decay_ms_set)
 #define arena_new JEMALLOC_N(arena_new)
@@ -85,7 +93,8 @@
 #define arena_ralloc JEMALLOC_N(arena_ralloc)
 #define arena_ralloc_no_move JEMALLOC_N(arena_ralloc_no_move)
 #define arena_reset JEMALLOC_N(arena_reset)
-#define arena_retain_grow_limit_get_set JEMALLOC_N(arena_retain_grow_limit_get_set)
+#define arena_retain_grow_limit_get_set                                        \
+    JEMALLOC_N(arena_retain_grow_limit_get_set)
 #define arena_stats_merge JEMALLOC_N(arena_stats_merge)
 #define arena_tcache_fill_small JEMALLOC_N(arena_tcache_fill_small)
 #define h_steps JEMALLOC_N(h_steps)
@@ -99,12 +108,16 @@
 #define background_thread_boot1 JEMALLOC_N(background_thread_boot1)
 #define background_thread_create JEMALLOC_N(background_thread_create)
 #define background_thread_ctl_init JEMALLOC_N(background_thread_ctl_init)
-#define background_thread_enabled_state JEMALLOC_N(background_thread_enabled_state)
+#define background_thread_enabled_state                                        \
+    JEMALLOC_N(background_thread_enabled_state)
 #define background_thread_info JEMALLOC_N(background_thread_info)
-#define background_thread_interval_check JEMALLOC_N(background_thread_interval_check)
+#define background_thread_interval_check                                       \
+    JEMALLOC_N(background_thread_interval_check)
 #define background_thread_lock JEMALLOC_N(background_thread_lock)
-#define background_thread_postfork_child JEMALLOC_N(background_thread_postfork_child)
-#define background_thread_postfork_parent JEMALLOC_N(background_thread_postfork_parent)
+#define background_thread_postfork_child                                       \
+    JEMALLOC_N(background_thread_postfork_child)
+#define background_thread_postfork_parent                                      \
+    JEMALLOC_N(background_thread_postfork_parent)
 #define background_thread_prefork0 JEMALLOC_N(background_thread_prefork0)
 #define background_thread_prefork1 JEMALLOC_N(background_thread_prefork1)
 #define background_threads_disable JEMALLOC_N(background_threads_disable)
@@ -228,7 +241,8 @@
 #define large_dalloc_finish JEMALLOC_N(large_dalloc_finish)
 #define large_dalloc_junk JEMALLOC_N(large_dalloc_junk)
 #define large_dalloc_maybe_junk JEMALLOC_N(large_dalloc_maybe_junk)
-#define large_dalloc_prep_junked_locked JEMALLOC_N(large_dalloc_prep_junked_locked)
+#define large_dalloc_prep_junked_locked                                        \
+    JEMALLOC_N(large_dalloc_prep_junked_locked)
 #define large_malloc JEMALLOC_N(large_malloc)
 #define large_palloc JEMALLOC_N(large_palloc)
 #define large_prof_alloc_time_get JEMALLOC_N(large_prof_alloc_time_get)

@@ -13,32 +13,36 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
-
 #ifndef _typelib_h
 #define _typelib_h
 
 #include "my_alloc.h"
 
-typedef struct st_typelib {	/* Different types saved here */
-  unsigned int count;		/* How many types */
-  const char *name;		/* Name of typelib */
-  const char **type_names;
-  unsigned int *type_lengths;
+typedef struct st_typelib { /* Different types saved here */
+    unsigned int  count;    /* How many types */
+    const char*   name;     /* Name of typelib */
+    const char**  type_names;
+    unsigned int* type_lengths;
 } TYPELIB;
 
-extern my_ulonglong find_typeset(char *x, TYPELIB *typelib,int *error_position);
-extern int find_type_or_exit(const char *x, TYPELIB *typelib,
-                             const char *option);
-extern int find_type(char *x, const TYPELIB *typelib, unsigned int full_name);
-extern void make_type(char *to,unsigned int nr,TYPELIB *typelib);
-extern const char *get_type(TYPELIB *typelib,unsigned int nr);
-extern TYPELIB *copy_typelib(MEM_ROOT *root, TYPELIB *from);
+extern my_ulonglong
+find_typeset(char* x, TYPELIB* typelib, int* error_position);
+extern int
+find_type_or_exit(const char* x, TYPELIB* typelib, const char* option);
+extern int  find_type(char* x, const TYPELIB* typelib, unsigned int full_name);
+extern void make_type(char* to, unsigned int nr, TYPELIB* typelib);
+extern const char* get_type(TYPELIB* typelib, unsigned int nr);
+extern TYPELIB*    copy_typelib(MEM_ROOT* root, TYPELIB* from);
 
 extern TYPELIB sql_protocol_typelib;
 
-my_ulonglong find_set_from_flags(const TYPELIB *lib, unsigned int default_name,
-                              my_ulonglong cur_set, my_ulonglong default_set,
-                              const char *str, unsigned int length,
-                              char **err_pos, unsigned int *err_len);
+my_ulonglong find_set_from_flags(const TYPELIB* lib,
+                                 unsigned int   default_name,
+                                 my_ulonglong   cur_set,
+                                 my_ulonglong   default_set,
+                                 const char*    str,
+                                 unsigned int   length,
+                                 char**         err_pos,
+                                 unsigned int*  err_len);
 
 #endif /* _typelib_h */

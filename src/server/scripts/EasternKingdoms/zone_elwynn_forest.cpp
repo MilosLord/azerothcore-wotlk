@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,148 +23,134 @@
 #include "ObjectAccessor.h"
 #include "ScriptedCreature.h"
 
-enum COG_Paths
-{
+enum COG_Paths {
     STORMWIND_PATH = 80500,
     GOLDSHIRE_PATH = 80501,
-    WOODS_PATH = 80502,
-    HOUSE_PATH = 80503,
-    LISA_PATH = 80700
+    WOODS_PATH     = 80502,
+    HOUSE_PATH     = 80503,
+    LISA_PATH      = 80700
 };
 
-enum COG_Sounds
-{
-    BANSHEE_DEATH = 1171,
-    BANSHEEPREAGGRO = 1172,
-    CTHUN_YOU_WILL_DIE = 8585,
-    CTHUN_DEATH_IS_CLOSE = 8580,
+enum COG_Sounds {
+    BANSHEE_DEATH          = 1171,
+    BANSHEEPREAGGRO        = 1172,
+    CTHUN_YOU_WILL_DIE     = 8585,
+    CTHUN_DEATH_IS_CLOSE   = 8580,
     HUMAN_FEMALE_EMOTE_CRY = 6916,
-    GHOSTDEATH = 3416
+    GHOSTDEATH             = 3416
 };
 
-enum COG_Creatures
-{
-    NPC_DANA = 804,
+enum COG_Creatures {
+    NPC_DANA    = 804,
     NPC_CAMERON = 805,
-    NPC_JOHN = 806,
-    NPC_LISA = 807,
-    NPC_AARON = 810,
-    NPC_JOSE = 811
+    NPC_JOHN    = 806,
+    NPC_LISA    = 807,
+    NPC_AARON   = 810,
+    NPC_JOSE    = 811
 };
 
-enum COG_Events
-{
+enum COG_Events {
     EVENT_WP_START_GOLDSHIRE = 1,
-    EVENT_WP_START_WOODS = 2,
-    EVENT_WP_START_HOUSE = 3,
-    EVENT_WP_START_LISA = 4,
-    EVENT_PLAY_SOUNDS = 5,
-    EVENT_BEGIN_EVENT = 6,
-    EVENT_RANDOM_MOVEMENT = 7
+    EVENT_WP_START_WOODS     = 2,
+    EVENT_WP_START_HOUSE     = 3,
+    EVENT_WP_START_LISA      = 4,
+    EVENT_PLAY_SOUNDS        = 5,
+    EVENT_BEGIN_EVENT        = 6,
+    EVENT_RANDOM_MOVEMENT    = 7
 };
 
-enum COG_GameEvent
-{
-    GAME_EVENT_CHILDREN_OF_GOLDSHIRE = 74
-};
+enum COG_GameEvent { GAME_EVENT_CHILDREN_OF_GOLDSHIRE = 74 };
 
-struct npc_cameron : public ScriptedAI
-{
-    npc_cameron(Creature* creature) : ScriptedAI(creature)
-    {
-        _started = false;
-    }
+struct npc_cameron : public ScriptedAI {
+    npc_cameron(Creature* creature) : ScriptedAI(creature) { _started = false; }
 
     static uint32 SoundPicker()
     {
-        return RAND(
-            BANSHEE_DEATH,
-            BANSHEEPREAGGRO,
-            CTHUN_YOU_WILL_DIE,
-            CTHUN_DEATH_IS_CLOSE,
-            HUMAN_FEMALE_EMOTE_CRY,
-            GHOSTDEATH
-        );
+        return RAND(BANSHEE_DEATH,
+                    BANSHEEPREAGGRO,
+                    CTHUN_YOU_WILL_DIE,
+                    CTHUN_DEATH_IS_CLOSE,
+                    HUMAN_FEMALE_EMOTE_CRY,
+                    GHOSTDEATH);
     }
 
     void MoveTheChildren()
     {
-        std::vector<Position> MovePosPositions =
-        {
-            { -9373.521f, -67.71767f, 69.201965f, 1.117011f },
-            { -9374.94f, -62.51654f, 69.201965f, 5.201081f },
-            { -9371.013f, -71.20811f, 69.201965f, 1.937315f },
-            { -9368.419f, -66.47543f, 69.201965f, 3.141593f },
-            { -9372.376f, -65.49946f, 69.201965f, 4.206244f },
-            { -9377.477f, -67.8297f, 69.201965f, 0.296706f }
-        };
+        std::vector<Position> MovePosPositions = {
+            {-9373.521f, -67.71767f, 69.201965f, 1.117011f},
+            {-9374.94f, -62.51654f, 69.201965f, 5.201081f},
+            {-9371.013f, -71.20811f, 69.201965f, 1.937315f},
+            {-9368.419f, -66.47543f, 69.201965f, 3.141593f},
+            {-9372.376f, -65.49946f, 69.201965f, 4.206244f},
+            {-9377.477f, -67.8297f, 69.201965f, 0.296706f}};
 
         Acore::Containers::RandomShuffle(MovePosPositions);
 
-        // first we break formation because children will need to move on their own now
+        // first we break formation because children will need to move on their
+        // own now
         for (auto& guid : _childrenGUIDs)
             if (Creature* child = ObjectAccessor::GetCreature(*me, guid))
                 if (child->GetFormation())
                     child->GetFormation()->RemoveMember(child);
 
         // Move each child to an random position
-        for (uint32 i = 0; i < _childrenGUIDs.size(); ++i)
-        {
-            if (Creature* children = ObjectAccessor::GetCreature(*me, _childrenGUIDs[i]))
-            {
+        for (uint32 i = 0; i < _childrenGUIDs.size(); ++i) {
+            if (Creature* children =
+                    ObjectAccessor::GetCreature(*me, _childrenGUIDs[i])) {
                 children->SetWalk(true);
-                children->GetMotionMaster()->MovePoint(0, MovePosPositions[i], true, MovePosPositions[i].GetOrientation());
+                children->GetMotionMaster()->MovePoint(
+                    0,
+                    MovePosPositions[i],
+                    true,
+                    MovePosPositions[i].GetOrientation());
             }
         }
         me->SetWalk(true);
-        me->GetMotionMaster()->MovePoint(0, MovePosPositions.back(), true, MovePosPositions.back().GetOrientation());
+        me->GetMotionMaster()->MovePoint(
+            0,
+            MovePosPositions.back(),
+            true,
+            MovePosPositions.back().GetOrientation());
     }
 
     void PathEndReached(uint32 pathId) override
     {
-        switch (pathId)
-        {
-            case STORMWIND_PATH:
-            {
-                _events.ScheduleEvent(EVENT_RANDOM_MOVEMENT, 2s);
-                _events.ScheduleEvent(EVENT_WP_START_GOLDSHIRE, 11min);
-                break;
-            }
-            case GOLDSHIRE_PATH:
-            {
-                _events.ScheduleEvent(EVENT_RANDOM_MOVEMENT, 2s);
-                _events.ScheduleEvent(EVENT_WP_START_WOODS, 15min);
-                break;
-            }
-            case WOODS_PATH:
-            {
-                _events.ScheduleEvent(EVENT_RANDOM_MOVEMENT, 2s);
-                _events.ScheduleEvent(EVENT_WP_START_HOUSE, 6min); // 6 minutes
-                _events.ScheduleEvent(EVENT_WP_START_LISA, 362s);
-                break;
-            }
-            case HOUSE_PATH:
-            {
-                // Move childeren at last point
-                MoveTheChildren();
-                // After 30 seconds a random sound should play
-                _events.ScheduleEvent(EVENT_PLAY_SOUNDS, 30s);
-                break;
-            }
+        switch (pathId) {
+        case STORMWIND_PATH: {
+            _events.ScheduleEvent(EVENT_RANDOM_MOVEMENT, 2s);
+            _events.ScheduleEvent(EVENT_WP_START_GOLDSHIRE, 11min);
+            break;
+        }
+        case GOLDSHIRE_PATH: {
+            _events.ScheduleEvent(EVENT_RANDOM_MOVEMENT, 2s);
+            _events.ScheduleEvent(EVENT_WP_START_WOODS, 15min);
+            break;
+        }
+        case WOODS_PATH: {
+            _events.ScheduleEvent(EVENT_RANDOM_MOVEMENT, 2s);
+            _events.ScheduleEvent(EVENT_WP_START_HOUSE, 6min); // 6 minutes
+            _events.ScheduleEvent(EVENT_WP_START_LISA, 362s);
+            break;
+        }
+        case HOUSE_PATH: {
+            // Move childeren at last point
+            MoveTheChildren();
+            // After 30 seconds a random sound should play
+            _events.ScheduleEvent(EVENT_PLAY_SOUNDS, 30s);
+            break;
+        }
         }
     }
 
     void sOnGameEvent(bool start, uint16 eventId) override
     {
-        if (start && eventId == GAME_EVENT_CHILDREN_OF_GOLDSHIRE)
-        {
+        if (start && eventId == GAME_EVENT_CHILDREN_OF_GOLDSHIRE) {
             // Start event at 7 am
             // Begin pathing
             _events.ScheduleEvent(EVENT_BEGIN_EVENT, 2s);
             _started = true;
         }
-        else if (!start && eventId == GAME_EVENT_CHILDREN_OF_GOLDSHIRE)
-        {
+        else if (!start && eventId == GAME_EVENT_CHILDREN_OF_GOLDSHIRE) {
             // Reset event at 8 am
             _started = false;
             _events.Reset();
@@ -177,10 +164,8 @@ struct npc_cameron : public ScriptedAI
 
         _events.Update(diff);
 
-        while (uint32 eventId = _events.ExecuteEvent())
-        {
-            switch (eventId)
-            {
+        while (uint32 eventId = _events.ExecuteEvent()) {
+            switch (eventId) {
             case EVENT_WP_START_GOLDSHIRE:
                 me->GetMotionMaster()->MovePath(GOLDSHIRE_PATH, false);
                 break;
@@ -191,12 +176,10 @@ struct npc_cameron : public ScriptedAI
                 me->GetMotionMaster()->MovePath(HOUSE_PATH, false);
                 break;
             case EVENT_WP_START_LISA:
-                for (uint32 i = 0; i < _childrenGUIDs.size(); ++i)
-                {
-                    if (Creature* lisa = ObjectAccessor::GetCreature(*me, _childrenGUIDs[i]))
-                    {
-                        if (lisa->GetEntry() == NPC_LISA)
-                        {
+                for (uint32 i = 0; i < _childrenGUIDs.size(); ++i) {
+                    if (Creature* lisa = ObjectAccessor::GetCreature(
+                            *me, _childrenGUIDs[i])) {
+                        if (lisa->GetEntry() == NPC_LISA) {
                             lisa->GetMotionMaster()->MovePath(LISA_PATH, false);
                             break;
                         }
@@ -206,8 +189,7 @@ struct npc_cameron : public ScriptedAI
             case EVENT_PLAY_SOUNDS:
                 me->PlayDistanceSound(SoundPicker());
                 break;
-            case EVENT_BEGIN_EVENT:
-            {
+            case EVENT_BEGIN_EVENT: {
                 _childrenGUIDs.clear();
 
                 // Get all childeren's guid's.
@@ -229,7 +211,8 @@ struct npc_cameron : public ScriptedAI
                 // If Formation was disbanded, remake.
                 if (!me->GetFormation()->IsFormed())
                     for (auto& guid : _childrenGUIDs)
-                        if (Creature* child = ObjectAccessor::GetCreature(*me, guid))
+                        if (Creature* child =
+                                ObjectAccessor::GetCreature(*me, guid))
                             child->SearchFormation();
 
                 // Start movement
@@ -237,8 +220,7 @@ struct npc_cameron : public ScriptedAI
 
                 break;
             }
-            case EVENT_RANDOM_MOVEMENT:
-            {
+            case EVENT_RANDOM_MOVEMENT: {
                 me->GetMotionMaster()->MoveRandom(10.0f);
                 break;
             }
@@ -249,8 +231,8 @@ struct npc_cameron : public ScriptedAI
     }
 
 private:
-    EventMap _events;
-    bool _started;
+    EventMap   _events;
+    bool       _started;
     GuidVector _childrenGUIDs;
 };
 
@@ -258,15 +240,13 @@ private:
 ## npc_supervisor_raelen
 ######*/
 
-enum SupervisorRaelen
-{
+enum SupervisorRaelen {
     EVENT_FIND_PEASENTS  = 8,
     EVENT_NEXT_PEASENT   = 9,
     NPC_EASTVALE_PEASENT = 11328
 };
 
-struct npc_supervisor_raelen : public ScriptedAI
-{
+struct npc_supervisor_raelen : public ScriptedAI {
     npc_supervisor_raelen(Creature* creature) : ScriptedAI(creature) {}
 
     void Reset() override
@@ -278,17 +258,18 @@ struct npc_supervisor_raelen : public ScriptedAI
 
     void SetData(uint32 /*type*/, uint32 data) override
     {
-        if (data == 1)
-        {
+        if (data == 1) {
             ++_PeasentId;
-            if (_PeasentId == 5) _PeasentId = 0;
+            if (_PeasentId == 5)
+                _PeasentId = 0;
             _events.ScheduleEvent(EVENT_NEXT_PEASENT, 2s, 6s);
         }
     }
 
     void CallPeasent()
     {
-        if (Creature* peasent = ObjectAccessor::GetCreature(*me, peasentGUIDs[_PeasentId]))
+        if (Creature* peasent =
+                ObjectAccessor::GetCreature(*me, peasentGUIDs[_PeasentId]))
             peasent->AI()->SetData(1, 1);
     }
 
@@ -296,30 +277,27 @@ struct npc_supervisor_raelen : public ScriptedAI
     {
         _events.Update(diff);
 
-        if (uint32 eventId = _events.ExecuteEvent())
-        {
-            switch (eventId)
-            {
-                case EVENT_FIND_PEASENTS:
-                {
-                    GuidVector tempGUIDs;
-                    std::list<Creature*> peasents;
-                    GetCreatureListWithEntryInGrid(peasents, me, NPC_EASTVALE_PEASENT, 100.f);
-                    for (Creature* peasent : peasents)
-                    {
-                        tempGUIDs.push_back(peasent->GetGUID());
-                    }
-                    peasentGUIDs.push_back(tempGUIDs[2]);
-                    peasentGUIDs.push_back(tempGUIDs[3]);
-                    peasentGUIDs.push_back(tempGUIDs[0]);
-                    peasentGUIDs.push_back(tempGUIDs[1]);
-                    peasentGUIDs.push_back(tempGUIDs[4]);
-                    _events.ScheduleEvent(EVENT_NEXT_PEASENT, 1s);
-                    break;
+        if (uint32 eventId = _events.ExecuteEvent()) {
+            switch (eventId) {
+            case EVENT_FIND_PEASENTS: {
+                GuidVector           tempGUIDs;
+                std::list<Creature*> peasents;
+                GetCreatureListWithEntryInGrid(
+                    peasents, me, NPC_EASTVALE_PEASENT, 100.f);
+                for (Creature* peasent : peasents) {
+                    tempGUIDs.push_back(peasent->GetGUID());
                 }
-                case EVENT_NEXT_PEASENT:
-                    CallPeasent();
-                    break;
+                peasentGUIDs.push_back(tempGUIDs[2]);
+                peasentGUIDs.push_back(tempGUIDs[3]);
+                peasentGUIDs.push_back(tempGUIDs[0]);
+                peasentGUIDs.push_back(tempGUIDs[1]);
+                peasentGUIDs.push_back(tempGUIDs[4]);
+                _events.ScheduleEvent(EVENT_NEXT_PEASENT, 1s);
+                break;
+            }
+            case EVENT_NEXT_PEASENT:
+                CallPeasent();
+                break;
             }
         }
 
@@ -328,9 +306,10 @@ struct npc_supervisor_raelen : public ScriptedAI
 
         DoMeleeAttackIfReady();
     }
+
 private:
-    EventMap _events;
-    uint8 _PeasentId;
+    EventMap   _events;
+    uint8      _PeasentId;
     GuidVector peasentGUIDs;
 };
 
@@ -338,8 +317,7 @@ private:
 ## npc_eastvale_peasent
 ######*/
 
-enum EastvalePeasent
-{
+enum EastvalePeasent {
     EVENT_MOVETORAELEN                = 10,
     EVENT_TALKTORAELEN1               = 11,
     EVENT_TALKTORAELEN2               = 12,
@@ -365,24 +343,19 @@ enum EastvalePeasent
     SPELL_TRANSFORM_PEASENT_WITH_WOOD = 9127
 };
 
-struct npc_eastvale_peasent : public ScriptedAI
-{
+struct npc_eastvale_peasent : public ScriptedAI {
     npc_eastvale_peasent(Creature* creature) : ScriptedAI(creature)
     {
         Initialize();
     }
 
-    void Initialize()
-    {
-        _path = me->GetSpawnId() * 10;
-    }
+    void Initialize() { _path = me->GetSpawnId() * 10; }
 
     void Reset() override {}
 
     void SetData(uint32 /*type*/, uint32 data) override
     {
-        if (data == 1)
-        {
+        if (data == 1) {
             me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_NONE);
             me->CastSpell(me, SPELL_TRANSFORM_PEASENT_WITH_WOOD);
             me->SetSpeed(MOVE_WALK, 1.0f);
@@ -392,19 +365,17 @@ struct npc_eastvale_peasent : public ScriptedAI
 
     void PathEndReached(uint32 pathId) override
     {
-        if (pathId == _path)
-        {
-            CreatureTemplate const* cinfo = sObjectMgr->GetCreatureTemplate(me->GetEntry());
+        if (pathId == _path) {
+            CreatureTemplate const* cinfo =
+                sObjectMgr->GetCreatureTemplate(me->GetEntry());
             me->SetSpeed(MOVE_WALK, cinfo->speed_walk);
             me->RemoveAura(SPELL_TRANSFORM_PEASENT_WITH_WOOD);
             _events.ScheduleEvent(EVENT_MOVETORAELEN, 3s);
         }
-        else if (pathId == _path + 1)
-        {
+        else if (pathId == _path + 1) {
             _events.ScheduleEvent(EVENT_TALKTORAELEN1, 1s);
         }
-        else if (pathId == _path + 2)
-        {
+        else if (pathId == _path + 2) {
             me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_WORK_CHOPWOOD);
         }
     }
@@ -413,21 +384,18 @@ struct npc_eastvale_peasent : public ScriptedAI
     {
         _events.Update(diff);
 
-        if (uint32 eventId = _events.ExecuteEvent())
-        {
-            switch (eventId)
-            {
+        if (uint32 eventId = _events.ExecuteEvent()) {
+            switch (eventId) {
             case EVENT_MOVETORAELEN:
                 me->GetMotionMaster()->MovePath(_path + 1, false);
                 break;
             case EVENT_TALKTORAELEN1:
-                if (Creature* realen = me->FindNearestCreature(NPC_SUPERVISOR_RAELEN, 2.0f, true))
-                {
+                if (Creature* realen = me->FindNearestCreature(
+                        NPC_SUPERVISOR_RAELEN, 2.0f, true)) {
                     _realenGUID = realen->GetGUID();
                     me->SetFacingToObject(realen);
 
-                    switch (_path)
-                    {
+                    switch (_path) {
                     case PATH_PEASENT_0:
                         me->PlayDirectSound(SOUND_PEASENT_GREETING_1);
                         _events.ScheduleEvent(EVENT_TALKTORAELEN2, 2s);
@@ -444,8 +412,7 @@ struct npc_eastvale_peasent : public ScriptedAI
                         break;
                     }
                 }
-                else
-                {
+                else {
                     // Path back if realen cannot be found alive
                     _events.ScheduleEvent(EVENT_PATHBACK, 2s);
                 }
@@ -455,42 +422,40 @@ struct npc_eastvale_peasent : public ScriptedAI
                 _events.ScheduleEvent(EVENT_RAELENTALK, 2s);
                 break;
             case EVENT_RAELENTALK:
-                if (Creature* realen = ObjectAccessor::GetCreature(*me, _realenGUID))
-                {
+                if (Creature* realen =
+                        ObjectAccessor::GetCreature(*me, _realenGUID)) {
                     realen->AI()->Talk(SAY_RAELEN);
                     _events.ScheduleEvent(EVENT_TALKTORAELEN3, 5s);
                 }
                 break;
-            case EVENT_TALKTORAELEN3:
-                {
-                    switch (_path)
-                    {
-                    case PATH_PEASENT_0:
-                        me->PlayDirectSound(SOUND_PEASENT_LEAVING_1);
-                        _events.ScheduleEvent(EVENT_PATHBACK, 2s);
-                        break;
-                    case PATH_PEASENT_1:
-                    case PATH_PEASENT_3:
-                        me->PlayDirectSound(SOUND_PEASENT_LEAVING_4);
-                        _events.ScheduleEvent(EVENT_TALKTORAELEN4, 2s);
-                        break;
-                    case PATH_PEASENT_2:
-                        me->PlayDirectSound(SOUND_PEASENT_LEAVING_3);
-                        _events.ScheduleEvent(EVENT_PATHBACK, 2s);
-                        break;
-                    case PATH_PEASENT_4:
-                        me->PlayDirectSound(SOUND_PEASENT_LEAVING_2);
-                        _events.ScheduleEvent(EVENT_PATHBACK, 2s);
-                        break;
-                    }
+            case EVENT_TALKTORAELEN3: {
+                switch (_path) {
+                case PATH_PEASENT_0:
+                    me->PlayDirectSound(SOUND_PEASENT_LEAVING_1);
+                    _events.ScheduleEvent(EVENT_PATHBACK, 2s);
+                    break;
+                case PATH_PEASENT_1:
+                case PATH_PEASENT_3:
+                    me->PlayDirectSound(SOUND_PEASENT_LEAVING_4);
+                    _events.ScheduleEvent(EVENT_TALKTORAELEN4, 2s);
+                    break;
+                case PATH_PEASENT_2:
+                    me->PlayDirectSound(SOUND_PEASENT_LEAVING_3);
+                    _events.ScheduleEvent(EVENT_PATHBACK, 2s);
+                    break;
+                case PATH_PEASENT_4:
+                    me->PlayDirectSound(SOUND_PEASENT_LEAVING_2);
+                    _events.ScheduleEvent(EVENT_PATHBACK, 2s);
+                    break;
                 }
-                break;
+            } break;
             case EVENT_TALKTORAELEN4:
                 me->PlayDirectSound(SOUND_PEASENT_LEAVING_5);
                 _events.ScheduleEvent(EVENT_PATHBACK, 2s);
                 break;
             case EVENT_PATHBACK:
-                if (Creature* realen = ObjectAccessor::GetCreature(*me, _realenGUID))
+                if (Creature* realen =
+                        ObjectAccessor::GetCreature(*me, _realenGUID))
                     realen->AI()->SetData(1, 1);
                 me->GetMotionMaster()->MovePath(_path + 2, false);
                 break;
@@ -504,9 +469,9 @@ struct npc_eastvale_peasent : public ScriptedAI
     }
 
 private:
-    EventMap _events;
+    EventMap   _events;
     ObjectGuid _realenGUID;
-    uint32 _path;
+    uint32     _path;
 };
 
 void AddSC_elwynn_forest()

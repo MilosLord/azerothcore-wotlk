@@ -4,51 +4,49 @@
   @created 2002-05-27
   @edited  2006-05-10
  */
-#include "G3D/platform.h"
-#include "G3D/GImage.h"
 #include "G3D/BinaryInput.h"
 #include "G3D/BinaryOutput.h"
+#include "G3D/GImage.h"
+#include "G3D/Log.h"
 #include "G3D/TextInput.h"
 #include "G3D/TextOutput.h"
-#include "G3D/Log.h"
+#include "G3D/platform.h"
 
 namespace G3D {
 
-void GImage::encodePPMASCII(
-    BinaryOutput&       out) const {
+void GImage::encodePPMASCII(BinaryOutput& out) const
+{
 
     TextOutput::Settings ppmOptions;
     ppmOptions.convertNewlines = false;
-    ppmOptions.numColumns = 70;
-    ppmOptions.wordWrap = TextOutput::Settings::WRAP_WITHOUT_BREAKING;
+    ppmOptions.numColumns      = 70;
+    ppmOptions.wordWrap        = TextOutput::Settings::WRAP_WITHOUT_BREAKING;
     TextOutput ppm(ppmOptions);
 
     switch (m_channels) {
-    case 1:
-        {
-            ppm.printf("P2\n%d %d\n255\n", m_width, m_height);
-            
-            const Color1uint8* c = this->pixel1();
-            // Insert newlines every 70 characters max
-            for (uint32 i = 0; i < (uint32)(m_width * m_height); ++i) {
-                ppm.printf("%d%c", c[i].value, (i % (70/4) == 0) ? '\n' : ' '); 
-            }
-        }
-        break;
+    case 1: {
+        ppm.printf("P2\n%d %d\n255\n", m_width, m_height);
 
-    case 3:
-        {
-            ppm.printf("P3\n%d %d\n255\n", m_width, m_height);
-            
-            const Color3uint8* c = this->pixel3();
-            // Insert newlines every 70 characters max
-            for (uint32 i = 0; i < (uint32)(m_width * m_height); ++i) {
-                ppm.printf("%d %d %d%c", c[i].r, c[i].g, c[i].b, 
-                    (i % (70/12) == 0) ?
-                    '\n' : ' '); 
-            }
+        const Color1uint8* c = this->pixel1();
+        // Insert newlines every 70 characters max
+        for (uint32 i = 0; i < (uint32)(m_width * m_height); ++i) {
+            ppm.printf("%d%c", c[i].value, (i % (70 / 4) == 0) ? '\n' : ' ');
         }
-        break;
+    } break;
+
+    case 3: {
+        ppm.printf("P3\n%d %d\n255\n", m_width, m_height);
+
+        const Color3uint8* c = this->pixel3();
+        // Insert newlines every 70 characters max
+        for (uint32 i = 0; i < (uint32)(m_width * m_height); ++i) {
+            ppm.printf("%d %d %d%c",
+                       c[i].r,
+                       c[i].g,
+                       c[i].b,
+                       (i % (70 / 12) == 0) ? '\n' : ' ');
+        }
+    } break;
     default:
         alwaysAssertM(false, "PPM requires either 1 or 3 channels exactly.");
     }
@@ -57,27 +55,27 @@ void GImage::encodePPMASCII(
     out.writeBytes(s.c_str(), s.length());
 }
 
-
-void GImage::encodePPM(
-    BinaryOutput&       out) const {
+void GImage::encodePPM(BinaryOutput& out) const
+{
 
     // http://netpbm.sourceforge.net/doc/ppm.html
     if (m_channels == 3) {
         std::string header = format("P6 %d %d 255 ", m_width, m_height);
         out.writeBytes(header.c_str(), header.size());
         out.writeBytes(this->pixel3(), m_width * m_height * 3);
-    } else if (m_channels == 1) {
+    }
+    else if (m_channels == 1) {
         std::string header = format("P5 %d %d 255 ", m_width, m_height);
         out.writeBytes(header.c_str(), header.size());
         out.writeBytes(this->pixel1(), m_width * m_height);
-    } else {
+    }
+    else {
         alwaysAssertM(false, "PPM requires either 1 or 3 channels exactly.");
     }
 }
 
-
-void GImage::decodePPMASCII(
-    BinaryInput&        input) {
+void GImage::decodePPMASCII(BinaryInput& input)
+{
 
     int ppmWidth;
     int ppmHeight;
@@ -85,34 +83,33 @@ void GImage::decodePPMASCII(
     double maxColor;
 
     // Create a TextInput object to parse ascii format
-    // Mixed binary/ascii formats will require more 
+    // Mixed binary/ascii formats will require more
 
     const std::string inputStr = input.readString();
 
     TextInput::Settings ppmOptions;
-    ppmOptions.cppLineComments = false;
+    ppmOptions.cppLineComments       = false;
     ppmOptions.otherCommentCharacter = '#';
-    ppmOptions.signedNumbers = true;
-    ppmOptions.singleQuotedStrings = false;
+    ppmOptions.signedNumbers         = true;
+    ppmOptions.singleQuotedStrings   = false;
 
     TextInput ppmInput(TextInput::FROM_STRING, inputStr, ppmOptions);
 
-    //Skip first line in header P#
+    // Skip first line in header P#
     std::string ppmType = ppmInput.readSymbol();
 
-    ppmWidth = (int)ppmInput.readNumber();
+    ppmWidth  = (int)ppmInput.readNumber();
     ppmHeight = (int)ppmInput.readNumber();
 
     // Everything but a PBM will have a max color value
     if (ppmType != "P2") {
         maxColor = ppmInput.readNumber();
-    } else {
+    }
+    else {
         maxColor = 255;
     }
 
-    if ((ppmWidth < 0) ||
-        (ppmHeight < 0) ||
-        (maxColor <= 0)) {
+    if ((ppmWidth < 0) || (ppmHeight < 0) || (maxColor <= 0)) {
         throw GImage::Error("Invalid PPM Header.", input.getFilename());
     }
 
@@ -121,14 +118,15 @@ void GImage::decodePPMASCII(
         maxColor = 255.0;
     }
 
-    m_width = ppmWidth;
-    m_height = ppmHeight;
+    m_width    = ppmWidth;
+    m_height   = ppmHeight;
     m_channels = 3;
     // always scale down to 1 byte per channel
     m_byte = (uint8*)m_memMan->alloc(m_width * m_height * 3);
 
-    // Read in the image data.  I am not validating if the values match the maxColor
-    // requirements.  I only scale if needed to fit within the byte available.
+    // Read in the image data.  I am not validating if the values match the
+    // maxColor requirements.  I only scale if needed to fit within the byte
+    // available.
     for (uint32 i = 0; i < (uint32)(m_width * m_height); ++i) {
         // read in color and scale to max pixel defined in header
         // A max color less than 255 might need to be left alone and not scaled.
@@ -138,13 +136,15 @@ void GImage::decodePPMASCII(
             curPixel.r = (uint8)(ppmInput.readNumber() * (255.0 / maxColor));
             curPixel.g = (uint8)(ppmInput.readNumber() * (255.0 / maxColor));
             curPixel.b = (uint8)(ppmInput.readNumber() * (255.0 / maxColor));
-        } else if (ppmType == "P2") {
+        }
+        else if (ppmType == "P2") {
             uint8 pixel = (uint8)(ppmInput.readNumber() * (255.0 / maxColor));
-            curPixel.r = pixel;
-            curPixel.g = pixel;
-            curPixel.b = pixel;
-        } else if (ppmType == "P1") {
-            int pixel = (uint8)(ppmInput.readNumber() * maxColor);
+            curPixel.r  = pixel;
+            curPixel.g  = pixel;
+            curPixel.b  = pixel;
+        }
+        else if (ppmType == "P1") {
+            int pixel  = (uint8)(ppmInput.readNumber() * maxColor);
             curPixel.r = pixel;
             curPixel.g = pixel;
             curPixel.b = pixel;
@@ -152,8 +152,10 @@ void GImage::decodePPMASCII(
     }
 }
 
-/** Consumes whitespace up to and including a number, but not the following character */
-static int scanUInt(BinaryInput& input) {
+/** Consumes whitespace up to and including a number, but not the following
+ * character */
+static int scanUInt(BinaryInput& input)
+{
     char c = input.readUInt8();
     while (isWhiteSpace(c)) {
         c = input.readUInt8();
@@ -175,12 +177,11 @@ static int scanUInt(BinaryInput& input) {
     return x;
 }
 
-
-void GImage::decodePPM(
-    BinaryInput&        input) {
+void GImage::decodePPM(BinaryInput& input)
+{
 
     char head[2];
-    int w, h;
+    int  w, h;
 
     input.readBytes(head, 2);
     if (head[0] != 'P' || ((head[1] != '6') && (head[1] != '5'))) {
@@ -193,10 +194,7 @@ void GImage::decodePPM(
     // Skip the max color specifier
     scanUInt(input);
 
-    if ((w < 0) ||
-        (h < 0) ||
-        (w > 100000) ||
-        (h > 100000)) {
+    if ((w < 0) || (h < 0) || (w > 100000) || (h > 100000)) {
         throw GImage::Error("Invalid PPM size in header.", input.getFilename());
     }
 
@@ -207,11 +205,12 @@ void GImage::decodePPM(
         // 3 channel
         resize(w, h, 3);
         input.readBytes(m_byte, m_width * m_height * 3);
-    } else if (head[1] == '5') {
+    }
+    else if (head[1] == '5') {
         // 1 channel
         resize(w, h, 1);
         input.readBytes(m_byte, m_width * m_height);
     }
 }
 
-}
+} // namespace G3D

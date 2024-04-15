@@ -1,6 +1,6 @@
-/** 
+/**
   \file FileNotFound.h
- 
+
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
   \created 2011-12-31
   \edited  2011-12-31
@@ -13,7 +13,7 @@
 
 namespace G3D {
 
-/** Thrown by various file opening routines if the file is not found. 
+/** Thrown by various file opening routines if the file is not found.
 
    \sa ParseError, System::findDataFile
 */
@@ -23,10 +23,13 @@ public:
     std::string message;
 
     FileNotFound() {}
-    FileNotFound(const std::string& f, const std::string& m) : filename(f), message(m) {}
+    FileNotFound(const std::string& f, const std::string& m)
+        : filename(f), message(m)
+    {
+    }
     virtual ~FileNotFound(){};
 };
 
-} // G3D
+} // namespace G3D
 
 #endif

@@ -13,8 +13,7 @@
 
 #include "G3D/platform.h"
 
-template<typename Value>
-struct BoundsTrait{};
+template <typename Value>
+struct BoundsTrait {};
 
 #endif
-

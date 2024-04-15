@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,39 +22,30 @@
 #include "SpellScriptLoader.h"
 #include "temple_of_ahnqiraj.h"
 
-enum Yells
-{
-    SAY_AGGRO                   = 0,
-    SAY_SLAY                    = 1,
-    SAY_SPLIT                   = 2,
-    SAY_DEATH                   = 3
+enum Yells { SAY_AGGRO = 0, SAY_SLAY = 1, SAY_SPLIT = 2, SAY_DEATH = 3 };
+
+enum Spells {
+    SPELL_ARCANE_EXPLOSION = 26192,
+    SPELL_EARTH_SHOCK      = 26194,
+    SPELL_TRUE_FULFILLMENT = 785,
+    SPELL_INITIALIZE_IMAGE = 3730,
+    SPELL_SUMMON_IMAGES    = 747,
+    SPELL_BIRTH            = 34115
 };
 
-enum Spells
-{
-    SPELL_ARCANE_EXPLOSION      = 26192,
-    SPELL_EARTH_SHOCK           = 26194,
-    SPELL_TRUE_FULFILLMENT      = 785,
-    SPELL_INITIALIZE_IMAGE      = 3730,
-    SPELL_SUMMON_IMAGES         = 747,
-    SPELL_BIRTH                 = 34115
+enum Events {
+    EVENT_ARCANE_EXPLOSION = 1,
+    EVENT_FULLFILMENT      = 2,
+    EVENT_BLINK            = 3,
+    EVENT_EARTH_SHOCK      = 4,
+    EVENT_TELEPORT         = 5,
+    EVENT_INIT_IMAGE       = 6
 };
 
-enum Events
-{
-    EVENT_ARCANE_EXPLOSION      = 1,
-    EVENT_FULLFILMENT           = 2,
-    EVENT_BLINK                 = 3,
-    EVENT_EARTH_SHOCK           = 4,
-    EVENT_TELEPORT              = 5,
-    EVENT_INIT_IMAGE            = 6
-};
+uint32 const BlinkSpells[3] = {4801, 8195, 20449};
 
-uint32 const BlinkSpells[3] = { 4801, 8195, 20449 };
-
-struct boss_skeram : public BossAI
-{
-    boss_skeram(Creature* creature) : BossAI(creature, DATA_SKERAM) { }
+struct boss_skeram : public BossAI {
+    boss_skeram(Creature* creature) : BossAI(creature, DATA_SKERAM) {}
 
     void Reset() override
     {
@@ -65,10 +57,7 @@ struct boss_skeram : public BossAI
         me->SetControlled(false, UNIT_STATE_ROOT);
     }
 
-    void KilledUnit(Unit* /*victim*/) override
-    {
-        Talk(SAY_SLAY);
-    }
+    void KilledUnit(Unit* /*victim*/) override { Talk(SAY_SLAY); }
 
     void EnterEvadeMode(EvadeReason why) override
     {
@@ -90,7 +79,8 @@ struct boss_skeram : public BossAI
             ImageHealthPct = 0.10f;
 
         creature->SetMaxHealth(me->GetMaxHealth() * ImageHealthPct);
-        creature->SetHealth(creature->GetMaxHealth() * (me->GetHealthPct() / 100.0f));
+        creature->SetHealth(creature->GetMaxHealth() *
+                            (me->GetHealthPct() / 100.0f));
 
         creature->CastSpell(creature, SPELL_BIRTH, true);
         creature->SetControlled(true, UNIT_STATE_ROOT);
@@ -104,8 +94,7 @@ struct boss_skeram : public BossAI
     {
         // Shift the boss and images (Get it? *Shift*?)
         uint8 rand = 0;
-        if (_flag != 0)
-        {
+        if (_flag != 0) {
             while (_flag & (1 << rand))
                 rand = urand(0, 2);
             DoCast(me, BlinkSpells[rand]);
@@ -131,8 +120,7 @@ struct boss_skeram : public BossAI
 
     void JustDied(Unit* /*killer*/) override
     {
-        if (!me->IsSummon())
-        {
+        if (!me->IsSummon()) {
             _JustDied();
             Talk(SAY_DEATH);
             if (me->GetMap() && me->GetMap()->ToInstanceMap())
@@ -152,8 +140,7 @@ struct boss_skeram : public BossAI
         events.ScheduleEvent(EVENT_BLINK, 30s, 45s);
         events.ScheduleEvent(EVENT_EARTH_SHOCK, 1200ms);
 
-        if (!me->IsSummon())
-        {
+        if (!me->IsSummon()) {
             Talk(SAY_AGGRO);
         }
     }
@@ -165,49 +152,48 @@ struct boss_skeram : public BossAI
 
         events.Update(diff);
 
-        while (uint32 eventId = events.ExecuteEvent())
-        {
-            switch (eventId)
-            {
-                case EVENT_ARCANE_EXPLOSION:
-                    DoCastAOE(SPELL_ARCANE_EXPLOSION, false);
-                    events.ScheduleEvent(EVENT_ARCANE_EXPLOSION, 8s, 18s);
-                    break;
-                case EVENT_FULLFILMENT:
-                    DoCast(SelectTarget(SelectTargetMethod::MinDistance, 1, 0.0f, true), SPELL_TRUE_FULFILLMENT, false);
-                    events.ScheduleEvent(EVENT_FULLFILMENT, 20s, 30s);
-                    break;
-                case EVENT_BLINK:
-                    DoCast(me, BlinkSpells[urand(0, 2)]);
-                    DoResetThreatList();
-                    events.ScheduleEvent(EVENT_BLINK, 10s, 30s);
-                    break;
-                case EVENT_EARTH_SHOCK:
-                    DoCastVictim(SPELL_EARTH_SHOCK);
-                    events.ScheduleEvent(EVENT_EARTH_SHOCK, 1200ms);
-                    break;
-                case EVENT_TELEPORT:
-                    me->SetReactState(REACT_AGGRESSIVE);
-                    me->SetImmuneToAll(false);
-                    me->SetControlled(false, UNIT_STATE_ROOT);
-                    for (ObjectGuid const& guid : _copiesGUIDs)
-                    {
-                        if (Creature* image = ObjectAccessor::GetCreature(*me, guid))
-                        {
-                            DoTeleport(image);
-                        }
+        while (uint32 eventId = events.ExecuteEvent()) {
+            switch (eventId) {
+            case EVENT_ARCANE_EXPLOSION:
+                DoCastAOE(SPELL_ARCANE_EXPLOSION, false);
+                events.ScheduleEvent(EVENT_ARCANE_EXPLOSION, 8s, 18s);
+                break;
+            case EVENT_FULLFILMENT:
+                DoCast(SelectTarget(
+                           SelectTargetMethod::MinDistance, 1, 0.0f, true),
+                       SPELL_TRUE_FULFILLMENT,
+                       false);
+                events.ScheduleEvent(EVENT_FULLFILMENT, 20s, 30s);
+                break;
+            case EVENT_BLINK:
+                DoCast(me, BlinkSpells[urand(0, 2)]);
+                DoResetThreatList();
+                events.ScheduleEvent(EVENT_BLINK, 10s, 30s);
+                break;
+            case EVENT_EARTH_SHOCK:
+                DoCastVictim(SPELL_EARTH_SHOCK);
+                events.ScheduleEvent(EVENT_EARTH_SHOCK, 1200ms);
+                break;
+            case EVENT_TELEPORT:
+                me->SetReactState(REACT_AGGRESSIVE);
+                me->SetImmuneToAll(false);
+                me->SetControlled(false, UNIT_STATE_ROOT);
+                for (ObjectGuid const& guid : _copiesGUIDs) {
+                    if (Creature* image =
+                            ObjectAccessor::GetCreature(*me, guid)) {
+                        DoTeleport(image);
                     }
-                    DoResetThreatList();
-                    events.RescheduleEvent(EVENT_BLINK, 10s, 30s);
-                    break;
-                case EVENT_INIT_IMAGE:
-                    me->CastSpell(me, SPELL_INITIALIZE_IMAGE, true);
-                    break;
+                }
+                DoResetThreatList();
+                events.RescheduleEvent(EVENT_BLINK, 10s, 30s);
+                break;
+            case EVENT_INIT_IMAGE:
+                me->CastSpell(me, SPELL_INITIALIZE_IMAGE, true);
+                break;
             }
         }
 
-        if (!me->IsSummon() && me->GetHealthPct() < _hpct)
-        {
+        if (!me->IsSummon() && me->GetHealthPct() < _hpct) {
             _copiesGUIDs.clear();
             DoCast(me, SPELL_SUMMON_IMAGES, true);
             me->SetReactState(REACT_PASSIVE);
@@ -218,16 +204,12 @@ struct boss_skeram : public BossAI
             events.ScheduleEvent(EVENT_TELEPORT, 2s);
         }
 
-        if (Unit* myVictim = me->GetVictim())
-        {
-            if (me->IsWithinMeleeRange(myVictim))
-            {
+        if (Unit* myVictim = me->GetVictim()) {
+            if (me->IsWithinMeleeRange(myVictim)) {
                 DoMeleeAttackIfReady();
 
-                if (Unit* victimTarget = myVictim->GetVictim())
-                {
-                    if (victimTarget->GetGUID() == me->GetGUID())
-                    {
+                if (Unit* victimTarget = myVictim->GetVictim()) {
+                    if (victimTarget->GetGUID() == me->GetGUID()) {
                         events.RescheduleEvent(EVENT_EARTH_SHOCK, 1200ms);
                     }
                 }
@@ -236,13 +218,12 @@ struct boss_skeram : public BossAI
     }
 
 private:
-    float _hpct;
-    uint8 _flag;
+    float      _hpct;
+    uint8      _flag;
     GuidVector _copiesGUIDs;
 };
 
-class spell_skeram_arcane_explosion : public SpellScript
-{
+class spell_skeram_arcane_explosion : public SpellScript {
     PrepareSpellScript(spell_skeram_arcane_explosion);
 
     void FilterTargets(std::list<WorldObject*>& targets)
@@ -252,7 +233,10 @@ class spell_skeram_arcane_explosion : public SpellScript
 
     void Register() override
     {
-        OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_skeram_arcane_explosion::FilterTargets, EFFECT_0, TARGET_UNIT_SRC_AREA_ENEMY);
+        OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(
+            spell_skeram_arcane_explosion::FilterTargets,
+            EFFECT_0,
+            TARGET_UNIT_SRC_AREA_ENEMY);
     }
 };
 
@@ -261,4 +245,3 @@ void AddSC_boss_skeram()
     RegisterTempleOfAhnQirajCreatureAI(boss_skeram);
     RegisterSpellScript(spell_skeram_arcane_explosion);
 }
-

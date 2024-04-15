@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -19,13 +20,11 @@
 #include "InstanceScript.h"
 #include "deadmines.h"
 
-class instance_deadmines : public InstanceMapScript
-{
+class instance_deadmines : public InstanceMapScript {
 public:
-    instance_deadmines() : InstanceMapScript("instance_deadmines", 36) { }
+    instance_deadmines() : InstanceMapScript("instance_deadmines", 36) {}
 
-    struct instance_deadmines_InstanceMapScript : public InstanceScript
-    {
+    struct instance_deadmines_InstanceMapScript : public InstanceScript {
         instance_deadmines_InstanceMapScript(Map* map) : InstanceScript(map)
         {
             SetHeaders(DataHeader);
@@ -38,40 +37,39 @@ public:
 
         void OnGameObjectCreate(GameObject* gameobject) override
         {
-            switch (gameobject->GetEntry())
-            {
-                case GO_HEAVY_DOOR_1:
-                case GO_HEAVY_DOOR_2:
-                case GO_DOOR_LEVER_1:
-                case GO_DOOR_LEVER_2:
-                case GO_DOOR_LEVER_3:
-                case GO_CANNON:
-                    gameobject->AllowSaveToDB(true);
-                    break;
-                case GO_FACTORY_DOOR:
-                    gameobject->AllowSaveToDB(true);
-                    // GoState (Door opened) is restored during GO creation, but we need to set LootState to prevent Lever from closing it again
-                    if (_encounters[TYPE_RHAHK_ZOR] == DONE)
-                        gameobject->SetLootState(GO_ACTIVATED);
-                    break;
-                case GO_IRON_CLAD_DOOR:
-                    gameobject->AllowSaveToDB(true);
-                    if (GetStoredGameObjectState(gameobject->GetSpawnId()) == GO_STATE_ACTIVE)
-                    {
-                        gameobject->DespawnOrUnsummon();
-                    }
-                    break;
+            switch (gameobject->GetEntry()) {
+            case GO_HEAVY_DOOR_1:
+            case GO_HEAVY_DOOR_2:
+            case GO_DOOR_LEVER_1:
+            case GO_DOOR_LEVER_2:
+            case GO_DOOR_LEVER_3:
+            case GO_CANNON:
+                gameobject->AllowSaveToDB(true);
+                break;
+            case GO_FACTORY_DOOR:
+                gameobject->AllowSaveToDB(true);
+                // GoState (Door opened) is restored during GO creation, but we
+                // need to set LootState to prevent Lever from closing it again
+                if (_encounters[TYPE_RHAHK_ZOR] == DONE)
+                    gameobject->SetLootState(GO_ACTIVATED);
+                break;
+            case GO_IRON_CLAD_DOOR:
+                gameobject->AllowSaveToDB(true);
+                if (GetStoredGameObjectState(gameobject->GetSpawnId()) ==
+                    GO_STATE_ACTIVE) {
+                    gameobject->DespawnOrUnsummon();
+                }
+                break;
             }
         }
 
         void SetData(uint32 type, uint32 data) override
         {
-            switch (type)
-            {
-                case TYPE_RHAHK_ZOR:
-                case TYPE_CANNON:
-                    _encounters[type] = data;
-                    break;
+            switch (type) {
+            case TYPE_RHAHK_ZOR:
+            case TYPE_CANNON:
+                _encounters[type] = data;
+                break;
             }
 
             if (data == DONE)
@@ -90,13 +88,11 @@ public:
             if (!in)
                 return;
 
-            char dataHead1, dataHead2;
+            char               dataHead1, dataHead2;
             std::istringstream loadStream(in);
             loadStream >> dataHead1 >> dataHead2;
-            if (dataHead1 == 'D' && dataHead2 == 'E')
-            {
-                for (uint8 i = 0; i < MAX_ENCOUNTERS; ++i)
-                {
+            if (dataHead1 == 'D' && dataHead2 == 'E') {
+                for (uint8 i = 0; i < MAX_ENCOUNTERS; ++i) {
                     loadStream >> _encounters[i];
                     if (_encounters[i] == IN_PROGRESS)
                         _encounters[i] = NOT_STARTED;
@@ -114,7 +110,4 @@ public:
     }
 };
 
-void AddSC_instance_deadmines()
-{
-    new instance_deadmines();
-}
+void AddSC_instance_deadmines() { new instance_deadmines(); }

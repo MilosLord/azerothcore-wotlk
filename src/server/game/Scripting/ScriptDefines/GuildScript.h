@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,8 +23,7 @@
 #include "ScriptObject.h"
 #include <vector>
 
-enum GuildHook
-{
+enum GuildHook {
     GUILDHOOK_ON_ADD_MEMBER,
     GUILDHOOK_ON_REMOVE_MEMBER,
     GUILDHOOK_ON_MOTD_CHANGED,
@@ -39,46 +39,100 @@ enum GuildHook
     GUILDHOOK_END
 };
 
-class GuildScript : public ScriptObject
-{
+class GuildScript : public ScriptObject {
 protected:
-    GuildScript(const char* name, std::vector<uint16> enabledHooks = std::vector<uint16>());
+    GuildScript(const char*         name,
+                std::vector<uint16> enabledHooks = std::vector<uint16>());
 
 public:
     [[nodiscard]] bool IsDatabaseBound() const override { return false; }
 
     // Called when a member is added to the guild.
-    virtual void OnAddMember(Guild* /*guild*/, Player* /*player*/, uint8& /*plRank*/) { }
+    virtual void
+    OnAddMember(Guild* /*guild*/, Player* /*player*/, uint8& /*plRank*/)
+    {
+    }
 
     // Called when a member is removed from the guild.
-    virtual void OnRemoveMember(Guild* /*guild*/, Player* /*player*/, bool /*isDisbanding*/, bool /*isKicked*/) { }
+    virtual void OnRemoveMember(Guild* /*guild*/,
+                                Player* /*player*/,
+                                bool /*isDisbanding*/,
+                                bool /*isKicked*/)
+    {
+    }
 
     // Called when the guild MOTD (message of the day) changes.
-    virtual void OnMOTDChanged(Guild* /*guild*/, const std::string& /*newMotd*/) { }
+    virtual void OnMOTDChanged(Guild* /*guild*/, const std::string& /*newMotd*/)
+    {
+    }
 
     // Called when the guild info is altered.
-    virtual void OnInfoChanged(Guild* /*guild*/, const std::string& /*newInfo*/) { }
+    virtual void OnInfoChanged(Guild* /*guild*/, const std::string& /*newInfo*/)
+    {
+    }
 
     // Called when a guild is created.
-    virtual void OnCreate(Guild* /*guild*/, Player* /*leader*/, const std::string& /*name*/) { }
+    virtual void
+    OnCreate(Guild* /*guild*/, Player* /*leader*/, const std::string& /*name*/)
+    {
+    }
 
     // Called when a guild is disbanded.
-    virtual void OnDisband(Guild* /*guild*/) { }
+    virtual void OnDisband(Guild* /*guild*/) {}
 
     // Called when a guild member withdraws money from a guild bank.
-    virtual void OnMemberWitdrawMoney(Guild* /*guild*/, Player* /*player*/, uint32& /*amount*/, bool /*isRepair*/) { }
+    virtual void OnMemberWitdrawMoney(Guild* /*guild*/,
+                                      Player* /*player*/,
+                                      uint32& /*amount*/,
+                                      bool /*isRepair*/)
+    {
+    }
 
     // Called when a guild member deposits money in a guild bank.
-    virtual void OnMemberDepositMoney(Guild* /*guild*/, Player* /*player*/, uint32& /*amount*/) { }
+    virtual void OnMemberDepositMoney(Guild* /*guild*/,
+                                      Player* /*player*/,
+                                      uint32& /*amount*/)
+    {
+    }
 
     // Called when a guild member moves an item in a guild bank.
-    virtual void OnItemMove(Guild* /*guild*/, Player* /*player*/, Item* /*pItem*/, bool /*isSrcBank*/, uint8 /*srcContainer*/, uint8 /*srcSlotId*/, bool /*isDestBank*/, uint8 /*destContainer*/, uint8 /*destSlotId*/) { }
+    virtual void OnItemMove(Guild* /*guild*/,
+                            Player* /*player*/,
+                            Item* /*pItem*/,
+                            bool /*isSrcBank*/,
+                            uint8 /*srcContainer*/,
+                            uint8 /*srcSlotId*/,
+                            bool /*isDestBank*/,
+                            uint8 /*destContainer*/,
+                            uint8 /*destSlotId*/)
+    {
+    }
 
-    virtual void OnEvent(Guild* /*guild*/, uint8 /*eventType*/, ObjectGuid::LowType /*playerGuid1*/, ObjectGuid::LowType /*playerGuid2*/, uint8 /*newRank*/) { }
+    virtual void OnEvent(Guild* /*guild*/,
+                         uint8 /*eventType*/,
+                         ObjectGuid::LowType /*playerGuid1*/,
+                         ObjectGuid::LowType /*playerGuid2*/,
+                         uint8 /*newRank*/)
+    {
+    }
 
-    virtual void OnBankEvent(Guild* /*guild*/, uint8 /*eventType*/, uint8 /*tabId*/, ObjectGuid::LowType /*playerGuid*/, uint32 /*itemOrMoney*/, uint16 /*itemStackCount*/, uint8 /*destTabId*/) { }
+    virtual void OnBankEvent(Guild* /*guild*/,
+                             uint8 /*eventType*/,
+                             uint8 /*tabId*/,
+                             ObjectGuid::LowType /*playerGuid*/,
+                             uint32 /*itemOrMoney*/,
+                             uint16 /*itemStackCount*/,
+                             uint8 /*destTabId*/)
+    {
+    }
 
-    [[nodiscard]] virtual bool CanGuildSendBankList(Guild const* /*guild*/, WorldSession* /*session*/, uint8 /*tabId*/, bool /*sendAllSlots*/) { return true; }
+    [[nodiscard]] virtual bool CanGuildSendBankList(Guild const* /*guild*/,
+                                                    WorldSession* /*session*/,
+                                                    uint8 /*tabId*/,
+                                                    bool /*sendAllSlots*/)
+    {
+        return true;
+    }
 };
 
 #endif

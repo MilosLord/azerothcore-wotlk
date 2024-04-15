@@ -66,16 +66,15 @@
   An instrumented mutex structure.
   @sa mysql_mutex_t
 */
-struct st_mysql_mutex
-{
-  /** The real mutex. */
-  pthread_mutex_t m_mutex;
-  /**
-    The instrumentation hook.
-    Note that this hook is not conditionally defined,
-    for binary compatibility of the @c mysql_mutex_t interface.
-  */
-  struct PSI_mutex *m_psi;
+struct st_mysql_mutex {
+    /** The real mutex. */
+    pthread_mutex_t m_mutex;
+    /**
+      The instrumentation hook.
+      Note that this hook is not conditionally defined,
+      for binary compatibility of the @c mysql_mutex_t interface.
+    */
+    struct PSI_mutex* m_psi;
 };
 
 /**
@@ -94,32 +93,30 @@ typedef struct st_mysql_mutex mysql_mutex_t;
   An instrumented rwlock structure.
   @sa mysql_rwlock_t
 */
-struct st_mysql_rwlock
-{
-  /** The real rwlock */
-  rw_lock_t m_rwlock;
-  /**
-    The instrumentation hook.
-    Note that this hook is not conditionally defined,
-    for binary compatibility of the @c mysql_rwlock_t interface.
-  */
-  struct PSI_rwlock *m_psi;
+struct st_mysql_rwlock {
+    /** The real rwlock */
+    rw_lock_t m_rwlock;
+    /**
+      The instrumentation hook.
+      Note that this hook is not conditionally defined,
+      for binary compatibility of the @c mysql_rwlock_t interface.
+    */
+    struct PSI_rwlock* m_psi;
 };
 
 /**
   An instrumented prlock structure.
   @sa mysql_prlock_t
 */
-struct st_mysql_prlock
-{
-  /** The real prlock */
-  rw_pr_lock_t m_prlock;
-  /**
-    The instrumentation hook.
-    Note that this hook is not conditionally defined,
-    for binary compatibility of the @c mysql_rwlock_t interface.
-  */
-  struct PSI_rwlock *m_psi;
+struct st_mysql_prlock {
+    /** The real prlock */
+    rw_pr_lock_t m_prlock;
+    /**
+      The instrumentation hook.
+      Note that this hook is not conditionally defined,
+      for binary compatibility of the @c mysql_rwlock_t interface.
+    */
+    struct PSI_rwlock* m_psi;
 };
 
 /**
@@ -151,16 +148,15 @@ typedef struct st_mysql_prlock mysql_prlock_t;
   An instrumented cond structure.
   @sa mysql_cond_t
 */
-struct st_mysql_cond
-{
-  /** The real condition */
-  pthread_cond_t m_cond;
-  /**
-    The instrumentation hook.
-    Note that this hook is not conditionally defined,
-    for binary compatibility of the @c mysql_cond_t interface.
-  */
-  struct PSI_cond *m_psi;
+struct st_mysql_cond {
+    /** The real condition */
+    pthread_cond_t m_cond;
+    /**
+      The instrumentation hook.
+      Note that this hook is not conditionally defined,
+      for binary compatibility of the @c mysql_cond_t interface.
+    */
+    struct PSI_cond* m_psi;
 };
 
 /**
@@ -201,8 +197,7 @@ typedef struct st_mysql_cond mysql_cond_t;
   @c mysql_mutex_assert_owner is a drop-in replacement
   for @c safe_mutex_assert_owner.
 */
-#define mysql_mutex_assert_owner(M) \
-  safe_mutex_assert_owner(&(M)->m_mutex)
+#define mysql_mutex_assert_owner(M) safe_mutex_assert_owner(&(M)->m_mutex)
 
 /**
   @def mysql_mutex_assert_not_owner(M)
@@ -210,16 +205,16 @@ typedef struct st_mysql_cond mysql_cond_t;
   @c mysql_mutex_assert_not_owner is a drop-in replacement
   for @c safe_mutex_assert_not_owner.
 */
-#define mysql_mutex_assert_not_owner(M) \
-  safe_mutex_assert_not_owner(&(M)->m_mutex)
+#define mysql_mutex_assert_not_owner(M)                                        \
+    safe_mutex_assert_not_owner(&(M)->m_mutex)
 
 /** Wrappers for instrumented prlock objects.  */
 
-#define mysql_prlock_assert_write_owner(M) \
-  rw_pr_lock_assert_write_owner(&(M)->m_prlock)
+#define mysql_prlock_assert_write_owner(M)                                     \
+    rw_pr_lock_assert_write_owner(&(M)->m_prlock)
 
-#define mysql_prlock_assert_not_write_owner(M) \
-  rw_pr_lock_assert_not_write_owner(&(M)->m_prlock)
+#define mysql_prlock_assert_not_write_owner(M)                                 \
+    rw_pr_lock_assert_not_write_owner(&(M)->m_prlock)
 
 /**
   @def mysql_mutex_init(K, M, A)
@@ -231,21 +226,19 @@ typedef struct st_mysql_cond mysql_cond_t;
 */
 
 #ifdef HAVE_PSI_INTERFACE
-  #ifdef SAFE_MUTEX
-    #define mysql_mutex_init(K, M, A) \
-      inline_mysql_mutex_init(K, M, A, __FILE__, __LINE__)
-  #else
-    #define mysql_mutex_init(K, M, A) \
-      inline_mysql_mutex_init(K, M, A)
-  #endif
+#ifdef SAFE_MUTEX
+#define mysql_mutex_init(K, M, A)                                              \
+    inline_mysql_mutex_init(K, M, A, __FILE__, __LINE__)
 #else
-  #ifdef SAFE_MUTEX
-    #define mysql_mutex_init(K, M, A) \
-      inline_mysql_mutex_init(M, A, __FILE__, __LINE__)
-  #else
-    #define mysql_mutex_init(K, M, A) \
-      inline_mysql_mutex_init(M, A)
-  #endif
+#define mysql_mutex_init(K, M, A) inline_mysql_mutex_init(K, M, A)
+#endif
+#else
+#ifdef SAFE_MUTEX
+#define mysql_mutex_init(K, M, A)                                              \
+    inline_mysql_mutex_init(M, A, __FILE__, __LINE__)
+#else
+#define mysql_mutex_init(K, M, A) inline_mysql_mutex_init(M, A)
+#endif
 #endif
 
 /**
@@ -255,11 +248,9 @@ typedef struct st_mysql_cond mysql_cond_t;
   for @c pthread_mutex_destroy.
 */
 #ifdef SAFE_MUTEX
-  #define mysql_mutex_destroy(M) \
-    inline_mysql_mutex_destroy(M, __FILE__, __LINE__)
+#define mysql_mutex_destroy(M) inline_mysql_mutex_destroy(M, __FILE__, __LINE__)
 #else
-  #define mysql_mutex_destroy(M) \
-    inline_mysql_mutex_destroy(M)
+#define mysql_mutex_destroy(M) inline_mysql_mutex_destroy(M)
 #endif
 
 /**
@@ -269,12 +260,10 @@ typedef struct st_mysql_cond mysql_cond_t;
   @param M The mutex to lock
 */
 
-#if defined(SAFE_MUTEX) || defined (HAVE_PSI_INTERFACE)
-  #define mysql_mutex_lock(M) \
-    inline_mysql_mutex_lock(M, __FILE__, __LINE__)
+#if defined(SAFE_MUTEX) || defined(HAVE_PSI_INTERFACE)
+#define mysql_mutex_lock(M) inline_mysql_mutex_lock(M, __FILE__, __LINE__)
 #else
-  #define mysql_mutex_lock(M) \
-    inline_mysql_mutex_lock(M)
+#define mysql_mutex_lock(M) inline_mysql_mutex_lock(M)
 #endif
 
 /**
@@ -284,12 +273,10 @@ typedef struct st_mysql_cond mysql_cond_t;
   for @c pthread_mutex_trylock.
 */
 
-#if defined(SAFE_MUTEX) || defined (HAVE_PSI_INTERFACE)
-  #define mysql_mutex_trylock(M) \
-    inline_mysql_mutex_trylock(M, __FILE__, __LINE__)
+#if defined(SAFE_MUTEX) || defined(HAVE_PSI_INTERFACE)
+#define mysql_mutex_trylock(M) inline_mysql_mutex_trylock(M, __FILE__, __LINE__)
 #else
-  #define mysql_mutex_trylock(M) \
-    inline_mysql_mutex_trylock(M)
+#define mysql_mutex_trylock(M) inline_mysql_mutex_trylock(M)
 #endif
 
 /**
@@ -298,11 +285,9 @@ typedef struct st_mysql_cond mysql_cond_t;
   @c mysql_mutex_unlock is a drop-in replacement for @c pthread_mutex_unlock.
 */
 #ifdef SAFE_MUTEX
-  #define mysql_mutex_unlock(M) \
-    inline_mysql_mutex_unlock(M, __FILE__, __LINE__)
+#define mysql_mutex_unlock(M) inline_mysql_mutex_unlock(M, __FILE__, __LINE__)
 #else
-  #define mysql_mutex_unlock(M) \
-    inline_mysql_mutex_unlock(M)
+#define mysql_mutex_unlock(M) inline_mysql_mutex_unlock(M)
 #endif
 
 /**
@@ -314,9 +299,9 @@ typedef struct st_mysql_cond mysql_cond_t;
   @param RW The rwlock to initialize
 */
 #ifdef HAVE_PSI_INTERFACE
-  #define mysql_rwlock_init(K, RW) inline_mysql_rwlock_init(K, RW)
+#define mysql_rwlock_init(K, RW) inline_mysql_rwlock_init(K, RW)
 #else
-  #define mysql_rwlock_init(K, RW) inline_mysql_rwlock_init(RW)
+#define mysql_rwlock_init(K, RW) inline_mysql_rwlock_init(RW)
 #endif
 
 /**
@@ -327,9 +312,9 @@ typedef struct st_mysql_cond mysql_cond_t;
   @param RW The prlock to initialize
 */
 #ifdef HAVE_PSI_INTERFACE
-  #define mysql_prlock_init(K, RW) inline_mysql_prlock_init(K, RW)
+#define mysql_prlock_init(K, RW) inline_mysql_prlock_init(K, RW)
 #else
-  #define mysql_prlock_init(K, RW) inline_mysql_prlock_init(RW)
+#define mysql_prlock_init(K, RW) inline_mysql_prlock_init(RW)
 #endif
 
 /**
@@ -355,11 +340,10 @@ typedef struct st_mysql_cond mysql_cond_t;
   for @c pthread_rwlock_rdlock.
 */
 #ifdef HAVE_PSI_INTERFACE
-  #define mysql_rwlock_rdlock(RW) \
+#define mysql_rwlock_rdlock(RW)                                                \
     inline_mysql_rwlock_rdlock(RW, __FILE__, __LINE__)
 #else
-  #define mysql_rwlock_rdlock(RW) \
-    inline_mysql_rwlock_rdlock(RW)
+#define mysql_rwlock_rdlock(RW) inline_mysql_rwlock_rdlock(RW)
 #endif
 
 /**
@@ -369,11 +353,10 @@ typedef struct st_mysql_cond mysql_cond_t;
   for @c rw_pr_rdlock.
 */
 #ifdef HAVE_PSI_INTERFACE
-  #define mysql_prlock_rdlock(RW) \
+#define mysql_prlock_rdlock(RW)                                                \
     inline_mysql_prlock_rdlock(RW, __FILE__, __LINE__)
 #else
-  #define mysql_prlock_rdlock(RW) \
-    inline_mysql_prlock_rdlock(RW)
+#define mysql_prlock_rdlock(RW) inline_mysql_prlock_rdlock(RW)
 #endif
 
 /**
@@ -383,11 +366,10 @@ typedef struct st_mysql_cond mysql_cond_t;
   for @c pthread_rwlock_wrlock.
 */
 #ifdef HAVE_PSI_INTERFACE
-  #define mysql_rwlock_wrlock(RW) \
+#define mysql_rwlock_wrlock(RW)                                                \
     inline_mysql_rwlock_wrlock(RW, __FILE__, __LINE__)
 #else
-  #define mysql_rwlock_wrlock(RW) \
-    inline_mysql_rwlock_wrlock(RW)
+#define mysql_rwlock_wrlock(RW) inline_mysql_rwlock_wrlock(RW)
 #endif
 
 /**
@@ -397,11 +379,10 @@ typedef struct st_mysql_cond mysql_cond_t;
   for @c rw_pr_wrlock.
 */
 #ifdef HAVE_PSI_INTERFACE
-  #define mysql_prlock_wrlock(RW) \
+#define mysql_prlock_wrlock(RW)                                                \
     inline_mysql_prlock_wrlock(RW, __FILE__, __LINE__)
 #else
-  #define mysql_prlock_wrlock(RW) \
-    inline_mysql_prlock_wrlock(RW)
+#define mysql_prlock_wrlock(RW) inline_mysql_prlock_wrlock(RW)
 #endif
 
 /**
@@ -411,11 +392,10 @@ typedef struct st_mysql_cond mysql_cond_t;
   for @c pthread_rwlock_tryrdlock.
 */
 #ifdef HAVE_PSI_INTERFACE
-  #define mysql_rwlock_tryrdlock(RW) \
+#define mysql_rwlock_tryrdlock(RW)                                             \
     inline_mysql_rwlock_tryrdlock(RW, __FILE__, __LINE__)
 #else
-  #define mysql_rwlock_tryrdlock(RW) \
-    inline_mysql_rwlock_tryrdlock(RW)
+#define mysql_rwlock_tryrdlock(RW) inline_mysql_rwlock_tryrdlock(RW)
 #endif
 
 /**
@@ -425,11 +405,10 @@ typedef struct st_mysql_cond mysql_cond_t;
   for @c pthread_rwlock_trywrlock.
 */
 #ifdef HAVE_PSI_INTERFACE
-  #define mysql_rwlock_trywrlock(RW) \
+#define mysql_rwlock_trywrlock(RW)                                             \
     inline_mysql_rwlock_trywrlock(RW, __FILE__, __LINE__)
 #else
-  #define mysql_rwlock_trywrlock(RW) \
-    inline_mysql_rwlock_trywrlock(RW)
+#define mysql_rwlock_trywrlock(RW) inline_mysql_rwlock_trywrlock(RW)
 #endif
 
 /**
@@ -457,9 +436,9 @@ typedef struct st_mysql_cond mysql_cond_t;
   @param A Condition attributes
 */
 #ifdef HAVE_PSI_INTERFACE
-  #define mysql_cond_init(K, C, A) inline_mysql_cond_init(K, C, A)
+#define mysql_cond_init(K, C, A) inline_mysql_cond_init(K, C, A)
 #else
-  #define mysql_cond_init(K, C, A) inline_mysql_cond_init(C, A)
+#define mysql_cond_init(K, C, A) inline_mysql_cond_init(C, A)
 #endif
 
 /**
@@ -475,11 +454,9 @@ typedef struct st_mysql_cond mysql_cond_t;
   @c mysql_cond_wait is a drop-in replacement for @c pthread_cond_wait.
 */
 #ifdef HAVE_PSI_INTERFACE
-  #define mysql_cond_wait(C, M) \
-    inline_mysql_cond_wait(C, M, __FILE__, __LINE__)
+#define mysql_cond_wait(C, M) inline_mysql_cond_wait(C, M, __FILE__, __LINE__)
 #else
-  #define mysql_cond_wait(C, M) \
-    inline_mysql_cond_wait(C, M)
+#define mysql_cond_wait(C, M) inline_mysql_cond_wait(C, M)
 #endif
 
 /**
@@ -489,11 +466,10 @@ typedef struct st_mysql_cond mysql_cond_t;
   for @c pthread_cond_timedwait.
 */
 #ifdef HAVE_PSI_INTERFACE
-  #define mysql_cond_timedwait(C, M, W) \
+#define mysql_cond_timedwait(C, M, W)                                          \
     inline_mysql_cond_timedwait(C, M, W, __FILE__, __LINE__)
 #else
-  #define mysql_cond_timedwait(C, M, W) \
-    inline_mysql_cond_timedwait(C, M, W)
+#define mysql_cond_timedwait(C, M, W) inline_mysql_cond_timedwait(C, M, W)
 #endif
 
 /**
@@ -510,7 +486,6 @@ typedef struct st_mysql_cond mysql_cond_t;
   for @c pthread_cond_broadcast.
 */
 #define mysql_cond_broadcast(C) inline_mysql_cond_broadcast(C)
-
 
 /**
   @def mysql_thread_create(K, P1, P2, P3, P4)
@@ -530,11 +505,10 @@ typedef struct st_mysql_cond mysql_cond_t;
   @param P4 pthread_create parameter 4
 */
 #ifdef HAVE_PSI_INTERFACE
-  #define mysql_thread_create(K, P1, P2, P3, P4) \
+#define mysql_thread_create(K, P1, P2, P3, P4)                                 \
     inline_mysql_thread_create(K, P1, P2, P3, P4)
 #else
-  #define mysql_thread_create(K, P1, P2, P3, P4) \
-    pthread_create(P1, P2, P3, P4)
+#define mysql_thread_create(K, P1, P2, P3, P4) pthread_create(P1, P2, P3, P4)
 #endif
 
 /**
@@ -543,523 +517,521 @@ typedef struct st_mysql_cond mysql_cond_t;
   @param I The thread identifier
 */
 #ifdef HAVE_PSI_INTERFACE
-  #define mysql_thread_set_psi_id(I) inline_mysql_thread_set_psi_id(I)
+#define mysql_thread_set_psi_id(I) inline_mysql_thread_set_psi_id(I)
 #else
-  #define mysql_thread_set_psi_id(I) do {} while (0)
+#define mysql_thread_set_psi_id(I)                                             \
+    do {                                                                       \
+    } while (0)
 #endif
 
 static inline int inline_mysql_mutex_init(
 #ifdef HAVE_PSI_INTERFACE
-  PSI_mutex_key key,
+    PSI_mutex_key key,
 #endif
-  mysql_mutex_t *that,
-  const pthread_mutexattr_t *attr
+    mysql_mutex_t*             that,
+    const pthread_mutexattr_t* attr
 #ifdef SAFE_MUTEX
-  , const char *src_file, uint src_line
+    ,
+    const char* src_file,
+    uint        src_line
 #endif
-  )
+)
 {
 #ifdef HAVE_PSI_INTERFACE
-  that->m_psi= PSI_server ? PSI_server->init_mutex(key, &that->m_mutex)
-                          : NULL;
+    that->m_psi =
+        PSI_server ? PSI_server->init_mutex(key, &that->m_mutex) : NULL;
 #else
-  that->m_psi= NULL;
+    that->m_psi = NULL;
 #endif
 #ifdef SAFE_MUTEX
-  return safe_mutex_init(&that->m_mutex, attr, src_file, src_line);
+    return safe_mutex_init(&that->m_mutex, attr, src_file, src_line);
 #else
-  return pthread_mutex_init(&that->m_mutex, attr);
+    return pthread_mutex_init(&that->m_mutex, attr);
 #endif
 }
 
-static inline int inline_mysql_mutex_destroy(
-  mysql_mutex_t *that
+static inline int inline_mysql_mutex_destroy(mysql_mutex_t* that
 #ifdef SAFE_MUTEX
-  , const char *src_file, uint src_line
+                                             ,
+                                             const char* src_file,
+                                             uint        src_line
 #endif
-  )
+)
 {
 #ifdef HAVE_PSI_INTERFACE
-  if (likely(PSI_server && that->m_psi))
-  {
-    PSI_server->destroy_mutex(that->m_psi);
-    that->m_psi= NULL;
-  }
+    if (likely(PSI_server && that->m_psi)) {
+        PSI_server->destroy_mutex(that->m_psi);
+        that->m_psi = NULL;
+    }
 #endif
 #ifdef SAFE_MUTEX
-  return safe_mutex_destroy(&that->m_mutex, src_file, src_line);
+    return safe_mutex_destroy(&that->m_mutex, src_file, src_line);
 #else
-  return pthread_mutex_destroy(&that->m_mutex);
+    return pthread_mutex_destroy(&that->m_mutex);
 #endif
 }
 
-static inline int inline_mysql_mutex_lock(
-  mysql_mutex_t *that
-#if defined(SAFE_MUTEX) || defined (HAVE_PSI_INTERFACE)
-  , const char *src_file, uint src_line
+static inline int inline_mysql_mutex_lock(mysql_mutex_t* that
+#if defined(SAFE_MUTEX) || defined(HAVE_PSI_INTERFACE)
+                                          ,
+                                          const char* src_file,
+                                          uint        src_line
 #endif
-  )
+)
 {
-  int result;
+    int result;
 #ifdef HAVE_PSI_INTERFACE
-  struct PSI_mutex_locker *locker= NULL;
-  PSI_mutex_locker_state state;
-  if (likely(PSI_server && that->m_psi))
-  {
-    locker= PSI_server->get_thread_mutex_locker(&state, that->m_psi, PSI_MUTEX_LOCK);
+    struct PSI_mutex_locker* locker = NULL;
+    PSI_mutex_locker_state   state;
+    if (likely(PSI_server && that->m_psi)) {
+        locker = PSI_server->get_thread_mutex_locker(
+            &state, that->m_psi, PSI_MUTEX_LOCK);
+        if (likely(locker != NULL))
+            PSI_server->start_mutex_wait(locker, src_file, src_line);
+    }
+#endif
+#ifdef SAFE_MUTEX
+    result = safe_mutex_lock(&that->m_mutex, FALSE, src_file, src_line);
+#else
+    result = pthread_mutex_lock(&that->m_mutex);
+#endif
+#ifdef HAVE_PSI_INTERFACE
     if (likely(locker != NULL))
-      PSI_server->start_mutex_wait(locker, src_file, src_line);
-  }
+        PSI_server->end_mutex_wait(locker, result);
 #endif
-#ifdef SAFE_MUTEX
-  result= safe_mutex_lock(&that->m_mutex, FALSE, src_file, src_line);
-#else
-  result= pthread_mutex_lock(&that->m_mutex);
-#endif
-#ifdef HAVE_PSI_INTERFACE
-  if (likely(locker != NULL))
-    PSI_server->end_mutex_wait(locker, result);
-#endif
-  return result;
+    return result;
 }
 
-static inline int inline_mysql_mutex_trylock(
-  mysql_mutex_t *that
-#if defined(SAFE_MUTEX) || defined (HAVE_PSI_INTERFACE)
-  , const char *src_file, uint src_line
+static inline int inline_mysql_mutex_trylock(mysql_mutex_t* that
+#if defined(SAFE_MUTEX) || defined(HAVE_PSI_INTERFACE)
+                                             ,
+                                             const char* src_file,
+                                             uint        src_line
 #endif
-  )
+)
 {
-  int result;
+    int result;
 #ifdef HAVE_PSI_INTERFACE
-  struct PSI_mutex_locker *locker= NULL;
-  PSI_mutex_locker_state state;
-  if (likely(PSI_server && that->m_psi))
-  {
-    locker= PSI_server->get_thread_mutex_locker(&state, that->m_psi, PSI_MUTEX_TRYLOCK);
+    struct PSI_mutex_locker* locker = NULL;
+    PSI_mutex_locker_state   state;
+    if (likely(PSI_server && that->m_psi)) {
+        locker = PSI_server->get_thread_mutex_locker(
+            &state, that->m_psi, PSI_MUTEX_TRYLOCK);
+        if (likely(locker != NULL))
+            PSI_server->start_mutex_wait(locker, src_file, src_line);
+    }
+#endif
+#ifdef SAFE_MUTEX
+    result = safe_mutex_lock(&that->m_mutex, TRUE, src_file, src_line);
+#else
+    result = pthread_mutex_trylock(&that->m_mutex);
+#endif
+#ifdef HAVE_PSI_INTERFACE
     if (likely(locker != NULL))
-      PSI_server->start_mutex_wait(locker, src_file, src_line);
-  }
+        PSI_server->end_mutex_wait(locker, result);
 #endif
-#ifdef SAFE_MUTEX
-  result= safe_mutex_lock(&that->m_mutex, TRUE, src_file, src_line);
-#else
-  result= pthread_mutex_trylock(&that->m_mutex);
-#endif
-#ifdef HAVE_PSI_INTERFACE
-  if (likely(locker != NULL))
-    PSI_server->end_mutex_wait(locker, result);
-#endif
-  return result;
+    return result;
 }
 
-static inline int inline_mysql_mutex_unlock(
-  mysql_mutex_t *that
+static inline int inline_mysql_mutex_unlock(mysql_mutex_t* that
 #ifdef SAFE_MUTEX
-  , const char *src_file, uint src_line
+                                            ,
+                                            const char* src_file,
+                                            uint        src_line
 #endif
-  )
+)
 {
-  int result;
+    int result;
 #ifdef HAVE_PSI_INTERFACE
-  if (likely(PSI_server && that->m_psi))
-    PSI_server->unlock_mutex(that->m_psi);
+    if (likely(PSI_server && that->m_psi))
+        PSI_server->unlock_mutex(that->m_psi);
 #endif
 #ifdef SAFE_MUTEX
-  result= safe_mutex_unlock(&that->m_mutex, src_file, src_line);
+    result = safe_mutex_unlock(&that->m_mutex, src_file, src_line);
 #else
-  result= pthread_mutex_unlock(&that->m_mutex);
+    result = pthread_mutex_unlock(&that->m_mutex);
 #endif
-  return result;
+    return result;
 }
 
 static inline int inline_mysql_rwlock_init(
 #ifdef HAVE_PSI_INTERFACE
-  PSI_rwlock_key key,
+    PSI_rwlock_key key,
 #endif
-  mysql_rwlock_t *that)
+    mysql_rwlock_t* that)
 {
 #ifdef HAVE_PSI_INTERFACE
-  that->m_psi= (PSI_server ? PSI_server->init_rwlock(key, &that->m_rwlock)
-                           : NULL);
+    that->m_psi =
+        (PSI_server ? PSI_server->init_rwlock(key, &that->m_rwlock) : NULL);
 #else
-  that->m_psi= NULL;
+    that->m_psi = NULL;
 #endif
-  /*
-    pthread_rwlockattr_t is not used in MySQL.
-  */
-  return my_rwlock_init(&that->m_rwlock, NULL);
+    /*
+      pthread_rwlockattr_t is not used in MySQL.
+    */
+    return my_rwlock_init(&that->m_rwlock, NULL);
 }
 
 #ifndef DISABLE_MYSQL_PRLOCK_H
 static inline int inline_mysql_prlock_init(
 #ifdef HAVE_PSI_INTERFACE
-  PSI_rwlock_key key,
+    PSI_rwlock_key key,
 #endif
-  mysql_prlock_t *that)
+    mysql_prlock_t* that)
 {
 #ifdef HAVE_PSI_INTERFACE
-  that->m_psi= (PSI_server ? PSI_server->init_rwlock(key, &that->m_prlock)
-                           : NULL);
+    that->m_psi =
+        (PSI_server ? PSI_server->init_rwlock(key, &that->m_prlock) : NULL);
 #else
-  that->m_psi= NULL;
+    that->m_psi = NULL;
 #endif
-  return rw_pr_init(&that->m_prlock);
+    return rw_pr_init(&that->m_prlock);
 }
 #endif
 
-static inline int inline_mysql_rwlock_destroy(
-  mysql_rwlock_t *that)
+static inline int inline_mysql_rwlock_destroy(mysql_rwlock_t* that)
 {
 #ifdef HAVE_PSI_INTERFACE
-  if (likely(PSI_server && that->m_psi))
-  {
-    PSI_server->destroy_rwlock(that->m_psi);
-    that->m_psi= NULL;
-  }
+    if (likely(PSI_server && that->m_psi)) {
+        PSI_server->destroy_rwlock(that->m_psi);
+        that->m_psi = NULL;
+    }
 #endif
-  return rwlock_destroy(&that->m_rwlock);
+    return rwlock_destroy(&that->m_rwlock);
 }
 
 #ifndef DISABLE_MYSQL_PRLOCK_H
-static inline int inline_mysql_prlock_destroy(
-  mysql_prlock_t *that)
+static inline int inline_mysql_prlock_destroy(mysql_prlock_t* that)
 {
 #ifdef HAVE_PSI_INTERFACE
-  if (likely(PSI_server && that->m_psi))
-  {
-    PSI_server->destroy_rwlock(that->m_psi);
-    that->m_psi= NULL;
-  }
+    if (likely(PSI_server && that->m_psi)) {
+        PSI_server->destroy_rwlock(that->m_psi);
+        that->m_psi = NULL;
+    }
 #endif
-  return rw_pr_destroy(&that->m_prlock);
+    return rw_pr_destroy(&that->m_prlock);
 }
 #endif
 
-static inline int inline_mysql_rwlock_rdlock(
-  mysql_rwlock_t *that
+static inline int inline_mysql_rwlock_rdlock(mysql_rwlock_t* that
 #ifdef HAVE_PSI_INTERFACE
-  , const char *src_file, uint src_line
+                                             ,
+                                             const char* src_file,
+                                             uint        src_line
 #endif
-  )
+)
 {
-  int result;
+    int result;
 #ifdef HAVE_PSI_INTERFACE
-  struct PSI_rwlock_locker *locker= NULL;
-  PSI_rwlock_locker_state state;
-  if (likely(PSI_server && that->m_psi))
-  {
-    locker= PSI_server->get_thread_rwlock_locker(&state, that->m_psi,
-                                                 PSI_RWLOCK_READLOCK);
+    struct PSI_rwlock_locker* locker = NULL;
+    PSI_rwlock_locker_state   state;
+    if (likely(PSI_server && that->m_psi)) {
+        locker = PSI_server->get_thread_rwlock_locker(
+            &state, that->m_psi, PSI_RWLOCK_READLOCK);
+        if (likely(locker != NULL))
+            PSI_server->start_rwlock_rdwait(locker, src_file, src_line);
+    }
+#endif
+    result = rw_rdlock(&that->m_rwlock);
+#ifdef HAVE_PSI_INTERFACE
     if (likely(locker != NULL))
-      PSI_server->start_rwlock_rdwait(locker, src_file, src_line);
-  }
+        PSI_server->end_rwlock_rdwait(locker, result);
 #endif
-  result= rw_rdlock(&that->m_rwlock);
-#ifdef HAVE_PSI_INTERFACE
-  if (likely(locker != NULL))
-    PSI_server->end_rwlock_rdwait(locker, result);
-#endif
-  return result;
+    return result;
 }
 
 #ifndef DISABLE_MYSQL_PRLOCK_H
-static inline int inline_mysql_prlock_rdlock(
-  mysql_prlock_t *that
+static inline int inline_mysql_prlock_rdlock(mysql_prlock_t* that
 #ifdef HAVE_PSI_INTERFACE
-  , const char *src_file, uint src_line
+                                             ,
+                                             const char* src_file,
+                                             uint        src_line
 #endif
-  )
+)
 {
-  int result;
+    int result;
 #ifdef HAVE_PSI_INTERFACE
-  struct PSI_rwlock_locker *locker= NULL;
-  PSI_rwlock_locker_state state;
-  if (likely(PSI_server && that->m_psi))
-  {
-    locker= PSI_server->get_thread_rwlock_locker(&state, that->m_psi,
-                                                 PSI_RWLOCK_READLOCK);
+    struct PSI_rwlock_locker* locker = NULL;
+    PSI_rwlock_locker_state   state;
+    if (likely(PSI_server && that->m_psi)) {
+        locker = PSI_server->get_thread_rwlock_locker(
+            &state, that->m_psi, PSI_RWLOCK_READLOCK);
+        if (likely(locker != NULL))
+            PSI_server->start_rwlock_rdwait(locker, src_file, src_line);
+    }
+#endif
+    result = rw_pr_rdlock(&that->m_prlock);
+#ifdef HAVE_PSI_INTERFACE
     if (likely(locker != NULL))
-      PSI_server->start_rwlock_rdwait(locker, src_file, src_line);
-  }
+        PSI_server->end_rwlock_rdwait(locker, result);
 #endif
-  result= rw_pr_rdlock(&that->m_prlock);
-#ifdef HAVE_PSI_INTERFACE
-  if (likely(locker != NULL))
-    PSI_server->end_rwlock_rdwait(locker, result);
-#endif
-  return result;
+    return result;
 }
 #endif
 
-static inline int inline_mysql_rwlock_wrlock(
-  mysql_rwlock_t *that
+static inline int inline_mysql_rwlock_wrlock(mysql_rwlock_t* that
 #ifdef HAVE_PSI_INTERFACE
-  , const char *src_file, uint src_line
+                                             ,
+                                             const char* src_file,
+                                             uint        src_line
 #endif
-  )
+)
 {
-  int result;
+    int result;
 #ifdef HAVE_PSI_INTERFACE
-  struct PSI_rwlock_locker *locker= NULL;
-  PSI_rwlock_locker_state state;
-  if (likely(PSI_server && that->m_psi))
-  {
-    locker= PSI_server->get_thread_rwlock_locker(&state, that->m_psi,
-                                                 PSI_RWLOCK_WRITELOCK);
+    struct PSI_rwlock_locker* locker = NULL;
+    PSI_rwlock_locker_state   state;
+    if (likely(PSI_server && that->m_psi)) {
+        locker = PSI_server->get_thread_rwlock_locker(
+            &state, that->m_psi, PSI_RWLOCK_WRITELOCK);
+        if (likely(locker != NULL))
+            PSI_server->start_rwlock_wrwait(locker, src_file, src_line);
+    }
+#endif
+    result = rw_wrlock(&that->m_rwlock);
+#ifdef HAVE_PSI_INTERFACE
     if (likely(locker != NULL))
-      PSI_server->start_rwlock_wrwait(locker, src_file, src_line);
-  }
+        PSI_server->end_rwlock_wrwait(locker, result);
 #endif
-  result= rw_wrlock(&that->m_rwlock);
-#ifdef HAVE_PSI_INTERFACE
-  if (likely(locker != NULL))
-    PSI_server->end_rwlock_wrwait(locker, result);
-#endif
-  return result;
+    return result;
 }
 
 #ifndef DISABLE_MYSQL_PRLOCK_H
-static inline int inline_mysql_prlock_wrlock(
-  mysql_prlock_t *that
+static inline int inline_mysql_prlock_wrlock(mysql_prlock_t* that
 #ifdef HAVE_PSI_INTERFACE
-  , const char *src_file, uint src_line
+                                             ,
+                                             const char* src_file,
+                                             uint        src_line
 #endif
-  )
+)
 {
-  int result;
+    int result;
 #ifdef HAVE_PSI_INTERFACE
-  struct PSI_rwlock_locker *locker= NULL;
-  PSI_rwlock_locker_state state;
-  if (likely(PSI_server && that->m_psi))
-  {
-    locker= PSI_server->get_thread_rwlock_locker(&state, that->m_psi,
-                                                 PSI_RWLOCK_WRITELOCK);
+    struct PSI_rwlock_locker* locker = NULL;
+    PSI_rwlock_locker_state   state;
+    if (likely(PSI_server && that->m_psi)) {
+        locker = PSI_server->get_thread_rwlock_locker(
+            &state, that->m_psi, PSI_RWLOCK_WRITELOCK);
+        if (likely(locker != NULL))
+            PSI_server->start_rwlock_wrwait(locker, src_file, src_line);
+    }
+#endif
+    result = rw_pr_wrlock(&that->m_prlock);
+#ifdef HAVE_PSI_INTERFACE
     if (likely(locker != NULL))
-      PSI_server->start_rwlock_wrwait(locker, src_file, src_line);
-  }
+        PSI_server->end_rwlock_wrwait(locker, result);
 #endif
-  result= rw_pr_wrlock(&that->m_prlock);
-#ifdef HAVE_PSI_INTERFACE
-  if (likely(locker != NULL))
-    PSI_server->end_rwlock_wrwait(locker, result);
-#endif
-  return result;
+    return result;
 }
 #endif
 
-static inline int inline_mysql_rwlock_tryrdlock(
-  mysql_rwlock_t *that
+static inline int inline_mysql_rwlock_tryrdlock(mysql_rwlock_t* that
 #ifdef HAVE_PSI_INTERFACE
-  , const char *src_file, uint src_line
+                                                ,
+                                                const char* src_file,
+                                                uint        src_line
 #endif
-  )
+)
 {
-  int result;
+    int result;
 #ifdef HAVE_PSI_INTERFACE
-  struct PSI_rwlock_locker *locker= NULL;
-  PSI_rwlock_locker_state state;
-  if (likely(PSI_server && that->m_psi))
-  {
-    locker= PSI_server->get_thread_rwlock_locker(&state, that->m_psi,
-                                                 PSI_RWLOCK_TRYREADLOCK);
+    struct PSI_rwlock_locker* locker = NULL;
+    PSI_rwlock_locker_state   state;
+    if (likely(PSI_server && that->m_psi)) {
+        locker = PSI_server->get_thread_rwlock_locker(
+            &state, that->m_psi, PSI_RWLOCK_TRYREADLOCK);
+        if (likely(locker != NULL))
+            PSI_server->start_rwlock_rdwait(locker, src_file, src_line);
+    }
+#endif
+    result = rw_tryrdlock(&that->m_rwlock);
+#ifdef HAVE_PSI_INTERFACE
     if (likely(locker != NULL))
-      PSI_server->start_rwlock_rdwait(locker, src_file, src_line);
-  }
+        PSI_server->end_rwlock_rdwait(locker, result);
 #endif
-  result= rw_tryrdlock(&that->m_rwlock);
-#ifdef HAVE_PSI_INTERFACE
-  if (likely(locker != NULL))
-    PSI_server->end_rwlock_rdwait(locker, result);
-#endif
-  return result;
+    return result;
 }
 
-static inline int inline_mysql_rwlock_trywrlock(
-  mysql_rwlock_t *that
+static inline int inline_mysql_rwlock_trywrlock(mysql_rwlock_t* that
 #ifdef HAVE_PSI_INTERFACE
-  , const char *src_file, uint src_line
+                                                ,
+                                                const char* src_file,
+                                                uint        src_line
 #endif
-  )
+)
 {
-  int result;
+    int result;
 #ifdef HAVE_PSI_INTERFACE
-  struct PSI_rwlock_locker *locker= NULL;
-  PSI_rwlock_locker_state state;
-  if (likely(PSI_server && that->m_psi))
-  {
-    locker= PSI_server->get_thread_rwlock_locker(&state, that->m_psi,
-                                                 PSI_RWLOCK_TRYWRITELOCK);
+    struct PSI_rwlock_locker* locker = NULL;
+    PSI_rwlock_locker_state   state;
+    if (likely(PSI_server && that->m_psi)) {
+        locker = PSI_server->get_thread_rwlock_locker(
+            &state, that->m_psi, PSI_RWLOCK_TRYWRITELOCK);
+        if (likely(locker != NULL))
+            PSI_server->start_rwlock_wrwait(locker, src_file, src_line);
+    }
+#endif
+    result = rw_trywrlock(&that->m_rwlock);
+#ifdef HAVE_PSI_INTERFACE
     if (likely(locker != NULL))
-      PSI_server->start_rwlock_wrwait(locker, src_file, src_line);
-  }
+        PSI_server->end_rwlock_wrwait(locker, result);
 #endif
-  result= rw_trywrlock(&that->m_rwlock);
-#ifdef HAVE_PSI_INTERFACE
-  if (likely(locker != NULL))
-    PSI_server->end_rwlock_wrwait(locker, result);
-#endif
-  return result;
+    return result;
 }
 
-static inline int inline_mysql_rwlock_unlock(
-  mysql_rwlock_t *that)
+static inline int inline_mysql_rwlock_unlock(mysql_rwlock_t* that)
 {
-  int result;
+    int result;
 #ifdef HAVE_PSI_INTERFACE
-  if (likely(PSI_server && that->m_psi))
-    PSI_server->unlock_rwlock(that->m_psi);
+    if (likely(PSI_server && that->m_psi))
+        PSI_server->unlock_rwlock(that->m_psi);
 #endif
-  result= rw_unlock(&that->m_rwlock);
-  return result;
+    result = rw_unlock(&that->m_rwlock);
+    return result;
 }
 
 #ifndef DISABLE_MYSQL_PRLOCK_H
-static inline int inline_mysql_prlock_unlock(
-  mysql_prlock_t *that)
+static inline int inline_mysql_prlock_unlock(mysql_prlock_t* that)
 {
-  int result;
+    int result;
 #ifdef HAVE_PSI_INTERFACE
-  if (likely(PSI_server && that->m_psi))
-    PSI_server->unlock_rwlock(that->m_psi);
+    if (likely(PSI_server && that->m_psi))
+        PSI_server->unlock_rwlock(that->m_psi);
 #endif
-  result= rw_pr_unlock(&that->m_prlock);
-  return result;
+    result = rw_pr_unlock(&that->m_prlock);
+    return result;
 }
 #endif
 
 static inline int inline_mysql_cond_init(
 #ifdef HAVE_PSI_INTERFACE
-  PSI_cond_key key,
+    PSI_cond_key key,
 #endif
-  mysql_cond_t *that,
-  const pthread_condattr_t *attr)
+    mysql_cond_t*             that,
+    const pthread_condattr_t* attr)
 {
 #ifdef HAVE_PSI_INTERFACE
-  that->m_psi= (PSI_server ? PSI_server->init_cond(key, &that->m_cond)
-                           : NULL);
+    that->m_psi =
+        (PSI_server ? PSI_server->init_cond(key, &that->m_cond) : NULL);
 #else
-  that->m_psi= NULL;
+    that->m_psi = NULL;
 #endif
-  return pthread_cond_init(&that->m_cond, attr);
+    return pthread_cond_init(&that->m_cond, attr);
 }
 
-static inline int inline_mysql_cond_destroy(
-  mysql_cond_t *that)
+static inline int inline_mysql_cond_destroy(mysql_cond_t* that)
 {
 #ifdef HAVE_PSI_INTERFACE
-  if (likely(PSI_server && that->m_psi))
-  {
-    PSI_server->destroy_cond(that->m_psi);
-    that->m_psi= NULL;
-  }
+    if (likely(PSI_server && that->m_psi)) {
+        PSI_server->destroy_cond(that->m_psi);
+        that->m_psi = NULL;
+    }
 #endif
-  return pthread_cond_destroy(&that->m_cond);
+    return pthread_cond_destroy(&that->m_cond);
 }
 
-static inline int inline_mysql_cond_wait(
-  mysql_cond_t *that,
-  mysql_mutex_t *mutex
+static inline int inline_mysql_cond_wait(mysql_cond_t*  that,
+                                         mysql_mutex_t* mutex
 #ifdef HAVE_PSI_INTERFACE
-  , const char *src_file, uint src_line
+                                         ,
+                                         const char* src_file,
+                                         uint        src_line
 #endif
-  )
+)
 {
-  int result;
+    int result;
 #ifdef HAVE_PSI_INTERFACE
-  struct PSI_cond_locker *locker= NULL;
-  PSI_cond_locker_state state;
-  if (likely(PSI_server && that->m_psi))
-  {
-    locker= PSI_server->get_thread_cond_locker(&state, that->m_psi, mutex->m_psi,
-                                               PSI_COND_WAIT);
+    struct PSI_cond_locker* locker = NULL;
+    PSI_cond_locker_state   state;
+    if (likely(PSI_server && that->m_psi)) {
+        locker = PSI_server->get_thread_cond_locker(
+            &state, that->m_psi, mutex->m_psi, PSI_COND_WAIT);
+        if (likely(locker != NULL))
+            PSI_server->start_cond_wait(locker, src_file, src_line);
+    }
+#endif
+    result = pthread_cond_wait(&that->m_cond, &mutex->m_mutex);
+#ifdef HAVE_PSI_INTERFACE
     if (likely(locker != NULL))
-      PSI_server->start_cond_wait(locker, src_file, src_line);
-  }
+        PSI_server->end_cond_wait(locker, result);
 #endif
-  result= pthread_cond_wait(&that->m_cond, &mutex->m_mutex);
-#ifdef HAVE_PSI_INTERFACE
-  if (likely(locker != NULL))
-    PSI_server->end_cond_wait(locker, result);
-#endif
-  return result;
+    return result;
 }
 
-static inline int inline_mysql_cond_timedwait(
-  mysql_cond_t *that,
-  mysql_mutex_t *mutex,
-  struct timespec *abstime
+static inline int inline_mysql_cond_timedwait(mysql_cond_t*    that,
+                                              mysql_mutex_t*   mutex,
+                                              struct timespec* abstime
 #ifdef HAVE_PSI_INTERFACE
-  , const char *src_file, uint src_line
+                                              ,
+                                              const char* src_file,
+                                              uint        src_line
 #endif
-  )
+)
 {
-  int result;
+    int result;
 #ifdef HAVE_PSI_INTERFACE
-  struct PSI_cond_locker *locker= NULL;
-  PSI_cond_locker_state state;
-  if (likely(PSI_server && that->m_psi))
-  {
-    locker= PSI_server->get_thread_cond_locker(&state, that->m_psi, mutex->m_psi,
-                                               PSI_COND_TIMEDWAIT);
+    struct PSI_cond_locker* locker = NULL;
+    PSI_cond_locker_state   state;
+    if (likely(PSI_server && that->m_psi)) {
+        locker = PSI_server->get_thread_cond_locker(
+            &state, that->m_psi, mutex->m_psi, PSI_COND_TIMEDWAIT);
+        if (likely(locker != NULL))
+            PSI_server->start_cond_wait(locker, src_file, src_line);
+    }
+#endif
+    result = pthread_cond_timedwait(&that->m_cond, &mutex->m_mutex, abstime);
+#ifdef HAVE_PSI_INTERFACE
     if (likely(locker != NULL))
-      PSI_server->start_cond_wait(locker, src_file, src_line);
-  }
+        PSI_server->end_cond_wait(locker, result);
 #endif
-  result= pthread_cond_timedwait(&that->m_cond, &mutex->m_mutex, abstime);
-#ifdef HAVE_PSI_INTERFACE
-  if (likely(locker != NULL))
-    PSI_server->end_cond_wait(locker, result);
-#endif
-  return result;
+    return result;
 }
 
-static inline int inline_mysql_cond_signal(
-  mysql_cond_t *that)
+static inline int inline_mysql_cond_signal(mysql_cond_t* that)
 {
-  int result;
+    int result;
 #ifdef HAVE_PSI_INTERFACE
-  if (likely(PSI_server && that->m_psi))
-    PSI_server->signal_cond(that->m_psi);
+    if (likely(PSI_server && that->m_psi))
+        PSI_server->signal_cond(that->m_psi);
 #endif
-  result= pthread_cond_signal(&that->m_cond);
-  return result;
+    result = pthread_cond_signal(&that->m_cond);
+    return result;
 }
 
-static inline int inline_mysql_cond_broadcast(
-  mysql_cond_t *that)
+static inline int inline_mysql_cond_broadcast(mysql_cond_t* that)
 {
-  int result;
+    int result;
 #ifdef HAVE_PSI_INTERFACE
-  if (likely(PSI_server && that->m_psi))
-    PSI_server->broadcast_cond(that->m_psi);
+    if (likely(PSI_server && that->m_psi))
+        PSI_server->broadcast_cond(that->m_psi);
 #endif
-  result= pthread_cond_broadcast(&that->m_cond);
-  return result;
+    result = pthread_cond_broadcast(&that->m_cond);
+    return result;
 }
 
 #ifdef HAVE_PSI_INTERFACE
-static inline int inline_mysql_thread_create(
-  PSI_thread_key key,
-  pthread_t *thread, const pthread_attr_t *attr,
-  void *(*start_routine)(void*), void *arg)
+static inline int inline_mysql_thread_create(PSI_thread_key        key,
+                                             pthread_t*            thread,
+                                             const pthread_attr_t* attr,
+                                             void* (*start_routine)(void*),
+                                             void* arg)
 {
-  int result;
-  if (likely(PSI_server != NULL))
-    result= PSI_server->spawn_thread(key, thread, attr, start_routine, arg);
-  else
-    result= pthread_create(thread, attr, start_routine, arg);
-  return result;
+    int result;
+    if (likely(PSI_server != NULL))
+        result =
+            PSI_server->spawn_thread(key, thread, attr, start_routine, arg);
+    else
+        result = pthread_create(thread, attr, start_routine, arg);
+    return result;
 }
 
 static inline void inline_mysql_thread_set_psi_id(ulong id)
 {
-  if (likely(PSI_server != NULL))
-  {
-    struct PSI_thread *psi= PSI_server->get_thread();
-    if (likely(psi != NULL))
-      PSI_server->set_thread_id(psi, id);
-  }
+    if (likely(PSI_server != NULL)) {
+        struct PSI_thread* psi = PSI_server->get_thread();
+        if (likely(psi != NULL))
+            PSI_server->set_thread_id(psi, id);
+    }
 }
 #endif
 
@@ -1068,4 +1040,3 @@ static inline void inline_mysql_thread_set_psi_id(ulong id)
 /** @} (end of group Thread_instrumentation) */
 
 #endif
-

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -27,8 +28,7 @@
 class Map;
 class UpdateRequest;
 
-class MapUpdater
-{
+class MapUpdater {
 public:
     MapUpdater();
     ~MapUpdater() = default;
@@ -47,11 +47,11 @@ private:
     ProducerConsumerQueue<UpdateRequest*> _queue;
 
     std::vector<std::thread> _workerThreads;
-    std::atomic<bool> _cancelationToken;
+    std::atomic<bool>        _cancelationToken;
 
-    std::mutex _lock;
+    std::mutex              _lock;
     std::condition_variable _condition;
-    size_t pending_requests;
+    size_t                  pending_requests;
 };
 
 #endif //_MAP_UPDATER_H_INCLUDED

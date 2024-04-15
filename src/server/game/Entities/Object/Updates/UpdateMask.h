@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,18 +23,16 @@
 #include "Errors.h"
 #include "UpdateFields.h"
 
-class UpdateMask
-{
+class UpdateMask {
 public:
     /// Type representing how client reads update mask
     typedef uint32 ClientUpdateMaskType;
 
-    enum UpdateMaskCount
-    {
+    enum UpdateMaskCount {
         CLIENT_UPDATE_MASK_BITS = sizeof(ClientUpdateMaskType) * 8,
     };
 
-    UpdateMask()  = default;
+    UpdateMask() = default;
 
     UpdateMask(UpdateMask const& right)
     {
@@ -43,14 +42,13 @@ public:
 
     ~UpdateMask() { delete[] _bits; }
 
-    void SetBit(uint32 index) { _bits[index] = 1; }
-    void UnsetBit(uint32 index) { _bits[index] = 0; }
+    void               SetBit(uint32 index) { _bits[index] = 1; }
+    void               UnsetBit(uint32 index) { _bits[index] = 0; }
     [[nodiscard]] bool GetBit(uint32 index) const { return _bits[index] != 0; }
 
     void AppendToPacket(ByteBuffer* data)
     {
-        for (uint32 i = 0; i < GetBlockCount(); ++i)
-        {
+        for (uint32 i = 0; i < GetBlockCount(); ++i) {
             ClientUpdateMaskType maskPart = 0;
             for (uint32 j = 0; j < CLIENT_UPDATE_MASK_BITS; ++j)
                 if (_bits[CLIENT_UPDATE_MASK_BITS * i + j])
@@ -68,7 +66,8 @@ public:
         delete[] _bits;
 
         _fieldCount = valuesCount;
-        _blockCount = (valuesCount + CLIENT_UPDATE_MASK_BITS - 1) / CLIENT_UPDATE_MASK_BITS;
+        _blockCount = (valuesCount + CLIENT_UPDATE_MASK_BITS - 1) /
+                      CLIENT_UPDATE_MASK_BITS;
 
         _bits = new uint8[_blockCount * CLIENT_UPDATE_MASK_BITS];
         memset(_bits, 0, sizeof(uint8) * _blockCount * CLIENT_UPDATE_MASK_BITS);
@@ -77,7 +76,9 @@ public:
     void Clear()
     {
         if (_bits)
-            memset(_bits, 0, sizeof(uint8) * _blockCount * CLIENT_UPDATE_MASK_BITS);
+            memset(_bits,
+                   0,
+                   sizeof(uint8) * _blockCount * CLIENT_UPDATE_MASK_BITS);
     }
 
     UpdateMask& operator=(UpdateMask const& right)
@@ -86,7 +87,9 @@ public:
             return *this;
 
         SetCount(right.GetCount());
-        memcpy(_bits, right._bits, sizeof(uint8) * _blockCount * CLIENT_UPDATE_MASK_BITS);
+        memcpy(_bits,
+               right._bits,
+               sizeof(uint8) * _blockCount * CLIENT_UPDATE_MASK_BITS);
         return *this;
     }
 

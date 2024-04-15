@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -28,9 +29,8 @@
 #include <fstream>
 #include <sstream>
 
- // static data
-enum GuidType : uint8
-{
+// static data
+enum GuidType : uint8 {
     // 32 bit long guids
     GUID_TYPE_ACCOUNT,
     GUID_TYPE_CHAR,
@@ -46,8 +46,7 @@ enum GuidType : uint8
 };
 
 // for RAII
-struct FileCloser
-{
+struct FileCloser {
     void operator()(FILE* f) const
     {
         if (f)
@@ -61,8 +60,7 @@ inline FileHandle GetFileHandle(char const* path, char const* mode)
     return FileHandle(fopen(path, mode), FileCloser());
 }
 
-struct BaseTable
-{
+struct BaseTable {
     char const* TableName;
     char const* PrimaryKey;
     char const* PlayerGuid;
@@ -70,63 +68,59 @@ struct BaseTable
     GuidType StoredType;
 };
 
-BaseTable const BaseTables[] =
-{
-    { "character_pet",           "id",      "owner",      GUID_TYPE_PET           },
-    { "mail",                    "id",      "receiver",   GUID_TYPE_MAIL          },
-    { "item_instance",           "guid",    "owner_guid", GUID_TYPE_ITEM          },
+BaseTable const BaseTables[] = {
+    {"character_pet", "id", "owner", GUID_TYPE_PET},
+    {"mail", "id", "receiver", GUID_TYPE_MAIL},
+    {"item_instance", "guid", "owner_guid", GUID_TYPE_ITEM},
 
-    { "character_equipmentsets", "setguid", "guid",       GUID_TYPE_EQUIPMENT_SET }
-};
+    {"character_equipmentsets", "setguid", "guid", GUID_TYPE_EQUIPMENT_SET}};
 
-struct DumpTable
-{
-    char const* Name;
+struct DumpTable {
+    char const*   Name;
     DumpTableType Type;
 };
 
-DumpTable const DumpTables[] =
-{
-    { "characters",                     DTT_CHARACTER    },
-    { "character_account_data",         DTT_CHAR_TABLE   },
-    { "character_achievement",          DTT_CHAR_TABLE   },
-    { "character_achievement_progress", DTT_CHAR_TABLE   },
-    { "character_action",               DTT_CHAR_TABLE   },
-    { "character_aura",                 DTT_CHAR_TABLE   },
-    { "character_declinedname",         DTT_CHAR_TABLE   },
-    { "character_equipmentsets",        DTT_EQSET_TABLE  },
-    { "character_glyphs",               DTT_CHAR_TABLE   },
-    { "character_homebind",             DTT_CHAR_TABLE   },
-    { "character_inventory",            DTT_INVENTORY    },
-    { "character_pet",                  DTT_PET          },
-    { "character_pet_declinedname",     DTT_PET          },
-    { "character_queststatus",          DTT_CHAR_TABLE   },
-    { "character_queststatus_daily",    DTT_CHAR_TABLE   },
-    { "character_queststatus_weekly",   DTT_CHAR_TABLE   },
-    { "character_queststatus_monthly",  DTT_CHAR_TABLE   },
-    { "character_queststatus_seasonal", DTT_CHAR_TABLE   },
-    { "character_queststatus_rewarded", DTT_CHAR_TABLE   },
-    { "character_reputation",           DTT_CHAR_TABLE   },
-    { "character_skills",               DTT_CHAR_TABLE   },
-    { "character_spell",                DTT_CHAR_TABLE   },
-    { "character_spell_cooldown",       DTT_CHAR_TABLE   },
-    { "character_talent",               DTT_CHAR_TABLE   },
-    { "mail",                           DTT_MAIL         },
-    { "mail_items",                     DTT_MAIL_ITEM    }, // must be after mail
-    { "pet_aura",                       DTT_PET_TABLE    }, // must be after character_pet
-    { "pet_spell",                      DTT_PET_TABLE    }, // must be after character_pet
-    { "pet_spell_cooldown",             DTT_PET_TABLE    }, // must be after character_pet
-    { "item_instance",                  DTT_ITEM         }, // must be after character_inventory and mail_items
-    { "character_gifts",                DTT_ITEM_GIFT    }  // must be after item_instance
+DumpTable const DumpTables[] = {
+    {"characters", DTT_CHARACTER},
+    {"character_account_data", DTT_CHAR_TABLE},
+    {"character_achievement", DTT_CHAR_TABLE},
+    {"character_achievement_progress", DTT_CHAR_TABLE},
+    {"character_action", DTT_CHAR_TABLE},
+    {"character_aura", DTT_CHAR_TABLE},
+    {"character_declinedname", DTT_CHAR_TABLE},
+    {"character_equipmentsets", DTT_EQSET_TABLE},
+    {"character_glyphs", DTT_CHAR_TABLE},
+    {"character_homebind", DTT_CHAR_TABLE},
+    {"character_inventory", DTT_INVENTORY},
+    {"character_pet", DTT_PET},
+    {"character_pet_declinedname", DTT_PET},
+    {"character_queststatus", DTT_CHAR_TABLE},
+    {"character_queststatus_daily", DTT_CHAR_TABLE},
+    {"character_queststatus_weekly", DTT_CHAR_TABLE},
+    {"character_queststatus_monthly", DTT_CHAR_TABLE},
+    {"character_queststatus_seasonal", DTT_CHAR_TABLE},
+    {"character_queststatus_rewarded", DTT_CHAR_TABLE},
+    {"character_reputation", DTT_CHAR_TABLE},
+    {"character_skills", DTT_CHAR_TABLE},
+    {"character_spell", DTT_CHAR_TABLE},
+    {"character_spell_cooldown", DTT_CHAR_TABLE},
+    {"character_talent", DTT_CHAR_TABLE},
+    {"mail", DTT_MAIL},
+    {"mail_items", DTT_MAIL_ITEM},         // must be after mail
+    {"pet_aura", DTT_PET_TABLE},           // must be after character_pet
+    {"pet_spell", DTT_PET_TABLE},          // must be after character_pet
+    {"pet_spell_cooldown", DTT_PET_TABLE}, // must be after character_pet
+    {"item_instance",
+     DTT_ITEM}, // must be after character_inventory and mail_items
+    {"character_gifts", DTT_ITEM_GIFT} // must be after item_instance
 };
 
 uint32 const DUMP_TABLE_COUNT = std::extent<decltype(DumpTables)>::value;
 
 // helper class to dump sql queries to a printable string
-class StringTransaction
-{
+class StringTransaction {
 public:
-    StringTransaction() : _buf() { }
+    StringTransaction() : _buf() {}
 
     void Append(char const* sql)
     {
@@ -135,28 +129,23 @@ public:
         _buf += oss.str();
     }
 
-    char const* GetBuffer() const
-    {
-        return _buf.c_str();
-    }
+    char const* GetBuffer() const { return _buf.c_str(); }
 
 private:
     std::string _buf;
 };
 
 // dynamic data, loaded at startup
-struct TableField
-{
+struct TableField {
     std::string FieldName;
 
-    GuidType FieldGuidType = GUID_TYPE_ACCOUNT;
-    bool IsDependentField = false;
+    GuidType FieldGuidType    = GUID_TYPE_ACCOUNT;
+    bool     IsDependentField = false;
 };
 
-struct TableStruct
-{
-    std::string TableName;
-    std::string WhereFieldName;
+struct TableStruct {
+    std::string             TableName;
+    std::string             WhereFieldName;
     std::vector<TableField> TableFields;
 
     // for lookup
@@ -165,28 +154,34 @@ struct TableStruct
 
 std::vector<TableStruct> CharacterTables;
 
-inline bool StringsEqualCaseInsensitive(std::string const& left, std::string const& right)
+inline bool StringsEqualCaseInsensitive(std::string const& left,
+                                        std::string const& right)
 {
     std::string upperLeftString = left;
-    bool leftResult = Utf8ToUpperOnlyLatin(upperLeftString);
+    bool        leftResult      = Utf8ToUpperOnlyLatin(upperLeftString);
     ASSERT(leftResult);
 
     std::string upperRightString = right;
-    bool rightResult = Utf8ToUpperOnlyLatin(upperRightString);
+    bool        rightResult      = Utf8ToUpperOnlyLatin(upperRightString);
     ASSERT(rightResult);
 
     return upperLeftString == upperRightString;
 }
 
-inline auto FindColumnByName(TableStruct& tableStruct, std::string const& columnName) -> decltype(tableStruct.TableFields.begin())
+inline auto FindColumnByName(TableStruct&       tableStruct,
+                             std::string const& columnName)
+    -> decltype(tableStruct.TableFields.begin())
 {
-    return std::find_if(tableStruct.TableFields.begin(), tableStruct.TableFields.end(), [columnName](TableField const& tableField) -> bool
-    {
-        return StringsEqualCaseInsensitive(tableField.FieldName, columnName);
-    });
+    return std::find_if(tableStruct.TableFields.begin(),
+                        tableStruct.TableFields.end(),
+                        [columnName](TableField const& tableField) -> bool {
+                            return StringsEqualCaseInsensitive(
+                                tableField.FieldName, columnName);
+                        });
 }
 
-inline int32 GetColumnIndexByName(TableStruct const& tableStruct, std::string const& columnName)
+inline int32 GetColumnIndexByName(TableStruct const& tableStruct,
+                                  std::string const& columnName)
 {
     auto itr = tableStruct.FieldIndices.find(columnName);
     if (itr == tableStruct.FieldIndices.end())
@@ -195,38 +190,48 @@ inline int32 GetColumnIndexByName(TableStruct const& tableStruct, std::string co
     return itr->second;
 }
 
-inline void MarkDependentColumn(TableStruct& tableStruct, std::string const& columnName, GuidType dependentType)
+inline void MarkDependentColumn(TableStruct&       tableStruct,
+                                std::string const& columnName,
+                                GuidType           dependentType)
 {
     auto itr = FindColumnByName(tableStruct, columnName);
-    if (itr == tableStruct.TableFields.end())
-    {
-        LOG_FATAL("server.loading", "Column `{}` declared in table `{}` marked as dependent but doesn't exist, PlayerDump will not work properly, please update table definitions",
-            columnName, tableStruct.TableName);
+    if (itr == tableStruct.TableFields.end()) {
+        LOG_FATAL("server.loading",
+                  "Column `{}` declared in table `{}` marked as dependent but "
+                  "doesn't exist, PlayerDump will not work properly, please "
+                  "update table definitions",
+                  columnName,
+                  tableStruct.TableName);
         ABORT();
         return;
     }
 
-    if (itr->IsDependentField)
-    {
-        LOG_FATAL("server.loading", "Attempt to mark column `{}` in table `{}` as dependent column but already marked! please check your code.",
-            columnName, tableStruct.TableName);
+    if (itr->IsDependentField) {
+        LOG_FATAL("server.loading",
+                  "Attempt to mark column `{}` in table `{}` as dependent "
+                  "column but already marked! please check your code.",
+                  columnName,
+                  tableStruct.TableName);
         ABORT();
         return;
     }
 
     itr->IsDependentField = true;
-    itr->FieldGuidType = dependentType;
+    itr->FieldGuidType    = dependentType;
 }
 
-inline void MarkWhereField(TableStruct& tableStruct, std::string const& whereField)
+inline void MarkWhereField(TableStruct&       tableStruct,
+                           std::string const& whereField)
 {
     ASSERT(tableStruct.WhereFieldName.empty());
 
     auto whereFieldItr = FindColumnByName(tableStruct, whereField);
-    if (whereFieldItr == tableStruct.TableFields.end())
-    {
-        LOG_FATAL("server.loading", "Column name `{}` set as 'WHERE' column for table `{}` doesn't exist. PlayerDump won't work properly",
-            whereField, tableStruct.TableName);
+    if (whereFieldItr == tableStruct.TableFields.end()) {
+        LOG_FATAL("server.loading",
+                  "Column name `{}` set as 'WHERE' column for table `{}` "
+                  "doesn't exist. PlayerDump won't work properly",
+                  whereField,
+                  tableStruct.TableName);
         ABORT();
         return;
     }
@@ -236,10 +241,13 @@ inline void MarkWhereField(TableStruct& tableStruct, std::string const& whereFie
 
 inline void AssertBaseTable(BaseTable const& baseTable)
 {
-    auto itr = std::find_if(CharacterTables.begin(), CharacterTables.end(), [baseTable](TableStruct const& tableStruct) -> bool
-    {
-        return StringsEqualCaseInsensitive(tableStruct.TableName, baseTable.TableName);
-    });
+    auto itr =
+        std::find_if(CharacterTables.begin(),
+                     CharacterTables.end(),
+                     [baseTable](TableStruct const& tableStruct) -> bool {
+                         return StringsEqualCaseInsensitive(
+                             tableStruct.TableName, baseTable.TableName);
+                     });
 
     ASSERT(itr != CharacterTables.end());
 
@@ -254,18 +262,17 @@ void PlayerDump::InitializeTables()
 {
     uint32 oldMSTime = getMSTime();
 
-    for (DumpTable const& dumpTable : DumpTables)
-    {
+    for (DumpTable const& dumpTable : DumpTables) {
         TableStruct t;
         t.TableName = dumpTable.Name;
 
         QueryResult result = CharacterDatabase.Query("DESC {}", dumpTable.Name);
-        // prepared statement is correct (checked at startup) so table must exist
+        // prepared statement is correct (checked at startup) so table must
+        // exist
         ASSERT(result);
 
         int32 i = 0;
-        do
-        {
+        do {
             std::string columnName = (*result)[0].Get<std::string>();
             t.FieldIndices.emplace(columnName, i++);
 
@@ -278,8 +285,7 @@ void PlayerDump::InitializeTables()
             t.TableFields.emplace_back(std::move(f));
         } while (result->NextRow());
 
-        switch (dumpTable.Type)
-        {
+        switch (dumpTable.Type) {
         case DTT_CHARACTER:
             MarkWhereField(t, "guid");
 
@@ -302,8 +308,7 @@ void PlayerDump::InitializeTables()
             MarkDependentColumn(t, "setguid", GUID_TYPE_EQUIPMENT_SET);
 
             // item0 - item18
-            for (uint32 j = 0; j < EQUIPMENT_SLOT_END; ++j)
-            {
+            for (uint32 j = 0; j < EQUIPMENT_SLOT_END; ++j) {
                 std::string itColumn = Acore::StringFormat("item%u", j);
                 MarkDependentColumn(t, itColumn, GUID_TYPE_ITEM);
             }
@@ -352,7 +357,10 @@ void PlayerDump::InitializeTables()
             MarkDependentColumn(t, "guid", GUID_TYPE_PET);
             break;
         default:
-            LOG_FATAL("server.loading", "Wrong dump table type {}, probably added a new table type without updating code", uint32(dumpTable.Type));
+            LOG_FATAL("server.loading",
+                      "Wrong dump table type {}, probably added a new table "
+                      "type without updating code",
+                      uint32(dumpTable.Type));
             ABORT();
             return;
         }
@@ -361,11 +369,12 @@ void PlayerDump::InitializeTables()
     }
 
     // perform some sanity checks
-    for (TableStruct const& tableStruct : CharacterTables)
-    {
-        if (tableStruct.WhereFieldName.empty())
-        {
-            LOG_FATAL("server.loading", "Table `{}` defined in player dump doesn't have a WHERE query field", tableStruct.TableName);
+    for (TableStruct const& tableStruct : CharacterTables) {
+        if (tableStruct.WhereFieldName.empty()) {
+            LOG_FATAL("server.loading",
+                      "Table `{}` defined in player dump doesn't have a WHERE "
+                      "query field",
+                      tableStruct.TableName);
             ABORT();
         }
     }
@@ -375,12 +384,18 @@ void PlayerDump::InitializeTables()
 
     ASSERT(CharacterTables.size() == DUMP_TABLE_COUNT);
 
-    LOG_INFO("server.loading", ">> Initialized Tables For PlayerDump in {} ms.", GetMSTimeDiffToNow(oldMSTime));
+    LOG_INFO("server.loading",
+             ">> Initialized Tables For PlayerDump in {} ms.",
+             GetMSTimeDiffToNow(oldMSTime));
     LOG_INFO("server.loading", " ");
 }
 
 // Low level functions
-inline bool FindColumn(TableStruct const& ts, std::string const& str, std::string const& column, std::string::size_type& s, std::string::size_type& e)
+inline bool FindColumn(TableStruct const&      ts,
+                       std::string const&      str,
+                       std::string const&      column,
+                       std::string::size_type& s,
+                       std::string::size_type& e)
 {
     int32 columnIndex = GetColumnIndexByName(ts, column);
     if (columnIndex == -1)
@@ -394,17 +409,14 @@ inline bool FindColumn(TableStruct const& ts, std::string const& str, std::strin
         return false;
     s += 9;
 
-    do
-    {
+    do {
         e = str.find('\'', s);
         if (e == std::string::npos)
             return false;
     } while (str[e - 1] == '\\');
 
-    for (int32 i = 1; i < columnIndex; ++i)
-    {
-        do
-        {
+    for (int32 i = 1; i < columnIndex; ++i) {
+        do {
             // length of "', '"
             s = e + 4;
             e = str.find('\'', s);
@@ -419,43 +431,50 @@ inline std::string GetTableName(std::string const& str)
 {
     // length of "INSERT INTO `"
     static std::string::size_type const s = 13;
-    std::string::size_type e = str.find('`', s);
+    std::string::size_type              e = str.find('`', s);
     if (e == std::string::npos)
         return "";
 
     return str.substr(s, e - s);
 }
 
-inline bool ValidateFields(TableStruct const& ts, std::string const& str, size_t lineNumber)
+inline bool
+ValidateFields(TableStruct const& ts, std::string const& str, size_t lineNumber)
 {
     std::string::size_type s = str.find("` VALUES (");
     if (s != std::string::npos) // old dump format (no column names)
         return true;
 
-    // new format has insert with columns, need validation else we risk executing an invalid query
+    // new format has insert with columns, need validation else we risk
+    // executing an invalid query
     s = str.find("` (`");
-    if (s == std::string::npos)
-    {
-        LOG_ERROR("misc", "LoadPlayerDump: (line {}) dump format not recognized.", lineNumber);
+    if (s == std::string::npos) {
+        LOG_ERROR("misc",
+                  "LoadPlayerDump: (line {}) dump format not recognized.",
+                  lineNumber);
         return false;
     }
     s += 4;
 
     std::string::size_type valPos = str.find("VALUES ('");
-    std::string::size_type e = str.find('`', s);
-    if (e == std::string::npos || valPos == std::string::npos)
-    {
-        LOG_ERROR("misc", "LoadPlayerDump: (line {}) unexpected end of line", lineNumber);
+    std::string::size_type e      = str.find('`', s);
+    if (e == std::string::npos || valPos == std::string::npos) {
+        LOG_ERROR("misc",
+                  "LoadPlayerDump: (line {}) unexpected end of line",
+                  lineNumber);
         return false;
     }
 
-    do
-    {
-        std::string column = str.substr(s, e - s);
-        int32 columnIndex = GetColumnIndexByName(ts, column);
-        if (columnIndex == -1)
-        {
-            LOG_ERROR("misc", "LoadPlayerDump: (line {}) unknown column name `{}` for table `{}`, aborting due to incompatible DB structure.", lineNumber, column, ts.TableName);
+    do {
+        std::string column      = str.substr(s, e - s);
+        int32       columnIndex = GetColumnIndexByName(ts, column);
+        if (columnIndex == -1) {
+            LOG_ERROR("misc",
+                      "LoadPlayerDump: (line {}) unknown column name `{}` for "
+                      "table `{}`, aborting due to incompatible DB structure.",
+                      lineNumber,
+                      column,
+                      ts.TableName);
             return false;
         }
 
@@ -467,20 +486,25 @@ inline bool ValidateFields(TableStruct const& ts, std::string const& str, size_t
     return true;
 }
 
-inline bool ChangeColumn(TableStruct const& ts, std::string& str, std::string const& column, std::string const& with, bool allowZero = false)
+inline bool ChangeColumn(TableStruct const& ts,
+                         std::string&       str,
+                         std::string const& column,
+                         std::string const& with,
+                         bool               allowZero = false)
 {
     std::string::size_type s, e;
     if (!FindColumn(ts, str, column, s, e))
         return false;
 
     if (allowZero && str.substr(s, e - s) == "0")
-        return true;                                        // not an error
+        return true; // not an error
 
     str.replace(s, e - s, with);
     return true;
 }
 
-inline std::string GetColumn(TableStruct const& ts, std::string& str, std::string const& column)
+inline std::string
+GetColumn(TableStruct const& ts, std::string& str, std::string const& column)
 {
     std::string::size_type s, e;
     if (!FindColumn(ts, str, column, s, e))
@@ -489,8 +513,12 @@ inline std::string GetColumn(TableStruct const& ts, std::string& str, std::strin
     return str.substr(s, e - s);
 }
 
-template <typename T, template<class, class, class...> class MapType, class... Rest>
-inline T RegisterNewGuid(T oldGuid, MapType<T, T, Rest...>& guidMap, T guidOffset)
+template <typename T,
+          template <class, class, class...>
+          class MapType,
+          class... Rest>
+inline T
+RegisterNewGuid(T oldGuid, MapType<T, T, Rest...>& guidMap, T guidOffset)
 {
     auto itr = guidMap.find(oldGuid);
     if (itr != guidMap.end())
@@ -501,31 +529,40 @@ inline T RegisterNewGuid(T oldGuid, MapType<T, T, Rest...>& guidMap, T guidOffse
     return newguid;
 }
 
-template <typename T, template<class, class, class...> class MapType, class... Rest>
-inline bool ChangeGuid(TableStruct const& ts, std::string& str, std::string const& column, MapType<T, T, Rest...>& guidMap, T guidOffset, bool allowZero = false)
+template <typename T,
+          template <class, class, class...>
+          class MapType,
+          class... Rest>
+inline bool ChangeGuid(TableStruct const&      ts,
+                       std::string&            str,
+                       std::string const&      column,
+                       MapType<T, T, Rest...>& guidMap,
+                       T                       guidOffset,
+                       bool                    allowZero = false)
 {
     T oldGuid(*Acore::StringTo<uint64>(GetColumn(ts, str, column)));
     if (allowZero && !oldGuid)
-        return true;                                        // not an error
+        return true; // not an error
 
     std::string chritem;
-    T newGuid = RegisterNewGuid(oldGuid, guidMap, guidOffset);
-    chritem = std::to_string(newGuid);
+    T           newGuid = RegisterNewGuid(oldGuid, guidMap, guidOffset);
+    chritem             = std::to_string(newGuid);
 
     return ChangeColumn(ts, str, column, chritem, allowZero);
 }
 
-inline void AppendTableDump(StringTransaction& trans, TableStruct const& tableStruct, QueryResult result)
+inline void AppendTableDump(StringTransaction& trans,
+                            TableStruct const& tableStruct,
+                            QueryResult        result)
 {
     if (!result)
         return;
 
-    do
-    {
+    do {
         std::ostringstream ss;
         ss << "INSERT INTO `" << tableStruct.TableName << "` (";
-        for (auto itr = tableStruct.TableFields.begin(); itr != tableStruct.TableFields.end();)
-        {
+        for (auto itr = tableStruct.TableFields.begin();
+             itr != tableStruct.TableFields.end();) {
             ss << '`' << itr->FieldName << '`';
             ++itr;
 
@@ -535,18 +572,16 @@ inline void AppendTableDump(StringTransaction& trans, TableStruct const& tableSt
         ss << ") VALUES (";
 
         uint32 const fieldSize = uint32(tableStruct.TableFields.size());
-        Field* fields = result->Fetch();
+        Field*       fields    = result->Fetch();
 
-        for (uint32 i = 0; i < fieldSize;)
-        {
+        for (uint32 i = 0; i < fieldSize;) {
             std::string cString = fields[i].Get<std::string>();
             ++i;
 
             // null pointer -> we have null
             if (cString.empty())
                 ss << "'NULL'";
-            else
-            {
+            else {
                 std::string s(cString);
                 CharacterDatabase.EscapeString(s);
                 ss << '\'' << s << '\'';
@@ -561,24 +596,25 @@ inline void AppendTableDump(StringTransaction& trans, TableStruct const& tableSt
     } while (result->NextRow());
 }
 
-inline std::string GenerateWhereStr(std::string const& field, ObjectGuid::LowType guid)
+inline std::string GenerateWhereStr(std::string const&  field,
+                                    ObjectGuid::LowType guid)
 {
     std::ostringstream whereStr;
     whereStr << field << " = '" << guid << '\'';
     return whereStr.str();
 }
 
-template <typename T, template<class, class...> class SetType, class... Rest>
-inline std::string GenerateWhereStr(std::string const& field, SetType<T, Rest...> const& guidSet)
+template <typename T, template <class, class...> class SetType, class... Rest>
+inline std::string GenerateWhereStr(std::string const&         field,
+                                    SetType<T, Rest...> const& guidSet)
 {
     std::ostringstream whereStr;
     whereStr << field << " IN ('";
-    for (auto itr = guidSet.begin(); itr != guidSet.end();)
-    {
+    for (auto itr = guidSet.begin(); itr != guidSet.end();) {
         whereStr << *itr;
         ++itr;
 
-        if (whereStr.str().size() > MAX_QUERY_LEN - 50)      // near to max query
+        if (whereStr.str().size() > MAX_QUERY_LEN - 50) // near to max query
             break;
 
         if (itr != guidSet.end())
@@ -591,10 +627,8 @@ inline std::string GenerateWhereStr(std::string const& field, SetType<T, Rest...
 // Writing - High-level functions
 void PlayerDumpWriter::PopulateGuids(ObjectGuid::LowType guid)
 {
-    for (BaseTable const& baseTable : BaseTables)
-    {
-        switch (baseTable.StoredType)
-        {
+    for (BaseTable const& baseTable : BaseTables) {
+        switch (baseTable.StoredType) {
         case GUID_TYPE_ITEM:
         case GUID_TYPE_MAIL:
         case GUID_TYPE_PET:
@@ -605,20 +639,24 @@ void PlayerDumpWriter::PopulateGuids(ObjectGuid::LowType guid)
         }
 
         std::string whereStr = GenerateWhereStr(baseTable.PlayerGuid, guid);
-        QueryResult result = CharacterDatabase.Query("SELECT {} FROM {} WHERE {}", baseTable.PrimaryKey, baseTable.TableName, whereStr);
+        QueryResult result =
+            CharacterDatabase.Query("SELECT {} FROM {} WHERE {}",
+                                    baseTable.PrimaryKey,
+                                    baseTable.TableName,
+                                    whereStr);
         if (!result)
             continue;
 
-        do
-        {
-            switch (baseTable.StoredType)
-            {
+        do {
+            switch (baseTable.StoredType) {
             case GUID_TYPE_ITEM:
-                if (ObjectGuid::LowType itemLowGuid = (*result)[0].Get<uint32>())
+                if (ObjectGuid::LowType itemLowGuid =
+                        (*result)[0].Get<uint32>())
                     _items.insert(itemLowGuid);
                 break;
             case GUID_TYPE_MAIL:
-                if (ObjectGuid::LowType mailLowGuid = (*result)[0].Get<uint32>())
+                if (ObjectGuid::LowType mailLowGuid =
+                        (*result)[0].Get<uint32>())
                     _mails.insert(mailLowGuid);
                 break;
             case GUID_TYPE_PET:
@@ -636,11 +674,13 @@ void PlayerDumpWriter::PopulateGuids(ObjectGuid::LowType guid)
     }
 }
 
-bool PlayerDumpWriter::AppendTable(StringTransaction& trans, ObjectGuid::LowType guid, TableStruct const& tableStruct, DumpTable const& dumpTable)
+bool PlayerDumpWriter::AppendTable(StringTransaction&  trans,
+                                   ObjectGuid::LowType guid,
+                                   TableStruct const&  tableStruct,
+                                   DumpTable const&    dumpTable)
 {
     std::string whereStr;
-    switch (dumpTable.Type)
-    {
+    switch (dumpTable.Type) {
     case DTT_ITEM:
     case DTT_ITEM_GIFT:
         if (_items.empty())
@@ -672,14 +712,14 @@ bool PlayerDumpWriter::AppendTable(StringTransaction& trans, ObjectGuid::LowType
         break;
     }
 
-    QueryResult result = CharacterDatabase.Query("SELECT * FROM {} WHERE {}", dumpTable.Name, whereStr);
-    switch (dumpTable.Type)
-    {
+    QueryResult result = CharacterDatabase.Query(
+        "SELECT * FROM {} WHERE {}", dumpTable.Name, whereStr);
+    switch (dumpTable.Type) {
     case DTT_CHARACTER:
-        if (result)
-        {
+        if (result) {
             // characters.deleteInfos_Account - if filled error
-            int32 index = GetColumnIndexByName(tableStruct, "deleteInfos_Account");
+            int32 index =
+                GetColumnIndexByName(tableStruct, "deleteInfos_Account");
             ASSERT(index != -1); // checked at startup
 
             if ((*result)[index].Get<uint32>())
@@ -696,8 +736,10 @@ bool PlayerDumpWriter::AppendTable(StringTransaction& trans, ObjectGuid::LowType
 
 bool PlayerDumpWriter::GetDump(ObjectGuid::LowType guid, std::string& dump)
 {
-    dump = "IMPORTANT NOTE: THIS DUMPFILE IS MADE FOR USE WITH THE 'PDUMP' COMMAND ONLY - EITHER THROUGH INGAME CHAT OR ON CONSOLE!\n";
-    dump += "IMPORTANT NOTE: DO NOT apply it directly - it will irreversibly DAMAGE and CORRUPT your database! You have been warned!\n\n";
+    dump = "IMPORTANT NOTE: THIS DUMPFILE IS MADE FOR USE WITH THE 'PDUMP' "
+           "COMMAND ONLY - EITHER THROUGH INGAME CHAT OR ON CONSOLE!\n";
+    dump += "IMPORTANT NOTE: DO NOT apply it directly - it will irreversibly "
+            "DAMAGE and CORRUPT your database! You have been warned!\n\n";
 
     StringTransaction trans;
 
@@ -715,14 +757,14 @@ bool PlayerDumpWriter::GetDump(ObjectGuid::LowType guid, std::string& dump)
     return true;
 }
 
-DumpReturn PlayerDumpWriter::WriteDumpToFile(std::string const& file, ObjectGuid::LowType guid)
+DumpReturn PlayerDumpWriter::WriteDumpToFile(std::string const&  file,
+                                             ObjectGuid::LowType guid)
 {
     if (sWorld->getBoolConfig(CONFIG_PDUMP_NO_PATHS))
         if (strchr(file.c_str(), '\\') || strchr(file.c_str(), '/'))
             return DUMP_FILE_OPEN_ERROR;
 
-    if (sWorld->getBoolConfig(CONFIG_PDUMP_NO_OVERWRITE))
-    {
+    if (sWorld->getBoolConfig(CONFIG_PDUMP_NO_OVERWRITE)) {
         // check if file exists already
         if (GetFileHandle(file.c_str(), "r"))
             return DUMP_FILE_OPEN_ERROR;
@@ -732,7 +774,7 @@ DumpReturn PlayerDumpWriter::WriteDumpToFile(std::string const& file, ObjectGuid
     if (!fout)
         return DUMP_FILE_OPEN_ERROR;
 
-    DumpReturn ret = DUMP_SUCCESS;
+    DumpReturn  ret = DUMP_SUCCESS;
     std::string dump;
     if (!GetDump(guid, dump))
         ret = DUMP_CHARACTER_DELETED;
@@ -741,7 +783,8 @@ DumpReturn PlayerDumpWriter::WriteDumpToFile(std::string const& file, ObjectGuid
     return ret;
 }
 
-DumpReturn PlayerDumpWriter::WriteDumpToString(std::string& dump, ObjectGuid::LowType guid)
+DumpReturn PlayerDumpWriter::WriteDumpToString(std::string&        dump,
+                                               ObjectGuid::LowType guid)
 {
     DumpReturn ret = DUMP_SUCCESS;
     if (!GetDump(guid, dump))
@@ -753,15 +796,17 @@ DumpReturn PlayerDumpWriter::WriteDumpToString(std::string& dump, ObjectGuid::Lo
 inline void FixNULLfields(std::string& line)
 {
     static std::string const NullString("'NULL'");
-    size_t pos = line.find(NullString);
-    while (pos != std::string::npos)
-    {
+    size_t                   pos = line.find(NullString);
+    while (pos != std::string::npos) {
         line.replace(pos, NullString.length(), "NULL");
         pos = line.find(NullString);
     }
 }
 
-DumpReturn PlayerDumpReader::LoadDump(std::istream& input, uint32 account, std::string name, ObjectGuid::LowType guid)
+DumpReturn PlayerDumpReader::LoadDump(std::istream&       input,
+                                      uint32              account,
+                                      std::string         name,
+                                      ObjectGuid::LowType guid)
 {
     uint32 charcount = AccountMgr::GetCharactersCount(account);
     if (charcount >= 10)
@@ -771,40 +816,44 @@ DumpReturn PlayerDumpReader::LoadDump(std::istream& input, uint32 account, std::
 
     // make sure the same guid doesn't already exist and is safe to use
     bool incHighest = true;
-    if (guid && guid < sObjectMgr->GetGenerator<HighGuid::Player>().GetNextAfterMaxUsed())
-    {
-        CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHECK_GUID);
+    if (guid && guid < sObjectMgr->GetGenerator<HighGuid::Player>()
+                           .GetNextAfterMaxUsed()) {
+        CharacterDatabasePreparedStatement* stmt =
+            CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHECK_GUID);
         stmt->SetData(0, guid);
 
         if (PreparedQueryResult result = CharacterDatabase.Query(stmt))
-            guid = sObjectMgr->GetGenerator<HighGuid::Player>().GetNextAfterMaxUsed();                     // use first free if exists
+            guid = sObjectMgr->GetGenerator<HighGuid::Player>()
+                       .GetNextAfterMaxUsed(); // use first free if exists
         else
             incHighest = false;
     }
     else
-        guid = sObjectMgr->GetGenerator<HighGuid::Player>().GetNextAfterMaxUsed();
+        guid =
+            sObjectMgr->GetGenerator<HighGuid::Player>().GetNextAfterMaxUsed();
 
     // normalize the name if specified and check if it exists
     if (!normalizePlayerName(name))
         name.clear();
 
-    if (ObjectMgr::CheckPlayerName(name, true) == CHAR_NAME_SUCCESS)
-    {
-        CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHECK_NAME);
+    if (ObjectMgr::CheckPlayerName(name, true) == CHAR_NAME_SUCCESS) {
+        CharacterDatabasePreparedStatement* stmt =
+            CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHECK_NAME);
         stmt->SetData(0, name);
 
         if (PreparedQueryResult result = CharacterDatabase.Query(stmt))
-            name.clear();                                       // use the one from the dump
+            name.clear(); // use the one from the dump
     }
     else
         name.clear();
 
     // name encoded or empty
-    newguid = std::to_string(guid);
+    newguid    = std::to_string(guid);
     chraccount = std::to_string(account);
 
     std::map<ObjectGuid::LowType, ObjectGuid::LowType> items;
-    ObjectGuid::LowType itemLowGuidOffset = sObjectMgr->GetGenerator<HighGuid::Item>().GetNextAfterMaxUsed();
+    ObjectGuid::LowType                                itemLowGuidOffset =
+        sObjectMgr->GetGenerator<HighGuid::Item>().GetNextAfterMaxUsed();
 
     std::map<ObjectGuid::LowType, ObjectGuid::LowType> mails;
     ObjectGuid::LowType mailLowGuidOffset = sObjectMgr->_mailId;
@@ -817,17 +866,16 @@ DumpReturn PlayerDumpReader::LoadDump(std::istream& input, uint32 account, std::
 
     std::string line;
 
-    uint8 gender = GENDER_NONE;
-    uint8 race = RACE_NONE;
+    uint8 gender      = GENDER_NONE;
+    uint8 race        = RACE_NONE;
     uint8 playerClass = CLASS_NONE;
-    uint8 level = 1;
+    uint8 level       = 1;
 
     // for logs
     size_t lineNumber = 0;
 
     CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
-    while (std::getline(input, line))
-    {
+    while (std::getline(input, line)) {
         ++lineNumber;
 
         // skip empty strings
@@ -842,26 +890,27 @@ DumpReturn PlayerDumpReader::LoadDump(std::istream& input, uint32 account, std::
 
         // determine table name and load type
         std::string tn = GetTableName(line);
-        if (tn.empty())
-        {
-            LOG_ERROR("misc", "LoadPlayerDump: (line {}) Can't extract table name!", lineNumber);
+        if (tn.empty()) {
+            LOG_ERROR("misc",
+                      "LoadPlayerDump: (line {}) Can't extract table name!",
+                      lineNumber);
             return DUMP_FILE_BROKEN;
         }
 
         DumpTableType type = DTT_CHARACTER;
-        uint32 i;
-        for (i = 0; i < DUMP_TABLE_COUNT; ++i)
-        {
-            if (tn == DumpTables[i].Name)
-            {
+        uint32        i;
+        for (i = 0; i < DUMP_TABLE_COUNT; ++i) {
+            if (tn == DumpTables[i].Name) {
                 type = DumpTables[i].Type;
                 break;
             }
         }
 
-        if (i == DUMP_TABLE_COUNT)
-        {
-            LOG_ERROR("misc", "LoadPlayerDump: (line {}) Unknown table: `{}`!", lineNumber, tn);
+        if (i == DUMP_TABLE_COUNT) {
+            LOG_ERROR("misc",
+                      "LoadPlayerDump: (line {}) Unknown table: `{}`!",
+                      lineNumber,
+                      tn);
             return DUMP_FILE_BROKEN;
         }
 
@@ -870,13 +919,11 @@ DumpReturn PlayerDumpReader::LoadDump(std::istream& input, uint32 account, std::
             return DUMP_FILE_BROKEN;
 
         // per field guid offsetting
-        for (TableField const& field : ts.TableFields)
-        {
+        for (TableField const& field : ts.TableFields) {
             if (!field.IsDependentField)
                 continue;
 
-            switch (field.FieldGuidType)
-            {
+            switch (field.FieldGuidType) {
             case GUID_TYPE_ACCOUNT:
                 if (!ChangeColumn(ts, line, field.FieldName, chraccount))
                     return DUMP_FILE_BROKEN;
@@ -886,23 +933,33 @@ DumpReturn PlayerDumpReader::LoadDump(std::istream& input, uint32 account, std::
                     return DUMP_FILE_BROKEN;
                 break;
             case GUID_TYPE_PET:
-                if (!ChangeGuid(ts, line, field.FieldName, petIds, petLowGuidOffset))
+                if (!ChangeGuid(
+                        ts, line, field.FieldName, petIds, petLowGuidOffset))
                     return DUMP_FILE_BROKEN;
                 break;
             case GUID_TYPE_MAIL:
-                if (!ChangeGuid(ts, line, field.FieldName, mails, mailLowGuidOffset))
+                if (!ChangeGuid(
+                        ts, line, field.FieldName, mails, mailLowGuidOffset))
                     return DUMP_FILE_BROKEN;
                 break;
             case GUID_TYPE_ITEM:
-                if (!ChangeGuid(ts, line, field.FieldName, items, itemLowGuidOffset, true))
+                if (!ChangeGuid(ts,
+                                line,
+                                field.FieldName,
+                                items,
+                                itemLowGuidOffset,
+                                true))
                     return DUMP_FILE_BROKEN;
                 break;
             case GUID_TYPE_EQUIPMENT_SET:
-                if (!ChangeGuid(ts, line, field.FieldName, equipmentSetIds, equipmentSetGuidOffset))
+                if (!ChangeGuid(ts,
+                                line,
+                                field.FieldName,
+                                equipmentSetIds,
+                                equipmentSetGuidOffset))
                     return DUMP_FILE_BROKEN;
                 break;
-            case GUID_TYPE_NULL:
-            {
+            case GUID_TYPE_NULL: {
                 static std::string const NullString("NULL");
                 if (!ChangeColumn(ts, line, field.FieldName, NullString))
                     return DUMP_FILE_BROKEN;
@@ -912,21 +969,22 @@ DumpReturn PlayerDumpReader::LoadDump(std::istream& input, uint32 account, std::
         }
 
         // extra modifications for other tables
-        switch (type)
-        {
-        case DTT_CHARACTER:
-        {
+        switch (type) {
+        case DTT_CHARACTER: {
             race = *Acore::StringTo<uint32>(GetColumn(ts, line, "race"));
-            playerClass = *Acore::StringTo<uint32>(GetColumn(ts, line, "class"));
+            playerClass =
+                *Acore::StringTo<uint32>(GetColumn(ts, line, "class"));
             gender = *Acore::StringTo<uint32>(GetColumn(ts, line, "gender"));
-            level = *Acore::StringTo<uint32>(GetColumn(ts, line, "level"));
-            if (name.empty())
-            {
+            level  = *Acore::StringTo<uint32>(GetColumn(ts, line, "level"));
+            if (name.empty()) {
                 // generate a temporary name
                 std::string guidPart = Acore::StringFormat("%X", guid);
-                std::size_t maxCharsFromOriginalName = MAX_PLAYER_NAME - guidPart.length();
+                std::size_t maxCharsFromOriginalName =
+                    MAX_PLAYER_NAME - guidPart.length();
 
-                name = GetColumn(ts, line, "name").substr(0, maxCharsFromOriginalName) + guidPart;
+                name = GetColumn(ts, line, "name")
+                           .substr(0, maxCharsFromOriginalName) +
+                       guidPart;
 
                 // characters.at_login set to "rename on login"
                 if (!ChangeColumn(ts, line, "name", name))
@@ -953,9 +1011,17 @@ DumpReturn PlayerDumpReader::LoadDump(std::istream& input, uint32 account, std::
     CharacterDatabase.CommitTransaction(trans);
 
     // in case of name conflict player has to rename at login anyway
-    sCharacterCache->AddCharacterCacheEntry(ObjectGuid(HighGuid::Player, guid), account, name, gender, race, playerClass, level);
+    sCharacterCache->AddCharacterCacheEntry(ObjectGuid(HighGuid::Player, guid),
+                                            account,
+                                            name,
+                                            gender,
+                                            race,
+                                            playerClass,
+                                            level);
 
-    sObjectMgr->GetGenerator<HighGuid::Item>().Set(sObjectMgr->GetGenerator<HighGuid::Item>().GetNextAfterMaxUsed() + items.size());
+    sObjectMgr->GetGenerator<HighGuid::Item>().Set(
+        sObjectMgr->GetGenerator<HighGuid::Item>().GetNextAfterMaxUsed() +
+        items.size());
     sObjectMgr->_mailId += mails.size();
     sObjectMgr->_hiPetNumber += petIds.size();
     sObjectMgr->_equipmentSetGuid += equipmentSetIds.size();
@@ -968,13 +1034,19 @@ DumpReturn PlayerDumpReader::LoadDump(std::istream& input, uint32 account, std::
     return DUMP_SUCCESS;
 }
 
-DumpReturn PlayerDumpReader::LoadDumpFromString(std::string const& dump, uint32 account, std::string name, ObjectGuid::LowType guid)
+DumpReturn PlayerDumpReader::LoadDumpFromString(std::string const&  dump,
+                                                uint32              account,
+                                                std::string         name,
+                                                ObjectGuid::LowType guid)
 {
     std::istringstream input(dump);
     return LoadDump(input, account, name, guid);
 }
 
-DumpReturn PlayerDumpReader::LoadDumpFromFile(std::string const& file, uint32 account, std::string name, ObjectGuid::LowType guid)
+DumpReturn PlayerDumpReader::LoadDumpFromFile(std::string const&  file,
+                                              uint32              account,
+                                              std::string         name,
+                                              ObjectGuid::LowType guid)
 {
     std::ifstream input(file);
     if (!input)

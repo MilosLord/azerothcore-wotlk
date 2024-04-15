@@ -1,8 +1,8 @@
 #ifndef JEMALLOC_PREAMBLE_H
 #define JEMALLOC_PREAMBLE_H
 
-#include "jemalloc_internal_defs.h"
 #include "jemalloc/internal/jemalloc_internal_decls.h"
+#include "jemalloc_internal_defs.h"
 
 #ifdef JEMALLOC_UTRACE
 #include <sys/ktrace.h>
@@ -10,15 +10,15 @@
 
 #define JEMALLOC_NO_DEMANGLE
 #ifdef JEMALLOC_JET
-#  undef JEMALLOC_IS_MALLOC
-#  define JEMALLOC_N(n) jet_##n
-#  include "jemalloc/internal/public_namespace.h"
-#  define JEMALLOC_NO_RENAME
-#  include "../jemalloc.h"
-#  undef JEMALLOC_NO_RENAME
+#undef JEMALLOC_IS_MALLOC
+#define JEMALLOC_N(n) jet_##n
+#include "jemalloc/internal/public_namespace.h"
+#define JEMALLOC_NO_RENAME
+#include "../jemalloc.h"
+#undef JEMALLOC_NO_RENAME
 #else
-#  define JEMALLOC_N(n) je_##n
-#  include "../jemalloc.h"
+#define JEMALLOC_N(n) je_##n
+#include "../jemalloc.h"
 #endif
 
 #if defined(JEMALLOC_OSATOMIC)
@@ -39,16 +39,16 @@
  * possible.
  */
 #ifndef JEMALLOC_NO_PRIVATE_NAMESPACE
-#  ifndef JEMALLOC_JET
-#    include "jemalloc/internal/private_namespace.h"
-#  else
-#    include "jemalloc/internal/private_namespace_jet.h"
-#  endif
+#ifndef JEMALLOC_JET
+#include "jemalloc/internal/private_namespace.h"
+#else
+#include "jemalloc/internal/private_namespace_jet.h"
+#endif
 #endif
 #include "jemalloc/internal/test_hooks.h"
 
 #ifdef JEMALLOC_DEFINE_MADVISE_FREE
-#  define JEMALLOC_MADV_FREE 8
+#define JEMALLOC_MADV_FREE 8
 #endif
 
 static const bool config_debug =
@@ -86,8 +86,8 @@ static const bool config_lazy_lock =
     false
 #endif
     ;
-static const char * const config_malloc_conf = JEMALLOC_CONFIG_MALLOC_CONF;
-static const bool config_prof =
+static const char* const config_malloc_conf = JEMALLOC_CONFIG_MALLOC_CONF;
+static const bool        config_prof =
 #ifdef JEMALLOC_PROF
     true
 #else

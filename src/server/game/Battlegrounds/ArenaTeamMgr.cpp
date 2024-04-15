@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -27,14 +28,16 @@
 
 ArenaTeamMgr::ArenaTeamMgr()
 {
-    NextArenaTeamId = 1;
-    LastArenaLogId = 0;
+    NextArenaTeamId     = 1;
+    LastArenaLogId      = 0;
     NextTempArenaTeamId = 0xFFF00000;
 }
 
 ArenaTeamMgr::~ArenaTeamMgr()
 {
-    for (ArenaTeamContainer::iterator itr = ArenaTeamStore.begin(); itr != ArenaTeamStore.end(); ++itr)
+    for (ArenaTeamContainer::iterator itr = ArenaTeamStore.begin();
+         itr != ArenaTeamStore.end();
+         ++itr)
         delete itr->second;
 }
 
@@ -54,36 +57,38 @@ ArenaTeam* ArenaTeamMgr::GetArenaTeamById(uint32 arenaTeamId) const
     return nullptr;
 }
 
-ArenaTeam* ArenaTeamMgr::GetArenaTeamByName(const std::string& arenaTeamName) const
+ArenaTeam*
+ArenaTeamMgr::GetArenaTeamByName(const std::string& arenaTeamName) const
 {
     std::string search = arenaTeamName;
     std::transform(search.begin(), search.end(), search.begin(), ::toupper);
-    for (ArenaTeamContainer::const_iterator itr = ArenaTeamStore.begin(); itr != ArenaTeamStore.end(); ++itr)
-    {
+    for (ArenaTeamContainer::const_iterator itr = ArenaTeamStore.begin();
+         itr != ArenaTeamStore.end();
+         ++itr) {
         std::string teamName = itr->second->GetName();
-        std::transform(teamName.begin(), teamName.end(), teamName.begin(), ::toupper);
-        if (search == teamName)
-        {
+        std::transform(
+            teamName.begin(), teamName.end(), teamName.begin(), ::toupper);
+        if (search == teamName) {
             return itr->second;
         }
     }
     return nullptr;
 }
 
-ArenaTeam* ArenaTeamMgr::GetArenaTeamByName(std::string const& arenaTeamName, const uint32 type) const
+ArenaTeam* ArenaTeamMgr::GetArenaTeamByName(std::string const& arenaTeamName,
+                                            const uint32       type) const
 {
     std::string search = arenaTeamName;
     std::transform(search.begin(), search.end(), search.begin(), ::toupper);
-    for (auto itr = ArenaTeamStore.begin(); itr != ArenaTeamStore.end(); ++itr)
-    {
-        if (itr->second->GetType() != type)
-        {
+    for (auto itr = ArenaTeamStore.begin(); itr != ArenaTeamStore.end();
+         ++itr) {
+        if (itr->second->GetType() != type) {
             continue;
         }
         std::string teamName = itr->second->GetName();
-        std::transform(teamName.begin(), teamName.end(), teamName.begin(), ::toupper);
-        if (search == teamName)
-        {
+        std::transform(
+            teamName.begin(), teamName.end(), teamName.begin(), ::toupper);
+        if (search == teamName) {
             return itr->second;
         }
     }
@@ -92,22 +97,24 @@ ArenaTeam* ArenaTeamMgr::GetArenaTeamByName(std::string const& arenaTeamName, co
 
 ArenaTeam* ArenaTeamMgr::GetArenaTeamByCaptain(ObjectGuid guid) const
 {
-    for (ArenaTeamContainer::const_iterator itr = ArenaTeamStore.begin(); itr != ArenaTeamStore.end(); ++itr)
-    {
-        if (itr->second->GetCaptain() == guid)
-        {
+    for (ArenaTeamContainer::const_iterator itr = ArenaTeamStore.begin();
+         itr != ArenaTeamStore.end();
+         ++itr) {
+        if (itr->second->GetCaptain() == guid) {
             return itr->second;
         }
     }
     return nullptr;
 }
 
-ArenaTeam* ArenaTeamMgr::GetArenaTeamByCaptain(ObjectGuid guid, const uint32 type) const
+ArenaTeam* ArenaTeamMgr::GetArenaTeamByCaptain(ObjectGuid   guid,
+                                               const uint32 type) const
 {
-    for (ArenaTeamContainer::const_iterator itr = ArenaTeamStore.begin(); itr != ArenaTeamStore.end(); ++itr)
-    {
-        if (itr->second->GetCaptain() == guid && itr->second->GetType() == type)
-        {
+    for (ArenaTeamContainer::const_iterator itr = ArenaTeamStore.begin();
+         itr != ArenaTeamStore.end();
+         ++itr) {
+        if (itr->second->GetCaptain() == guid &&
+            itr->second->GetType() == type) {
             return itr->second;
         }
     }
@@ -126,9 +133,10 @@ void ArenaTeamMgr::RemoveArenaTeam(uint32 arenaTeamId)
 
 uint32 ArenaTeamMgr::GenerateArenaTeamId()
 {
-    if (NextArenaTeamId >= MAX_ARENA_TEAM_ID)
-    {
-        LOG_ERROR("bg.arena", "Arena team ids overflow!! Can't continue, shutting down server. ");
+    if (NextArenaTeamId >= MAX_ARENA_TEAM_ID) {
+        LOG_ERROR(
+            "bg.arena",
+            "Arena team ids overflow!! Can't continue, shutting down server. ");
         World::StopNow(ERROR_EXIT_CODE);
     }
 
@@ -148,35 +156,45 @@ void ArenaTeamMgr::LoadArenaTeams()
     uint32 oldMSTime = getMSTime();
 
     // Clean out the trash before loading anything
-    CharacterDatabase.Execute("DELETE FROM arena_team_member WHERE arenaTeamId NOT IN (SELECT arenaTeamId FROM arena_team)");       // One-time query
+    CharacterDatabase.Execute(
+        "DELETE FROM arena_team_member WHERE arenaTeamId NOT IN (SELECT "
+        "arenaTeamId FROM arena_team)"); // One-time query
 
-    //                                                        0        1         2         3          4              5            6            7           8
-    QueryResult result = CharacterDatabase.Query("SELECT arenaTeamId, name, captainGuid, type, backgroundColor, emblemStyle, emblemColor, borderStyle, borderColor, "
-                         //      9        10        11         12           13        14
-                         "rating, weekGames, weekWins, seasonGames, seasonWins, `rank` FROM arena_team ORDER BY arenaTeamId ASC");
+    //                                                        0        1 2 3 4
+    //                                                        5            6 7 8
+    QueryResult result = CharacterDatabase.Query(
+        "SELECT arenaTeamId, name, captainGuid, type, backgroundColor, "
+        "emblemStyle, emblemColor, borderStyle, borderColor, "
+        //      9        10        11         12           13        14
+        "rating, weekGames, weekWins, seasonGames, seasonWins, `rank` FROM "
+        "arena_team ORDER BY arenaTeamId ASC");
 
-    if (!result)
-    {
-        LOG_WARN("server.loading", ">> Loaded 0 arena teams. DB table `arena_team` is empty!");
+    if (!result) {
+        LOG_WARN("server.loading",
+                 ">> Loaded 0 arena teams. DB table `arena_team` is empty!");
         LOG_INFO("server.loading", " ");
         return;
     }
 
     QueryResult result2 = CharacterDatabase.Query(
-                              //              0              1           2             3              4                 5          6     7          8                  9      10
-                              "SELECT arenaTeamId, atm.guid, atm.weekGames, atm.weekWins, atm.seasonGames, atm.seasonWins, c.name, class, personalRating, matchMakerRating, maxMMR FROM arena_team_member atm"
-                              " INNER JOIN arena_team ate USING (arenaTeamId)"
-                              " LEFT JOIN characters AS c ON atm.guid = c.guid"
-                              " LEFT JOIN character_arena_stats AS cas ON c.guid = cas.guid AND (cas.slot = 0 AND ate.type = 2 OR cas.slot = 1 AND ate.type = 3 OR cas.slot = 2 AND ate.type = 5)"
-                              " ORDER BY atm.arenateamid ASC");
+        //              0              1           2             3 4 5 6     7
+        //              8                  9      10
+        "SELECT arenaTeamId, atm.guid, atm.weekGames, atm.weekWins, "
+        "atm.seasonGames, atm.seasonWins, c.name, class, personalRating, "
+        "matchMakerRating, maxMMR FROM arena_team_member atm"
+        " INNER JOIN arena_team ate USING (arenaTeamId)"
+        " LEFT JOIN characters AS c ON atm.guid = c.guid"
+        " LEFT JOIN character_arena_stats AS cas ON c.guid = cas.guid AND "
+        "(cas.slot = 0 AND ate.type = 2 OR cas.slot = 1 AND ate.type = 3 OR "
+        "cas.slot = 2 AND ate.type = 5)"
+        " ORDER BY atm.arenateamid ASC");
 
     uint32 count = 0;
-    do
-    {
+    do {
         ArenaTeam* newArenaTeam = new ArenaTeam;
 
-        if (!newArenaTeam->LoadArenaTeamFromDB(result) || !newArenaTeam->LoadMembersFromDB(result2))
-        {
+        if (!newArenaTeam->LoadArenaTeamFromDB(result) ||
+            !newArenaTeam->LoadMembersFromDB(result2)) {
             newArenaTeam->Disband(nullptr);
             delete newArenaTeam;
             continue;
@@ -187,7 +205,10 @@ void ArenaTeamMgr::LoadArenaTeams()
         ++count;
     } while (result->NextRow());
 
-    LOG_INFO("server.loading", ">> Loaded {} arena teams in {} ms", count, GetMSTimeDiffToNow(oldMSTime));
+    LOG_INFO("server.loading",
+             ">> Loaded {} arena teams in {} ms",
+             count,
+             GetMSTimeDiffToNow(oldMSTime));
     LOG_INFO("server.loading", " ");
 }
 
@@ -198,13 +219,15 @@ void ArenaTeamMgr::DistributeArenaPoints()
 
     sWorld->SendWorldText(LANG_DIST_ARENA_POINTS_ONLINE_START);
 
-    // Temporary structure for storing maximum points to add values for all players
+    // Temporary structure for storing maximum points to add values for all
+    // players
     std::map<ObjectGuid, uint32> PlayerPoints;
 
     // At first update all points for all team members
-    for (ArenaTeamContainer::iterator teamItr = GetArenaTeamMapBegin(); teamItr != GetArenaTeamMapEnd(); ++teamItr)
-        if (ArenaTeam* at = teamItr->second)
-        {
+    for (ArenaTeamContainer::iterator teamItr = GetArenaTeamMapBegin();
+         teamItr != GetArenaTeamMapEnd();
+         ++teamItr)
+        if (ArenaTeam* at = teamItr->second) {
             at->UpdateArenaPointsHelper(PlayerPoints);
             sScriptMgr->OnBeforeUpdateArenaPoints(at, PlayerPoints);
         }
@@ -214,14 +237,17 @@ void ArenaTeamMgr::DistributeArenaPoints()
     CharacterDatabasePreparedStatement* stmt;
 
     // Cycle that gives points to all players
-    for (std::map<ObjectGuid, uint32>::iterator playerItr = PlayerPoints.begin(); playerItr != PlayerPoints.end(); ++playerItr)
-    {
+    for (std::map<ObjectGuid, uint32>::iterator playerItr =
+             PlayerPoints.begin();
+         playerItr != PlayerPoints.end();
+         ++playerItr) {
         // Add points to player if online
         if (Player* player = ObjectAccessor::FindPlayer(playerItr->first))
             player->ModifyArenaPoints(playerItr->second, trans);
-        else    // Update database
+        else // Update database
         {
-            stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_CHAR_ARENA_POINTS);
+            stmt = CharacterDatabase.GetPreparedStatement(
+                CHAR_UPD_CHAR_ARENA_POINTS);
             stmt->SetData(0, playerItr->second);
             stmt->SetData(1, playerItr->first.GetCounter());
             trans->Append(stmt);
@@ -235,10 +261,10 @@ void ArenaTeamMgr::DistributeArenaPoints()
     sWorld->SendWorldText(LANG_DIST_ARENA_POINTS_ONLINE_END);
 
     sWorld->SendWorldText(LANG_DIST_ARENA_POINTS_TEAM_START);
-    for (ArenaTeamContainer::iterator titr = GetArenaTeamMapBegin(); titr != GetArenaTeamMapEnd(); ++titr)
-    {
-        if (ArenaTeam* at = titr->second)
-        {
+    for (ArenaTeamContainer::iterator titr = GetArenaTeamMapBegin();
+         titr != GetArenaTeamMapEnd();
+         ++titr) {
+        if (ArenaTeam* at = titr->second) {
             if (at->FinishWeek())
                 at->SaveToDB(true);
 

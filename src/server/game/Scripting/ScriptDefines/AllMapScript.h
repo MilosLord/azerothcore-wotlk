@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,8 +21,7 @@
 
 #include "ScriptObject.h"
 
-class AllMapScript : public ScriptObject
-{
+class AllMapScript : public ScriptObject {
 protected:
     AllMapScript(const char* name);
 
@@ -32,7 +32,7 @@ public:
      * @param map Contains information about the Map
      * @param player Contains information about the Player
      */
-    virtual void OnPlayerEnterAll(Map* /*map*/, Player* /*player*/) { }
+    virtual void OnPlayerEnterAll(Map* /*map*/, Player* /*player*/) {}
 
     /**
      * @brief This hook called when a player leave any Map
@@ -40,7 +40,7 @@ public:
      * @param map Contains information about the Map
      * @param player Contains information about the Player
      */
-    virtual void OnPlayerLeaveAll(Map* /*map*/, Player* /*player*/) { }
+    virtual void OnPlayerLeaveAll(Map* /*map*/, Player* /*player*/) {}
 
     /**
      * @brief This hook called before create instance script
@@ -49,9 +49,16 @@ public:
      * @param instanceData Contains information about the WorldPacket
      * @param load if true loading instance save data
      * @param data Contains information about the instance save data
-     * @param completedEncounterMask Contains information about the completed encouter mask
+     * @param completedEncounterMask Contains information about the completed
+     * encouter mask
      */
-    virtual void OnBeforeCreateInstanceScript(InstanceMap* /*instanceMap*/, InstanceScript* /*instanceData*/, bool /*load*/, std::string /*data*/, uint32 /*completedEncounterMask*/) { }
+    virtual void OnBeforeCreateInstanceScript(InstanceMap* /*instanceMap*/,
+                                              InstanceScript* /*instanceData*/,
+                                              bool /*load*/,
+                                              std::string /*data*/,
+                                              uint32 /*completedEncounterMask*/)
+    {
+    }
 
     /**
      * @brief This hook called before destroy instance
@@ -59,21 +66,23 @@ public:
      * @param mapInstanced Contains information about the MapInstanced
      * @param map Contains information about the Map
      */
-    virtual void OnDestroyInstance(MapInstanced* /*mapInstanced*/, Map* /*map*/) { }
+    virtual void OnDestroyInstance(MapInstanced* /*mapInstanced*/, Map* /*map*/)
+    {
+    }
 
     /**
      * @brief This hook called before creating map
      *
      * @param map Contains information about the Map
      */
-    virtual void OnCreateMap(Map* /*map*/) { }
+    virtual void OnCreateMap(Map* /*map*/) {}
 
     /**
      * @brief This hook called before destroing map
      *
      * @param map Contains information about the Map
      */
-    virtual void OnDestroyMap(Map* /*map*/) { }
+    virtual void OnDestroyMap(Map* /*map*/) {}
 
     /**
      * @brief This hook called before updating map
@@ -81,7 +90,7 @@ public:
      * @param map Contains information about the Map
      * @param diff Contains information about the diff time
      */
-    virtual void OnMapUpdate(Map* /*map*/, uint32 /*diff*/) { }
+    virtual void OnMapUpdate(Map* /*map*/, uint32 /*diff*/) {}
 };
 
 #endif

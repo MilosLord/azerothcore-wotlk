@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -35,29 +36,25 @@ void WorldSession::HandleAttackSwingOpcode(WorldPacket& recvData)
 
     Unit* pEnemy = ObjectAccessor::GetUnit(*_player, guid);
 
-    if (!pEnemy)
-    {
+    if (!pEnemy) {
         // stop attack state at client
         SendAttackStop(nullptr);
         return;
     }
 
-    if (!_player->IsValidAttackTarget(pEnemy))
-    {
+    if (!_player->IsValidAttackTarget(pEnemy)) {
         // stop attack state at client
         SendAttackStop(pEnemy);
         return;
     }
 
-    //! Client explicitly checks the following before sending CMSG_ATTACKSWING packet,
-    //! so we'll place the same check here. Note that it might be possible to reuse this snippet
-    //! in other places as well.
-    if (Vehicle* vehicle = _player->GetVehicle())
-    {
+    //! Client explicitly checks the following before sending CMSG_ATTACKSWING
+    //! packet, so we'll place the same check here. Note that it might be
+    //! possible to reuse this snippet in other places as well.
+    if (Vehicle* vehicle = _player->GetVehicle()) {
         VehicleSeatEntry const* seat = vehicle->GetSeatForPassenger(_player);
         ASSERT(seat);
-        if (!(seat->m_flags & VEHICLE_SEAT_FLAG_CAN_ATTACK))
-        {
+        if (!(seat->m_flags & VEHICLE_SEAT_FLAG_CAN_ATTACK)) {
             SendAttackStop(pEnemy);
             return;
         }
@@ -71,11 +68,13 @@ void WorldSession::HandleAttackStopOpcode(WorldPacket& /*recvData*/)
     GetPlayer()->AttackStop();
 }
 
-void WorldSession::HandleSetSheathedOpcode(WorldPackets::Combat::SetSheathed& packet)
+void WorldSession::HandleSetSheathedOpcode(
+    WorldPackets::Combat::SetSheathed& packet)
 {
-    if (packet.CurrentSheathState >= MAX_SHEATH_STATE)
-    {
-        LOG_ERROR("network.opcode", "Unknown sheath state {} ??", packet.CurrentSheathState);
+    if (packet.CurrentSheathState >= MAX_SHEATH_STATE) {
+        LOG_ERROR("network.opcode",
+                  "Unknown sheath state {} ??",
+                  packet.CurrentSheathState);
         return;
     }
 
@@ -84,9 +83,10 @@ void WorldSession::HandleSetSheathedOpcode(WorldPackets::Combat::SetSheathed& pa
 
 void WorldSession::SendAttackStop(Unit const* enemy)
 {
-    WorldPacket data(SMSG_ATTACKSTOP, (8 + 8 + 4));         // we guess size
+    WorldPacket data(SMSG_ATTACKSTOP, (8 + 8 + 4)); // we guess size
     data << GetPlayer()->GetPackGUID();
-    data << (enemy ? enemy->GetPackGUID() : PackedGuid());  // must be packed guid
-    data << uint32(0);                                      // unk, can be 1 also
+    data << (enemy ? enemy->GetPackGUID()
+                   : PackedGuid()); // must be packed guid
+    data << uint32(0);              // unk, can be 1 also
     SendPacket(&data);
 }

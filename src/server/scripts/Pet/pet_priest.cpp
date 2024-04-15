@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -26,36 +27,34 @@
 #include "ScriptedCreature.h"
 #include "TotemAI.h"
 
-enum PriestSpells
-{
-    SPELL_PRIEST_GLYPH_OF_SHADOWFIEND       = 58228,
-    SPELL_PRIEST_GLYPH_OF_SHADOWFIEND_MANA  = 58227,
-    SPELL_PRIEST_SHADOWFIEND_DODGE          = 8273,
-    SPELL_PRIEST_LIGHTWELL_CHARGES          = 59907
+enum PriestSpells {
+    SPELL_PRIEST_GLYPH_OF_SHADOWFIEND      = 58228,
+    SPELL_PRIEST_GLYPH_OF_SHADOWFIEND_MANA = 58227,
+    SPELL_PRIEST_SHADOWFIEND_DODGE         = 8273,
+    SPELL_PRIEST_LIGHTWELL_CHARGES         = 59907
 };
 
-struct npc_pet_pri_lightwell : public TotemAI
-{
-    npc_pet_pri_lightwell(Creature* creature) : TotemAI(creature) { }
+struct npc_pet_pri_lightwell : public TotemAI {
+    npc_pet_pri_lightwell(Creature* creature) : TotemAI(creature) {}
 
     void InitializeAI() override
     {
-        if (Unit* owner = me->ToTempSummon()->GetSummonerUnit())
-        {
+        if (Unit* owner = me->ToTempSummon()->GetSummonerUnit()) {
             uint32 hp = uint32(owner->GetMaxHealth() * 0.3f);
             me->SetMaxHealth(hp);
             me->SetHealth(hp);
             me->SetLevel(owner->GetLevel());
         }
 
-        me->CastSpell(me, SPELL_PRIEST_LIGHTWELL_CHARGES, false); // Spell for Lightwell Charges
+        me->CastSpell(me,
+                      SPELL_PRIEST_LIGHTWELL_CHARGES,
+                      false); // Spell for Lightwell Charges
         TotemAI::InitializeAI();
     }
 };
 
-struct npc_pet_pri_shadowfiend : public PetAI
-{
-    npc_pet_pri_shadowfiend(Creature* creature) : PetAI(creature) { }
+struct npc_pet_pri_shadowfiend : public PetAI {
+    npc_pet_pri_shadowfiend(Creature* creature) : PetAI(creature) {}
 
     void Reset() override
     {
@@ -72,7 +71,8 @@ struct npc_pet_pri_shadowfiend : public PetAI
         if (me->IsSummon())
             if (Unit* owner = me->ToTempSummon()->GetSummonerUnit())
                 if (owner->HasAura(SPELL_PRIEST_GLYPH_OF_SHADOWFIEND))
-                    owner->CastSpell(owner, SPELL_PRIEST_GLYPH_OF_SHADOWFIEND_MANA, true);
+                    owner->CastSpell(
+                        owner, SPELL_PRIEST_GLYPH_OF_SHADOWFIEND_MANA, true);
     }
 };
 

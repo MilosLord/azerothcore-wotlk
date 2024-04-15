@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -35,8 +36,7 @@ using boost::asio::ip::tcp;
 class Field;
 struct AuthHandler;
 
-enum AuthStatus
-{
+enum AuthStatus {
     STATUS_CHALLENGE = 0,
     STATUS_LOGON_PROOF,
     STATUS_RECONNECT_PROOF,
@@ -46,23 +46,21 @@ enum AuthStatus
 };
 
 // cppcheck-suppress ctuOneDefinitionRuleViolation
-struct AccountInfo
-{
+struct AccountInfo {
     void LoadResult(Field* fields);
 
-    uint32 Id = 0;
-    std::string Login;
-    bool IsLockedToIP = false;
-    std::string LockCountry;
-    std::string LastIP;
-    uint32 FailedLogins = 0;
-    bool IsBanned = false;
-    bool IsPermanentlyBanned = false;
-    AccountTypes SecurityLevel = SEC_PLAYER;
+    uint32       Id = 0;
+    std::string  Login;
+    bool         IsLockedToIP = false;
+    std::string  LockCountry;
+    std::string  LastIP;
+    uint32       FailedLogins        = 0;
+    bool         IsBanned            = false;
+    bool         IsPermanentlyBanned = false;
+    AccountTypes SecurityLevel       = SEC_PLAYER;
 };
 
-class AuthSession : public Socket<AuthSession>
-{
+class AuthSession : public Socket<AuthSession> {
     typedef Socket<AuthSession> AuthSocket;
 
 public:
@@ -90,31 +88,33 @@ private:
     void ReconnectChallengeCallback(PreparedQueryResult result);
     void RealmListCallback(PreparedQueryResult result);
 
-    bool VerifyVersion(uint8 const* a, int32 aLength, Acore::Crypto::SHA1::Digest const& versionProof, bool isReconnect);
+    bool VerifyVersion(uint8 const*                       a,
+                       int32                              aLength,
+                       Acore::Crypto::SHA1::Digest const& versionProof,
+                       bool                               isReconnect);
 
     Optional<Acore::Crypto::SRP6> _srp6;
-    SessionKey _sessionKey = {};
-    std::array<uint8, 16> _reconnectProof = {};
+    SessionKey                    _sessionKey     = {};
+    std::array<uint8, 16>         _reconnectProof = {};
 
-    AuthStatus _status;
-    AccountInfo _accountInfo;
+    AuthStatus                   _status;
+    AccountInfo                  _accountInfo;
     Optional<std::vector<uint8>> _totpSecret;
-    std::string _localizationName;
-    std::string _os;
-    std::string _ipCountry;
-    uint16 _build;
-    uint8 _expversion;
+    std::string                  _localizationName;
+    std::string                  _os;
+    std::string                  _ipCountry;
+    uint16                       _build;
+    uint8                        _expversion;
 
     QueryCallbackProcessor _queryProcessor;
 };
 
 #pragma pack(push, 1)
 
-struct AuthHandler
-{
+struct AuthHandler {
     AuthStatus status;
-    size_t packetSize;
-    bool (AuthSession::* handler)();
+    size_t     packetSize;
+    bool (AuthSession::*handler)();
 };
 
 #pragma pack(pop)

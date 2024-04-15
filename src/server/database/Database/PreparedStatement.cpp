@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -23,15 +24,17 @@
 #include "MySQLWorkaround.h"
 #include "QueryResult.h"
 
-PreparedStatementBase::PreparedStatementBase(uint32 index, uint8 capacity) :
-    m_index(index),
-    statement_data(capacity) { }
+PreparedStatementBase::PreparedStatementBase(uint32 index, uint8 capacity)
+    : m_index(index), statement_data(capacity)
+{
+}
 
-PreparedStatementBase::~PreparedStatementBase() { }
+PreparedStatementBase::~PreparedStatementBase() {}
 
 //- Bind to buffer
-template<typename T>
-Acore::Types::is_non_string_view_v<T> PreparedStatementBase::SetValidData(const uint8 index, T const& value)
+template <typename T>
+Acore::Types::is_non_string_view_v<T>
+PreparedStatementBase::SetValidData(const uint8 index, T const& value)
 {
     ASSERT(index < statement_data.size());
     statement_data[index].data.emplace<T>(value);
@@ -44,29 +47,43 @@ void PreparedStatementBase::SetValidData(const uint8 index)
     statement_data[index].data.emplace<std::nullptr_t>(nullptr);
 }
 
-void PreparedStatementBase::SetValidData(const uint8 index, std::string_view value)
+void PreparedStatementBase::SetValidData(const uint8      index,
+                                         std::string_view value)
 {
     ASSERT(index < statement_data.size());
     statement_data[index].data.emplace<std::string>(value);
 }
 
-template void PreparedStatementBase::SetValidData(const uint8 index, uint8 const& value);
-template void PreparedStatementBase::SetValidData(const uint8 index, int8 const& value);
-template void PreparedStatementBase::SetValidData(const uint8 index, uint16 const& value);
-template void PreparedStatementBase::SetValidData(const uint8 index, int16 const& value);
-template void PreparedStatementBase::SetValidData(const uint8 index, uint32 const& value);
-template void PreparedStatementBase::SetValidData(const uint8 index, int32 const& value);
-template void PreparedStatementBase::SetValidData(const uint8 index, uint64 const& value);
-template void PreparedStatementBase::SetValidData(const uint8 index, int64 const& value);
-template void PreparedStatementBase::SetValidData(const uint8 index, bool const& value);
-template void PreparedStatementBase::SetValidData(const uint8 index, float const& value);
-template void PreparedStatementBase::SetValidData(const uint8 index, std::string const& value);
-template void PreparedStatementBase::SetValidData(const uint8 index, std::vector<uint8> const& value);
+template void PreparedStatementBase::SetValidData(const uint8  index,
+                                                  uint8 const& value);
+template void PreparedStatementBase::SetValidData(const uint8 index,
+                                                  int8 const& value);
+template void PreparedStatementBase::SetValidData(const uint8   index,
+                                                  uint16 const& value);
+template void PreparedStatementBase::SetValidData(const uint8  index,
+                                                  int16 const& value);
+template void PreparedStatementBase::SetValidData(const uint8   index,
+                                                  uint32 const& value);
+template void PreparedStatementBase::SetValidData(const uint8  index,
+                                                  int32 const& value);
+template void PreparedStatementBase::SetValidData(const uint8   index,
+                                                  uint64 const& value);
+template void PreparedStatementBase::SetValidData(const uint8  index,
+                                                  int64 const& value);
+template void PreparedStatementBase::SetValidData(const uint8 index,
+                                                  bool const& value);
+template void PreparedStatementBase::SetValidData(const uint8  index,
+                                                  float const& value);
+template void PreparedStatementBase::SetValidData(const uint8        index,
+                                                  std::string const& value);
+template void
+PreparedStatementBase::SetValidData(const uint8               index,
+                                    std::vector<uint8> const& value);
 
 //- Execution
-PreparedStatementTask::PreparedStatementTask(PreparedStatementBase* stmt, bool async) :
-    m_stmt(stmt),
-    m_result(nullptr)
+PreparedStatementTask::PreparedStatementTask(PreparedStatementBase* stmt,
+                                             bool                   async)
+    : m_stmt(stmt), m_result(nullptr)
 {
     m_has_result = async; // If it's async, then there's a result
 
@@ -84,11 +101,9 @@ PreparedStatementTask::~PreparedStatementTask()
 
 bool PreparedStatementTask::Execute()
 {
-    if (m_has_result)
-    {
+    if (m_has_result) {
         PreparedResultSet* result = m_conn->Query(m_stmt);
-        if (!result || !result->GetRowCount())
-        {
+        if (!result || !result->GetRowCount()) {
             delete result;
             m_result->set_value(PreparedQueryResult(nullptr));
             return false;
@@ -101,13 +116,13 @@ bool PreparedStatementTask::Execute()
     return m_conn->Execute(m_stmt);
 }
 
-template<typename T>
+template <typename T>
 std::string PreparedStatementData::ToString(T value)
 {
     return Acore::StringFormatFmt("{}", value);
 }
 
-template<>
+template <>
 std::string PreparedStatementData::ToString(std::vector<uint8> /*value*/)
 {
     return "BINARY";

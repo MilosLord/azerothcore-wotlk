@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,8 +23,7 @@
 #include "ScriptObject.h"
 #include <vector>
 
-enum MiscHook
-{
+enum MiscHook {
     MISCHOOK_ON_CONSTRUCT_OBJECT,
     MISCHOOK_ON_DESTRUCT_OBJECT,
     MISCHOOK_ON_CONSTRUCT_PLAYER,
@@ -45,47 +45,91 @@ enum MiscHook
     MISCHOOK_END
 };
 
-class MiscScript : public ScriptObject
-{
+class MiscScript : public ScriptObject {
 protected:
-    MiscScript(const char* name, std::vector<uint16> enabledHooks = std::vector<uint16>());
+    MiscScript(const char*         name,
+               std::vector<uint16> enabledHooks = std::vector<uint16>());
 
 public:
     [[nodiscard]] bool IsDatabaseBound() const override { return false; }
 
-    virtual void OnConstructObject(Object* /*origin*/) { }
+    virtual void OnConstructObject(Object* /*origin*/) {}
 
-    virtual void OnDestructObject(Object* /*origin*/) { }
+    virtual void OnDestructObject(Object* /*origin*/) {}
 
-    virtual void OnConstructPlayer(Player* /*origin*/) { }
+    virtual void OnConstructPlayer(Player* /*origin*/) {}
 
-    virtual void OnDestructPlayer(Player* /*origin*/) { }
+    virtual void OnDestructPlayer(Player* /*origin*/) {}
 
-    virtual void OnConstructGroup(Group* /*origin*/) { }
+    virtual void OnConstructGroup(Group* /*origin*/) {}
 
-    virtual void OnDestructGroup(Group* /*origin*/) { }
+    virtual void OnDestructGroup(Group* /*origin*/) {}
 
-    virtual void OnConstructInstanceSave(InstanceSave* /*origin*/) { }
+    virtual void OnConstructInstanceSave(InstanceSave* /*origin*/) {}
 
-    virtual void OnDestructInstanceSave(InstanceSave* /*origin*/) { }
+    virtual void OnDestructInstanceSave(InstanceSave* /*origin*/) {}
 
-    virtual void OnItemCreate(Item* /*item*/, ItemTemplate const* /*itemProto*/, Player const* /*owner*/) { }
+    virtual void OnItemCreate(Item* /*item*/,
+                              ItemTemplate const* /*itemProto*/,
+                              Player const* /*owner*/)
+    {
+    }
 
-    [[nodiscard]] virtual bool CanApplySoulboundFlag(Item* /*item*/, ItemTemplate const* /*proto*/) { return true; }
+    [[nodiscard]] virtual bool
+    CanApplySoulboundFlag(Item* /*item*/, ItemTemplate const* /*proto*/)
+    {
+        return true;
+    }
 
-    [[nodiscard]] virtual bool CanItemApplyEquipSpell(Player* /*player*/, Item* /*item*/) { return true; }
+    [[nodiscard]] virtual bool CanItemApplyEquipSpell(Player* /*player*/,
+                                                      Item* /*item*/)
+    {
+        return true;
+    }
 
-    [[nodiscard]] virtual bool CanSendAuctionHello(WorldSession const* /*session*/, ObjectGuid /*guid*/, Creature* /*creature*/) { return true; }
+    [[nodiscard]] virtual bool
+    CanSendAuctionHello(WorldSession const* /*session*/,
+                        ObjectGuid /*guid*/,
+                        Creature* /*creature*/)
+    {
+        return true;
+    }
 
-    virtual void ValidateSpellAtCastSpell(Player* /*player*/, uint32& /*oldSpellId*/, uint32& /*spellId*/, uint8& /*castCount*/, uint8& /*castFlags*/) { }
+    virtual void ValidateSpellAtCastSpell(Player* /*player*/,
+                                          uint32& /*oldSpellId*/,
+                                          uint32& /*spellId*/,
+                                          uint8& /*castCount*/,
+                                          uint8& /*castFlags*/)
+    {
+    }
 
-    virtual void ValidateSpellAtCastSpellResult(Player* /*player*/, Unit* /*mover*/, Spell* /*spell*/, uint32 /*oldSpellId*/, uint32 /*spellId*/) { }
+    virtual void ValidateSpellAtCastSpellResult(Player* /*player*/,
+                                                Unit* /*mover*/,
+                                                Spell* /*spell*/,
+                                                uint32 /*oldSpellId*/,
+                                                uint32 /*spellId*/)
+    {
+    }
 
-    virtual void OnAfterLootTemplateProcess(Loot* /*loot*/, LootTemplate const* /*tab*/, LootStore const& /*store*/, Player* /*lootOwner*/, bool /*personal*/, bool /*noEmptyError*/, uint16 /*lootMode*/) { }
+    virtual void OnAfterLootTemplateProcess(Loot* /*loot*/,
+                                            LootTemplate const* /*tab*/,
+                                            LootStore const& /*store*/,
+                                            Player* /*lootOwner*/,
+                                            bool /*personal*/,
+                                            bool /*noEmptyError*/,
+                                            uint16 /*lootMode*/)
+    {
+    }
 
-    virtual void OnPlayerSetPhase(const AuraEffect* /*auraEff*/, AuraApplication const* /*aurApp*/, uint8 /*mode*/, bool /*apply*/, uint32& /*newPhase*/) { }
+    virtual void OnPlayerSetPhase(const AuraEffect* /*auraEff*/,
+                                  AuraApplication const* /*aurApp*/,
+                                  uint8 /*mode*/,
+                                  bool /*apply*/,
+                                  uint32& /*newPhase*/)
+    {
+    }
 
-    virtual void OnInstanceSave(InstanceSave* /*instanceSave*/) { }
+    virtual void OnInstanceSave(InstanceSave* /*instanceSave*/) {}
 
     /**
      * @brief This hook called before get Quest Dialog Status
@@ -93,7 +137,7 @@ public:
      * @param player Contains information about the Player
      * @param questgiver Contains information about the Object
      */
-    virtual void GetDialogStatus(Player* /*player*/, Object* /*questgiver*/) { }
+    virtual void GetDialogStatus(Player* /*player*/, Object* /*questgiver*/) {}
 };
 
 #endif

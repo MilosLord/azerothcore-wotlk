@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -37,15 +38,15 @@ void RASession::Start()
     for (int counter = 0; counter < 10 && _socket.available() == 0; counter++)
         std::this_thread::sleep_for(100ms);
 
-    // Check if there are bytes available, if they are, then the client is requesting the negotiation
-    if (_socket.available() > 0)
-    {
+    // Check if there are bytes available, if they are, then the client is
+    // requesting the negotiation
+    if (_socket.available() > 0) {
         // Handle subnegotiation
-        char buf[1024] = { };
+        char buf[1024] = {};
         _socket.read_some(boost::asio::buffer(buf));
 
         // Send the end-of-negotiation packet
-        uint8 const reply[2] = { 0xFF, 0xF0 };
+        uint8 const reply[2] = {0xFF, 0xF0};
         _socket.write_some(boost::asio::buffer(reply));
     }
 
@@ -57,7 +58,10 @@ void RASession::Start()
     if (username.empty())
         return;
 
-    LOG_INFO("commands.ra", "Accepting RA connection from user {} (IP: {})", username, GetRemoteIpAddress());
+    LOG_INFO("commands.ra",
+             "Accepting RA connection from user {} (IP: {})",
+             username,
+             GetRemoteIpAddress());
 
     Send("Password: ");
 
@@ -65,21 +69,22 @@ void RASession::Start()
     if (password.empty())
         return;
 
-    if (!CheckAccessLevel(username) || !CheckPassword(username, password))
-    {
+    if (!CheckAccessLevel(username) || !CheckPassword(username, password)) {
         Send("Authentication failed\r\n");
         _socket.close();
         return;
     }
 
-    LOG_INFO("commands.ra", "User {} (IP: {}) authenticated correctly to RA", username, GetRemoteIpAddress());
+    LOG_INFO("commands.ra",
+             "User {} (IP: {}) authenticated correctly to RA",
+             username,
+             GetRemoteIpAddress());
 
     // Authentication successful, send the motd
     Send(std::string(std::string(sMotdMgr->GetMotd()) + "\r\n").c_str());
 
     // Read commands
-    for (;;)
-    {
+    for (;;) {
         Send("AC>");
         std::string command = ReadString();
 
@@ -103,13 +108,12 @@ std::string RASession::ReadString()
 {
     boost::system::error_code error;
     size_t read = boost::asio::read_until(_socket, _readBuffer, "\r\n", error);
-    if (!read)
-    {
+    if (!read) {
         _socket.close();
         return "";
     }
 
-    std::string line;
+    std::string  line;
     std::istream is(&_readBuffer);
     std::getline(is, line);
 
@@ -129,22 +133,23 @@ bool RASession::CheckAccessLevel(const std::string& user)
     stmt->SetData(0, safeUser);
 
     PreparedQueryResult result = LoginDatabase.Query(stmt);
-    if (!result)
-    {
+    if (!result) {
         LOG_INFO("commands.ra", "User {} does not exist in database", user);
         return false;
     }
 
     Field* fields = result->Fetch();
 
-    if (fields[1].Get<uint8>() < sConfigMgr->GetOption<int32>("Ra.MinLevel", 3))
-    {
+    if (fields[1].Get<uint8>() <
+        sConfigMgr->GetOption<int32>("Ra.MinLevel", 3)) {
         LOG_INFO("commands.ra", "User {} has no privilege to login", user);
         return false;
     }
-    else if (fields[2].Get<int32>() != -1)
-    {
-        LOG_INFO("commands.ra", "User {} has to be assigned on all realms (with RealmID = '-1')", user);
+    else if (fields[2].Get<int32>() != -1) {
+        LOG_INFO(
+            "commands.ra",
+            "User {} has to be assigned on all realms (with RealmID = '-1')",
+            user);
         return false;
     }
 
@@ -154,23 +159,28 @@ bool RASession::CheckAccessLevel(const std::string& user)
 bool RASession::CheckPassword(const std::string& user, const std::string& pass)
 {
     std::string safe_user = user;
-    std::transform(safe_user.begin(), safe_user.end(), safe_user.begin(), ::toupper);
+    std::transform(
+        safe_user.begin(), safe_user.end(), safe_user.begin(), ::toupper);
     Utf8ToUpperOnlyLatin(safe_user);
 
     std::string safe_pass = pass;
     Utf8ToUpperOnlyLatin(safe_pass);
-    std::transform(safe_pass.begin(), safe_pass.end(), safe_pass.begin(), ::toupper);
+    std::transform(
+        safe_pass.begin(), safe_pass.end(), safe_pass.begin(), ::toupper);
 
-    auto* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_CHECK_PASSWORD_BY_NAME);
+    auto* stmt =
+        LoginDatabase.GetPreparedStatement(LOGIN_SEL_CHECK_PASSWORD_BY_NAME);
 
     stmt->SetData(0, safe_user);
 
-    if (PreparedQueryResult result = LoginDatabase.Query(stmt))
-    {
-        Acore::Crypto::SRP6::Salt salt = (*result)[0].Get<Binary, Acore::Crypto::SRP6::SALT_LENGTH>();
-        Acore::Crypto::SRP6::Verifier verifier = (*result)[1].Get<Binary, Acore::Crypto::SRP6::VERIFIER_LENGTH>();
+    if (PreparedQueryResult result = LoginDatabase.Query(stmt)) {
+        Acore::Crypto::SRP6::Salt salt =
+            (*result)[0].Get<Binary, Acore::Crypto::SRP6::SALT_LENGTH>();
+        Acore::Crypto::SRP6::Verifier verifier =
+            (*result)[1].Get<Binary, Acore::Crypto::SRP6::VERIFIER_LENGTH>();
 
-        if (Acore::Crypto::SRP6::CheckLogin(safe_user, safe_pass, salt, verifier))
+        if (Acore::Crypto::SRP6::CheckLogin(
+                safe_user, safe_pass, salt, verifier))
             return true;
     }
 
@@ -186,8 +196,7 @@ bool RASession::ProcessCommand(std::string& command)
     LOG_INFO("commands.ra", "Received command: {}", command);
 
     // handle quit, exit and logout commands to terminate connection
-    if (command == "quit" || command == "exit" || command == "logout")
-    {
+    if (command == "quit" || command == "exit" || command == "logout") {
         Send("Bye\r\n");
         return true;
     }
@@ -196,7 +205,10 @@ bool RASession::ProcessCommand(std::string& command)
     delete _commandExecuting;
     _commandExecuting = new std::promise<void>();
 
-    CliCommandHolder* cmd = new CliCommandHolder(this, command.c_str(), &RASession::CommandPrint, &RASession::CommandFinished);
+    CliCommandHolder* cmd = new CliCommandHolder(this,
+                                                 command.c_str(),
+                                                 &RASession::CommandPrint,
+                                                 &RASession::CommandFinished);
     sWorld->QueueCliCommand(cmd);
 
     // Wait for the command to finish
@@ -207,8 +219,7 @@ bool RASession::ProcessCommand(std::string& command)
 
 void RASession::CommandPrint(void* callbackArg, std::string_view text)
 {
-    if (text.empty())
-    {
+    if (text.empty()) {
         return;
     }
 

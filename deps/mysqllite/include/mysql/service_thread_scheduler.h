@@ -25,9 +25,9 @@ extern "C" {
 struct scheduler_functions;
 
 extern struct my_thread_scheduler_service {
-  int (*set)(struct scheduler_functions *scheduler);
-  int (*reset)();
-} *my_thread_scheduler_service;
+    int (*set)(struct scheduler_functions* scheduler);
+    int (*reset)();
+}* my_thread_scheduler_service;
 
 #ifdef MYSQL_DYNAMIC_PLUGIN
 
@@ -43,7 +43,7 @@ extern struct my_thread_scheduler_service {
   @retval 0 Scheduler installed correctly.
   @retval 1 Invalid value (NULL) used for scheduler.
 */
-int my_thread_scheduler_set(struct scheduler_functions *scheduler);
+int my_thread_scheduler_set(struct scheduler_functions* scheduler);
 
 /**
   Restore the previous thread scheduler.

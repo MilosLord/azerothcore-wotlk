@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -38,62 +39,56 @@ const uint32 EP_PWT_CM = 17698;
 
 const uint32 EPBuffZones[EPBuffZonesNum] = {139, 2017, 2057};
 
-//enum EP_TaxiNodes
+// enum EP_TaxiNodes
 //{
-//    EP_CGT_Taxi = 87,
-//    EP_EWT_Taxi = 86,
-//    EP_NPT_Taxi = 85,
-//    EP_PWT_Taxi = 84
-//};
+//     EP_CGT_Taxi = 87,
+//     EP_EWT_Taxi = 86,
+//     EP_NPT_Taxi = 85,
+//     EP_PWT_Taxi = 84
+// };
 
-enum EP_EastwallTowerWorldStates
-{
-    EP_EWT_A = 2354,
-    EP_EWT_H = 2356,
+enum EP_EastwallTowerWorldStates {
+    EP_EWT_A   = 2354,
+    EP_EWT_H   = 2356,
     EP_EWT_N_A = 2359, // ally conquested
     EP_EWT_N_H = 2360,
-    EP_EWT_N = 2361
+    EP_EWT_N   = 2361
 };
 
-enum EP_NorthpassTowerWorldStates
-{
-    EP_NPT_N = 2352,
+enum EP_NorthpassTowerWorldStates {
+    EP_NPT_N   = 2352,
     EP_NPT_N_A = 2362,
     EP_NPT_N_H = 2363,
-    EP_NPT_A = 2372,
-    EP_NPT_H = 2373
+    EP_NPT_A   = 2372,
+    EP_NPT_H   = 2373
 };
 
-enum EP_PlagewoodTowerWorldStates
-{
+enum EP_PlagewoodTowerWorldStates {
     EP_PWT_N_A = 2366,
-    EP_PWT_N_H = 2353, //2367 not present! use neutral!
-    EP_PWT_A = 2370,
-    EP_PWT_H = 2371,
-    EP_PWT_N = 2353
+    EP_PWT_N_H = 2353, // 2367 not present! use neutral!
+    EP_PWT_A   = 2370,
+    EP_PWT_H   = 2371,
+    EP_PWT_N   = 2353
 };
 
-enum EP_CrownGuardTowerWorldStates
-{
+enum EP_CrownGuardTowerWorldStates {
     EP_CGT_N_A = 2374,
     EP_CGT_N_H = 2375,
-    EP_CGT_A = 2378,
-    EP_CGT_H = 2379,
-    EP_CGT_N = 2355
+    EP_CGT_A   = 2378,
+    EP_CGT_H   = 2379,
+    EP_CGT_N   = 2355
 };
 
-enum EP_WorldStates
-{
+enum EP_WorldStates {
     EP_UI_TOWER_SLIDER_DISPLAY = 2426,
-    EP_UI_TOWER_SLIDER_POS = 2427,
-    EP_UI_TOWER_SLIDER_N = 2428,
+    EP_UI_TOWER_SLIDER_POS     = 2427,
+    EP_UI_TOWER_SLIDER_N       = 2428,
 
     EP_UI_TOWER_COUNT_A = 2327,
     EP_UI_TOWER_COUNT_H = 2328
 };
 
-enum EP_Summons
-{
+enum EP_Summons {
     EP_EWT_COMMANDER = 0,
     EP_EWT_SOLDIER1,
     EP_EWT_SOLDIER2,
@@ -102,8 +97,7 @@ enum EP_Summons
     EP_PWT_FLIGHTMASTER,
 };
 
-enum EP_GoSummons
-{
+enum EP_GoSummons {
     EP_NPT_BUFF = 0,
     EP_NPT_FLAGS,
     EP_EWT_FLAGS,
@@ -111,79 +105,152 @@ enum EP_GoSummons
     EP_PWT_FLAGS
 };
 
-enum EP_Towers
-{
+enum EP_Towers {
     EP_EWT = 0, // plaguelands 03
-    EP_NPT, // plaguelands 01
-    EP_PWT, // plaguelands 04
-    EP_CGT, // plaguelands 02
+    EP_NPT,     // plaguelands 01
+    EP_PWT,     // plaguelands 04
+    EP_CGT,     // plaguelands 02
     EP_TOWER_NUM
 };
 
-const go_type EPCapturePoints[EP_TOWER_NUM] =
-{
-    {182097, 0, 2574.51f, -4794.89f, 144.704f, -1.45003f, -0.097056f, 0.095578f, -0.656229f, 0.742165f},
-    {181899, 0, 3181.08f, -4379.36f, 174.123f, -2.03472f, -0.065392f, 0.119494f, -0.842275f, 0.521553f},
-    {182098, 0, 2962.71f, -3042.31f, 154.789f, 2.08426f, -0.074807f, -0.113837f, 0.855928f, 0.49883f},
-    {182096, 0, 1860.85f, -3731.23f, 196.716f, -2.53214f, 0.033967f, -0.131914f, 0.944741f, -0.298177f}
-};
+const go_type EPCapturePoints[EP_TOWER_NUM] = {{182097,
+                                                0,
+                                                2574.51f,
+                                                -4794.89f,
+                                                144.704f,
+                                                -1.45003f,
+                                                -0.097056f,
+                                                0.095578f,
+                                                -0.656229f,
+                                                0.742165f},
+                                               {181899,
+                                                0,
+                                                3181.08f,
+                                                -4379.36f,
+                                                174.123f,
+                                                -2.03472f,
+                                                -0.065392f,
+                                                0.119494f,
+                                                -0.842275f,
+                                                0.521553f},
+                                               {182098,
+                                                0,
+                                                2962.71f,
+                                                -3042.31f,
+                                                154.789f,
+                                                2.08426f,
+                                                -0.074807f,
+                                                -0.113837f,
+                                                0.855928f,
+                                                0.49883f},
+                                               {182096,
+                                                0,
+                                                1860.85f,
+                                                -3731.23f,
+                                                196.716f,
+                                                -2.53214f,
+                                                0.033967f,
+                                                -0.131914f,
+                                                0.944741f,
+                                                -0.298177f}};
 
-const go_type EPTowerFlags[EP_TOWER_NUM] =
-{
-    {182106, 0, 2569.60f, -4772.93f, 115.399f, 2.72271f, 0.0f, 0.0f, 0.978148f, 0.207912f},
-    {182106, 0, 3148.17f, -4365.51f, 145.029f, 1.53589f, 0.0f, 0.0f, 0.694658f, 0.71934f},
-    {182106, 0, 2992.63f, -3022.95f, 125.593f, 3.03687f, 0.0f, 0.0f, 0.99863f, 0.052336f},
-    {182106, 0, 1838.42f, -3703.56f, 167.713f, 0.890118f, 0.0f, 0.0f, 0.430511f, 0.902585f}
-};
+const go_type EPTowerFlags[EP_TOWER_NUM] = {{182106,
+                                             0,
+                                             2569.60f,
+                                             -4772.93f,
+                                             115.399f,
+                                             2.72271f,
+                                             0.0f,
+                                             0.0f,
+                                             0.978148f,
+                                             0.207912f},
+                                            {182106,
+                                             0,
+                                             3148.17f,
+                                             -4365.51f,
+                                             145.029f,
+                                             1.53589f,
+                                             0.0f,
+                                             0.0f,
+                                             0.694658f,
+                                             0.71934f},
+                                            {182106,
+                                             0,
+                                             2992.63f,
+                                             -3022.95f,
+                                             125.593f,
+                                             3.03687f,
+                                             0.0f,
+                                             0.0f,
+                                             0.99863f,
+                                             0.052336f},
+                                            {182106,
+                                             0,
+                                             1838.42f,
+                                             -3703.56f,
+                                             167.713f,
+                                             0.890118f,
+                                             0.0f,
+                                             0.0f,
+                                             0.430511f,
+                                             0.902585f}};
 
-//const uint32 EPTowerPlayerEnterEvents[EP_TOWER_NUM] = {10691, 10699, 10701, 10705};
+// const uint32 EPTowerPlayerEnterEvents[EP_TOWER_NUM] = {10691, 10699, 10701,
+// 10705};
 
-//const uint32 EPTowerPlayerLeaveEvents[EP_TOWER_NUM] = {10692, 10698, 10700, 10704};
+// const uint32 EPTowerPlayerLeaveEvents[EP_TOWER_NUM] = {10692, 10698, 10700,
+// 10704};
 
-const uint8 EP_NUM_CREATURES = 6;
+const uint8 EP_NUM_CREATURES     = 6;
 const uint8 EP_EWT_NUM_CREATURES = 5;
 
 // one lordaeron commander, 4 soldiers
-// should be spawned at EWT and follow a path, but trans-grid pathing isn't safe, so summon them directly at NPT
-const creature_type EP_EWT_Summons_A[EP_EWT_NUM_CREATURES] =
-{
+// should be spawned at EWT and follow a path, but trans-grid pathing isn't
+// safe, so summon them directly at NPT
+const creature_type EP_EWT_Summons_A[EP_EWT_NUM_CREATURES] = {
     {17635, 0, 3167.61f, -4352.09f, 138.20f, 4.5811f},
     {17647, 0, 3172.74f, -4352.99f, 139.14f, 4.9873f},
     {17647, 0, 3165.89f, -4354.46f, 138.67f, 3.7244f},
     {17647, 0, 3164.65f, -4350.26f, 138.22f, 2.4794f},
-    {17647, 0, 3169.91f, -4349.68f, 138.37f, 0.7444f}
-};
+    {17647, 0, 3169.91f, -4349.68f, 138.37f, 0.7444f}};
 
-const creature_type EP_EWT_Summons_H[EP_EWT_NUM_CREATURES] =
-{
+const creature_type EP_EWT_Summons_H[EP_EWT_NUM_CREATURES] = {
     {17995, 0, 3167.61f, -4352.09f, 138.20f, 4.5811f},
     {17996, 0, 3172.74f, -4352.99f, 139.14f, 4.9873f},
     {17996, 0, 3165.89f, -4354.46f, 138.67f, 3.7244f},
     {17996, 0, 3164.65f, -4350.26f, 138.22f, 2.4794f},
-    {17996, 0, 3169.91f, -4349.68f, 138.37f, 0.7444f}
-};
+    {17996, 0, 3169.91f, -4349.68f, 138.37f, 0.7444f}};
 
-enum EP_TowerStates
-{
-    EP_TS_N = 1,
+enum EP_TowerStates {
+    EP_TS_N   = 1,
     EP_TS_N_A = 2,
     EP_TS_N_H = 4,
     EP_TS_A_P = 8,
     EP_TS_H_P = 16,
-    EP_TS_A = 32,
-    EP_TS_H = 64
+    EP_TS_A   = 32,
+    EP_TS_H   = 64
 };
 
 // when spawning, pay attention at setting the faction manually!
-const creature_type EP_PWT_FlightMaster = {17209, 0, 2987.5f, -3049.11f, 120.126f, 5.75959f};
+const creature_type EP_PWT_FlightMaster = {
+    17209, 0, 2987.5f, -3049.11f, 120.126f, 5.75959f};
 
-// after spawning, modify the faction so that only the controller will be able to use it with SetUInt32Value(GAMEOBJECT_FACTION, faction_id);
-const go_type EP_NPT_LordaeronShrine = {181682, 0, 3167.72f, -4355.91f, 138.785f, 1.69297f, 0.0f, 0.0f, 0.748956f, 0.66262f};
+// after spawning, modify the faction so that only the controller will be able
+// to use it with SetUInt32Value(GAMEOBJECT_FACTION, faction_id);
+const go_type EP_NPT_LordaeronShrine = {181682,
+                                        0,
+                                        3167.72f,
+                                        -4355.91f,
+                                        138.785f,
+                                        1.69297f,
+                                        0.0f,
+                                        0.0f,
+                                        0.748956f,
+                                        0.66262f};
 
 class OutdoorPvPEP;
 
-class OPvPCapturePointEP_EWT : public OPvPCapturePoint
-{
+class OPvPCapturePointEP_EWT : public OPvPCapturePoint {
 public:
     OPvPCapturePointEP_EWT(OutdoorPvP* pvp);
 
@@ -208,8 +275,7 @@ protected:
     TeamId m_UnitsSummonedSideId;
 };
 
-class OPvPCapturePointEP_NPT : public OPvPCapturePoint
-{
+class OPvPCapturePointEP_NPT : public OPvPCapturePoint {
 public:
     OPvPCapturePointEP_NPT(OutdoorPvP* pvp);
 
@@ -234,8 +300,7 @@ protected:
     TeamId m_SummonedGOSideId;
 };
 
-class OPvPCapturePointEP_CGT : public OPvPCapturePoint
-{
+class OPvPCapturePointEP_CGT : public OPvPCapturePoint {
 public:
     OPvPCapturePointEP_CGT(OutdoorPvP* pvp);
 
@@ -260,8 +325,7 @@ protected:
     TeamId m_GraveyardSide;
 };
 
-class OPvPCapturePointEP_PWT : public OPvPCapturePoint
-{
+class OPvPCapturePointEP_PWT : public OPvPCapturePoint {
 public:
     OPvPCapturePointEP_PWT(OutdoorPvP* pvp);
 
@@ -286,8 +350,7 @@ protected:
     uint32 m_TowerState;
 };
 
-class OutdoorPvPEP : public OutdoorPvP
-{
+class OutdoorPvPEP : public OutdoorPvP {
 public:
     OutdoorPvPEP();
 

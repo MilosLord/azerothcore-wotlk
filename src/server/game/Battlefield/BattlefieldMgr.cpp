@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,13 +23,15 @@
 BattlefieldMgr::BattlefieldMgr()
 {
     m_UpdateTimer = 0;
-    //LOG_DEBUG("bg.battlefield", "Instantiating BattlefieldMgr");
+    // LOG_DEBUG("bg.battlefield", "Instantiating BattlefieldMgr");
 }
 
 BattlefieldMgr::~BattlefieldMgr()
 {
-    //LOG_DEBUG("bg.battlefield", "Deleting BattlefieldMgr");
-    for (BattlefieldSet::iterator itr = m_BattlefieldSet.begin(); itr != m_BattlefieldSet.end(); ++itr)
+    // LOG_DEBUG("bg.battlefield", "Deleting BattlefieldMgr");
+    for (BattlefieldSet::iterator itr = m_BattlefieldSet.begin();
+         itr != m_BattlefieldSet.end();
+         ++itr)
         delete *itr;
 }
 
@@ -40,24 +43,22 @@ BattlefieldMgr* BattlefieldMgr::instance()
 
 void BattlefieldMgr::InitBattlefield()
 {
-    if (sWorld->getIntConfig(CONFIG_WINTERGRASP_ENABLE) == 2)
-    {
+    if (sWorld->getIntConfig(CONFIG_WINTERGRASP_ENABLE) == 2) {
         LOG_INFO("server.loading", "Battlefield: Wintergrasp is disabled.");
         LOG_INFO("server.loading", " ");
         return;
     }
     Battlefield* pBf = new BattlefieldWG;
     // respawn, init variables
-    if (!pBf->SetupBattlefield())
-    {
+    if (!pBf->SetupBattlefield()) {
         LOG_ERROR("server.loading", "Battlefield: Wintergrasp init failed.");
         LOG_INFO("server.loading", " ");
         delete pBf;
     }
-    else
-    {
+    else {
         m_BattlefieldSet.push_back(pBf);
-        LOG_INFO("server.loading", "Battlefield: Wintergrasp successfully initiated.");
+        LOG_INFO("server.loading",
+                 "Battlefield: Wintergrasp successfully initiated.");
         LOG_INFO("server.loading", " ");
     }
 
@@ -72,7 +73,8 @@ void BattlefieldMgr::InitBattlefield()
        else
        {
        m_BattlefieldSet.push_back(pBf);
-       LOG_DEBUG("bg.battlefield", "Battlefield : Tol Barad successfully initiated.");
+       LOG_DEBUG("bg.battlefield", "Battlefield : Tol Barad successfully
+       initiated.");
        } */
 }
 
@@ -91,7 +93,10 @@ void BattlefieldMgr::HandlePlayerEnterZone(Player* player, uint32 zoneid)
         return;
 
     itr->second->HandlePlayerEnterZone(player, zoneid);
-    LOG_DEBUG("bg.battlefield", "Player {} entered outdoorpvp id {}", player->GetGUID().ToString(), itr->second->GetTypeId());
+    LOG_DEBUG("bg.battlefield",
+              "Player {} entered outdoorpvp id {}",
+              player->GetGUID().ToString(),
+              itr->second->GetTypeId());
 }
 
 void BattlefieldMgr::HandlePlayerLeaveZone(Player* player, uint32 zoneid)
@@ -104,14 +109,16 @@ void BattlefieldMgr::HandlePlayerLeaveZone(Player* player, uint32 zoneid)
     if (!itr->second->HasPlayer(player))
         return;
     itr->second->HandlePlayerLeaveZone(player, zoneid);
-    LOG_DEBUG("bg.battlefield", "Player {} left outdoorpvp id {}", player->GetGUID().ToString(), itr->second->GetTypeId());
+    LOG_DEBUG("bg.battlefield",
+              "Player {} left outdoorpvp id {}",
+              player->GetGUID().ToString(),
+              itr->second->GetTypeId());
 }
 
 Battlefield* BattlefieldMgr::GetBattlefieldToZoneId(uint32 zoneid)
 {
     BattlefieldMap::iterator itr = m_BattlefieldMap.find(zoneid);
-    if (itr == m_BattlefieldMap.end())
-    {
+    if (itr == m_BattlefieldMap.end()) {
         // no handle for this zone, return
         return nullptr;
     }
@@ -122,8 +129,9 @@ Battlefield* BattlefieldMgr::GetBattlefieldToZoneId(uint32 zoneid)
 
 Battlefield* BattlefieldMgr::GetBattlefieldByBattleId(uint32 battleid)
 {
-    for (BattlefieldSet::iterator itr = m_BattlefieldSet.begin(); itr != m_BattlefieldSet.end(); ++itr)
-    {
+    for (BattlefieldSet::iterator itr = m_BattlefieldSet.begin();
+         itr != m_BattlefieldSet.end();
+         ++itr) {
         if ((*itr)->GetBattleId() == battleid)
             return (*itr);
     }
@@ -133,10 +141,11 @@ Battlefield* BattlefieldMgr::GetBattlefieldByBattleId(uint32 battleid)
 void BattlefieldMgr::Update(uint32 diff)
 {
     m_UpdateTimer += diff;
-    if (m_UpdateTimer > BATTLEFIELD_OBJECTIVE_UPDATE_INTERVAL)
-    {
-        for (BattlefieldSet::iterator itr = m_BattlefieldSet.begin(); itr != m_BattlefieldSet.end(); ++itr)
-            //if ((*itr)->IsEnabled())
+    if (m_UpdateTimer > BATTLEFIELD_OBJECTIVE_UPDATE_INTERVAL) {
+        for (BattlefieldSet::iterator itr = m_BattlefieldSet.begin();
+             itr != m_BattlefieldSet.end();
+             ++itr)
+            // if ((*itr)->IsEnabled())
             (*itr)->Update(m_UpdateTimer);
         m_UpdateTimer = 0;
     }

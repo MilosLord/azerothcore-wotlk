@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -27,16 +28,22 @@ constexpr auto CINEMATIC_LOOKAHEAD  = 2000;
 class Player;
 struct FlyByCamera;
 
-class AC_GAME_API CinematicMgr
-{
+class AC_GAME_API CinematicMgr {
     friend class Player;
+
 public:
     explicit CinematicMgr(Player* playerref);
     ~CinematicMgr();
 
     // Cinematic camera data and remote sight functions
-    uint32 GetActiveCinematicCamera() const { return m_activeCinematicCameraId; }
-    void SetActiveCinematicCamera(uint32 cinematicCameraId = 0) { m_activeCinematicCameraId = cinematicCameraId; }
+    uint32 GetActiveCinematicCamera() const
+    {
+        return m_activeCinematicCameraId;
+    }
+    void SetActiveCinematicCamera(uint32 cinematicCameraId = 0)
+    {
+        m_activeCinematicCameraId = cinematicCameraId;
+    }
     bool IsOnCinematic() const { return (m_cinematicCamera != nullptr); }
     void BeginCinematic();
     void EndCinematic();
@@ -44,16 +51,16 @@ public:
 
 private:
     // Remote location information
-    Player*     player;
+    Player* player;
 
 protected:
-    uint32      m_cinematicDiff;
-    uint32      m_lastCinematicCheck;
-    uint32      m_activeCinematicCameraId;
-    uint32      m_cinematicLength;
+    uint32                          m_cinematicDiff;
+    uint32                          m_lastCinematicCheck;
+    uint32                          m_activeCinematicCameraId;
+    uint32                          m_cinematicLength;
     std::vector<FlyByCamera> const* m_cinematicCamera;
-    Position    m_remoteSightPosition;
-    TempSummon*   m_CinematicObject;
+    Position                        m_remoteSightPosition;
+    TempSummon*                     m_CinematicObject;
 };
 
 #endif

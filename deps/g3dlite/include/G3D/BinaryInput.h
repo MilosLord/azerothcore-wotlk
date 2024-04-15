@@ -1,8 +1,8 @@
 /**
  \file G3D/BinaryInput.h
- 
+
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
- 
+
  \created 2001-08-09
  \edited  2013-01-03
 
@@ -14,36 +14,36 @@
 #define G3D_BinaryInput_h
 
 #ifdef _MSC_VER
-// Disable conditional expression is constant, which occurs incorrectly on inlined functions
-#   pragma  warning(push)
-#   pragma warning( disable : 4127 )
+// Disable conditional expression is constant, which occurs incorrectly on
+// inlined functions
+#pragma warning(push)
+#pragma warning(disable : 4127)
 #endif
 
-#include <assert.h>
-#include <string>
-#include <vector>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <stdio.h>
+#include "G3D/Array.h"
+#include "G3D/Color3.h"
+#include "G3D/Color4.h"
+#include "G3D/System.h"
+#include "G3D/Vector2.h"
+#include "G3D/Vector3.h"
+#include "G3D/Vector4.h"
+#include "G3D/debug.h"
+#include "G3D/g3dmath.h"
 #include "G3D/platform.h"
 #include "G3D/unorm8.h"
-#include "G3D/Array.h"
-#include "G3D/Color4.h"
-#include "G3D/Color3.h"
-#include "G3D/Vector4.h"
-#include "G3D/Vector3.h"
-#include "G3D/Vector2.h"
-#include "G3D/g3dmath.h"
-#include "G3D/debug.h"
-#include "G3D/System.h"
-
+#include <assert.h>
+#include <stdio.h>
+#include <string>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <vector>
 
 namespace G3D {
 
 #if defined(G3D_WINDOWS) || defined(G3D_LINUX)
-    // Allow writing of integers to non-word aligned locations.
-    // This is legal on x86, but not on other platforms.
-    #define G3D_ALLOW_UNALIGNED_WRITES
+// Allow writing of integers to non-word aligned locations.
+// This is legal on x86, but not on other platforms.
+#define G3D_ALLOW_UNALIGNED_WRITES
 #endif
 
 /**
@@ -59,92 +59,90 @@ namespace G3D {
  a memory block at least large enough to hold <I>n</I> elements.
 
  Most classes define serialize/deserialize methods that use BinaryInput,
- BinaryOutput, TextInput, and TextOutput.  There are text serializer 
- functions for primitive types (e.g. int, std::string, float, double) but not 
+ BinaryOutput, TextInput, and TextOutput.  There are text serializer
+ functions for primitive types (e.g. int, std::string, float, double) but not
  binary serializers-- you <B>must</b> call the BinaryInput::readInt32 or
- other appropriate function.  This is because it would be very hard to 
- debug the error sequence: <CODE>serialize(1.0, bo); ... float f; deserialize(f, bi);</CODE>
- in which a double is serialized and then deserialized as a float. 
+ other appropriate function.  This is because it would be very hard to
+ debug the error sequence: <CODE>serialize(1.0, bo); ... float f; deserialize(f,
+ bi);</CODE> in which a double is serialized and then deserialized as a float.
  */
 class BinaryInput {
 private:
-
-    // The initial buffer will be no larger than this, but 
+    // The initial buffer will be no larger than this, but
     // may grow if a large memory read occurs.  750 MB
-    static const int64
-        INITIAL_BUFFER_LENGTH =
+    static const int64 INITIAL_BUFFER_LENGTH =
 #ifdef G3D_64BIT
-        5000000000L  // 5 GB
+        5000000000L // 5 GB
 #else
         750000000 // 750 MB
 #endif
-    ;
+        ;
 
     /**
      is the file big or little endian
      */
-    G3DEndian       m_fileEndian;
-    std::string     m_filename;
+    G3DEndian   m_fileEndian;
+    std::string m_filename;
 
-    bool            m_swapBytes;
+    bool m_swapBytes;
 
     /** Next position to read from in bitString during readBits. */
-    int             m_bitPos;
+    int m_bitPos;
 
-    /** Bits currently being read by readBits.  
+    /** Bits currently being read by readBits.
         Contains at most 8 (low) bits.  Note that
         beginBits/readBits actually consumes one extra byte, which
         will be restored by writeBits.*/
-    uint32          m_bitString;
+    uint32 m_bitString;
 
     /** 1 when between beginBits and endBits, 0 otherwise. */
-    int             m_beginEndBits;
+    int m_beginEndBits;
 
     /** When operating on huge files, we cannot load the whole file into memory.
         This is the file position to which buffer[0] corresponds.
         Even 32-bit code can load 64-bit files in chunks, so this is not size_t
         */
-    int64           m_alreadyRead;
+    int64 m_alreadyRead;
 
     /**
-     Length of the entire file, in bytes.  
+     Length of the entire file, in bytes.
      For the length of the buffer, see bufferLength
      */
-    int64           m_length;
+    int64 m_length;
 
-    /** Length of the array referenced by buffer. May go past the end of the file!*/
-    int64           m_bufferLength;
-    uint8*          m_buffer;
+    /** Length of the array referenced by buffer. May go past the end of the
+     * file!*/
+    int64  m_bufferLength;
+    uint8* m_buffer;
 
     /**
      Next byte in file, relative to buffer.
      */
-    int64           m_pos;
+    int64 m_pos;
 
     /**
      When true, the buffer is freed in the destructor.
      */
-    bool            m_freeBuffer;
+    bool m_freeBuffer;
 
-    /** Ensures that we are able to read at least minLength from startPosition (relative
-        to start of file). */
+    /** Ensures that we are able to read at least minLength from startPosition
+       (relative to start of file). */
     void loadIntoMemory(int64 startPosition, int64 minLength = 0);
 
     /** Verifies that at least this number of bytes can be read.*/
     void prepareToRead(int64 nbytes);
 
-
     // Not implemented on purpose, don't use
     BinaryInput(const BinaryInput&);
     BinaryInput& operator=(const BinaryInput&);
-    bool operator==(const BinaryInput&);
+    bool         operator==(const BinaryInput&);
 
     /** Buffer is compressed; replace it with a decompressed version */
     void decompress();
-public:
 
+public:
     /** false, constant to use with the copyMemory option */
-    static const bool       NO_COPY;
+    static const bool NO_COPY;
 
     /**
        If the file cannot be opened, a zero length buffer is presented.
@@ -154,10 +152,9 @@ public:
        compressed using BinaryOutput's zlib compression.  This has
        nothing to do with whether the input is in a zipfile.
     */
-    BinaryInput(
-        const std::string&  filename,
-        G3DEndian           fileEndian,
-        bool                compressed = false);
+    BinaryInput(const std::string& filename,
+                G3DEndian          fileEndian,
+                bool               compressed = false);
 
     /**
      Creates input stream from an in memory source.
@@ -174,7 +171,7 @@ public:
 
         // read from master to point where compressed data exists.
 
-        BinaryInput subset(master.getCArray() + master.getPosition(), 
+        BinaryInput subset(master.getCArray() + master.getPosition(),
                            master.length() - master.getPosition(),
                            master.endian(), true, true);
 
@@ -182,12 +179,11 @@ public:
      </PRE>
      \endhtmlonly
      */
-    BinaryInput(
-        const uint8*        data,
-        int64               dataLen,
-        G3DEndian           dataEndian,
-        bool                compressed = false,
-        bool                copyMemory = true);
+    BinaryInput(const uint8* data,
+                int64        dataLen,
+                G3DEndian    dataEndian,
+                bool         compressed = false,
+                bool         copyMemory = true);
 
     virtual ~BinaryInput();
 
@@ -196,21 +192,18 @@ public:
         underlying data is unmodified.*/
     void setEndian(G3DEndian endian);
 
-    G3DEndian endian() const {
-        return m_fileEndian;
-    }
+    G3DEndian endian() const { return m_fileEndian; }
 
-    std::string getFilename() const {
-        return m_filename;
-    }
+    std::string getFilename() const { return m_filename; }
 
     /**
      Performs bounds checks in debug mode.  [] are relative to
      the start of the file, not the current position.
-     Seeks to the new position before reading (and leaves 
+     Seeks to the new position before reading (and leaves
      that as the current position)
      */
-   uint8 operator[](int64 n) {
+    uint8 operator[](int64 n)
+    {
         setPosition(n);
         return readUInt8();
     }
@@ -218,27 +211,22 @@ public:
     /**
      Returns the length of the file in bytes.
      */
-   int64 getLength() const {
-        return m_length;
-    }
+    int64 getLength() const { return m_length; }
 
-   int64 size() const {
-        return getLength();
-    }
+    int64 size() const { return getLength(); }
 
     /**
      Returns the current byte position in the file,
      where 0 is the beginning and getLength() - 1 is the end.
      */
-    int64 getPosition() const {
-        return m_pos + m_alreadyRead;
-    }
+    int64 getPosition() const { return m_pos + m_alreadyRead; }
 
     /**
      Returns a pointer to the internal memory buffer.
      May throw an exception for huge files.
      */
-    const uint8* getCArray() {
+    const uint8* getCArray()
+    {
         if (m_alreadyRead > 0 || m_bufferLength < m_length) {
             throw "Cannot getCArray for a huge file";
         }
@@ -249,7 +237,8 @@ public:
      Sets the position.  Cannot set past length.
      May throw a char* when seeking backwards more than 10 MB on a huge file.
      */
-    void setPosition(int64 p) {
+    void setPosition(int64 p)
+    {
         debugAssertM(p <= m_length, "Read past end of file");
         m_pos = p - m_alreadyRead;
         if ((m_pos < 0) || (m_pos > m_bufferLength)) {
@@ -260,31 +249,28 @@ public:
     /**
      Goes back to the beginning of the file.
      */
-   void reset() {
-        setPosition(0);
-    }
+    void reset() { setPosition(0); }
 
     void readBytes(void* bytes, int64 n);
 
-    int8 readInt8() {
+    int8 readInt8()
+    {
         prepareToRead(1);
         return m_buffer[m_pos++];
     }
-    
-    bool readBool8() {
-        return (readInt8() != 0);
-    }
-    
-    uint8 readUInt8() {
+
+    bool readBool8() { return (readInt8() != 0); }
+
+    uint8 readUInt8()
+    {
         prepareToRead(1);
         return ((uint8*)m_buffer)[m_pos++];
     }
-    
-    unorm8 readUNorm8() {
-        return unorm8::fromBits(readUInt8());
-    }
 
-    uint16 readUInt16() {
+    unorm8 readUNorm8() { return unorm8::fromBits(readUInt8()); }
+
+    uint16 readUInt16()
+    {
         prepareToRead(2);
 
         m_pos += 2;
@@ -293,25 +279,27 @@ public:
             out[0] = m_buffer[m_pos - 1];
             out[1] = m_buffer[m_pos - 2];
             return *(uint16*)out;
-        } else {
-            #ifdef G3D_ALLOW_UNALIGNED_WRITES
-                return *(uint16*)(&m_buffer[m_pos - 2]);
-            #else
-                uint8 out[2];
-                out[0] = m_buffer[m_pos - 2];
-                out[1] = m_buffer[m_pos - 1];
-                return *(uint16*)out;
-            #endif
         }
-
+        else {
+#ifdef G3D_ALLOW_UNALIGNED_WRITES
+            return *(uint16*)(&m_buffer[m_pos - 2]);
+#else
+            uint8 out[2];
+            out[0] = m_buffer[m_pos - 2];
+            out[1] = m_buffer[m_pos - 1];
+            return *(uint16*)out;
+#endif
+        }
     }
 
-   int16 readInt16() {
+    int16 readInt16()
+    {
         uint16 a = readUInt16();
         return *(int16*)&a;
     }
 
-   uint32 readUInt32() {
+    uint32 readUInt32()
+    {
         prepareToRead(4);
 
         m_pos += 4;
@@ -322,45 +310,49 @@ public:
             out[2] = m_buffer[m_pos - 3];
             out[3] = m_buffer[m_pos - 4];
             return *(uint32*)out;
-        } else {
-            #ifdef G3D_ALLOW_UNALIGNED_WRITES
-                return *(uint32*)(&m_buffer[m_pos - 4]);
-            #else
-                uint8 out[4];
-                out[0] = m_buffer[m_pos - 4];
-                out[1] = m_buffer[m_pos - 3];
-                out[2] = m_buffer[m_pos - 2];
-                out[3] = m_buffer[m_pos - 1];
-                return *(uint32*)out;
-            #endif
+        }
+        else {
+#ifdef G3D_ALLOW_UNALIGNED_WRITES
+            return *(uint32*)(&m_buffer[m_pos - 4]);
+#else
+            uint8 out[4];
+            out[0] = m_buffer[m_pos - 4];
+            out[1] = m_buffer[m_pos - 3];
+            out[2] = m_buffer[m_pos - 2];
+            out[3] = m_buffer[m_pos - 1];
+            return *(uint32*)out;
+#endif
         }
     }
 
-
-   int32 readInt32() {
+    int32 readInt32()
+    {
         uint32 a = readUInt32();
         return *(int32*)&a;
     }
 
     uint64 readUInt64();
 
-   int64 readInt64() {
+    int64 readInt64()
+    {
         uint64 a = readUInt64();
         return *(int64*)&a;
     }
 
-   float32 readFloat32() {
+    float32 readFloat32()
+    {
         union {
-            uint32 a;
+            uint32  a;
             float32 b;
         };
         a = readUInt32();
         return b;
-    }    
+    }
 
-   float64 readFloat64() {
+    float64 readFloat64()
+    {
         union {
-            uint64 a;
+            uint64  a;
             float64 b;
         };
         a = readUInt64();
@@ -368,7 +360,8 @@ public:
     }
 
     /**
-     Always consumes \a maxLength characters.  Reads a string until NULL or \a maxLength characters. Does not require NULL termination.
+     Always consumes \a maxLength characters.  Reads a string until NULL or \a
+     maxLength characters. Does not require NULL termination.
      */
     std::string readString(int64 maxLength);
 
@@ -377,24 +370,29 @@ public:
      */
     std::string readString();
 
-    /** Read a string (which may contain NULLs) of exactly numBytes bytes, including the final terminator if there is one.  If there is a NULL in the string before
-        the end, then only the part up to the first NULL is returned although all bytes are read.*/      
+    /** Read a string (which may contain NULLs) of exactly numBytes bytes,
+       including the final terminator if there is one.  If there is a NULL in
+       the string before the end, then only the part up to the first NULL is
+       returned although all bytes are read.*/
     std::string readFixedLengthString(int numBytes);
 
-    /** 
-     Reads a string until NULL, newline ("&#92;r", "&#92;n", "&#92;r&#92;n", "&#92;n&#92;r") or the end of the file is encountered. Consumes the newline.
+    /**
+     Reads a string until NULL, newline ("&#92;r", "&#92;n", "&#92;r&#92;n",
+     "&#92;n&#92;r") or the end of the file is encountered. Consumes the
+     newline.
      */
     std::string readStringNewline();
 
     /**
      Reads until NULL or the end of the file is encountered.
-     If the string has odd length (including NULL), reads 
+     If the string has odd length (including NULL), reads
      another byte.  This is a common format for 16-bit alignment
      in files.
      */
     std::string readStringEven();
 
-    /** Reads a uint32 and then calls readString(maxLength) with that value as the length. */
+    /** Reads a uint32 and then calls readString(maxLength) with that value as
+     * the length. */
     std::string readString32();
 
     Vector4 readVector4();
@@ -407,16 +405,12 @@ public:
     /**
      Skips ahead n bytes.
      */
-   void skip(int64 n) {
-        setPosition(m_pos + m_alreadyRead + n);
-    }
+    void skip(int64 n) { setPosition(m_pos + m_alreadyRead + n); }
 
     /**
       Returns true if the position is not at the end of the file
     */
-   bool hasMore() const {
-    return m_pos + m_alreadyRead < m_length;
-    }
+    bool hasMore() const { return m_pos + m_alreadyRead < m_length; }
 
     /** Prepares for bit reading via readBits.  Only readBits can be
         called between beginBits and endBits without corrupting the
@@ -429,30 +423,29 @@ public:
     /** Ends bit-reading. */
     void endBits();
 
-#   define DECLARE_READER(ucase, lcase)\
-    void read##ucase(lcase* out, int64 n);\
-    void read##ucase(std::vector<lcase>& out, int64 n);\
+#define DECLARE_READER(ucase, lcase)                                           \
+    void read##ucase(lcase* out, int64 n);                                     \
+    void read##ucase(std::vector<lcase>& out, int64 n);                        \
     void read##ucase(Array<lcase>& out, int64 n);
 
-    DECLARE_READER(Bool8,   bool)
-    DECLARE_READER(UInt8,   uint8)
-    DECLARE_READER(Int8,    int8)
-    DECLARE_READER(UInt16,  uint16)
-    DECLARE_READER(Int16,   int16)
-    DECLARE_READER(UInt32,  uint32)
-    DECLARE_READER(Int32,   int32)
-    DECLARE_READER(UInt64,  uint64)
-    DECLARE_READER(Int64,   int64)
+    DECLARE_READER(Bool8, bool)
+    DECLARE_READER(UInt8, uint8)
+    DECLARE_READER(Int8, int8)
+    DECLARE_READER(UInt16, uint16)
+    DECLARE_READER(Int16, int16)
+    DECLARE_READER(UInt32, uint32)
+    DECLARE_READER(Int32, int32)
+    DECLARE_READER(UInt64, uint64)
+    DECLARE_READER(Int64, int64)
     DECLARE_READER(Float32, float32)
-    DECLARE_READER(Float64, float64)    
-#   undef DECLARE_READER
+    DECLARE_READER(Float64, float64)
+#undef DECLARE_READER
 };
 
-
-}
+} // namespace G3D
 
 #ifdef _MSC_VER
-#   pragma  warning(pop)
+#pragma warning(pop)
 #endif
 
 #endif

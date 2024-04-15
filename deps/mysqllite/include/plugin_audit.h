@@ -30,17 +30,15 @@
   The first word in every event class struct indicates the specific
   class of the event.
 */
-struct mysql_event
-{
-  unsigned int event_class;
+struct mysql_event {
+    unsigned int event_class;
 };
-
 
 /*************************************************************************
   AUDIT CLASS : GENERAL
-  
+
   LOG events occurs before emitting to the general query log.
-  ERROR events occur before transmitting errors to the user. 
+  ERROR events occur before transmitting errors to the user.
   RESULT events occur after transmitting a resultset to the user.
   STATUS events occur after transmitting a resultset or errors
   to the user.
@@ -53,27 +51,25 @@ struct mysql_event
 #define MYSQL_AUDIT_GENERAL_RESULT 2
 #define MYSQL_AUDIT_GENERAL_STATUS 3
 
-struct mysql_event_general
-{
-  unsigned int event_class;
-  unsigned int event_subclass;
-  int general_error_code;
-  unsigned long general_thread_id;
-  const char *general_user;
-  unsigned int general_user_length;
-  const char *general_command;
-  unsigned int general_command_length;
-  const char *general_query;
-  unsigned int general_query_length;
-  struct charset_info_st *general_charset;
-  unsigned long long general_time;
-  unsigned long long general_rows;
+struct mysql_event_general {
+    unsigned int            event_class;
+    unsigned int            event_subclass;
+    int                     general_error_code;
+    unsigned long           general_thread_id;
+    const char*             general_user;
+    unsigned int            general_user_length;
+    const char*             general_command;
+    unsigned int            general_command_length;
+    const char*             general_query;
+    unsigned int            general_query_length;
+    struct charset_info_st* general_charset;
+    unsigned long long      general_time;
+    unsigned long long      general_rows;
 };
-
 
 /*
   AUDIT CLASS : CONNECTION
-  
+
   CONNECT occurs after authentication phase is completed.
   DISCONNECT occurs after connection is terminated.
   CHANGE_USER occurs after COM_CHANGE_USER RPC is completed.
@@ -85,28 +81,26 @@ struct mysql_event_general
 #define MYSQL_AUDIT_CONNECTION_DISCONNECT 1
 #define MYSQL_AUDIT_CONNECTION_CHANGE_USER 2
 
-struct mysql_event_connection
-{
-  unsigned int event_class;
-  unsigned int event_subclass;
-  int status;
-  unsigned long thread_id;
-  const char *user;
-  unsigned int user_length;
-  const char *priv_user;
-  unsigned int priv_user_length;
-  const char *external_user;
-  unsigned int external_user_length;
-  const char *proxy_user;
-  unsigned int proxy_user_length;
-  const char *host;
-  unsigned int host_length;
-  const char *ip;
-  unsigned int ip_length;
-  const char *database;
-  unsigned int database_length;
+struct mysql_event_connection {
+    unsigned int  event_class;
+    unsigned int  event_subclass;
+    int           status;
+    unsigned long thread_id;
+    const char*   user;
+    unsigned int  user_length;
+    const char*   priv_user;
+    unsigned int  priv_user_length;
+    const char*   external_user;
+    unsigned int  external_user_length;
+    const char*   proxy_user;
+    unsigned int  proxy_user_length;
+    const char*   host;
+    unsigned int  host_length;
+    const char*   ip;
+    unsigned int  ip_length;
+    const char*   database;
+    unsigned int  database_length;
 };
-
 
 /*************************************************************************
   Here we define the descriptor structure, that is referred from
@@ -116,23 +110,21 @@ struct mysql_event_connection
   disassociated from the specified THD. This would typically occur
   before some operation which may require sleeping - such as when
   waiting for the next query from the client.
-  
+
   event_notify() is invoked whenever an event occurs which is of any
   class for which the plugin has interest. The first word of the
   mysql_event argument indicates the specific event class and the
   remainder of the structure is as required for that class.
-  
+
   class_mask is an array of bits used to indicate what event classes
   that this plugin wants to receive.
 */
 
-struct st_mysql_audit
-{
-  int interface_version;
-  void (*release_thd)(MYSQL_THD);
-  void (*event_notify)(MYSQL_THD, const struct mysql_event *);
-  unsigned long class_mask[MYSQL_AUDIT_CLASS_MASK_SIZE];
+struct st_mysql_audit {
+    int interface_version;
+    void (*release_thd)(MYSQL_THD);
+    void (*event_notify)(MYSQL_THD, const struct mysql_event*);
+    unsigned long class_mask[MYSQL_AUDIT_CLASS_MASK_SIZE];
 };
-
 
 #endif

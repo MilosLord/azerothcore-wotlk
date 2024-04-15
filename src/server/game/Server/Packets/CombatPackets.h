@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,20 +22,20 @@
 #include "ObjectGuid.h"
 #include "Packet.h"
 
-namespace WorldPackets
-{
-    namespace Combat
+namespace WorldPackets {
+namespace Combat {
+class SetSheathed final : public ClientPacket {
+public:
+    SetSheathed(WorldPacket&& packet)
+        : ClientPacket(CMSG_SET_SHEATHED, std::move(packet))
     {
-        class SetSheathed final : public ClientPacket
-        {
-        public:
-            SetSheathed(WorldPacket&& packet) : ClientPacket(CMSG_SET_SHEATHED, std::move(packet)) { }
-
-            void Read() override;
-
-            uint32 CurrentSheathState = 0;
-        };
     }
-}
+
+    void Read() override;
+
+    uint32 CurrentSheathState = 0;
+};
+} // namespace Combat
+} // namespace WorldPackets
 
 #endif // CombatPackets_h__

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -17,7 +18,8 @@
 
 /**
  *
- * Utility library to define some global function for simple physics calculations
+ * Utility library to define some global function for simple physics
+ * calculations
  *
  */
 
@@ -31,7 +33,8 @@
 
 using namespace std;
 
-[[nodiscard]] inline float getWeight(float height, float width, float specificWeight)
+[[nodiscard]] inline float
+getWeight(float height, float width, float specificWeight)
 {
     auto volume = getCylinderVolume(height, width / 2.0f);
     auto weight = volume * specificWeight;
@@ -46,7 +49,8 @@ using namespace std;
  * @param weight specific weight
  * @return float
  */
-[[nodiscard]] inline float getOutOfWater(float width, float weight, float density)
+[[nodiscard]] inline float
+getOutOfWater(float width, float weight, float density)
 {
     auto baseArea = getCircleAreaByRadius(width / 2.0f);
     return weight / (baseArea * density);

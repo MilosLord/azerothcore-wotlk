@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,38 +21,34 @@
 #include "adt.h"
 
 // Helper
-int holetab_h[4] = { 0x1111, 0x2222, 0x4444, 0x8888 };
-int holetab_v[4] = { 0x000F, 0x00F0, 0x0F00, 0xF000 };
+int holetab_h[4] = {0x1111, 0x2222, 0x4444, 0x8888};
+int holetab_v[4] = {0x000F, 0x00F0, 0x0F00, 0xF000};
 
-u_map_fcc MHDRMagic = { { 'R', 'D', 'H', 'M' } };
-u_map_fcc MCINMagic = { { 'N', 'I', 'C', 'M' } };
-u_map_fcc MH2OMagic = { { 'O', '2', 'H', 'M' } };
-u_map_fcc MCNKMagic = { { 'K', 'N', 'C', 'M' } };
-u_map_fcc MCVTMagic = { { 'T', 'V', 'C', 'M' } };
-u_map_fcc MCLQMagic = { { 'Q', 'L', 'C', 'M' } };
-u_map_fcc MFBOMagic = { { 'O', 'B', 'F', 'M' } };
+u_map_fcc MHDRMagic = {{'R', 'D', 'H', 'M'}};
+u_map_fcc MCINMagic = {{'N', 'I', 'C', 'M'}};
+u_map_fcc MH2OMagic = {{'O', '2', 'H', 'M'}};
+u_map_fcc MCNKMagic = {{'K', 'N', 'C', 'M'}};
+u_map_fcc MCVTMagic = {{'T', 'V', 'C', 'M'}};
+u_map_fcc MCLQMagic = {{'Q', 'L', 'C', 'M'}};
+u_map_fcc MFBOMagic = {{'O', 'B', 'F', 'M'}};
 
 bool isHole(int holes, int i, int j)
 {
     int testi = i / 2;
     int testj = j / 4;
-    if (testi > 3) testi = 3;
-    if (testj > 3) testj = 3;
+    if (testi > 3)
+        testi = 3;
+    if (testj > 3)
+        testj = 3;
     return (holes & holetab_h[testi] & holetab_v[testj]) != 0;
 }
 
 //
 // Adt file loader class
 //
-ADT_file::ADT_file()
-{
-    a_grid = nullptr;
-}
+ADT_file::ADT_file() { a_grid = nullptr; }
 
-ADT_file::~ADT_file()
-{
-    free();
-}
+ADT_file::~ADT_file() { free(); }
 
 void ADT_file::free()
 {
@@ -158,7 +155,4 @@ bool adt_MCLQ::prepareLoadedData()
     return true;
 }
 
-bool adt_MFBO::prepareLoadedData()
-{
-    return fcc == MFBOMagic.fcc;
-}
+bool adt_MFBO::prepareLoadedData() { return fcc == MFBOMagic.fcc; }

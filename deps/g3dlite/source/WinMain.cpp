@@ -1,5 +1,6 @@
 /*
-    Dervied from SDL_main.c, which was placed in the public domain by Sam Lantinga  4/13/98
+    Dervied from SDL_main.c, which was placed in the public domain by Sam
+   Lantinga  4/13/98
 
     The WinMain function -- calls your program's main() function
 */
@@ -8,14 +9,14 @@
 
 #ifdef G3D_WINDOWS
 
+#include <cctype>
 #include <stdio.h>
 #include <stdlib.h>
-#include <cctype>
 
 #ifdef main
-#   ifndef _WIN32_WCE_EMULATION
-#       undef main
-#   endif /* _WIN32_WCE_EMULATION */
+#ifndef _WIN32_WCE_EMULATION
+#undef main
+#endif /* _WIN32_WCE_EMULATION */
 #endif /* main */
 
 #if defined(_WIN32_WCE) && _WIN32_WCE < 300
@@ -25,15 +26,16 @@
 
 // Turn off the G3D for loop scoping for C++
 #ifdef for
-#  undef for
+#undef for
 #endif
 
 extern int main(int argc, const char** argv);
 
 /* Parse a command line buffer into arguments */
-static int ParseCommandLine(char *cmdline, char **argv) {
-    char *bufp;
-    int argc;
+static int ParseCommandLine(char* cmdline, char** argv)
+{
+    char* bufp;
+    int   argc;
 
     argc = 0;
     for (bufp = cmdline; *bufp;) {
@@ -54,7 +56,8 @@ static int ParseCommandLine(char *cmdline, char **argv) {
             while (*bufp && (*bufp != '"')) {
                 ++bufp;
             }
-        } else {
+        }
+        else {
             if (*bufp) {
                 if (argv) {
                     argv[argc] = bufp;
@@ -80,7 +83,8 @@ static int ParseCommandLine(char *cmdline, char **argv) {
 }
 
 /* Show an error message */
-static void ShowError(const char *title, const char *message) {
+static void ShowError(const char* title, const char* message)
+{
 /* If USE_MESSAGEBOX is defined, you need to link with user32.lib */
 #ifdef USE_MESSAGEBOX
     MessageBox(NULL, message, title, MB_ICONEXCLAMATION | MB_OK);
@@ -90,24 +94,28 @@ static void ShowError(const char *title, const char *message) {
 }
 
 /* Pop up an out of memory message, returns to Windows */
-static BOOL OutOfMemory(void) {
+static BOOL OutOfMemory(void)
+{
     ShowError("Fatal Error", "Out of memory - aborting");
     return FALSE;
 }
 
-
-int WINAPI G3D_WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) {
-    char **argv;
-    int argc;
-    int status;
-    char *cmdline;
-#   ifdef _WIN32_WCE
-        wchar_t *bufp;
-        int nLen;
-#   else
-        char *bufp;
-        size_t nLen;
-#   endif
+int WINAPI G3D_WinMain(HINSTANCE hInst,
+                       HINSTANCE hPrev,
+                       LPSTR     szCmdLine,
+                       int       sw)
+{
+    char** argv;
+    int    argc;
+    int    status;
+    char*  cmdline;
+#ifdef _WIN32_WCE
+    wchar_t* bufp;
+    int      nLen;
+#else
+    char*  bufp;
+    size_t nLen;
+#endif
     (void)sw;
     (void)szCmdLine;
     (void)hInst;
@@ -131,8 +139,8 @@ int WINAPI G3D_WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw
     */
 #else
     /* Grab the command line */
-    bufp = GetCommandLineA();
-    nLen = strlen(bufp) + 1;
+    bufp    = GetCommandLineA();
+    nLen    = strlen(bufp) + 1;
     cmdline = (char*)malloc(sizeof(char) * nLen);
     if (cmdline == NULL) {
         return OutOfMemory();

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -19,14 +20,19 @@
 #include "InstanceScript.h"
 #include "hellfire_ramparts.h"
 
-class instance_hellfire_ramparts : public InstanceMapScript
-{
+class instance_hellfire_ramparts : public InstanceMapScript {
 public:
-    instance_hellfire_ramparts() : InstanceMapScript("instance_hellfire_ramparts", 543) { }
-
-    struct instance_hellfire_ramparts_InstanceMapScript : public InstanceScript
+    instance_hellfire_ramparts()
+        : InstanceMapScript("instance_hellfire_ramparts", 543)
     {
-        instance_hellfire_ramparts_InstanceMapScript(Map* map) : InstanceScript(map) { }
+    }
+
+    struct instance_hellfire_ramparts_InstanceMapScript
+        : public InstanceScript {
+        instance_hellfire_ramparts_InstanceMapScript(Map* map)
+            : InstanceScript(map)
+        {
+        }
 
         void Initialize() override
         {
@@ -36,12 +42,11 @@ public:
 
         void OnGameObjectCreate(GameObject* go) override
         {
-            switch (go->GetEntry())
-            {
-                case GO_FEL_IRON_CHEST_NORMAL:
-                case GO_FEL_IRON_CHECT_HEROIC:
-                    felIronChestGUID = go->GetGUID();
-                    break;
+            switch (go->GetEntry()) {
+            case GO_FEL_IRON_CHEST_NORMAL:
+            case GO_FEL_IRON_CHECT_HEROIC:
+                felIronChestGUID = go->GetGUID();
+                break;
             }
         }
 
@@ -51,7 +56,8 @@ public:
                 return false;
 
             if (type == DATA_VAZRUDEN && state == DONE)
-                if (GameObject* chest = instance->GetGameObject(felIronChestGUID))
+                if (GameObject* chest =
+                        instance->GetGameObject(felIronChestGUID))
                     chest->RemoveGameObjectFlag(GO_FLAG_NOT_SELECTABLE);
             return true;
         }
@@ -66,7 +72,4 @@ public:
     }
 };
 
-void AddSC_instance_hellfire_ramparts()
-{
-    new instance_hellfire_ramparts();
-}
+void AddSC_instance_hellfire_ramparts() { new instance_hellfire_ramparts(); }

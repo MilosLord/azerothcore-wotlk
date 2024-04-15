@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,106 +23,108 @@
 #include "Timer.h"
 #include <list>
 
-namespace AddonMgr
-{
-    // Anonymous namespace ensures file scope of all the stuff inside it, even
-    // if you add something more to this namespace somewhere else.
-    namespace
-    {
-        // List of saved addons (in DB).
-        typedef std::list<SavedAddon> SavedAddonsList;
+namespace AddonMgr {
+// Anonymous namespace ensures file scope of all the stuff inside it, even
+// if you add something more to this namespace somewhere else.
+namespace {
+// List of saved addons (in DB).
+typedef std::list<SavedAddon> SavedAddonsList;
 
-        SavedAddonsList m_knownAddons;
-        BannedAddonList m_bannedAddons;
+SavedAddonsList m_knownAddons;
+BannedAddonList m_bannedAddons;
+} // namespace
+
+void LoadFromDB()
+{
+    uint32 oldMSTime = getMSTime();
+
+    QueryResult result =
+        CharacterDatabase.Query("SELECT name, crc FROM addons");
+    if (!result) {
+        LOG_WARN("server.loading",
+                 ">> Loaded 0 known addons. DB table `addons` is empty!");
+        LOG_INFO("server.loading", " ");
+        return;
     }
 
-    void LoadFromDB()
-    {
-        uint32 oldMSTime = getMSTime();
+    uint32 count = 0;
 
-        QueryResult result = CharacterDatabase.Query("SELECT name, crc FROM addons");
-        if (!result)
-        {
-            LOG_WARN("server.loading", ">> Loaded 0 known addons. DB table `addons` is empty!");
-            LOG_INFO("server.loading", " ");
-            return;
-        }
+    do {
+        Field* fields = result->Fetch();
 
-        uint32 count = 0;
+        std::string name = fields[0].Get<std::string>();
+        uint32      crc  = fields[1].Get<uint32>();
 
-        do
-        {
+        m_knownAddons.push_back(SavedAddon(name, crc));
+
+        ++count;
+    } while (result->NextRow());
+
+    LOG_INFO("server.loading",
+             ">> Loaded {} known addons in {} ms",
+             count,
+             GetMSTimeDiffToNow(oldMSTime));
+    LOG_INFO("server.loading", " ");
+
+    oldMSTime = getMSTime();
+    result =
+        CharacterDatabase.Query("SELECT id, name, version, "
+                                "UNIX_TIMESTAMP(timestamp) FROM banned_addons");
+
+    if (result) {
+        uint32 count2 = 0;
+        uint32 offset = 102;
+
+        do {
             Field* fields = result->Fetch();
 
-            std::string name = fields[0].Get<std::string>();
-            uint32 crc = fields[1].Get<uint32>();
+            BannedAddon addon{};
+            addon.Id        = fields[0].Get<uint32>() + offset;
+            addon.Timestamp = uint32(fields[3].Get<uint64>());
+            addon.NameMD5 =
+                Acore::Crypto::MD5::GetDigestOf(fields[1].Get<std::string>());
+            addon.VersionMD5 =
+                Acore::Crypto::MD5::GetDigestOf(fields[2].Get<std::string>());
 
-            m_knownAddons.push_back(SavedAddon(name, crc));
+            m_bannedAddons.emplace_back(addon);
 
-            ++count;
+            ++count2;
         } while (result->NextRow());
 
-        LOG_INFO("server.loading", ">> Loaded {} known addons in {} ms", count, GetMSTimeDiffToNow(oldMSTime));
+        LOG_INFO("server.loading",
+                 ">> Loaded {} banned addons in {} ms",
+                 count2,
+                 GetMSTimeDiffToNow(oldMSTime));
         LOG_INFO("server.loading", " ");
+    }
+}
 
-        oldMSTime = getMSTime();
-        result = CharacterDatabase.Query("SELECT id, name, version, UNIX_TIMESTAMP(timestamp) FROM banned_addons");
+void SaveAddon(AddonInfo const& addon)
+{
+    std::string name = addon.Name;
 
-        if (result)
-        {
-            uint32 count2 = 0;
-            uint32 offset = 102;
+    CharacterDatabasePreparedStatement* stmt =
+        CharacterDatabase.GetPreparedStatement(CHAR_INS_ADDON);
 
-            do
-            {
-                Field* fields = result->Fetch();
+    stmt->SetData(0, name);
+    stmt->SetData(1, addon.CRC);
 
-                BannedAddon addon{};
-                addon.Id = fields[0].Get<uint32>() + offset;
-                addon.Timestamp = uint32(fields[3].Get<uint64>());
-                addon.NameMD5 = Acore::Crypto::MD5::GetDigestOf(fields[1].Get<std::string>());
-                addon.VersionMD5 = Acore::Crypto::MD5::GetDigestOf(fields[2].Get<std::string>());
+    CharacterDatabase.Execute(stmt);
 
-                m_bannedAddons.emplace_back(addon);
+    m_knownAddons.push_back(SavedAddon(addon.Name, addon.CRC));
+}
 
-                ++count2;
-            } while (result->NextRow());
-
-            LOG_INFO("server.loading", ">> Loaded {} banned addons in {} ms", count2, GetMSTimeDiffToNow(oldMSTime));
-            LOG_INFO("server.loading", " ");
+SavedAddon const* GetAddonInfo(const std::string& name)
+{
+    for (auto const& addon : m_knownAddons) {
+        if (addon.Name == name) {
+            return &addon;
         }
     }
 
-    void SaveAddon(AddonInfo const& addon)
-    {
-        std::string name = addon.Name;
+    return nullptr;
+}
 
-        CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_ADDON);
+BannedAddonList const* GetBannedAddons() { return &m_bannedAddons; }
 
-        stmt->SetData(0, name);
-        stmt->SetData(1, addon.CRC);
-
-        CharacterDatabase.Execute(stmt);
-
-        m_knownAddons.push_back(SavedAddon(addon.Name, addon.CRC));
-    }
-
-    SavedAddon const* GetAddonInfo(const std::string& name)
-    {
-        for (auto const& addon : m_knownAddons)
-        {
-            if (addon.Name == name)
-            {
-                return &addon;
-            }
-        }
-
-        return nullptr;
-    }
-
-    BannedAddonList const* GetBannedAddons()
-    {
-        return &m_bannedAddons;
-    }
-
-} // Namespace
+} // namespace AddonMgr

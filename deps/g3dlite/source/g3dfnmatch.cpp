@@ -42,25 +42,24 @@
 #ifdef G3D_WINDOWS
 
 #include <ctype.h>
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
 namespace G3D {
 
-#define    EOS    '\0'
+#define EOS '\0'
 
-#define    RANGE_MATCH    1
-#define    RANGE_NOMATCH    0
-#define    RANGE_ERROR    (-1)
+#define RANGE_MATCH 1
+#define RANGE_NOMATCH 0
+#define RANGE_ERROR (-1)
 
-static int rangematch(const char *, char, int, char **);
+static int rangematch(const char*, char, int, char**);
 
-int
-g3dfnmatch(const char *pattern, const char *string, int flags)
+int g3dfnmatch(const char* pattern, const char* string, int flags)
 {
-    const char *stringstart;
-    char *newp;
-    char c, test;
+    const char* stringstart;
+    char*       newp;
+    char        c, test;
 
     for (stringstart = string;;)
         switch (c = *pattern++) {
@@ -75,7 +74,7 @@ g3dfnmatch(const char *pattern, const char *string, int flags)
                 return (FNM_NOMATCH);
             if (*string == '.' && (flags & FNM_PERIOD) &&
                 (string == stringstart ||
-                ((flags & FNM_PATHNAME) && *(string - 1) == '/')))
+                 ((flags & FNM_PATHNAME) && *(string - 1) == '/')))
                 return (FNM_NOMATCH);
             ++string;
             break;
@@ -87,18 +86,20 @@ g3dfnmatch(const char *pattern, const char *string, int flags)
 
             if (*string == '.' && (flags & FNM_PERIOD) &&
                 (string == stringstart ||
-                ((flags & FNM_PATHNAME) && *(string - 1) == '/')))
+                 ((flags & FNM_PATHNAME) && *(string - 1) == '/')))
                 return (FNM_NOMATCH);
 
             /* Optimize for pattern with * at end or before /. */
             if (c == EOS) {
                 if (flags & FNM_PATHNAME)
                     return ((flags & FNM_LEADING_DIR) ||
-                        strchr(string, '/') == NULL ?
-                        0 : FNM_NOMATCH);
+                                    strchr(string, '/') == NULL
+                                ? 0
+                                : FNM_NOMATCH);
                 else
                     return (0);
-            } else if (c == '/' && (flags & FNM_PATHNAME)) {
+            }
+            else if (c == '/' && (flags & FNM_PATHNAME)) {
                 if ((string = strchr(string, '/')) == NULL)
                     return (FNM_NOMATCH);
                 break;
@@ -120,7 +121,7 @@ g3dfnmatch(const char *pattern, const char *string, int flags)
                 return (FNM_NOMATCH);
             if (*string == '.' && (flags & FNM_PERIOD) &&
                 (string == stringstart ||
-                ((flags & FNM_PATHNAME) && *(string - 1) == '/')))
+                 ((flags & FNM_PATHNAME) && *(string - 1) == '/')))
                 return (FNM_NOMATCH);
 
             switch (rangematch(pattern, *string, flags, &newp)) {
@@ -145,9 +146,9 @@ g3dfnmatch(const char *pattern, const char *string, int flags)
             /* FALLTHROUGH */
         default:
         normal:
-            if (c != *string && !((flags & FNM_CASEFOLD) &&
-                 (tolower((unsigned char)c) ==
-                 tolower((unsigned char)*string))))
+            if (c != *string &&
+                !((flags & FNM_CASEFOLD) && (tolower((unsigned char)c) ==
+                                             tolower((unsigned char)*string))))
                 return (FNM_NOMATCH);
             ++string;
             break;
@@ -155,10 +156,9 @@ g3dfnmatch(const char *pattern, const char *string, int flags)
     /* NOTREACHED */
 }
 
-static int
-rangematch(const char *pattern, char test, int flags, char **newp)
+static int rangematch(const char* pattern, char test, int flags, char** newp)
 {
-    int negate, ok;
+    int  negate, ok;
     char c, c2;
 
     /*
@@ -180,7 +180,7 @@ rangematch(const char *pattern, char test, int flags, char **newp)
      * -- POSIX.2 2.8.3.2
      */
     ok = 0;
-    c = *pattern++;
+    c  = *pattern++;
     do {
         if (c == '\\' && !(flags & FNM_NOESCAPE))
             c = *pattern++;
@@ -190,8 +190,7 @@ rangematch(const char *pattern, char test, int flags, char **newp)
             return (RANGE_NOMATCH);
         if ((flags & FNM_CASEFOLD))
             c = tolower((unsigned char)c);
-        if (*pattern == '-'
-            && (c2 = *(pattern+1)) != EOS && c2 != ']') {
+        if (*pattern == '-' && (c2 = *(pattern + 1)) != EOS && c2 != ']') {
             pattern += 2;
             if (c2 == '\\' && !(flags & FNM_NOESCAPE))
                 c2 = *pattern++;
@@ -201,23 +200,21 @@ rangematch(const char *pattern, char test, int flags, char **newp)
                 c2 = tolower((unsigned char)c2);
             if (c <= test && test <= c2)
                 ok = 1;
-        } else if (c == test)
+        }
+        else if (c == test)
             ok = 1;
     } while ((c = *pattern++) != ']');
 
-    *newp = (char *)pattern;
+    *newp = (char*)pattern;
     return (ok == negate ? RANGE_NOMATCH : RANGE_MATCH);
 }
 
-}
+} // namespace G3D
 
 #else
 
 namespace G3D {
-int g3dfnmatch(const char * a, const char *b, int c) {
-    return fnmatch(a, b, c);
-}
-}
+int g3dfnmatch(const char* a, const char* b, int c) { return fnmatch(a, b, c); }
+} // namespace G3D
 
 #endif
-

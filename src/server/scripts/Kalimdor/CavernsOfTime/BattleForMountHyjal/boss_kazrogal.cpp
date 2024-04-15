@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,8 +23,7 @@
 #include "SpellScriptLoader.h"
 #include "hyjal.h"
 
-enum Spells
-{
+enum Spells {
     SPELL_MALEVOLENT_CLEAVE = 31436,
     SPELL_WAR_STOMP         = 31480,
     SPELL_CRIPPLE           = 31477,
@@ -31,58 +31,58 @@ enum Spells
     SPELL_MARK_DAMAGE       = 31463
 };
 
-enum Texts
-{
-    SAY_ONSLAY          = 0,
-    SAY_MARK            = 1,
-    SAY_ONSPAWN         = 2,
+enum Texts {
+    SAY_ONSLAY  = 0,
+    SAY_MARK    = 1,
+    SAY_ONSPAWN = 2,
 };
 
-enum Sounds
-{
-    SOUND_ONDEATH       = 11018,
+enum Sounds {
+    SOUND_ONDEATH = 11018,
 };
 
-struct boss_kazrogal : public BossAI
-{
+struct boss_kazrogal : public BossAI {
 public:
     boss_kazrogal(Creature* creature) : BossAI(creature, DATA_KAZROGAL)
     {
         _recentlySpoken = false;
-        _markCounter = 0;
-        scheduler.SetValidator([this]
-            {
-                return !me->HasUnitState(UNIT_STATE_CASTING);
-            });
+        _markCounter    = 0;
+        scheduler.SetValidator(
+            [this] { return !me->HasUnitState(UNIT_STATE_CASTING); });
     }
 
-    void JustEngagedWith(Unit * who) override
+    void JustEngagedWith(Unit* who) override
     {
         BossAI::JustEngagedWith(who);
 
-        scheduler.Schedule(6s, 21s, [this](TaskContext context)
-        {
-            DoCastVictim(SPELL_MALEVOLENT_CLEAVE);
-            context.Repeat();
-        }).Schedule(12s, 18s, [this](TaskContext context)
-        {
-            if (SelectTarget(SelectTargetMethod::Random, 0, 12.f))
-            {
-                DoCastAOE(SPELL_WAR_STOMP);
-                context.Repeat(15s, 30s);
-            }
-            else
-                context.Repeat(1200ms);
-        }).Schedule(15s, [this](TaskContext context)
-        {
-            DoCastRandomTarget(SPELL_CRIPPLE, 0, 20.f);
-            context.Repeat(12s, 20s);
-        }).Schedule(45s, [this](TaskContext context)
-        {
-            DoCastSelf(SPELL_MARK);
-            Talk(SAY_MARK);
-            context.Repeat(GetMarkRepeatTimer());
-        });
+        scheduler
+            .Schedule(6s,
+                      21s,
+                      [this](TaskContext context) {
+                          DoCastVictim(SPELL_MALEVOLENT_CLEAVE);
+                          context.Repeat();
+                      })
+            .Schedule(
+                12s,
+                18s,
+                [this](TaskContext context) {
+                    if (SelectTarget(SelectTargetMethod::Random, 0, 12.f)) {
+                        DoCastAOE(SPELL_WAR_STOMP);
+                        context.Repeat(15s, 30s);
+                    }
+                    else
+                        context.Repeat(1200ms);
+                })
+            .Schedule(15s,
+                      [this](TaskContext context) {
+                          DoCastRandomTarget(SPELL_CRIPPLE, 0, 20.f);
+                          context.Repeat(12s, 20s);
+                      })
+            .Schedule(45s, [this](TaskContext context) {
+                DoCastSelf(SPELL_MARK);
+                Talk(SAY_MARK);
+                context.Repeat(GetMarkRepeatTimer());
+            });
     }
 
     Milliseconds GetMarkRepeatTimer()
@@ -103,38 +103,33 @@ public:
             me->GetMotionMaster()->MovePath(HORDE_BOSS_PATH, false);
     }
 
-    void KilledUnit(Unit * victim) override
+    void KilledUnit(Unit* victim) override
     {
-        if (!_recentlySpoken && victim->IsPlayer())
-        {
+        if (!_recentlySpoken && victim->IsPlayer()) {
             Talk(SAY_ONSLAY);
             _recentlySpoken = true;
 
-            scheduler.Schedule(6s, [this](TaskContext)
-                {
-                    _recentlySpoken = false;
-                });
+            scheduler.Schedule(
+                6s, [this](TaskContext) { _recentlySpoken = false; });
         }
     }
 
-    void JustDied(Unit * killer) override
+    void JustDied(Unit* killer) override
     {
         me->PlayDirectSound(SOUND_ONDEATH);
         BossAI::JustDied(killer);
     }
 
 private:
-    bool _recentlySpoken;
+    bool  _recentlySpoken;
     uint8 _markCounter;
 };
 
-class spell_mark_of_kazrogal : public SpellScriptLoader
-{
+class spell_mark_of_kazrogal : public SpellScriptLoader {
 public:
-    spell_mark_of_kazrogal() : SpellScriptLoader("spell_mark_of_kazrogal") { }
+    spell_mark_of_kazrogal() : SpellScriptLoader("spell_mark_of_kazrogal") {}
 
-    class spell_mark_of_kazrogal_SpellScript : public SpellScript
-    {
+    class spell_mark_of_kazrogal_SpellScript : public SpellScript {
         PrepareSpellScript(spell_mark_of_kazrogal_SpellScript);
 
         void FilterTargets(std::list<WorldObject*>& targets)
@@ -144,26 +139,28 @@ public:
 
         void Register() override
         {
-            OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_mark_of_kazrogal_SpellScript::FilterTargets, EFFECT_0, TARGET_UNIT_SRC_AREA_ENEMY);
+            OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(
+                spell_mark_of_kazrogal_SpellScript::FilterTargets,
+                EFFECT_0,
+                TARGET_UNIT_SRC_AREA_ENEMY);
         }
     };
 
-    class spell_mark_of_kazrogal_AuraScript : public AuraScript
-    {
+    class spell_mark_of_kazrogal_AuraScript : public AuraScript {
         PrepareAuraScript(spell_mark_of_kazrogal_AuraScript);
 
         bool Validate(SpellInfo const* /*spell*/) override
         {
-            return ValidateSpellInfo({ SPELL_MARK_DAMAGE });
+            return ValidateSpellInfo({SPELL_MARK_DAMAGE});
         }
 
         void OnPeriodic(AuraEffect const* aurEff)
         {
             Unit* target = GetTarget();
 
-            if ((int32)target->GetPower(POWER_MANA) < aurEff->GetBaseAmount())
-            {
-                target->CastSpell(target, SPELL_MARK_DAMAGE, true, nullptr, aurEff);
+            if ((int32)target->GetPower(POWER_MANA) < aurEff->GetBaseAmount()) {
+                target->CastSpell(
+                    target, SPELL_MARK_DAMAGE, true, nullptr, aurEff);
                 // Remove aura
                 SetDuration(0);
             }
@@ -171,7 +168,10 @@ public:
 
         void Register() override
         {
-            OnEffectPeriodic += AuraEffectPeriodicFn(spell_mark_of_kazrogal_AuraScript::OnPeriodic, EFFECT_0, SPELL_AURA_PERIODIC_MANA_LEECH);
+            OnEffectPeriodic += AuraEffectPeriodicFn(
+                spell_mark_of_kazrogal_AuraScript::OnPeriodic,
+                EFFECT_0,
+                SPELL_AURA_PERIODIC_MANA_LEECH);
         }
     };
 
@@ -191,4 +191,3 @@ void AddSC_boss_kazrogal()
     RegisterHyjalAI(boss_kazrogal);
     new spell_mark_of_kazrogal();
 }
-

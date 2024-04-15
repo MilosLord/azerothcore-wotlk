@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -36,36 +37,28 @@ void stripLineInvisibleChars(std::string& str)
     size_t wpos = 0;
 
     bool space = false;
-    for (size_t pos = 0; pos < str.size(); ++pos)
-    {
-        if (invChars.find(str[pos]) != std::string::npos)
-        {
-            if (!space)
-            {
+    for (size_t pos = 0; pos < str.size(); ++pos) {
+        if (invChars.find(str[pos]) != std::string::npos) {
+            if (!space) {
                 str[wpos++] = ' ';
-                space = true;
+                space       = true;
             }
         }
-        else
-        {
-            if (wpos != pos)
-            {
+        else {
+            if (wpos != pos) {
                 str[wpos++] = str[pos];
             }
-            else
-            {
+            else {
                 ++wpos;
             }
             space = false;
         }
     }
 
-    if (wpos < str.size())
-    {
+    if (wpos < str.size()) {
         str.erase(wpos, str.size());
     }
-    if (str.find("|TInterface") != std::string::npos)
-    {
+    if (str.find("|TInterface") != std::string::npos) {
         str.clear();
     }
 }
@@ -74,31 +67,26 @@ std::string secsToTimeString(uint64 timeInSecs, bool shortText)
 {
     uint64 secs    = timeInSecs % MINUTE;
     uint64 minutes = timeInSecs % HOUR / MINUTE;
-    uint64 hours   = timeInSecs % DAY  / HOUR;
+    uint64 hours   = timeInSecs % DAY / HOUR;
     uint64 days    = timeInSecs / DAY;
 
     std::ostringstream ss;
-    if (days)
-    {
+    if (days) {
         ss << days << (shortText ? "d" : " day(s) ");
     }
-    if (hours)
-    {
+    if (hours) {
         ss << hours << (shortText ? "h" : " hour(s) ");
     }
-    if (minutes)
-    {
+    if (minutes) {
         ss << minutes << (shortText ? "m" : " minute(s) ");
     }
-    if (secs || (!days && !hours && !minutes) )
-    {
+    if (secs || (!days && !hours && !minutes)) {
         ss << secs << (shortText ? "s" : " second(s) ");
     }
 
     std::string str = ss.str();
 
-    if (!shortText && !str.empty() && str[str.size() - 1] == ' ')
-    {
+    if (!shortText && !str.empty() && str[str.size() - 1] == ' ') {
         str.resize(str.size() - 1);
     }
 
@@ -113,30 +101,25 @@ Optional<int32> MoneyStringToMoney(std::string_view moneyString)
     bool hadS = false;
     bool hadC = false;
 
-    for (std::string_view token : Acore::Tokenize(moneyString, ' ', false))
-    {
+    for (std::string_view token : Acore::Tokenize(moneyString, ' ', false)) {
         uint32 unit;
-        switch (token[token.length() - 1])
-        {
+        switch (token[token.length() - 1]) {
         case 'g':
-            if (hadG)
-            {
+            if (hadG) {
                 return std::nullopt;
             }
             hadG = true;
             unit = 100 * 100;
             break;
         case 's':
-            if (hadS)
-            {
+            if (hadS) {
                 return std::nullopt;
             }
             hadS = true;
             unit = 100;
             break;
         case 'c':
-            if (hadC)
-            {
+            if (hadC) {
                 return std::nullopt;
             }
             hadC = true;
@@ -146,13 +129,12 @@ Optional<int32> MoneyStringToMoney(std::string_view moneyString)
             return std::nullopt;
         }
 
-        Optional<uint32> amount = Acore::StringTo<uint32>(token.substr(0, token.length() - 1));
-        if (amount)
-        {
+        Optional<uint32> amount =
+            Acore::StringTo<uint32>(token.substr(0, token.length() - 1));
+        if (amount) {
             money += (unit * *amount);
         }
-        else
-        {
+        else {
             return std::nullopt;
         }
     }
@@ -166,31 +148,29 @@ uint32 TimeStringToSecs(const std::string& timestring)
     uint32 buffer     = 0;
     uint32 multiplier = 0;
 
-    for (std::string::const_iterator itr = timestring.begin(); itr != timestring.end(); ++itr)
-    {
-        if (isdigit(*itr))
-        {
+    for (std::string::const_iterator itr = timestring.begin();
+         itr != timestring.end();
+         ++itr) {
+        if (isdigit(*itr)) {
             buffer *= 10;
             buffer += (*itr) - '0';
         }
-        else
-        {
-            switch (*itr)
-            {
-                case 'd':
-                    multiplier = DAY;
-                    break;
-                case 'h':
-                    multiplier = HOUR;
-                    break;
-                case 'm':
-                    multiplier = MINUTE;
-                    break;
-                case 's':
-                    multiplier = 1;
-                    break;
-                default :
-                    return 0;                         //bad format
+        else {
+            switch (*itr) {
+            case 'd':
+                multiplier = DAY;
+                break;
+            case 'h':
+                multiplier = HOUR;
+                break;
+            case 'm':
+                multiplier = MINUTE;
+                break;
+            case 's':
+                multiplier = 1;
+                break;
+            default:
+                return 0; // bad format
             }
             buffer *= multiplier;
             secs += buffer;
@@ -204,8 +184,7 @@ uint32 TimeStringToSecs(const std::string& timestring)
 /// Check if the string is a valid ip address representation
 bool IsIPAddress(char const* ipaddress)
 {
-    if (!ipaddress)
-    {
+    if (!ipaddress) {
         return false;
     }
 
@@ -218,8 +197,7 @@ bool IsIPAddress(char const* ipaddress)
 uint32 CreatePIDFile(std::string const& filename)
 {
     FILE* pid_file = fopen(filename.c_str(), "w");
-    if (!pid_file)
-    {
+    if (!pid_file) {
         return 0;
     }
 
@@ -244,12 +222,11 @@ uint32 GetPID()
 
 size_t utf8length(std::string& utf8str)
 {
-    try
-    {
-        return utf8::distance(utf8str.c_str(), utf8str.c_str() + utf8str.size());
+    try {
+        return utf8::distance(utf8str.c_str(),
+                              utf8str.c_str() + utf8str.size());
     }
-    catch (std::exception const&)
-    {
+    catch (std::exception const&) {
         utf8str.clear();
         return 0;
     }
@@ -257,54 +234,51 @@ size_t utf8length(std::string& utf8str)
 
 void utf8truncate(std::string& utf8str, size_t len)
 {
-    try
-    {
-        size_t wlen = utf8::distance(utf8str.c_str(), utf8str.c_str() + utf8str.size());
-        if (wlen <= len)
-        {
+    try {
+        size_t wlen =
+            utf8::distance(utf8str.c_str(), utf8str.c_str() + utf8str.size());
+        if (wlen <= len) {
             return;
         }
 
         std::wstring wstr;
         wstr.resize(wlen);
-        utf8::utf8to16(utf8str.c_str(), utf8str.c_str() + utf8str.size(), &wstr[0]);
+        utf8::utf8to16(
+            utf8str.c_str(), utf8str.c_str() + utf8str.size(), &wstr[0]);
         wstr.resize(len);
-        char* oend = utf8::utf16to8(wstr.c_str(), wstr.c_str() + wstr.size(), &utf8str[0]);
-        utf8str.resize(oend - (&utf8str[0]));               // remove unused tail
+        char* oend = utf8::utf16to8(
+            wstr.c_str(), wstr.c_str() + wstr.size(), &utf8str[0]);
+        utf8str.resize(oend - (&utf8str[0])); // remove unused tail
     }
-    catch (std::exception const&)
-    {
+    catch (std::exception const&) {
         utf8str.clear();
     }
 }
 
 bool Utf8toWStr(char const* utf8str, size_t csize, wchar_t* wstr, size_t& wsize)
 {
-    try
-    {
+    try {
         Acore::CheckedBufferOutputIterator<wchar_t> out(wstr, wsize);
         out = utf8::utf8to16(utf8str, utf8str + csize, out);
         wsize -= out.remaining(); // remaining unused space
         wstr[wsize] = L'\0';
     }
-    catch (std::exception const&)
-    {
-        // Replace the converted string with an error message if there is enough space
-        // Otherwise just return an empty string
-        const wchar_t* errorMessage = L"An error occurred converting string from UTF-8 to WStr";
-        std::size_t errorMessageLength = std::char_traits<wchar_t>::length(errorMessage);
-        if (wsize >= errorMessageLength)
-        {
+    catch (std::exception const&) {
+        // Replace the converted string with an error message if there is enough
+        // space Otherwise just return an empty string
+        const wchar_t* errorMessage =
+            L"An error occurred converting string from UTF-8 to WStr";
+        std::size_t errorMessageLength =
+            std::char_traits<wchar_t>::length(errorMessage);
+        if (wsize >= errorMessageLength) {
             std::wcscpy(wstr, errorMessage);
             wsize = std::char_traits<wchar_t>::length(wstr);
         }
-        else if (wsize > 0)
-        {
+        else if (wsize > 0) {
             wstr[0] = L'\0';
-            wsize = 0;
+            wsize   = 0;
         }
-        else
-        {
+        else {
             wsize = 0;
         }
 
@@ -317,12 +291,11 @@ bool Utf8toWStr(char const* utf8str, size_t csize, wchar_t* wstr, size_t& wsize)
 bool Utf8toWStr(std::string_view utf8str, std::wstring& wstr)
 {
     wstr.clear();
-    try
-    {
-        utf8::utf8to16(utf8str.begin(), utf8str.end(), std::back_inserter(wstr));
+    try {
+        utf8::utf8to16(
+            utf8str.begin(), utf8str.end(), std::back_inserter(wstr));
     }
-    catch (std::exception const&)
-    {
+    catch (std::exception const&) {
         wstr.clear();
         return false;
     }
@@ -332,21 +305,18 @@ bool Utf8toWStr(std::string_view utf8str, std::wstring& wstr)
 
 bool WStrToUtf8(wchar_t const* wstr, size_t size, std::string& utf8str)
 {
-    try
-    {
+    try {
         std::string utf8str2;
-        utf8str2.resize(size * 4);                            // allocate for most long case
+        utf8str2.resize(size * 4); // allocate for most long case
 
-        if (size)
-        {
+        if (size) {
             char* oend = utf8::utf16to8(wstr, wstr + size, &utf8str2[0]);
-            utf8str2.resize(oend - (&utf8str2[0]));               // remove unused tail
+            utf8str2.resize(oend - (&utf8str2[0])); // remove unused tail
         }
 
         utf8str = utf8str2;
     }
-    catch (std::exception const&)
-    {
+    catch (std::exception const&) {
         utf8str.clear();
         return false;
     }
@@ -356,21 +326,18 @@ bool WStrToUtf8(wchar_t const* wstr, size_t size, std::string& utf8str)
 
 bool WStrToUtf8(std::wstring_view wstr, std::string& utf8str)
 {
-    try
-    {
+    try {
         std::string utf8str2;
-        utf8str2.resize(wstr.size() * 4);                     // allocate for most long case
+        utf8str2.resize(wstr.size() * 4); // allocate for most long case
 
-        if (!wstr.empty())
-        {
+        if (!wstr.empty()) {
             char* oend = utf8::utf16to8(wstr.begin(), wstr.end(), &utf8str2[0]);
-            utf8str2.resize(oend - (&utf8str2[0]));                // remove unused tail
+            utf8str2.resize(oend - (&utf8str2[0])); // remove unused tail
         }
 
         utf8str = utf8str2;
     }
-    catch (std::exception const&)
-    {
+    catch (std::exception const&) {
         utf8str.clear();
         return false;
     }
@@ -378,60 +345,84 @@ bool WStrToUtf8(std::wstring_view wstr, std::string& utf8str)
     return true;
 }
 
-void wstrToUpper(std::wstring& str) { std::transform(std::begin(str), std::end(str), std::begin(str), wcharToUpper); }
-void wstrToLower(std::wstring& str) { std::transform(std::begin(str), std::end(str), std::begin(str), wcharToLower); }
-void strToUpper(std::string& str) { std::transform(std::begin(str), std::end(str), std::begin(str), charToUpper); }
-void strToLower(std::string& str) { std::transform(std::begin(str), std::end(str), std::begin(str), charToLower); }
+void wstrToUpper(std::wstring& str)
+{
+    std::transform(
+        std::begin(str), std::end(str), std::begin(str), wcharToUpper);
+}
+void wstrToLower(std::wstring& str)
+{
+    std::transform(
+        std::begin(str), std::end(str), std::begin(str), wcharToLower);
+}
+void strToUpper(std::string& str)
+{
+    std::transform(
+        std::begin(str), std::end(str), std::begin(str), charToUpper);
+}
+void strToLower(std::string& str)
+{
+    std::transform(
+        std::begin(str), std::end(str), std::begin(str), charToLower);
+}
 
 std::wstring GetMainPartOfName(std::wstring const& wname, uint32 declension)
 {
     // supported only Cyrillic cases
-    if (wname.empty() || !isCyrillicCharacter(wname[0]) || declension > 5)
-    {
+    if (wname.empty() || !isCyrillicCharacter(wname[0]) || declension > 5) {
         return wname;
     }
 
-    // Important: end length must be <= MAX_INTERNAL_PLAYER_NAME-MAX_PLAYER_NAME (3 currently)
-    static std::wstring const a_End    = { wchar_t(0x0430), wchar_t(0x0000) };
-    static std::wstring const o_End    = { wchar_t(0x043E), wchar_t(0x0000) };
-    static std::wstring const ya_End   = { wchar_t(0x044F), wchar_t(0x0000) };
-    static std::wstring const ie_End   = { wchar_t(0x0435), wchar_t(0x0000) };
-    static std::wstring const i_End    = { wchar_t(0x0438), wchar_t(0x0000) };
-    static std::wstring const yeru_End = { wchar_t(0x044B), wchar_t(0x0000) };
-    static std::wstring const u_End    = { wchar_t(0x0443), wchar_t(0x0000) };
-    static std::wstring const yu_End   = { wchar_t(0x044E), wchar_t(0x0000) };
-    static std::wstring const oj_End   = { wchar_t(0x043E), wchar_t(0x0439), wchar_t(0x0000) };
-    static std::wstring const ie_j_End = { wchar_t(0x0435), wchar_t(0x0439), wchar_t(0x0000) };
-    static std::wstring const io_j_End = { wchar_t(0x0451), wchar_t(0x0439), wchar_t(0x0000) };
-    static std::wstring const o_m_End  = { wchar_t(0x043E), wchar_t(0x043C), wchar_t(0x0000) };
-    static std::wstring const io_m_End = { wchar_t(0x0451), wchar_t(0x043C), wchar_t(0x0000) };
-    static std::wstring const ie_m_End = { wchar_t(0x0435), wchar_t(0x043C), wchar_t(0x0000) };
-    static std::wstring const soft_End = { wchar_t(0x044C), wchar_t(0x0000) };
-    static std::wstring const j_End    = { wchar_t(0x0439), wchar_t(0x0000) };
+    // Important: end length must be <= MAX_INTERNAL_PLAYER_NAME-MAX_PLAYER_NAME
+    // (3 currently)
+    static std::wstring const a_End    = {wchar_t(0x0430), wchar_t(0x0000)};
+    static std::wstring const o_End    = {wchar_t(0x043E), wchar_t(0x0000)};
+    static std::wstring const ya_End   = {wchar_t(0x044F), wchar_t(0x0000)};
+    static std::wstring const ie_End   = {wchar_t(0x0435), wchar_t(0x0000)};
+    static std::wstring const i_End    = {wchar_t(0x0438), wchar_t(0x0000)};
+    static std::wstring const yeru_End = {wchar_t(0x044B), wchar_t(0x0000)};
+    static std::wstring const u_End    = {wchar_t(0x0443), wchar_t(0x0000)};
+    static std::wstring const yu_End   = {wchar_t(0x044E), wchar_t(0x0000)};
+    static std::wstring const oj_End   = {
+        wchar_t(0x043E), wchar_t(0x0439), wchar_t(0x0000)};
+    static std::wstring const ie_j_End = {
+        wchar_t(0x0435), wchar_t(0x0439), wchar_t(0x0000)};
+    static std::wstring const io_j_End = {
+        wchar_t(0x0451), wchar_t(0x0439), wchar_t(0x0000)};
+    static std::wstring const o_m_End = {
+        wchar_t(0x043E), wchar_t(0x043C), wchar_t(0x0000)};
+    static std::wstring const io_m_End = {
+        wchar_t(0x0451), wchar_t(0x043C), wchar_t(0x0000)};
+    static std::wstring const ie_m_End = {
+        wchar_t(0x0435), wchar_t(0x043C), wchar_t(0x0000)};
+    static std::wstring const soft_End = {wchar_t(0x044C), wchar_t(0x0000)};
+    static std::wstring const j_End    = {wchar_t(0x0439), wchar_t(0x0000)};
 
-    static std::array<std::array<std::wstring const*, 7>, 6> const dropEnds = {{
-            { &a_End,  &o_End,    &ya_End,   &ie_End,  &soft_End, &j_End,    nullptr },
-            { &a_End,  &ya_End,   &yeru_End, &i_End,   nullptr,   nullptr,   nullptr },
-            { &ie_End, &u_End,    &yu_End,   &i_End,   nullptr,   nullptr,   nullptr },
-            { &u_End,  &yu_End,   &o_End,    &ie_End,  &soft_End, &ya_End,   &a_End  },
-            { &oj_End, &io_j_End, &ie_j_End, &o_m_End, &io_m_End, &ie_m_End, &yu_End },
-            { &ie_End, &i_End,    nullptr,   nullptr,  nullptr,   nullptr,   nullptr }
-        }
-    };
+    static std::array<std::array<std::wstring const*, 7>, 6> const dropEnds = {
+        {{&a_End, &o_End, &ya_End, &ie_End, &soft_End, &j_End, nullptr},
+         {&a_End, &ya_End, &yeru_End, &i_End, nullptr, nullptr, nullptr},
+         {&ie_End, &u_End, &yu_End, &i_End, nullptr, nullptr, nullptr},
+         {&u_End, &yu_End, &o_End, &ie_End, &soft_End, &ya_End, &a_End},
+         {&oj_End,
+          &io_j_End,
+          &ie_j_End,
+          &o_m_End,
+          &io_m_End,
+          &ie_m_End,
+          &yu_End},
+         {&ie_End, &i_End, nullptr, nullptr, nullptr, nullptr, nullptr}}};
 
-    std::size_t const thisLen = wname.length();
+    std::size_t const                         thisLen = wname.length();
     std::array<std::wstring const*, 7> const& endings = dropEnds[declension];
-    for (auto itr = endings.begin(), end = endings.end(); (itr != end) && *itr; ++itr)
-    {
+    for (auto itr = endings.begin(), end = endings.end(); (itr != end) && *itr;
+         ++itr) {
         std::wstring const& ending = **itr;
-        std::size_t const endLen = ending.length();
-        if (endLen > thisLen)
-        {
+        std::size_t const   endLen = ending.length();
+        if (endLen > thisLen) {
             continue;
         }
 
-        if (wname.substr(thisLen - endLen, thisLen) == ending)
-        {
+        if (wname.substr(thisLen - endLen, thisLen) == ending) {
             return wname.substr(0, thisLen - endLen);
         }
     }
@@ -443,8 +434,7 @@ bool utf8ToConsole(std::string_view utf8str, std::string& conStr)
 {
 #if AC_PLATFORM == AC_PLATFORM_WINDOWS
     std::wstring wstr;
-    if (!Utf8toWStr(utf8str, wstr))
-    {
+    if (!Utf8toWStr(utf8str, wstr)) {
         return false;
     }
 
@@ -477,16 +467,14 @@ bool Utf8FitTo(std::string_view str, std::wstring_view search)
 {
     std::wstring temp;
 
-    if (!Utf8toWStr(str, temp))
-    {
+    if (!Utf8toWStr(str, temp)) {
         return false;
     }
 
     // converting to lower case
     wstrToLower(temp);
 
-    if (temp.find(search) == std::wstring::npos)
-    {
+    if (temp.find(search) == std::wstring::npos) {
         return false;
     }
 
@@ -504,13 +492,12 @@ void utf8printf(FILE* out, const char* str, ...)
 void vutf8printf(FILE* out, const char* str, va_list* ap)
 {
 #if AC_PLATFORM == AC_PLATFORM_WINDOWS
-    char temp_buf[32 * 1024];
+    char    temp_buf[32 * 1024];
     wchar_t wtemp_buf[32 * 1024];
 
     size_t temp_len = vsnprintf(temp_buf, 32 * 1024, str, *ap);
-    //vsnprintf returns -1 if the buffer is too small
-    if (temp_len == size_t(-1))
-    {
+    // vsnprintf returns -1 if the buffer is too small
+    if (temp_len == size_t(-1)) {
         temp_len = 32 * 1024 - 1;
     }
 
@@ -527,32 +514,32 @@ void vutf8printf(FILE* out, const char* str, va_list* ap)
 bool Utf8ToUpperOnlyLatin(std::string& utf8String)
 {
     std::wstring wstr;
-    if (!Utf8toWStr(utf8String, wstr))
-    {
+    if (!Utf8toWStr(utf8String, wstr)) {
         return false;
     }
 
-    std::transform(wstr.begin(), wstr.end(), wstr.begin(), wcharToUpperOnlyLatin);
+    std::transform(
+        wstr.begin(), wstr.end(), wstr.begin(), wcharToUpperOnlyLatin);
 
     return WStrToUtf8(wstr, utf8String);
 }
 
-std::string Acore::Impl::ByteArrayToHexStr(uint8 const* bytes, size_t arrayLen, bool reverse /* = false */)
+std::string Acore::Impl::ByteArrayToHexStr(uint8 const* bytes,
+                                           size_t       arrayLen,
+                                           bool         reverse /* = false */)
 {
     int32 init = 0;
-    int32 end = arrayLen;
-    int8 op = 1;
+    int32 end  = arrayLen;
+    int8  op   = 1;
 
-    if (reverse)
-    {
+    if (reverse) {
         init = arrayLen - 1;
-        end = -1;
-        op = -1;
+        end  = -1;
+        op   = -1;
     }
 
     std::ostringstream ss;
-    for (int32 i = init; i != end; i += op)
-    {
+    for (int32 i = init; i != end; i += op) {
         char buffer[4];
         snprintf(buffer, sizeof(buffer), "%02X", bytes[i]);
         ss << buffer;
@@ -561,43 +548,56 @@ std::string Acore::Impl::ByteArrayToHexStr(uint8 const* bytes, size_t arrayLen, 
     return ss.str();
 }
 
-void Acore::Impl::HexStrToByteArray(std::string_view str, uint8* out, size_t outlen, bool reverse /*= false*/)
+void Acore::Impl::HexStrToByteArray(std::string_view str,
+                                    uint8*           out,
+                                    size_t           outlen,
+                                    bool             reverse /*= false*/)
 {
     ASSERT(str.size() == (2 * outlen));
 
     int32 init = 0;
-    int32 end = int32(str.length());
-    int8 op = 1;
+    int32 end  = int32(str.length());
+    int8  op   = 1;
 
-    if (reverse)
-    {
+    if (reverse) {
         init = int32(str.length() - 2);
-        end = -2;
-        op = -1;
+        end  = -2;
+        op   = -1;
     }
 
     uint32 j = 0;
-    for (int32 i = init; i != end; i += 2 * op)
-    {
-        char buffer[3] = { str[i], str[i + 1], '\0' };
-        out[j++] = uint8(strtoul(buffer, nullptr, 16));
+    for (int32 i = init; i != end; i += 2 * op) {
+        char buffer[3] = {str[i], str[i + 1], '\0'};
+        out[j++]       = uint8(strtoul(buffer, nullptr, 16));
     }
 }
 
 bool StringEqualI(std::string_view a, std::string_view b)
 {
-    return std::equal(a.begin(), a.end(), b.begin(), b.end(), [](char c1, char c2) { return std::tolower(c1) == std::tolower(c2); });
+    return std::equal(
+        a.begin(), a.end(), b.begin(), b.end(), [](char c1, char c2) {
+            return std::tolower(c1) == std::tolower(c2);
+        });
 }
 
 bool StringContainsStringI(std::string_view haystack, std::string_view needle)
 {
-    return haystack.end() !=
-        std::search(haystack.begin(), haystack.end(), needle.begin(), needle.end(), [](char c1, char c2) { return std::tolower(c1) == std::tolower(c2); });
+    return haystack.end() != std::search(haystack.begin(),
+                                         haystack.end(),
+                                         needle.begin(),
+                                         needle.end(),
+                                         [](char c1, char c2) {
+                                             return std::tolower(c1) ==
+                                                    std::tolower(c2);
+                                         });
 }
 
 bool StringCompareLessI(std::string_view a, std::string_view b)
 {
-    return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end(), [](char c1, char c2) { return std::tolower(c1) < std::tolower(c2); });
+    return std::lexicographical_compare(
+        a.begin(), a.end(), b.begin(), b.end(), [](char c1, char c2) {
+            return std::tolower(c1) < std::tolower(c2);
+        });
 }
 
 std::string GetTypeName(std::type_info const& info)

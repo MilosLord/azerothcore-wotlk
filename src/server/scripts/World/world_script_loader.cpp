@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -27,7 +28,7 @@ void AddSC_npc_innkeeper();
 void AddSC_npcs_special();
 void AddSC_npc_taxi();
 void AddSC_achievement_scripts();
-void AddSC_chat_log(); // location: scripts\World\chat_log.cpp
+void AddSC_chat_log();         // location: scripts\World\chat_log.cpp
 void AddSC_action_ip_logger(); // location: scripts\World\action_ip_logger.cpp
 void AddSC_player_scripts();
 void AddSC_npc_stave_of_ancients();
@@ -48,7 +49,7 @@ void AddWorldScripts()
     AddSC_npcs_special();
     AddSC_npc_taxi();
     AddSC_achievement_scripts();
-    AddSC_chat_log(); // location: scripts\World\chat_log.cpp
+    AddSC_chat_log();         // location: scripts\World\chat_log.cpp
     AddSC_action_ip_logger(); // location: scripts\World\action_ip_logger.cpp
     AddSC_player_scripts();
     AddSC_npc_stave_of_ancients();

@@ -41,7 +41,7 @@
 #define HAVE_UNISTD_H 0
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
-   */
+ */
 #define LT_OBJDIR ".libs/"
 
 /* Name of package */

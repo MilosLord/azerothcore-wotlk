@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,40 +23,42 @@
 #include "mpq_libmpq04.h"
 #include <utility>
 
-DBCFile::DBCFile(std::string  filename):
-    filename(std::move(filename)), recordSize(0), recordCount(0), fieldCount(0), stringSize(0), data(nullptr), stringTable(nullptr)
+DBCFile::DBCFile(std::string filename)
+    : filename(std::move(filename)), recordSize(0), recordCount(0),
+      fieldCount(0), stringSize(0), data(nullptr), stringTable(nullptr)
 {
 }
 
 bool DBCFile::open()
 {
-    MPQFile f(filename.c_str());
-    char header[4];
+    MPQFile      f(filename.c_str());
+    char         header[4];
     unsigned int na, nb, es, ss;
 
-    if (f.read(header, 4) != 4)                             // Number of records
+    if (f.read(header, 4) != 4) // Number of records
         return false;
 
-    if (header[0] != 'W' || header[1] != 'D' || header[2] != 'B' || header[3] != 'C')
+    if (header[0] != 'W' || header[1] != 'D' || header[2] != 'B' ||
+        header[3] != 'C')
         return false;
 
-    if (f.read(&na, 4) != 4)                                // Number of records
+    if (f.read(&na, 4) != 4) // Number of records
         return false;
-    if (f.read(&nb, 4) != 4)                                // Number of fields
+    if (f.read(&nb, 4) != 4) // Number of fields
         return false;
-    if (f.read(&es, 4) != 4)                                // Size of a record
+    if (f.read(&es, 4) != 4) // Size of a record
         return false;
-    if (f.read(&ss, 4) != 4)                                // String size
+    if (f.read(&ss, 4) != 4) // String size
         return false;
 
-    recordSize = es;
+    recordSize  = es;
     recordCount = na;
-    fieldCount = nb;
-    stringSize = ss;
+    fieldCount  = nb;
+    stringSize  = ss;
     if (fieldCount * 4 != recordSize)
         return false;
 
-    data = new unsigned char[recordSize * recordCount + stringSize];
+    data        = new unsigned char[recordSize * recordCount + stringSize];
     stringTable = data + recordSize * recordCount;
 
     size_t data_size = recordSize * recordCount + stringSize;
@@ -64,10 +67,7 @@ bool DBCFile::open()
     f.close();
     return true;
 }
-DBCFile::~DBCFile()
-{
-    delete [] data;
-}
+DBCFile::~DBCFile() { delete[] data; }
 
 DBCFile::Record DBCFile::getRecord(size_t id)
 {
@@ -80,8 +80,7 @@ size_t DBCFile::getMaxId()
     assert(data);
 
     size_t maxId = 0;
-    for (size_t i = 0; i < getRecordCount(); ++i)
-    {
+    for (size_t i = 0; i < getRecordCount(); ++i) {
         if (maxId < getRecord(i).getUInt(0))
             maxId = getRecord(i).getUInt(0);
     }

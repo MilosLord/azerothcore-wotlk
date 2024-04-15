@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -19,63 +20,65 @@
 #include "ScriptedCreature.h"
 #include "hyjal.h"
 
-enum Spells
-{
-    SPELL_RAIN_OF_FIRE          = 31340,
-    SPELL_DOOM                  = 31347,
-    SPELL_HOWL_OF_AZGALOR       = 31344,
-    SPELL_CLEAVE                = 31345,
-    SPELL_BERSERK               = 26662
+enum Spells {
+    SPELL_RAIN_OF_FIRE    = 31340,
+    SPELL_DOOM            = 31347,
+    SPELL_HOWL_OF_AZGALOR = 31344,
+    SPELL_CLEAVE          = 31345,
+    SPELL_BERSERK         = 26662
 };
 
-enum Texts
-{
-    SAY_ONDEATH             = 0,
-    SAY_ONSLAY              = 1,
-    SAY_DOOM                = 2, // Not used?
-    SAY_ONSPAWN             = 3,
+enum Texts {
+    SAY_ONDEATH = 0,
+    SAY_ONSLAY  = 1,
+    SAY_DOOM    = 2, // Not used?
+    SAY_ONSPAWN = 3,
 
-    SAY_ARCHIMONDE_INTRO    = 8
+    SAY_ARCHIMONDE_INTRO = 8
 };
 
-struct boss_azgalor : public BossAI
-{
+struct boss_azgalor : public BossAI {
 public:
     boss_azgalor(Creature* creature) : BossAI(creature, DATA_AZGALOR)
     {
         _recentlySpoken = false;
-        scheduler.SetValidator([this]
-            {
-                return !me->HasUnitState(UNIT_STATE_CASTING);
-            });
+        scheduler.SetValidator(
+            [this] { return !me->HasUnitState(UNIT_STATE_CASTING); });
     }
 
-    void JustEngagedWith(Unit * who) override
+    void JustEngagedWith(Unit* who) override
     {
         BossAI::JustEngagedWith(who);
 
-        scheduler.Schedule(10s, 16s, [this](TaskContext context)
-        {
-            DoCastVictim(SPELL_CLEAVE);
-            context.Repeat(8s, 16s);
-        }).Schedule(25s, [this](TaskContext context)
-        {
-            DoCastRandomTarget(SPELL_RAIN_OF_FIRE, 0, 40.f);
-            context.Repeat(15s);
-        }).Schedule(30s, [this](TaskContext context)
-        {
-            DoCastAOE(SPELL_HOWL_OF_AZGALOR);
-            context.Repeat(18s, 20s);
-        }).Schedule(45s, 55s, [this](TaskContext context)
-        {
-            DoCastRandomTarget(SPELL_DOOM, 0, 100.f, true, false, false);
-            Talk(SAY_DOOM);
-            context.Repeat();
-        }).Schedule(10min, [this](TaskContext context)
-        {
-            DoCastSelf(SPELL_BERSERK);
-            context.Repeat(5min);
-        });
+        scheduler
+            .Schedule(10s,
+                      16s,
+                      [this](TaskContext context) {
+                          DoCastVictim(SPELL_CLEAVE);
+                          context.Repeat(8s, 16s);
+                      })
+            .Schedule(25s,
+                      [this](TaskContext context) {
+                          DoCastRandomTarget(SPELL_RAIN_OF_FIRE, 0, 40.f);
+                          context.Repeat(15s);
+                      })
+            .Schedule(30s,
+                      [this](TaskContext context) {
+                          DoCastAOE(SPELL_HOWL_OF_AZGALOR);
+                          context.Repeat(18s, 20s);
+                      })
+            .Schedule(45s,
+                      55s,
+                      [this](TaskContext context) {
+                          DoCastRandomTarget(
+                              SPELL_DOOM, 0, 100.f, true, false, false);
+                          Talk(SAY_DOOM);
+                          context.Repeat();
+                      })
+            .Schedule(10min, [this](TaskContext context) {
+                DoCastSelf(SPELL_BERSERK);
+                context.Repeat(5min);
+            });
     }
 
     void DoAction(int32 action) override
@@ -86,26 +89,22 @@ public:
             me->GetMotionMaster()->MovePath(HORDE_BOSS_PATH, false);
     }
 
-    void KilledUnit(Unit * victim) override
+    void KilledUnit(Unit* victim) override
     {
-        if (!_recentlySpoken && victim->IsPlayer())
-        {
+        if (!_recentlySpoken && victim->IsPlayer()) {
             Talk(SAY_ONSLAY);
             _recentlySpoken = true;
 
-            scheduler.Schedule(6s, [this](TaskContext)
-            {
-                _recentlySpoken = false;
-            });
+            scheduler.Schedule(
+                6s, [this](TaskContext) { _recentlySpoken = false; });
         }
     }
 
-    void JustDied(Unit * killer) override
+    void JustDied(Unit* killer) override
     {
         Talk(SAY_ONDEATH);
         // If Archimonde has not yet been initialized, this won't trigger
-        if (Creature* archi = instance->GetCreature(DATA_ARCHIMONDE))
-        {
+        if (Creature* archi = instance->GetCreature(DATA_ARCHIMONDE)) {
             archi->AI()->DoAction(ACTION_BECOME_ACTIVE_AND_CHANNEL);
             archi->AI()->Talk(SAY_ARCHIMONDE_INTRO, 25000ms);
         }
@@ -114,10 +113,6 @@ public:
 
 private:
     bool _recentlySpoken;
-
 };
 
-void AddSC_boss_azgalor()
-{
-    RegisterHyjalAI(boss_azgalor);
-}
+void AddSC_boss_azgalor() { RegisterHyjalAI(boss_azgalor); }

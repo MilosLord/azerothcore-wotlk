@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,73 +9,66 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "molten_core.h"
 #include "CreatureScript.h"
 #include "ScriptedCreature.h"
 #include "SpellScript.h"
 #include "SpellScriptLoader.h"
 #include "TaskScheduler.h"
-#include "molten_core.h"
 
-enum Texts
-{
-    EMOTE_SMOLDERING        = 0,
-    EMOTE_IGNITE            = 1,
+enum Texts {
+    EMOTE_SMOLDERING = 0,
+    EMOTE_IGNITE     = 1,
 };
 
-enum Spells
-{
+enum Spells {
     // Ancient Core Hound
-    SPELL_SERRATED_BITE     = 19771,
-    SPELL_PLAY_DEAD         = 19822,
-    SPELL_FULL_HEALTH       = 17683,
-    SPELL_FIRE_NOVA_VISUAL  = 19823,
-    SPELL_PLAY_DEAD_PACIFY  = 19951,    // Server side spell
+    SPELL_SERRATED_BITE    = 19771,
+    SPELL_PLAY_DEAD        = 19822,
+    SPELL_FULL_HEALTH      = 17683,
+    SPELL_FIRE_NOVA_VISUAL = 19823,
+    SPELL_PLAY_DEAD_PACIFY = 19951, // Server side spell
 
     // Lava Spawn
-    SPELL_FIREBALL          = 19391,
-    SPELL_SPLIT_1           = 19569,
-    SPELL_SPLIT_2           = 19570,
+    SPELL_FIREBALL = 19391,
+    SPELL_SPLIT_1  = 19569,
+    SPELL_SPLIT_2  = 19570,
 
-    TALK_0                  = 0
+    TALK_0 = 0
 };
 
 // Serrated Bites timer may be wrong
-class npc_mc_core_hound : public CreatureScript
-{
+class npc_mc_core_hound : public CreatureScript {
 public:
     npc_mc_core_hound() : CreatureScript("npc_mc_core_hound") {}
 
-    struct npc_mc_core_houndAI : public CreatureAI
-    {
-        npc_mc_core_houndAI(Creature* creature) :
-            CreatureAI(creature),
-            instance(creature->GetInstanceScript()),
-            serratedBiteTimer(3000)
+    struct npc_mc_core_houndAI : public CreatureAI {
+        npc_mc_core_houndAI(Creature* creature)
+            : CreatureAI(creature), instance(creature->GetInstanceScript()),
+              serratedBiteTimer(3000)
         {
         }
 
-        void Reset() override
-        {
-            serratedBiteTimer = 3000;
-        }
+        void Reset() override { serratedBiteTimer = 3000; }
 
-        void DamageTaken(Unit* /*attacker*/, uint32& damage, DamageEffectType /*damagetype*/, SpellSchoolMask /*damageSchoolMask*/) override
+        void DamageTaken(Unit* /*attacker*/,
+                         uint32& damage,
+                         DamageEffectType /*damagetype*/,
+                         SpellSchoolMask /*damageSchoolMask*/) override
         {
             // Prevent receiving any extra damage if Hound is playing dead
-            if (me->HasAura(SPELL_PLAY_DEAD))
-            {
+            if (me->HasAura(SPELL_PLAY_DEAD)) {
                 damage = 0;
                 return;
             }
-            else if (me->GetHealth() <= damage)
-            {
+            else if (me->GetHealth() <= damage) {
                 damage = 0;
                 Talk(EMOTE_SMOLDERING);
                 DoCastSelf(SPELL_PLAY_DEAD);
@@ -83,23 +77,20 @@ public:
 
         void UpdateAI(uint32 diff) override
         {
-            if (!UpdateVictim())
-            {
+            if (!UpdateVictim()) {
                 return;
             }
 
-            if (me->HasUnitState(UNIT_STATE_CASTING) || me->HasAura(SPELL_PLAY_DEAD))
-            {
+            if (me->HasUnitState(UNIT_STATE_CASTING) ||
+                me->HasAura(SPELL_PLAY_DEAD)) {
                 return;
             }
 
-            if (serratedBiteTimer <= diff)
-            {
+            if (serratedBiteTimer <= diff) {
                 DoCastVictim(SPELL_SERRATED_BITE);
                 serratedBiteTimer = urand(5000, 6000);
             }
-            else
-            {
+            else {
                 serratedBiteTimer -= diff;
             }
 
@@ -108,7 +99,7 @@ public:
 
     private:
         InstanceScript* instance;
-        uint32 serratedBiteTimer;
+        uint32          serratedBiteTimer;
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -118,86 +109,84 @@ public:
 };
 
 // 19822 Play Dead
-class spell_mc_play_dead : public SpellScriptLoader
-{
+class spell_mc_play_dead : public SpellScriptLoader {
 public:
-    spell_mc_play_dead() : SpellScriptLoader("spell_mc_play_dead") { }
+    spell_mc_play_dead() : SpellScriptLoader("spell_mc_play_dead") {}
 
-    class spell_mc_play_dead_AuraScript : public AuraScript
-    {
+    class spell_mc_play_dead_AuraScript : public AuraScript {
         PrepareAuraScript(spell_mc_play_dead_AuraScript);
 
-        bool Load() override
-        {
-            return GetCaster()->GetTypeId() == TYPEID_UNIT;
-        }
+        bool Load() override { return GetCaster()->GetTypeId() == TYPEID_UNIT; }
 
-        void HandleEffectApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+        void HandleEffectApply(AuraEffect const* /*aurEff*/,
+                               AuraEffectHandleModes /*mode*/)
         {
             Creature* creatureTarget = GetTarget()->ToCreature();
-            if (!creatureTarget)
-            {
+            if (!creatureTarget) {
                 return;
             }
 
-            creatureTarget->CastSpell(creatureTarget, SPELL_PLAY_DEAD_PACIFY, true);
+            creatureTarget->CastSpell(
+                creatureTarget, SPELL_PLAY_DEAD_PACIFY, true);
             creatureTarget->SetDynamicFlag(UNIT_DYNFLAG_DEAD);
             creatureTarget->SetUnitFlag2(UNIT_FLAG2_FEIGN_DEATH);
-            //creatureTarget->SetUnitFlag(UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC);
+            // creatureTarget->SetUnitFlag(UNIT_FLAG_IMMUNE_TO_PC |
+            // UNIT_FLAG_IMMUNE_TO_NPC);
             creatureTarget->SetReactState(REACT_PASSIVE);
             creatureTarget->SetControlled(true, UNIT_STATE_ROOT);
 
             creatureTarget->AttackStop();
         }
 
-        void HandleEffectRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+        void HandleEffectRemove(AuraEffect const* /*aurEff*/,
+                                AuraEffectHandleModes /*mode*/)
         {
             Creature* creatureTarget = GetTarget()->ToCreature();
-            if (!creatureTarget)
-            {
+            if (!creatureTarget) {
                 return;
             }
 
             creatureTarget->RemoveAurasDueToSpell(SPELL_PLAY_DEAD_PACIFY);
             creatureTarget->RemoveDynamicFlag(UNIT_DYNFLAG_DEAD);
             creatureTarget->RemoveUnitFlag2(UNIT_FLAG2_FEIGN_DEATH);
-            //creatureTarget->RemoveUnitFlag(UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC);
+            // creatureTarget->RemoveUnitFlag(UNIT_FLAG_IMMUNE_TO_PC |
+            // UNIT_FLAG_IMMUNE_TO_NPC);
             creatureTarget->SetControlled(false, UNIT_STATE_ROOT);
             creatureTarget->SetReactState(REACT_AGGRESSIVE);
 
-            if (!creatureTarget->IsInCombat())
-            {
+            if (!creatureTarget->IsInCombat()) {
                 return;
             }
 
-            bool shouldDie = true;
+            bool                 shouldDie = true;
             std::list<Creature*> hounds;
-            creatureTarget->GetCreaturesWithEntryInRange(hounds, 80.0f, NPC_CORE_HOUND);
+            creatureTarget->GetCreaturesWithEntryInRange(
+                hounds, 80.0f, NPC_CORE_HOUND);
 
             // Perform lambda based check to find if there is any nearby
-            if (!hounds.empty())
-            {
+            if (!hounds.empty()) {
                 // Alive hound been found within 80 yards -> cancel suicide
-                if (std::find_if(hounds.begin(), hounds.end(), [creatureTarget](Creature const* hound)
-                {
-                    return creatureTarget != hound && creatureTarget->IsWithinLOSInMap(hound) && hound->IsAlive() && hound->IsInCombat() && !hound->HasAura(SPELL_PLAY_DEAD);
-                }) != hounds.end())
-                {
+                if (std::find_if(
+                        hounds.begin(),
+                        hounds.end(),
+                        [creatureTarget](Creature const* hound) {
+                            return creatureTarget != hound &&
+                                   creatureTarget->IsWithinLOSInMap(hound) &&
+                                   hound->IsAlive() && hound->IsInCombat() &&
+                                   !hound->HasAura(SPELL_PLAY_DEAD);
+                        }) != hounds.end()) {
                     shouldDie = false;
                 }
             }
 
-            if (!shouldDie)
-            {
-                if (CreatureAI* targetAI = creatureTarget->AI())
-                {
+            if (!shouldDie) {
+                if (CreatureAI* targetAI = creatureTarget->AI()) {
                     targetAI->DoCastSelf(SPELL_FIRE_NOVA_VISUAL, true);
                     targetAI->DoCastSelf(SPELL_FULL_HEALTH, true);
                     targetAI->Talk(EMOTE_IGNITE);
                 }
             }
-            else
-            {
+            else {
                 Unit::Kill(creatureTarget, creatureTarget);
                 creatureTarget->DespawnOrUnsummon(14000);
             }
@@ -205,8 +194,16 @@ public:
 
         void Register() override
         {
-            AfterEffectApply += AuraEffectApplyFn(spell_mc_play_dead_AuraScript::HandleEffectApply, EFFECT_0, SPELL_AURA_FEIGN_DEATH, AURA_EFFECT_HANDLE_REAL);
-            AfterEffectRemove += AuraEffectApplyFn(spell_mc_play_dead_AuraScript::HandleEffectRemove, EFFECT_0, SPELL_AURA_FEIGN_DEATH, AURA_EFFECT_HANDLE_REAL);
+            AfterEffectApply += AuraEffectApplyFn(
+                spell_mc_play_dead_AuraScript::HandleEffectApply,
+                EFFECT_0,
+                SPELL_AURA_FEIGN_DEATH,
+                AURA_EFFECT_HANDLE_REAL);
+            AfterEffectRemove += AuraEffectApplyFn(
+                spell_mc_play_dead_AuraScript::HandleEffectRemove,
+                EFFECT_0,
+                SPELL_AURA_FEIGN_DEATH,
+                AURA_EFFECT_HANDLE_REAL);
         }
     };
 
@@ -216,25 +213,18 @@ public:
     }
 };
 
-struct npc_lava_spawn : public ScriptedAI
-{
-    npc_lava_spawn(Creature* creature) : ScriptedAI(creature)
-    {
-    }
+struct npc_lava_spawn : public ScriptedAI {
+    npc_lava_spawn(Creature* creature) : ScriptedAI(creature) {}
 
-    void Reset() override
-    {
-        _scheduler.CancelAll();
-    }
+    void Reset() override { _scheduler.CancelAll(); }
 
     void JustEngagedWith(Unit* /*who*/) override
     {
-        _scheduler.Schedule(15s, [this](TaskContext context)
-        {
+        _scheduler.Schedule(15s, [this](TaskContext context) {
             std::list<Creature*> lavaSpawns;
-            me->GetCreatureListWithEntryInGrid(lavaSpawns, me->GetEntry(), 100.f);
-            if (lavaSpawns.size() < 16)
-            {
+            me->GetCreatureListWithEntryInGrid(
+                lavaSpawns, me->GetEntry(), 100.f);
+            if (lavaSpawns.size() < 16) {
                 Talk(TALK_0);
 
                 DoCastSelf(SPELL_SPLIT_1, true);
@@ -242,8 +232,7 @@ struct npc_lava_spawn : public ScriptedAI
 
                 me->DespawnOrUnsummon();
             }
-            else
-            {
+            else {
                 context.Repeat(15s);
             }
         });
@@ -251,8 +240,7 @@ struct npc_lava_spawn : public ScriptedAI
 
     void UpdateAI(uint32 diff) override
     {
-        if (!UpdateVictim())
-        {
+        if (!UpdateVictim()) {
             return;
         }
 
@@ -274,4 +262,3 @@ void AddSC_molten_core()
     // Spells
     new spell_mc_play_dead();
 }
-

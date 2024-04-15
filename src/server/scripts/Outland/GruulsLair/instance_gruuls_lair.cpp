@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -19,35 +20,25 @@
 #include "InstanceScript.h"
 #include "gruuls_lair.h"
 
-DoorData const doorData[] =
-{
-    { GO_MAULGAR_DOOR,  DATA_MAULGAR,   DOOR_TYPE_PASSAGE },
-    { GO_GRUUL_DOOR,    DATA_GRUUL,     DOOR_TYPE_ROOM    },
-    { 0,                0,              DOOR_TYPE_ROOM    } // END
+DoorData const doorData[] = {
+    {GO_MAULGAR_DOOR, DATA_MAULGAR, DOOR_TYPE_PASSAGE},
+    {GO_GRUUL_DOOR, DATA_GRUUL, DOOR_TYPE_ROOM},
+    {0, 0, DOOR_TYPE_ROOM} // END
 };
 
-ObjectData const creatureData[] =
-{
-    { NPC_MAULGAR, DATA_MAULGAR },
-    { 0,           0            }
-};
+ObjectData const creatureData[] = {{NPC_MAULGAR, DATA_MAULGAR}, {0, 0}};
 
-MinionData const minionData[] =
-{
-    { NPC_MAULGAR,              DATA_MAULGAR },
-    { NPC_KROSH_FIREHAND,       DATA_MAULGAR },
-    { NPC_OLM_THE_SUMMONER,     DATA_MAULGAR },
-    { NPC_KIGGLER_THE_CRAZED,   DATA_MAULGAR },
-    { NPC_BLINDEYE_THE_SEER,    DATA_MAULGAR }
-};
+MinionData const minionData[] = {{NPC_MAULGAR, DATA_MAULGAR},
+                                 {NPC_KROSH_FIREHAND, DATA_MAULGAR},
+                                 {NPC_OLM_THE_SUMMONER, DATA_MAULGAR},
+                                 {NPC_KIGGLER_THE_CRAZED, DATA_MAULGAR},
+                                 {NPC_BLINDEYE_THE_SEER, DATA_MAULGAR}};
 
-class instance_gruuls_lair : public InstanceMapScript
-{
+class instance_gruuls_lair : public InstanceMapScript {
 public:
-    instance_gruuls_lair() : InstanceMapScript("instance_gruuls_lair", 565) { }
+    instance_gruuls_lair() : InstanceMapScript("instance_gruuls_lair", 565) {}
 
-    struct instance_gruuls_lair_InstanceMapScript : public InstanceScript
-    {
+    struct instance_gruuls_lair_InstanceMapScript : public InstanceScript {
         instance_gruuls_lair_InstanceMapScript(Map* map) : InstanceScript(map)
         {
             SetHeaders(DataHeader);
@@ -69,12 +60,10 @@ public:
             return true;
         }
 
-        void SetData(uint32 type, uint32  /*id*/) override
+        void SetData(uint32 type, uint32 /*id*/) override
         {
-            if (type == DATA_ADDS_KILLED)
-            {
-                if (Creature* maulgar = GetCreature(DATA_MAULGAR))
-                {
+            if (type == DATA_ADDS_KILLED) {
+                if (Creature* maulgar = GetCreature(DATA_MAULGAR)) {
                     maulgar->AI()->DoAction(++_addsKilled);
                 }
             }
@@ -97,7 +86,4 @@ public:
     }
 };
 
-void AddSC_instance_gruuls_lair()
-{
-    new instance_gruuls_lair();
-}
+void AddSC_instance_gruuls_lair() { new instance_gruuls_lair(); }

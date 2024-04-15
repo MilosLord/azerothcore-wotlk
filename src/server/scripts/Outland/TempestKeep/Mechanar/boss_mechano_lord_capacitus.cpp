@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,76 +23,72 @@
 #include "SpellScriptLoader.h"
 #include "mechanar.h"
 
-enum Spells
-{
-    SPELL_HEADCRACK                 = 35161,
-    SPELL_REFLECTIVE_MAGIC_SHIELD   = 35158,
-    SPELL_REFLECTIVE_DAMAGE_SHIELD  = 35159,
-    SPELL_POLARITY_SHIFT            = 39096,
-    SPELL_BERSERK                   = 26662,
+enum Spells {
+    SPELL_HEADCRACK                = 35161,
+    SPELL_REFLECTIVE_MAGIC_SHIELD  = 35158,
+    SPELL_REFLECTIVE_DAMAGE_SHIELD = 35159,
+    SPELL_POLARITY_SHIFT           = 39096,
+    SPELL_BERSERK                  = 26662,
 
-    SPELL_NETHER_CHARGE_PASSIVE     = 35150,
+    SPELL_NETHER_CHARGE_PASSIVE = 35150,
 
-    SPELL_SUMMON_NETHER_CHARGE_NE   = 35153,
-    SPELL_SUMMON_NETHER_CHARGE_NW   = 35904,
-    SPELL_SUMMON_NETHER_CHARGE_SE   = 35905,
-    SPELL_SUMMON_NETHER_CHARGE_SW   = 35906,
+    SPELL_SUMMON_NETHER_CHARGE_NE = 35153,
+    SPELL_SUMMON_NETHER_CHARGE_NW = 35904,
+    SPELL_SUMMON_NETHER_CHARGE_SE = 35905,
+    SPELL_SUMMON_NETHER_CHARGE_SW = 35906,
 };
 
-enum Yells
-{
-    SAY_AGGRO                      = 0,
-    SAY_REFLECTIVE_MAGIC_SHIELD    = 1,
-    SAY_REFLECTIVE_DAMAGE_SHIELD   = 2,
-    SAY_KILL                       = 3,
-    SAY_DEATH                      = 4
+enum Yells {
+    SAY_AGGRO                    = 0,
+    SAY_REFLECTIVE_MAGIC_SHIELD  = 1,
+    SAY_REFLECTIVE_DAMAGE_SHIELD = 2,
+    SAY_KILL                     = 3,
+    SAY_DEATH                    = 4
 };
 
-struct boss_mechano_lord_capacitus : public BossAI
-{
-    boss_mechano_lord_capacitus(Creature* creature) : BossAI(creature, DATA_MECHANOLORD_CAPACITUS) { }
+struct boss_mechano_lord_capacitus : public BossAI {
+    boss_mechano_lord_capacitus(Creature* creature)
+        : BossAI(creature, DATA_MECHANOLORD_CAPACITUS)
+    {
+    }
 
     void JustEngagedWith(Unit* /*who*/) override
     {
         _JustEngagedWith();
         Talk(SAY_AGGRO);
 
-        scheduler.Schedule(6s, [this](TaskContext context)
-        {
-            DoCastVictim(SPELL_HEADCRACK);
-            context.Repeat(20s);
-        }).Schedule(10s, [this](TaskContext context)
-        {
-            uint32 spellId = RAND(SPELL_SUMMON_NETHER_CHARGE_NE,
-                SPELL_SUMMON_NETHER_CHARGE_NW,
-                SPELL_SUMMON_NETHER_CHARGE_SE,
-                SPELL_SUMMON_NETHER_CHARGE_SW);
-            DoCastAOE(spellId);
-            context.Repeat(2400ms, 3600ms);
-        }).Schedule(3min, [this](TaskContext /*context*/)
-        {
-            DoCastSelf(SPELL_BERSERK, true);
-        });
+        scheduler
+            .Schedule(6s,
+                      [this](TaskContext context) {
+                          DoCastVictim(SPELL_HEADCRACK);
+                          context.Repeat(20s);
+                      })
+            .Schedule(10s,
+                      [this](TaskContext context) {
+                          uint32 spellId = RAND(SPELL_SUMMON_NETHER_CHARGE_NE,
+                                                SPELL_SUMMON_NETHER_CHARGE_NW,
+                                                SPELL_SUMMON_NETHER_CHARGE_SE,
+                                                SPELL_SUMMON_NETHER_CHARGE_SW);
+                          DoCastAOE(spellId);
+                          context.Repeat(2400ms, 3600ms);
+                      })
+            .Schedule(3min, [this](TaskContext /*context*/) {
+                DoCastSelf(SPELL_BERSERK, true);
+            });
 
-        if (IsHeroic())
-        {
-            scheduler.Schedule(15s, [this](TaskContext context)
-            {
+        if (IsHeroic()) {
+            scheduler.Schedule(15s, [this](TaskContext context) {
                 DoCastSelf(SPELL_POLARITY_SHIFT, true);
                 context.Repeat(30s);
             });
         }
-        else
-        {
-            scheduler.Schedule(15s, [this](TaskContext context)
-            {
-                if (IsEvenNumber(context.GetRepeatCounter()))
-                {
+        else {
+            scheduler.Schedule(15s, [this](TaskContext context) {
+                if (IsEvenNumber(context.GetRepeatCounter())) {
                     Talk(SAY_REFLECTIVE_DAMAGE_SHIELD);
                     DoCastSelf(SPELL_REFLECTIVE_DAMAGE_SHIELD);
                 }
-                else
-                {
+                else {
                     Talk(SAY_REFLECTIVE_MAGIC_SHIELD);
                     DoCastSelf(SPELL_REFLECTIVE_MAGIC_SHIELD);
                 }
@@ -103,8 +100,7 @@ struct boss_mechano_lord_capacitus : public BossAI
 
     void KilledUnit(Unit* victim) override
     {
-        if (victim->IsPlayer())
-        {
+        if (victim->IsPlayer()) {
             Talk(SAY_KILL);
         }
     }
@@ -121,19 +117,17 @@ struct boss_mechano_lord_capacitus : public BossAI
     }
 };
 
-enum polarityShift
-{
-    SPELL_POSITIVE_POLARITY         = 39088,
-    SPELL_POSITIVE_CHARGE_STACK     = 39089,
-    SPELL_POSITIVE_CHARGE           = 39090,
+enum polarityShift {
+    SPELL_POSITIVE_POLARITY     = 39088,
+    SPELL_POSITIVE_CHARGE_STACK = 39089,
+    SPELL_POSITIVE_CHARGE       = 39090,
 
-    SPELL_NEGATIVE_POLARITY         = 39091,
-    SPELL_NEGATIVE_CHARGE_STACK     = 39092,
-    SPELL_NEGATIVE_CHARGE           = 39093
+    SPELL_NEGATIVE_POLARITY     = 39091,
+    SPELL_NEGATIVE_CHARGE_STACK = 39092,
+    SPELL_NEGATIVE_CHARGE       = 39093
 };
 
-class spell_capacitus_polarity_charge : public SpellScript
-{
+class spell_capacitus_polarity_charge : public SpellScript {
     PrepareSpellScript(spell_capacitus_polarity_charge);
 
     void HandleTargets(std::list<WorldObject*>& targetList)
@@ -145,13 +139,13 @@ class spell_capacitus_polarity_charge : public SpellScript
                     if (target->HasAura(GetTriggeringSpell()->Id))
                         ++count;
 
-        uint32 spellId = GetSpellInfo()->Id == SPELL_POSITIVE_CHARGE ? SPELL_POSITIVE_CHARGE_STACK : SPELL_NEGATIVE_CHARGE_STACK;
-        if (count)
-        {
+        uint32 spellId = GetSpellInfo()->Id == SPELL_POSITIVE_CHARGE
+                             ? SPELL_POSITIVE_CHARGE_STACK
+                             : SPELL_NEGATIVE_CHARGE_STACK;
+        if (count) {
             GetCaster()->SetAuraStack(spellId, GetCaster(), count);
         }
-        else
-        {
+        else {
             GetCaster()->RemoveAurasDueToSpell(spellId);
         }
     }
@@ -168,19 +162,24 @@ class spell_capacitus_polarity_charge : public SpellScript
 
     void Register() override
     {
-        OnEffectHitTarget += SpellEffectFn(spell_capacitus_polarity_charge::HandleDamage, EFFECT_0, SPELL_EFFECT_SCHOOL_DAMAGE);
-        OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_capacitus_polarity_charge::HandleTargets, EFFECT_0, TARGET_UNIT_SRC_AREA_ALLY);
+        OnEffectHitTarget +=
+            SpellEffectFn(spell_capacitus_polarity_charge::HandleDamage,
+                          EFFECT_0,
+                          SPELL_EFFECT_SCHOOL_DAMAGE);
+        OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(
+            spell_capacitus_polarity_charge::HandleTargets,
+            EFFECT_0,
+            TARGET_UNIT_SRC_AREA_ALLY);
     }
 };
 
-class spell_capacitus_polarity_charge_aura : public AuraScript
-{
+class spell_capacitus_polarity_charge_aura : public AuraScript {
     PrepareAuraScript(spell_capacitus_polarity_charge_aura);
 
-    void HandleAfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+    void HandleAfterRemove(AuraEffect const* /*aurEff*/,
+                           AuraEffectHandleModes /*mode*/)
     {
-        if (GetTargetApplication()->GetRemoveMode() == AURA_REMOVE_BY_EXPIRE)
-        {
+        if (GetTargetApplication()->GetRemoveMode() == AURA_REMOVE_BY_EXPIRE) {
             Unit* target = GetTarget();
             if (!target)
                 return;
@@ -192,27 +191,38 @@ class spell_capacitus_polarity_charge_aura : public AuraScript
 
     void Register() override
     {
-        AfterEffectRemove += AuraEffectRemoveFn(spell_capacitus_polarity_charge_aura::HandleAfterRemove, EFFECT_1, SPELL_AURA_PERIODIC_TRIGGER_SPELL, AURA_EFFECT_HANDLE_REAL);
+        AfterEffectRemove += AuraEffectRemoveFn(
+            spell_capacitus_polarity_charge_aura::HandleAfterRemove,
+            EFFECT_1,
+            SPELL_AURA_PERIODIC_TRIGGER_SPELL,
+            AURA_EFFECT_HANDLE_REAL);
     }
 };
 
-class spell_capacitus_polarity_shift : public SpellScript
-{
+class spell_capacitus_polarity_shift : public SpellScript {
     PrepareSpellScript(spell_capacitus_polarity_shift);
 
     void HandleDummy(SpellEffIndex /*effIndex*/)
     {
-        if (Unit* target = GetHitUnit())
-        {
+        if (Unit* target = GetHitUnit()) {
             target->RemoveAurasDueToSpell(SPELL_POSITIVE_CHARGE_STACK);
             target->RemoveAurasDueToSpell(SPELL_NEGATIVE_CHARGE_STACK);
-            target->CastSpell(target, roll_chance_i(50) ? SPELL_POSITIVE_POLARITY : SPELL_NEGATIVE_POLARITY, true, nullptr, nullptr, GetCaster()->GetGUID());
+            target->CastSpell(target,
+                              roll_chance_i(50) ? SPELL_POSITIVE_POLARITY
+                                                : SPELL_NEGATIVE_POLARITY,
+                              true,
+                              nullptr,
+                              nullptr,
+                              GetCaster()->GetGUID());
         }
     }
 
     void Register() override
     {
-        OnEffectHitTarget += SpellEffectFn(spell_capacitus_polarity_shift::HandleDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
+        OnEffectHitTarget +=
+            SpellEffectFn(spell_capacitus_polarity_shift::HandleDummy,
+                          EFFECT_0,
+                          SPELL_EFFECT_DUMMY);
     }
 };
 
@@ -223,4 +233,3 @@ void AddSC_boss_mechano_lord_capacitus()
     RegisterSpellScript(spell_capacitus_polarity_charge_aura);
     RegisterSpellScript(spell_capacitus_polarity_shift);
 }
-

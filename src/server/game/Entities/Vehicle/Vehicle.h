@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -26,23 +27,26 @@
 struct VehicleEntry;
 class Unit;
 
-class Vehicle : public TransportBase
-{
+class Vehicle : public TransportBase {
 public:
     void Install();
     void Uninstall();
     void Reset(bool evading = false);
     void InstallAllAccessories(bool evading);
     void ApplyAllImmunities();
-    void InstallAccessory(uint32 entry, int8 seatId, bool minion, uint8 type, uint32 summonTime);   //! May be called from scripts
+    void InstallAccessory(uint32 entry,
+                          int8   seatId,
+                          bool   minion,
+                          uint8  type,
+                          uint32 summonTime); //! May be called from scripts
 
-    Unit* GetBase() const { return _me; }
+    Unit*               GetBase() const { return _me; }
     VehicleEntry const* GetVehicleInfo() const { return _vehicleInfo; }
-    uint32 GetCreatureEntry() const { return _creatureEntry; }
+    uint32              GetCreatureEntry() const { return _creatureEntry; }
 
-    bool HasEmptySeat(int8 seatId) const;
+    bool  HasEmptySeat(int8 seatId) const;
     Unit* GetPassenger(int8 seatId) const;
-    int8 GetNextEmptySeat(int8 seatId, bool next) const;
+    int8  GetNextEmptySeat(int8 seatId, bool next) const;
     uint8 GetAvailableSeatCount() const;
 
     bool AddPassenger(Unit* passenger, int8 seatId = -1);
@@ -57,7 +61,7 @@ public:
     SeatMap Seats;
 
     VehicleSeatEntry const* GetSeatForPassenger(Unit const* passenger);
-    SeatMap::iterator GetSeatIteratorForPassenger(Unit* passenger);
+    SeatMap::iterator       GetSeatIteratorForPassenger(Unit* passenger);
 
 protected:
     friend bool Unit::CreateVehicleKit(uint32 id, uint32 creatureEntry);
@@ -66,8 +70,7 @@ protected:
     ~Vehicle() override;
 
 private:
-    enum Status
-    {
+    enum Status {
         STATUS_NONE,
         STATUS_INSTALLED,
         STATUS_UNINSTALLING,
@@ -75,26 +78,46 @@ private:
 
     void InitMovementInfoForBase();
 
-    /// This method transforms supplied transport offsets into global coordinates
-    void CalculatePassengerPosition(float& x, float& y, float& z, float* o /*= nullptr*/) const override
+    /// This method transforms supplied transport offsets into global
+    /// coordinates
+    void CalculatePassengerPosition(float& x,
+                                    float& y,
+                                    float& z,
+                                    float* o /*= nullptr*/) const override
     {
-        TransportBase::CalculatePassengerPosition(x, y, z, o,
-                GetBase()->GetPositionX(), GetBase()->GetPositionY(),
-                GetBase()->GetPositionZ(), GetBase()->GetOrientation());
+        TransportBase::CalculatePassengerPosition(x,
+                                                  y,
+                                                  z,
+                                                  o,
+                                                  GetBase()->GetPositionX(),
+                                                  GetBase()->GetPositionY(),
+                                                  GetBase()->GetPositionZ(),
+                                                  GetBase()->GetOrientation());
     }
 
     /// This method transforms supplied global coordinates into local offsets
-    void CalculatePassengerOffset(float& x, float& y, float& z, float* o /*= nullptr*/) const override
+    void CalculatePassengerOffset(float& x,
+                                  float& y,
+                                  float& z,
+                                  float* o /*= nullptr*/) const override
     {
-        TransportBase::CalculatePassengerOffset(x, y, z, o,
-                                                GetBase()->GetPositionX(), GetBase()->GetPositionY(),
-                                                GetBase()->GetPositionZ(), GetBase()->GetOrientation());
+        TransportBase::CalculatePassengerOffset(x,
+                                                y,
+                                                z,
+                                                o,
+                                                GetBase()->GetPositionX(),
+                                                GetBase()->GetPositionY(),
+                                                GetBase()->GetPositionZ(),
+                                                GetBase()->GetOrientation());
     }
 
-    Unit* _me;
+    Unit*               _me;
     VehicleEntry const* _vehicleInfo;
-    uint32 _usableSeatNum;         // Number of seats that match VehicleSeatEntry::UsableByPlayer, used for proper display flags
-    uint32 _creatureEntry;         // Can be different than me->GetBase()->GetEntry() in case of players
+    uint32              _usableSeatNum; // Number of seats that match
+                           // VehicleSeatEntry::UsableByPlayer, used for proper
+                           // display flags
+    uint32 _creatureEntry; // Can be different than me->GetBase()->GetEntry() in
+                           // case of players
     Status _status;
 };
 

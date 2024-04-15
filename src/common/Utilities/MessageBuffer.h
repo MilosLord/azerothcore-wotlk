@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,26 +23,27 @@
 #include <cstring>
 #include <vector>
 
-class MessageBuffer
-{
+class MessageBuffer {
     using size_type = std::vector<uint8>::size_type;
 
 public:
-    MessageBuffer() :  _storage()
-    {
-        _storage.resize(4096);
-    }
+    MessageBuffer() : _storage() { _storage.resize(4096); }
 
-    explicit MessageBuffer(std::size_t initialSize) : _wpos(0), _rpos(0), _storage()
+    explicit MessageBuffer(std::size_t initialSize)
+        : _wpos(0), _rpos(0), _storage()
     {
         _storage.resize(initialSize);
     }
 
-    MessageBuffer(MessageBuffer const& right) :
-        _wpos(right._wpos), _rpos(right._rpos), _storage(right._storage) { }
+    MessageBuffer(MessageBuffer const& right)
+        : _wpos(right._wpos), _rpos(right._rpos), _storage(right._storage)
+    {
+    }
 
-    MessageBuffer(MessageBuffer&& right) noexcept :
-        _wpos(right._wpos), _rpos(right._rpos), _storage(right.Move()) { }
+    MessageBuffer(MessageBuffer&& right) noexcept
+        : _wpos(right._wpos), _rpos(right._rpos), _storage(right.Move())
+    {
+    }
 
     void Reset()
     {
@@ -49,10 +51,7 @@ public:
         _rpos = 0;
     }
 
-    void Resize(size_type bytes)
-    {
-        _storage.resize(bytes);
-    }
+    void Resize(size_type bytes) { _storage.resize(bytes); }
 
     uint8* GetBasePointer() { return _storage.data(); }
     uint8* GetReadPointer() { return GetBasePointer() + _rpos; }
@@ -62,16 +61,17 @@ public:
     void WriteCompleted(size_type bytes) { _wpos += bytes; }
 
     [[nodiscard]] size_type GetActiveSize() const { return _wpos - _rpos; }
-    [[nodiscard]] size_type GetRemainingSpace() const { return _storage.size() - _wpos; }
+    [[nodiscard]] size_type GetRemainingSpace() const
+    {
+        return _storage.size() - _wpos;
+    }
     [[nodiscard]] size_type GetBufferSize() const { return _storage.size(); }
 
     // Discards inactive data
     void Normalize()
     {
-        if (_rpos)
-        {
-            if (_rpos != _wpos)
-            {
+        if (_rpos) {
+            if (_rpos != _wpos) {
                 memmove(GetBasePointer(), GetReadPointer(), GetActiveSize());
             }
 
@@ -80,20 +80,19 @@ public:
         }
     }
 
-    // Ensures there's "some" free space, make sure to call Normalize() before this
+    // Ensures there's "some" free space, make sure to call Normalize() before
+    // this
     void EnsureFreeSpace()
     {
         // resize buffer if it's already full
-        if (GetRemainingSpace() == 0)
-        {
+        if (GetRemainingSpace() == 0) {
             _storage.resize(_storage.size() * 3 / 2);
         }
     }
 
     void Write(void const* data, std::size_t size)
     {
-        if (size)
-        {
+        if (size) {
             memcpy(GetWritePointer(), data, size);
             WriteCompleted(size);
         }
@@ -109,10 +108,9 @@ public:
 
     MessageBuffer& operator=(MessageBuffer const& right)
     {
-        if (this != &right)
-        {
-            _wpos = right._wpos;
-            _rpos = right._rpos;
+        if (this != &right) {
+            _wpos    = right._wpos;
+            _rpos    = right._rpos;
             _storage = right._storage;
         }
 
@@ -121,10 +119,9 @@ public:
 
     MessageBuffer& operator=(MessageBuffer&& right) noexcept
     {
-        if (this != &right)
-        {
-            _wpos = right._wpos;
-            _rpos = right._rpos;
+        if (this != &right) {
+            _wpos    = right._wpos;
+            _rpos    = right._rpos;
             _storage = right.Move();
         }
 
@@ -132,8 +129,8 @@ public:
     }
 
 private:
-    size_type _wpos{0};
-    size_type _rpos{0};
+    size_type          _wpos{0};
+    size_type          _rpos{0};
     std::vector<uint8> _storage;
 };
 

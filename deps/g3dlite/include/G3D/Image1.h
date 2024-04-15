@@ -7,13 +7,12 @@
   \edited  2011-08-31
 */
 
-
 #ifndef G3D_Image1_h
 #define G3D_Image1_h
 
-#include "G3D/platform.h"
-#include "G3D/Map2D.h"
 #include "G3D/Color1.h"
+#include "G3D/Map2D.h"
+#include "G3D/platform.h"
 
 namespace G3D {
 
@@ -26,14 +25,12 @@ typedef shared_ptr<class Image1> Image1Ref;
  */
 class Image1 : public Map2D<Color1, Color1> {
 public:
-
-    typedef Image1      Type;
-    typedef shared_ptr<class Image1>   Ref;
-    typedef Color1      Storage;
-    typedef Color1      Compute;
+    typedef Image1                   Type;
+    typedef shared_ptr<class Image1> Ref;
+    typedef Color1                   Storage;
+    typedef Color1                   Compute;
 
 protected:
-
     Image1(int w, int h, WrapMode wrap);
 
     void copyGImage(const class GImage& im);
@@ -45,23 +42,42 @@ protected:
     void copyArray(const Color4unorm8* src, int w, int h);
 
 public:
-
     const class ImageFormat* format() const;
 
     /** Creates an all-zero width x height image. */
-    static Ref createEmpty(int width, int height, WrapMode wrap = WrapMode::ERROR);
+    static Ref
+    createEmpty(int width, int height, WrapMode wrap = WrapMode::ERROR);
 
     /** Creates a 0 x 0 image. */
     static Ref createEmpty(WrapMode wrap = WrapMode::ERROR);
 
-    static Ref fromFile(const std::string& filename, WrapMode wrap = WrapMode::ERROR);
-    
-    static Ref fromArray(const class Color1unorm8* ptr, int width, int height, WrapMode wrap = WrapMode::ERROR);
-    static Ref fromArray(const class Color3unorm8* ptr, int width, int height, WrapMode wrap = WrapMode::ERROR);
-    static Ref fromArray(const class Color4unorm8* ptr, int width, int height, WrapMode wrap = WrapMode::ERROR);
-    static Ref fromArray(const class Color1* ptr, int width, int height, WrapMode wrap = WrapMode::ERROR);
-    static Ref fromArray(const class Color3* ptr, int width, int height, WrapMode wrap = WrapMode::ERROR);
-    static Ref fromArray(const class Color4* ptr, int width, int height, WrapMode wrap = WrapMode::ERROR);
+    static Ref fromFile(const std::string& filename,
+                        WrapMode           wrap = WrapMode::ERROR);
+
+    static Ref fromArray(const class Color1unorm8* ptr,
+                         int                       width,
+                         int                       height,
+                         WrapMode                  wrap = WrapMode::ERROR);
+    static Ref fromArray(const class Color3unorm8* ptr,
+                         int                       width,
+                         int                       height,
+                         WrapMode                  wrap = WrapMode::ERROR);
+    static Ref fromArray(const class Color4unorm8* ptr,
+                         int                       width,
+                         int                       height,
+                         WrapMode                  wrap = WrapMode::ERROR);
+    static Ref fromArray(const class Color1* ptr,
+                         int                 width,
+                         int                 height,
+                         WrapMode            wrap = WrapMode::ERROR);
+    static Ref fromArray(const class Color3* ptr,
+                         int                 width,
+                         int                 height,
+                         WrapMode            wrap = WrapMode::ERROR);
+    static Ref fromArray(const class Color4* ptr,
+                         int                 width,
+                         int                 height,
+                         WrapMode            wrap = WrapMode::ERROR);
 
     static Ref fromImage1unorm8(const shared_ptr<class Image1unorm8>& im);
 
@@ -71,13 +87,13 @@ public:
         Values are automatically scaled to the range [0, 1]. */
     void load(const std::string& filename);
 
-    /** Saves in any of the formats supported by G3D::Image. 
+    /** Saves in any of the formats supported by G3D::Image.
 
         The data values are assumed to be on the range [0, 1] and will
         be scaled appropriately for the save format.*/
     void save(const std::string& filename);
 };
 
-} // G3D
+} // namespace G3D
 
 #endif

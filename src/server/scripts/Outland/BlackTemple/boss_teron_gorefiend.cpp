@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,60 +21,59 @@
 #include "SpellScriptLoader.h"
 #include "black_temple.h"
 
-enum Says
-{
-    SAY_INTRO                       = 0,
-    SAY_AGGRO                       = 1,
-    SAY_SLAY                        = 2,
-    SAY_BLOSSOM                     = 3,
-    SAY_INCINERATE                  = 4,
-    SAY_CRUSHING                    = 5,
-    SAY_DEATH                       = 6
+enum Says {
+    SAY_INTRO      = 0,
+    SAY_AGGRO      = 1,
+    SAY_SLAY       = 2,
+    SAY_BLOSSOM    = 3,
+    SAY_INCINERATE = 4,
+    SAY_CRUSHING   = 5,
+    SAY_DEATH      = 6
 };
 
-enum Spells
-{
-    SPELL_INCINERATE                = 40239,
-    SPELL_SUMMON_DOOM_BLOSSOM       = 40188,
-    SPELL_CRUSHING_SHADOWS          = 40243,
-    SPELL_SHADOW_OF_DEATH           = 40251,
-    SPELL_SHADOW_OF_DEATH_REMOVE    = 41999,
-    SPELL_SUMMON_SPIRIT             = 40266,
-    SPELL_SUMMON_SKELETON1          = 40270,
-    SPELL_SUMMON_SKELETON2          = 41948,
-    SPELL_SUMMON_SKELETON3          = 41949,
-    SPELL_SUMMON_SKELETON4          = 41950,
-    SPELL_POSSESS_SPIRIT_IMMUNE     = 40282,
-    SPELL_SPIRITUAL_VENGEANCE       = 40268,
-    SPELL_BRIEF_STUN                = 41421,
+enum Spells {
+    SPELL_INCINERATE             = 40239,
+    SPELL_SUMMON_DOOM_BLOSSOM    = 40188,
+    SPELL_CRUSHING_SHADOWS       = 40243,
+    SPELL_SHADOW_OF_DEATH        = 40251,
+    SPELL_SHADOW_OF_DEATH_REMOVE = 41999,
+    SPELL_SUMMON_SPIRIT          = 40266,
+    SPELL_SUMMON_SKELETON1       = 40270,
+    SPELL_SUMMON_SKELETON2       = 41948,
+    SPELL_SUMMON_SKELETON3       = 41949,
+    SPELL_SUMMON_SKELETON4       = 41950,
+    SPELL_POSSESS_SPIRIT_IMMUNE  = 40282,
+    SPELL_SPIRITUAL_VENGEANCE    = 40268,
+    SPELL_BRIEF_STUN             = 41421,
 
-    SPELL_SPIRIT_LANCE              = 40157,
-    SPELL_SPIRIT_CHAINS             = 40175,
-    SPELL_SPIRIT_VOLLEY             = 40314
+    SPELL_SPIRIT_LANCE  = 40157,
+    SPELL_SPIRIT_CHAINS = 40175,
+    SPELL_SPIRIT_VOLLEY = 40314
 };
 
-enum Misc
-{
-    SET_DATA_INTRO                  = 1,
+enum Misc {
+    SET_DATA_INTRO = 1,
 
-    EVENT_SPELL_INCINERATE          = 1,
-    EVENT_SPELL_DOOM_BLOSSOM        = 2,
-    EVENT_SPELL_CRUSHING_SHADOWS    = 3,
-    EVENT_SPELL_SHADOW_OF_DEATH     = 4,
-    EVENT_TALK_KILL                 = 10
+    EVENT_SPELL_INCINERATE       = 1,
+    EVENT_SPELL_DOOM_BLOSSOM     = 2,
+    EVENT_SPELL_CRUSHING_SHADOWS = 3,
+    EVENT_SPELL_SHADOW_OF_DEATH  = 4,
+    EVENT_TALK_KILL              = 10
 };
 
-struct ShadowOfDeathSelector
-{
+struct ShadowOfDeathSelector {
     bool operator()(Unit const* target) const
     {
-        return target && !target->HasAura(SPELL_SHADOW_OF_DEATH) && !target->HasAura(SPELL_POSSESS_SPIRIT_IMMUNE);
+        return target && !target->HasAura(SPELL_SHADOW_OF_DEATH) &&
+               !target->HasAura(SPELL_POSSESS_SPIRIT_IMMUNE);
     }
 };
 
-struct boss_teron_gorefiend : public BossAI
-{
-    boss_teron_gorefiend(Creature* creature) : BossAI(creature, DATA_TERON_GOREFIEND), intro(false) { }
+struct boss_teron_gorefiend : public BossAI {
+    boss_teron_gorefiend(Creature* creature)
+        : BossAI(creature, DATA_TERON_GOREFIEND), intro(false)
+    {
+    }
 
     bool intro;
 
@@ -88,8 +88,7 @@ struct boss_teron_gorefiend : public BossAI
         if (type || !me->IsAlive())
             return;
 
-        if (id == SET_DATA_INTRO && !intro)
-        {
+        if (id == SET_DATA_INTRO && !intro) {
             intro = true;
             Talk(SAY_INTRO);
         }
@@ -104,19 +103,15 @@ struct boss_teron_gorefiend : public BossAI
         events.ScheduleEvent(EVENT_SPELL_SHADOW_OF_DEATH, 20000);
     }
 
-    void KilledUnit(Unit*  /*victim*/) override
+    void KilledUnit(Unit* /*victim*/) override
     {
-        if (events.GetNextEventTime(EVENT_TALK_KILL) == 0)
-        {
+        if (events.GetNextEventTime(EVENT_TALK_KILL) == 0) {
             Talk(SAY_SLAY);
             events.ScheduleEvent(EVENT_TALK_KILL, 6000);
         }
     }
 
-    void JustSummoned(Creature* summon) override
-    {
-        summons.Summon(summon);
-    }
+    void JustSummoned(Creature* summon) override { summons.Summon(summon); }
 
     void JustDied(Unit* killer) override
     {
@@ -134,11 +129,9 @@ struct boss_teron_gorefiend : public BossAI
         if (me->HasUnitState(UNIT_STATE_CASTING))
             return;
 
-        switch (events.ExecuteEvent())
-        {
+        switch (events.ExecuteEvent()) {
         case EVENT_SPELL_INCINERATE:
-            if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0))
-            {
+            if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0)) {
                 if (roll_chance_i(50))
                     Talk(SAY_INCINERATE);
                 me->CastSpell(target, SPELL_INCINERATE, false);
@@ -155,11 +148,13 @@ struct boss_teron_gorefiend : public BossAI
         case EVENT_SPELL_CRUSHING_SHADOWS:
             if (roll_chance_i(20))
                 Talk(SAY_CRUSHING);
-            me->CastCustomSpell(SPELL_CRUSHING_SHADOWS, SPELLVALUE_MAX_TARGETS, 5, me, false);
+            me->CastCustomSpell(
+                SPELL_CRUSHING_SHADOWS, SPELLVALUE_MAX_TARGETS, 5, me, false);
             events.ScheduleEvent(EVENT_SPELL_CRUSHING_SHADOWS, 15000);
             break;
         case EVENT_SPELL_SHADOW_OF_DEATH:
-            if (Unit* target = SelectTarget(SelectTargetMethod::Random, 1, ShadowOfDeathSelector()))
+            if (Unit* target = SelectTarget(
+                    SelectTargetMethod::Random, 1, ShadowOfDeathSelector()))
                 me->CastSpell(target, SPELL_SHADOW_OF_DEATH, false);
             events.ScheduleEvent(EVENT_SPELL_SHADOW_OF_DEATH, 30000);
             break;
@@ -169,16 +164,18 @@ struct boss_teron_gorefiend : public BossAI
     }
 };
 
-class spell_teron_gorefiend_shadow_of_death : public AuraScript
-{
+class spell_teron_gorefiend_shadow_of_death : public AuraScript {
     PrepareAuraScript(spell_teron_gorefiend_shadow_of_death);
 
-    void Absorb(AuraEffect* /*aurEff*/, DamageInfo&   /*dmgInfo*/, uint32&   /*absorbAmount*/)
+    void Absorb(AuraEffect* /*aurEff*/,
+                DamageInfo& /*dmgInfo*/,
+                uint32& /*absorbAmount*/)
     {
         PreventDefaultAction();
     }
 
-    void HandleEffectRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+    void HandleEffectRemove(AuraEffect const* /*aurEff*/,
+                            AuraEffectHandleModes /*mode*/)
     {
         InstanceScript* instance = GetTarget()->GetInstanceScript();
         if (!GetCaster() || !instance || !instance->IsEncounterInProgress())
@@ -195,22 +192,29 @@ class spell_teron_gorefiend_shadow_of_death : public AuraScript
 
     void Register() override
     {
-        OnEffectAbsorb += AuraEffectAbsorbFn(spell_teron_gorefiend_shadow_of_death::Absorb, EFFECT_0);
-        AfterEffectRemove += AuraEffectRemoveFn(spell_teron_gorefiend_shadow_of_death::HandleEffectRemove, EFFECT_0, SPELL_AURA_SCHOOL_ABSORB, AURA_EFFECT_HANDLE_REAL);
+        OnEffectAbsorb += AuraEffectAbsorbFn(
+            spell_teron_gorefiend_shadow_of_death::Absorb, EFFECT_0);
+        AfterEffectRemove += AuraEffectRemoveFn(
+            spell_teron_gorefiend_shadow_of_death::HandleEffectRemove,
+            EFFECT_0,
+            SPELL_AURA_SCHOOL_ABSORB,
+            AURA_EFFECT_HANDLE_REAL);
     }
 };
 
-class spell_teron_gorefiend_spirit_lance : public AuraScript
-{
+class spell_teron_gorefiend_spirit_lance : public AuraScript {
     PrepareAuraScript(spell_teron_gorefiend_spirit_lance);
 
-    void CalculateAmount(AuraEffect const* /*aurEff*/, int32& amount, bool& /*canBeRecalculated*/)
+    void CalculateAmount(AuraEffect const* /*aurEff*/,
+                         int32& amount,
+                         bool& /*canBeRecalculated*/)
     {
         if (AuraEffect* effect = GetAura()->GetEffect(EFFECT_2))
-            amount -= (amount / effect->GetTotalTicks()) * effect->GetTickNumber();
+            amount -=
+                (amount / effect->GetTotalTicks()) * effect->GetTickNumber();
     }
 
-    void Update(AuraEffect const*  /*effect*/)
+    void Update(AuraEffect const* /*effect*/)
     {
         PreventDefaultAction();
         if (AuraEffect* effect = GetAura()->GetEffect(EFFECT_1))
@@ -219,47 +223,60 @@ class spell_teron_gorefiend_spirit_lance : public AuraScript
 
     void Register() override
     {
-        DoEffectCalcAmount += AuraEffectCalcAmountFn(spell_teron_gorefiend_spirit_lance::CalculateAmount, EFFECT_1, SPELL_AURA_MOD_DECREASE_SPEED);
-        OnEffectPeriodic += AuraEffectPeriodicFn(spell_teron_gorefiend_spirit_lance::Update, EFFECT_2, SPELL_AURA_PERIODIC_TRIGGER_SPELL);
+        DoEffectCalcAmount += AuraEffectCalcAmountFn(
+            spell_teron_gorefiend_spirit_lance::CalculateAmount,
+            EFFECT_1,
+            SPELL_AURA_MOD_DECREASE_SPEED);
+        OnEffectPeriodic +=
+            AuraEffectPeriodicFn(spell_teron_gorefiend_spirit_lance::Update,
+                                 EFFECT_2,
+                                 SPELL_AURA_PERIODIC_TRIGGER_SPELL);
     }
 };
 
-class spell_teron_gorefiend_spiritual_vengeance : public AuraScript
-{
+class spell_teron_gorefiend_spiritual_vengeance : public AuraScript {
     PrepareAuraScript(spell_teron_gorefiend_spiritual_vengeance);
 
-        void HandleEffectRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+    void HandleEffectRemove(AuraEffect const* /*aurEff*/,
+                            AuraEffectHandleModes /*mode*/)
     {
         Unit::Kill(nullptr, GetTarget());
     }
 
     void Register() override
     {
-        AfterEffectRemove += AuraEffectRemoveFn(spell_teron_gorefiend_spiritual_vengeance::HandleEffectRemove, EFFECT_2, SPELL_AURA_MOD_PACIFY_SILENCE, AURA_EFFECT_HANDLE_REAL);
+        AfterEffectRemove += AuraEffectRemoveFn(
+            spell_teron_gorefiend_spiritual_vengeance::HandleEffectRemove,
+            EFFECT_2,
+            SPELL_AURA_MOD_PACIFY_SILENCE,
+            AURA_EFFECT_HANDLE_REAL);
     }
 };
 
-class spell_teron_gorefiend_shadowy_construct : public AuraScript
-{
+class spell_teron_gorefiend_shadowy_construct : public AuraScript {
     PrepareAuraScript(spell_teron_gorefiend_shadowy_construct);
 
-    bool Load() override
-    {
-        return GetUnitOwner()->GetTypeId() == TYPEID_UNIT;
-    }
+    bool Load() override { return GetUnitOwner()->GetTypeId() == TYPEID_UNIT; }
 
-    void HandleEffectApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+    void HandleEffectApply(AuraEffect const* /*aurEff*/,
+                           AuraEffectHandleModes /*mode*/)
     {
-        GetUnitOwner()->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NORMAL, true);
-        GetUnitOwner()->ApplySpellImmune(0, IMMUNITY_ALLOW_ID, SPELL_SPIRIT_LANCE, true);
-        GetUnitOwner()->ApplySpellImmune(0, IMMUNITY_ALLOW_ID, SPELL_SPIRIT_CHAINS, true);
-        GetUnitOwner()->ApplySpellImmune(0, IMMUNITY_ALLOW_ID, SPELL_SPIRIT_VOLLEY, true);
+        GetUnitOwner()->ApplySpellImmune(
+            0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NORMAL, true);
+        GetUnitOwner()->ApplySpellImmune(
+            0, IMMUNITY_ALLOW_ID, SPELL_SPIRIT_LANCE, true);
+        GetUnitOwner()->ApplySpellImmune(
+            0, IMMUNITY_ALLOW_ID, SPELL_SPIRIT_CHAINS, true);
+        GetUnitOwner()->ApplySpellImmune(
+            0, IMMUNITY_ALLOW_ID, SPELL_SPIRIT_VOLLEY, true);
 
         GetUnitOwner()->ToCreature()->SetInCombatWithZone();
-        Map::PlayerList const& playerList = GetUnitOwner()->GetMap()->GetPlayers();
-        for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
-            if (Player* player = i->GetSource())
-            {
+        Map::PlayerList const& playerList =
+            GetUnitOwner()->GetMap()->GetPlayers();
+        for (Map::PlayerList::const_iterator i = playerList.begin();
+             i != playerList.end();
+             ++i)
+            if (Player* player = i->GetSource()) {
                 if (GetUnitOwner()->IsValidAttackTarget(player))
                     GetUnitOwner()->AddThreat(player, 1000000.0f);
             }
@@ -269,7 +286,11 @@ class spell_teron_gorefiend_shadowy_construct : public AuraScript
 
     void Register() override
     {
-        AfterEffectApply += AuraEffectApplyFn(spell_teron_gorefiend_shadowy_construct::HandleEffectApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+        AfterEffectApply += AuraEffectApplyFn(
+            spell_teron_gorefiend_shadowy_construct::HandleEffectApply,
+            EFFECT_0,
+            SPELL_AURA_DUMMY,
+            AURA_EFFECT_HANDLE_REAL);
     }
 };
 
@@ -281,4 +302,3 @@ void AddSC_boss_teron_gorefiend()
     RegisterSpellScript(spell_teron_gorefiend_spiritual_vengeance);
     RegisterSpellScript(spell_teron_gorefiend_shadowy_construct);
 }
-

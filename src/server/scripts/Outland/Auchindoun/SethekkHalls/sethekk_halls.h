@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -26,31 +27,25 @@ uint32 constexpr EncounterCount = 3;
 
 #define SethekkHallsScriptName "instance_sethekk_halls"
 
-enum Encounters
-{
+enum Encounters {
     DATA_DARKWEAVER_SYTH,
     DATA_ANZU,
     DATA_IKISS,
 };
 
-enum eTypes
-{
+enum eTypes {
     DATA_IKISSDOOREVENT = 1,
     TYPE_ANZU_ENCOUNTER = 2,
 };
 
-enum InstanceData
-{
-    DATA_GO_TALON_KING_COFFER
-};
+enum InstanceData { DATA_GO_TALON_KING_COFFER };
 
-enum eIds
-{
-    NPC_VOICE_OF_THE_RAVEN_GOD  = 21851,
-    NPC_ANZU                    = 23035,
+enum eIds {
+    NPC_VOICE_OF_THE_RAVEN_GOD = 21851,
+    NPC_ANZU                   = 23035,
 
-    GO_IKISS_DOOR               = 183398,
-    GO_THE_TALON_KINGS_COFFER   = 187372
+    GO_IKISS_DOOR             = 183398,
+    GO_THE_TALON_KINGS_COFFER = 187372
 };
 
 template <class AI, class T>
@@ -59,6 +54,7 @@ inline AI* GetSethekkHallsAI(T* obj)
     return GetInstanceAI<AI>(obj, SethekkHallsScriptName);
 }
 
-#define RegisterSethekkHallsCreatureAI(ai_name) RegisterCreatureAIWithFactory(ai_name, GetSethekkHallsAI)
+#define RegisterSethekkHallsCreatureAI(ai_name)                                \
+    RegisterCreatureAIWithFactory(ai_name, GetSethekkHallsAI)
 
 #endif

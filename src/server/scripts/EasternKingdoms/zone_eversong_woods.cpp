@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -19,25 +20,20 @@
 #include "CreatureScript.h"
 #include "ScriptedCreature.h"
 
-enum Partygoer_Pather
-{
+enum Partygoer_Pather {
     EVENT_PATH                    = 1,
     EVENT_RANDOM_ACTION_PATHER    = 2,
     EVENT_REMOVE_EQUIPMENT_PATHER = 3,
     EVENT_STOP_DANCING_PATHER     = 4
 };
 
-struct npc_partygoer_pather : public ScriptedAI
-{
+struct npc_partygoer_pather : public ScriptedAI {
     npc_partygoer_pather(Creature* creature) : ScriptedAI(creature)
     {
         Initialize();
     }
 
-    void Initialize()
-    {
-        _path = 594440;
-    }
+    void Initialize() { _path = 594440; }
 
     void Reset() override
     {
@@ -57,40 +53,36 @@ struct npc_partygoer_pather : public ScriptedAI
     {
         _events.Update(diff);
 
-        if (uint32 eventId = _events.ExecuteEvent())
-        {
-            switch (eventId)
-            {
+        if (uint32 eventId = _events.ExecuteEvent()) {
+            switch (eventId) {
             case EVENT_PATH:
                 me->GetMotionMaster()->MovePath(_path, false);
                 break;
-            case EVENT_RANDOM_ACTION_PATHER:
-            {
+            case EVENT_RANDOM_ACTION_PATHER: {
                 int8 _action = urand(1, 5);
 
-                switch (_action)
-                {
-                    case 1:
-                        me->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
-                        _events.ScheduleEvent(EVENT_PATH, 11s);
-                        break;
-                    case 2:
-                        me->HandleEmoteCommand(EMOTE_ONESHOT_EXCLAMATION);
-                        _events.ScheduleEvent(EVENT_PATH, 11s);
-                        break;
-                    case 3:
-                        me->HandleEmoteCommand(EMOTE_ONESHOT_LAUGH);
-                        _events.ScheduleEvent(EVENT_PATH, 11s);
-                        break;
-                    case 4:
-                        me->LoadEquipment(urand(1, 2));
-                        me->HandleEmoteCommand(EMOTE_ONESHOT_EAT_NO_SHEATHE);
-                        _events.ScheduleEvent(EVENT_REMOVE_EQUIPMENT_PATHER, 4s);
-                        break;
-                    case 5:
-                        me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_DANCE);
-                        _events.ScheduleEvent(EVENT_STOP_DANCING_PATHER, 6s);
-                        break;
+                switch (_action) {
+                case 1:
+                    me->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
+                    _events.ScheduleEvent(EVENT_PATH, 11s);
+                    break;
+                case 2:
+                    me->HandleEmoteCommand(EMOTE_ONESHOT_EXCLAMATION);
+                    _events.ScheduleEvent(EVENT_PATH, 11s);
+                    break;
+                case 3:
+                    me->HandleEmoteCommand(EMOTE_ONESHOT_LAUGH);
+                    _events.ScheduleEvent(EVENT_PATH, 11s);
+                    break;
+                case 4:
+                    me->LoadEquipment(urand(1, 2));
+                    me->HandleEmoteCommand(EMOTE_ONESHOT_EAT_NO_SHEATHE);
+                    _events.ScheduleEvent(EVENT_REMOVE_EQUIPMENT_PATHER, 4s);
+                    break;
+                case 5:
+                    me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_DANCE);
+                    _events.ScheduleEvent(EVENT_STOP_DANCING_PATHER, 6s);
+                    break;
                 }
                 break;
             }
@@ -102,7 +94,7 @@ struct npc_partygoer_pather : public ScriptedAI
                 me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_NONE);
                 _events.ScheduleEvent(EVENT_PATH, 5s);
                 break;
-            break;
+                break;
             }
         }
 
@@ -117,8 +109,7 @@ private:
     uint32   _path;
 };
 
-enum Partygoer
-{
+enum Partygoer {
     EVENT_RANDOM_ACTION    = 5,
     EVENT_REMOVE_EQUIPMENT = 6,
     EVENT_STOP_DANCING     = 7,
@@ -127,17 +118,10 @@ enum Partygoer
     GO_FIREWORKS_LAUNCHER  = 180771
 };
 
-struct npc_partygoer : public ScriptedAI
-{
-    npc_partygoer(Creature* creature) : ScriptedAI(creature)
-    {
-        Initialize();
-    }
+struct npc_partygoer : public ScriptedAI {
+    npc_partygoer(Creature* creature) : ScriptedAI(creature) { Initialize(); }
 
-    void Initialize()
-    {
-        _facing = me->GetOrientation();
-    }
+    void Initialize() { _facing = me->GetOrientation(); }
 
     void Reset() override
     {
@@ -148,16 +132,12 @@ struct npc_partygoer : public ScriptedAI
     {
         _events.Update(diff);
 
-        if (uint32 eventId = _events.ExecuteEvent())
-        {
-            switch (eventId)
-            {
-            case EVENT_RANDOM_ACTION:
-            {
+        if (uint32 eventId = _events.ExecuteEvent()) {
+            switch (eventId) {
+            case EVENT_RANDOM_ACTION: {
                 int8 _action = urand(1, 6);
 
-                switch (_action)
-                {
+                switch (_action) {
                 case 1:
                     me->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
                     _events.ScheduleEvent(EVENT_RANDOM_ACTION, 13s, 20s);
@@ -180,7 +160,8 @@ struct npc_partygoer : public ScriptedAI
                     _events.ScheduleEvent(EVENT_STOP_DANCING, 8s, 16s);
                     break;
                 case 6:
-                    if (GameObject* launcher = me->FindNearestGameObject(GO_FIREWORKS_LAUNCHER, 20.0f))
+                    if (GameObject* launcher = me->FindNearestGameObject(
+                            GO_FIREWORKS_LAUNCHER, 20.0f))
                         me->SetFacingToObject(launcher);
                     _events.ScheduleEvent(EVENT_THROW_FIREWORKS, 1s);
                     break;

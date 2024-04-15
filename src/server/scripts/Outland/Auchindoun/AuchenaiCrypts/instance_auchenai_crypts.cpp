@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,14 +21,13 @@
 #include "Map.h"
 #include "auchenai_crypts.h"
 
-class instance_auchenai_crypts : public InstanceMapScript
-{
+class instance_auchenai_crypts : public InstanceMapScript {
 public:
-    instance_auchenai_crypts() : InstanceMapScript(ACScriptName, 558) { }
+    instance_auchenai_crypts() : InstanceMapScript(ACScriptName, 558) {}
 
-    struct instance_auchenai_crypts_InstanceMapScript : public InstanceScript
-    {
-        instance_auchenai_crypts_InstanceMapScript(Map* map) : InstanceScript(map)
+    struct instance_auchenai_crypts_InstanceMapScript : public InstanceScript {
+        instance_auchenai_crypts_InstanceMapScript(Map* map)
+            : InstanceScript(map)
         {
             SetHeaders(DataHeader);
             SetBossNumber(EncounterCount);
@@ -40,7 +40,4 @@ public:
     }
 };
 
-void AddSC_instance_auchenai_crypts()
-{
-    new instance_auchenai_crypts();
-}
+void AddSC_instance_auchenai_crypts() { new instance_auchenai_crypts(); }

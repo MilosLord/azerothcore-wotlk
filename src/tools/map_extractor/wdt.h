@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -24,13 +25,12 @@
 //**************************************************************************************
 #define WDT_MAP_SIZE 64
 
-class wdt_MPHD
-{
-    union
-    {
+class wdt_MPHD {
+    union {
         uint32 fcc;
         char   fcc_txt[4];
     };
+
 public:
     uint32 size;
 
@@ -45,29 +45,26 @@ public:
     bool   prepareLoadedData();
 };
 
-class wdt_MAIN
-{
-    union
-    {
+class wdt_MAIN {
+    union {
         uint32 fcc;
         char   fcc_txt[4];
     };
+
 public:
     uint32 size;
 
-    struct adtData
-    {
+    struct adtData {
         uint32 exist;
         uint32 data1;
     } adt_list[64][64];
 
-    bool   prepareLoadedData();
+    bool prepareLoadedData();
 };
 
-class WDT_file : public FileLoader
-{
+class WDT_file : public FileLoader {
 public:
-    bool   prepareLoadedData() override;
+    bool prepareLoadedData() override;
 
     WDT_file();
     ~WDT_file();

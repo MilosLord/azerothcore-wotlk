@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,32 +21,29 @@
 
 #include "OutdoorPvP.h"
 
-enum OutdoorPvPGHenum
-{
-    GH_ALLIANCE_DEFENSE_EVENT           = 65,
-    GH_HORDE_DEFENSE_EVENT              = 66,
+enum OutdoorPvPGHenum {
+    GH_ALLIANCE_DEFENSE_EVENT = 65,
+    GH_HORDE_DEFENSE_EVENT    = 66,
 
-    GH_ZONE                             = 394,
+    GH_ZONE = 394,
 
-    GH_UI_SLIDER_DISPLAY                = 3466,
-    GH_UI_SLIDER_POS                    = 3467,
-    GH_UI_SLIDER_N                      = 3468,
+    GH_UI_SLIDER_DISPLAY = 3466,
+    GH_UI_SLIDER_POS     = 3467,
+    GH_UI_SLIDER_N       = 3468,
 };
 
 class Unit;
 class Creature;
 class OPvPCapturePointGH;
 
-class OutdoorPvPGH : public OutdoorPvP
-{
+class OutdoorPvPGH : public OutdoorPvP {
 public:
     OutdoorPvPGH();
     bool SetupOutdoorPvP() override;
     void SendRemoveWorldStates(Player* player) override;
 };
 
-class OPvPCapturePointGH : public OPvPCapturePoint
-{
+class OPvPCapturePointGH : public OPvPCapturePoint {
 public:
     OPvPCapturePointGH(OutdoorPvP* pvp);
 

@@ -25,7 +25,10 @@
 #ifdef NDEBUG
 
 // From http://cnicholson.net/2009/02/stupid-c-tricks-adventures-in-assert/
-#	define dtAssert(x) do { (void)sizeof(x); } while((void)(__LINE__==-1),false)  
+#define dtAssert(x)                                                            \
+    do {                                                                       \
+        (void)sizeof(x);                                                       \
+    } while ((void)(__LINE__ == -1), false)
 
 #else
 
@@ -34,22 +37,29 @@
 //  @param[in]		file  Filename of the failed assertion.
 //  @param[in]		line  Line number of the failed assertion.
 ///  @see dtAssertFailSetCustom
-typedef void (dtAssertFailFunc)(const char* expression, const char* file, int line);
+typedef void(dtAssertFailFunc)(const char* expression,
+                               const char* file,
+                               int         line);
 
 /// Sets the base custom assertion failure function to be used by Detour.
-///  @param[in]		assertFailFunc	The function to be invoked in case of failure of #dtAssert
-void dtAssertFailSetCustom(dtAssertFailFunc *assertFailFunc);
+///  @param[in]		assertFailFunc	The function to be invoked in case of
+///  failure of #dtAssert
+void dtAssertFailSetCustom(dtAssertFailFunc* assertFailFunc);
 
 /// Gets the base custom assertion failure function to be used by Detour.
 dtAssertFailFunc* dtAssertFailGetCustom();
 
-#	include <assert.h> 
-#	define dtAssert(expression) \
-		{ \
-			dtAssertFailFunc* failFunc = dtAssertFailGetCustom(); \
-			if(failFunc == NULL) { assert(expression); } \
-			else if(!(expression)) { (*failFunc)(#expression, __FILE__, __LINE__); } \
-		}
+#include <assert.h>
+#define dtAssert(expression)                                                   \
+    {                                                                          \
+        dtAssertFailFunc* failFunc = dtAssertFailGetCustom();                  \
+        if (failFunc == NULL) {                                                \
+            assert(expression);                                                \
+        }                                                                      \
+        else if (!(expression)) {                                              \
+            (*failFunc)(#expression, __FILE__, __LINE__);                      \
+        }                                                                      \
+    }
 
 #endif
 

@@ -11,23 +11,22 @@
 #ifndef G3D_MemoryManager_h
 #define G3D_MemoryManager_h
 
-#include "G3D/platform.h"
 #include "G3D/ReferenceCount.h"
+#include "G3D/platform.h"
 
 namespace G3D {
 
-/** 
+/**
    Abstraction of memory management.
    Default implementation uses G3D::System::malloc and is threadsafe.
 
-   \sa LargePoolMemoryManager, CRTMemoryManager, AlignedMemoryManager, AreaMemoryManager */
+   \sa LargePoolMemoryManager, CRTMemoryManager, AlignedMemoryManager,
+   AreaMemoryManager */
 class MemoryManager : public ReferenceCountedObject {
 protected:
-
     MemoryManager();
 
 public:
-
     typedef shared_ptr<class MemoryManager> Ref;
 
     /** Return a pointer to \a s bytes of memory that are unused by
@@ -49,19 +48,16 @@ public:
     static MemoryManager::Ref create();
 };
 
-/** 
+/**
    Allocates memory on 16-byte boundaries.
    \sa MemoryManager, CRTMemoryManager, AreaMemoryManager */
 class AlignedMemoryManager : public MemoryManager {
 protected:
-
     AlignedMemoryManager();
 
 public:
-
     typedef shared_ptr<class AlignedMemoryManager> Ref;
 
-    
     virtual void* alloc(size_t s);
 
     virtual void free(void* ptr);
@@ -71,7 +67,6 @@ public:
     static AlignedMemoryManager::Ref create();
 };
 
-
 /** A MemoryManager implemented using the C runtime. Not recommended
     for general use; this is largely for debugging. */
 class CRTMemoryManager : public MemoryManager {
@@ -80,15 +75,15 @@ protected:
 
 public:
     typedef shared_ptr<class MemoryManager> Ref;
-    virtual void* alloc(size_t s);
-    virtual void free(void* ptr);
-    virtual bool isThreadsafe() const;
+    virtual void*                           alloc(size_t s);
+    virtual void                            free(void* ptr);
+    virtual bool                            isThreadsafe() const;
 
-    /** There's only one instance of this memory manager; it is 
+    /** There's only one instance of this memory manager; it is
         cached after the first creation. */
     static CRTMemoryManager::Ref create();
 };
 
-}
+} // namespace G3D
 
 #endif

@@ -1,6 +1,6 @@
-/** 
+/**
   \file G3D/GMutex.h
-   
+
   \created 2005-09-22
   \edited  2013-04-03
  */
@@ -8,20 +8,19 @@
 #ifndef G3D_GMutex_h
 #define G3D_GMutex_h
 
-#include "G3D/platform.h"
 #include "G3D/AtomicInt32.h"
 #include "G3D/debugAssert.h"
+#include "G3D/platform.h"
 #include <string>
 
 #ifndef G3D_WINDOWS
-#   include <pthread.h>
-#   include <signal.h>
+#include <pthread.h>
+#include <signal.h>
 #endif
 
 #if defined(G3D_LINUX) || defined(G3D_OSX)
-#   include <unistd.h> // For usleep
+#include <unistd.h> // For usleep
 #endif
-
 
 namespace G3D {
 
@@ -35,37 +34,33 @@ namespace G3D {
  */
 class Spinlock {
 private:
-
-    AtomicInt32   x;
+    AtomicInt32 x;
 
 public:
-
     inline Spinlock() : x(0) {}
 
     /** Busy waits until the lock is unlocked, then locks it
         exclusively.  Returns true if the lock succeeded on the first
-        try (indicating no contention). 
-        
+        try (indicating no contention).
+
         Unlike a G3D::GMutex, a single thread cannot re-enter
         Spinlock::lock() that it already locked.
      */
-    inline bool lock() {
+    inline bool lock()
+    {
         bool first = true;
         while (x.compareAndSet(0, 1) == 1) {
             first = false;
-#           ifdef G3D_WINDOWS
-                Sleep(0);
-#           else
-                usleep(0);
-#           endif
+#ifdef G3D_WINDOWS
+            Sleep(0);
+#else
+            usleep(0);
+#endif
         }
         return first;
     }
 
-    inline void unlock() {
-        x.compareAndSet(1, 0);
-    }
-
+    inline void unlock() { x.compareAndSet(1, 0); }
 };
 
 /**
@@ -75,17 +70,17 @@ public:
 */
 class GMutex {
 private:
-#   ifdef G3D_WINDOWS
-    CRITICAL_SECTION                    m_handle;
-#   else
-    pthread_mutex_t                     m_handle;
-    pthread_mutexattr_t                 m_attr;
-#   endif
+#ifdef G3D_WINDOWS
+    CRITICAL_SECTION m_handle;
+#else
+    pthread_mutex_t     m_handle;
+    pthread_mutexattr_t m_attr;
+#endif
 
     // Not implemented on purpose, don't use
-    GMutex(const GMutex &mlock);
-    GMutex &operator=(const GMutex &);
-    bool operator==(const GMutex&);
+    GMutex(const GMutex& mlock);
+    GMutex& operator=(const GMutex&);
+    bool    operator==(const GMutex&);
 
 public:
     GMutex();
@@ -102,7 +97,6 @@ public:
     void unlock();
 };
 
-
 /**
     Automatically locks while in scope.
 */
@@ -111,21 +105,20 @@ private:
     GMutex* m;
 
     // Not implemented on purpose, don't use
-    GMutexLock(const GMutexLock &mlock);
-    GMutexLock &operator=(const GMutexLock &);
-    bool operator==(const GMutexLock&);
+    GMutexLock(const GMutexLock& mlock);
+    GMutexLock& operator=(const GMutexLock&);
+    bool        operator==(const GMutexLock&);
 
 public:
-    GMutexLock(GMutex* mutex) {
+    GMutexLock(GMutex* mutex)
+    {
         m = mutex;
         m->lock();
     }
 
-    ~GMutexLock() {
-        m->unlock();
-    }
+    ~GMutexLock() { m->unlock(); }
 };
 
-} // G3D
+} // namespace G3D
 
 #endif

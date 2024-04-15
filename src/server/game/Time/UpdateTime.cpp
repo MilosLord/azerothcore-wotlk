@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -27,27 +28,23 @@ WorldUpdateTime sWorldUpdateTime;
 
 UpdateTime::UpdateTime()
 {
-    _averageUpdateTime = 0;
-    _totalUpdateTime = 0;
-    _updateTimeTableIndex = 0;
-    _maxUpdateTime = 0;
-    _maxUpdateTimeOfLastTable = 0;
+    _averageUpdateTime           = 0;
+    _totalUpdateTime             = 0;
+    _updateTimeTableIndex        = 0;
+    _maxUpdateTime               = 0;
+    _maxUpdateTimeOfLastTable    = 0;
     _maxUpdateTimeOfCurrentTable = 0;
 
-    _updateTimeDataTable = { };
+    _updateTimeDataTable = {};
 }
 
-uint32 UpdateTime::GetAverageUpdateTime() const
-{
-    return _averageUpdateTime;
-}
+uint32 UpdateTime::GetAverageUpdateTime() const { return _averageUpdateTime; }
 
 uint32 UpdateTime::GetTimeWeightedAverageUpdateTime() const
 {
     uint32 sum = 0, weightsum = 0;
 
-    for (uint32 diff : _updateTimeDataTable)
-    {
+    for (uint32 diff : _updateTimeDataTable) {
         sum += diff * diff;
         weightsum += diff;
     }
@@ -58,10 +55,7 @@ uint32 UpdateTime::GetTimeWeightedAverageUpdateTime() const
     return sum / weightsum;
 }
 
-uint32 UpdateTime::GetMaxUpdateTime() const
-{
-    return _maxUpdateTime;
-}
+uint32 UpdateTime::GetMaxUpdateTime() const { return _maxUpdateTime; }
 
 uint32 UpdateTime::GetMaxUpdateTimeOfCurrentTable() const
 {
@@ -70,12 +64,16 @@ uint32 UpdateTime::GetMaxUpdateTimeOfCurrentTable() const
 
 uint32 UpdateTime::GetLastUpdateTime() const
 {
-    return _updateTimeDataTable[_updateTimeTableIndex != 0 ? _updateTimeTableIndex - 1 : _updateTimeDataTable.size() - 1];
+    return _updateTimeDataTable[_updateTimeTableIndex != 0
+                                    ? _updateTimeTableIndex - 1
+                                    : _updateTimeDataTable.size() - 1];
 }
 
 uint32 UpdateTime::GetDatasetSize() const
 {
-    return _updateTimeDataTable[_updateTimeDataTable.size() - 1] == 0 ? _updateTimeTableIndex : _orderedUpdateTimeDataTable.size();
+    return _updateTimeDataTable[_updateTimeDataTable.size() - 1] == 0
+               ? _updateTimeTableIndex
+               : _orderedUpdateTimeDataTable.size();
 }
 
 uint32 UpdateTime::GetPercentile(uint8 p)
@@ -88,20 +86,22 @@ uint32 UpdateTime::GetPercentile(uint8 p)
 
     // If the index is an integer, return the value at that index
     if (index == floor(index))
-       return _orderedUpdateTimeDataTable[index];
+        return _orderedUpdateTimeDataTable[index];
 
     // Otherwise, perform linear interpolation
-    int lowerIndex = floor(index);
-    int upperIndex = ceil(index);
-    double fraction = index - lowerIndex;
+    int    lowerIndex = floor(index);
+    int    upperIndex = ceil(index);
+    double fraction   = index - lowerIndex;
 
-    return _orderedUpdateTimeDataTable[lowerIndex] * (1 - fraction) + _orderedUpdateTimeDataTable[upperIndex] * fraction;
+    return _orderedUpdateTimeDataTable[lowerIndex] * (1 - fraction) +
+           _orderedUpdateTimeDataTable[upperIndex] * fraction;
 }
 
 void UpdateTime::UpdateWithDiff(uint32 diff)
 {
     _needsReorder = true;
-    _totalUpdateTime = _totalUpdateTime - _updateTimeDataTable[_updateTimeTableIndex] + diff;
+    _totalUpdateTime =
+        _totalUpdateTime - _updateTimeDataTable[_updateTimeTableIndex] + diff;
     _updateTimeDataTable[_updateTimeTableIndex] = diff;
 
     if (diff > _maxUpdateTime)
@@ -110,10 +110,9 @@ void UpdateTime::UpdateWithDiff(uint32 diff)
     if (diff > _maxUpdateTimeOfCurrentTable)
         _maxUpdateTimeOfCurrentTable = diff;
 
-    if (++_updateTimeTableIndex >= _updateTimeDataTable.size())
-    {
-        _updateTimeTableIndex = 0;
-        _maxUpdateTimeOfLastTable = _maxUpdateTimeOfCurrentTable;
+    if (++_updateTimeTableIndex >= _updateTimeDataTable.size()) {
+        _updateTimeTableIndex        = 0;
+        _maxUpdateTimeOfLastTable    = _maxUpdateTimeOfCurrentTable;
         _maxUpdateTimeOfCurrentTable = 0;
     }
 
@@ -123,10 +122,7 @@ void UpdateTime::UpdateWithDiff(uint32 diff)
         _averageUpdateTime = _totalUpdateTime / _updateTimeTableIndex;
 }
 
-void UpdateTime::RecordUpdateTimeReset()
-{
-    _recordedTime = GetTimeMS();
-}
+void UpdateTime::RecordUpdateTimeReset() { _recordedTime = GetTimeMS(); }
 
 void UpdateTime::SortUpdateTimeDataTable()
 {
@@ -135,13 +131,17 @@ void UpdateTime::SortUpdateTimeDataTable()
 
     auto endUpdateTable = _updateTimeDataTable.end();
     if (!_updateTimeDataTable[_updateTimeDataTable.size() - 1])
-        endUpdateTable = std::next(_updateTimeDataTable.begin(), _updateTimeTableIndex);
+        endUpdateTable =
+            std::next(_updateTimeDataTable.begin(), _updateTimeTableIndex);
 
-    std::copy(_updateTimeDataTable.begin(), endUpdateTable, _orderedUpdateTimeDataTable.begin());
+    std::copy(_updateTimeDataTable.begin(),
+              endUpdateTable,
+              _orderedUpdateTimeDataTable.begin());
 
     auto endOrderedUpdateTable = _orderedUpdateTimeDataTable.end();
     if (!_updateTimeDataTable[_updateTimeDataTable.size() - 1])
-        endOrderedUpdateTable = std::next(_orderedUpdateTimeDataTable.begin(), _updateTimeTableIndex);
+        endOrderedUpdateTable = std::next(_orderedUpdateTimeDataTable.begin(),
+                                          _updateTimeTableIndex);
 
     std::sort(_orderedUpdateTimeDataTable.begin(), endOrderedUpdateTable);
 
@@ -150,8 +150,10 @@ void UpdateTime::SortUpdateTimeDataTable()
 
 void WorldUpdateTime::LoadFromConfig()
 {
-    _recordUpdateTimeInverval = Milliseconds(sConfigMgr->GetOption<uint32>("RecordUpdateTimeDiffInterval", 60000));
-    _recordUpdateTimeMin = Milliseconds(sConfigMgr->GetOption<uint32>("MinRecordUpdateTimeDiff", 100));
+    _recordUpdateTimeInverval = Milliseconds(
+        sConfigMgr->GetOption<uint32>("RecordUpdateTimeDiffInterval", 60000));
+    _recordUpdateTimeMin = Milliseconds(
+        sConfigMgr->GetOption<uint32>("MinRecordUpdateTimeDiff", 100));
 }
 
 void WorldUpdateTime::SetRecordUpdateTimeInterval(Milliseconds t)
@@ -159,16 +161,24 @@ void WorldUpdateTime::SetRecordUpdateTimeInterval(Milliseconds t)
     _recordUpdateTimeInverval = t;
 }
 
-void WorldUpdateTime::RecordUpdateTime(Milliseconds gameTimeMs, uint32 diff, uint32 sessionCount)
+void WorldUpdateTime::RecordUpdateTime(Milliseconds gameTimeMs,
+                                       uint32       diff,
+                                       uint32       sessionCount)
 {
-    if (_recordUpdateTimeInverval > 0s && diff > _recordUpdateTimeMin.count())
-    {
-        if (GetMSTimeDiff(_lastRecordTime, gameTimeMs) > _recordUpdateTimeInverval)
-        {
-            LOG_INFO("time.update", "Last {} diffs summary with {} players online:", GetDatasetSize(), sessionCount);
+    if (_recordUpdateTimeInverval > 0s && diff > _recordUpdateTimeMin.count()) {
+        if (GetMSTimeDiff(_lastRecordTime, gameTimeMs) >
+            _recordUpdateTimeInverval) {
+            LOG_INFO("time.update",
+                     "Last {} diffs summary with {} players online:",
+                     GetDatasetSize(),
+                     sessionCount);
             LOG_INFO("time.update", " - Mean: {};", GetAverageUpdateTime());
             LOG_INFO("time.update", " - Median: {};", GetPercentile(50));
-            LOG_INFO("time.update", " - Percentiles (95, 99, max): {}, {}, {}.", GetPercentile(95), GetPercentile(99), GetPercentile(100));
+            LOG_INFO("time.update",
+                     " - Percentiles (95, 99, max): {}, {}, {}.",
+                     GetPercentile(95),
+                     GetPercentile(99),
+                     GetPercentile(100));
             _lastRecordTime = gameTimeMs;
         }
     }

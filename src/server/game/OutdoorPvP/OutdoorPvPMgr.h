@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -29,15 +30,13 @@ class Creature;
 class ZoneScript;
 struct GossipMenuItems;
 
-struct OutdoorPvPData
-{
+struct OutdoorPvPData {
     OutdoorPvPTypes TypeId;
-    uint32 ScriptId;
+    uint32          ScriptId;
 };
 
 // class to handle player enter / leave / areatrigger / GO use events
-class OutdoorPvPMgr
-{
+class OutdoorPvPMgr {
 private:
     OutdoorPvPMgr();
     ~OutdoorPvPMgr() = default;
@@ -75,9 +74,11 @@ public:
 
     void Update(uint32 diff);
 
-    void HandleGossipOption(Player* player, Creature* creatured, uint32 gossipid);
+    void
+    HandleGossipOption(Player* player, Creature* creatured, uint32 gossipid);
 
-    bool CanTalkTo(Player* player, Creature* creature, GossipMenuItems const& gso);
+    bool
+    CanTalkTo(Player* player, Creature* creature, GossipMenuItems const& gso);
 
     void HandleDropFlag(Player* player, uint32 spellId);
 
@@ -91,10 +92,11 @@ private:
 
     // maps the zone ids to an outdoor pvp event
     // used in player event handling
-    std::map<uint32/*zoneid*/, OutdoorPvP*> m_OutdoorPvPMap;
+    std::map<uint32 /*zoneid*/, OutdoorPvP*> m_OutdoorPvPMap;
 
     // Holds the outdoor PvP templates
-    std::map<OutdoorPvPTypes, std::unique_ptr<OutdoorPvPData>> m_OutdoorPvPDatas;
+    std::map<OutdoorPvPTypes, std::unique_ptr<OutdoorPvPData>>
+        m_OutdoorPvPDatas;
 
     // update interval
     uint32 m_UpdateTimer;

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,61 +22,57 @@
 #include <atomic>
 #include <thread>
 
-namespace Acore
-{
-    class Runnable
-    {
-    public:
-        virtual ~Runnable() = default;
-        virtual void run() = 0;
+namespace Acore {
+class Runnable {
+public:
+    virtual ~Runnable() = default;
+    virtual void run()  = 0;
 
-        void incReference() { ++m_refs; }
-        void decReference()
-        {
-            if (!--m_refs)
-            {
-                delete this;
-            }
+    void incReference() { ++m_refs; }
+    void decReference()
+    {
+        if (!--m_refs) {
+            delete this;
         }
-    private:
-        std::atomic_long m_refs;
-    };
+    }
 
-    enum Priority
-    {
-        Priority_Idle,
-        Priority_Lowest,
-        Priority_Low,
-        Priority_Normal,
-        Priority_High,
-        Priority_Highest,
-        Priority_Realtime,
-    };
+private:
+    std::atomic_long m_refs;
+};
 
-    class Thread
-    {
-    public:
-        Thread();
-        explicit Thread(Runnable* instance);
-        ~Thread();
+enum Priority {
+    Priority_Idle,
+    Priority_Lowest,
+    Priority_Low,
+    Priority_Normal,
+    Priority_High,
+    Priority_Highest,
+    Priority_Realtime,
+};
 
-        bool wait();
-        void destroy();
+class Thread {
+public:
+    Thread();
+    explicit Thread(Runnable* instance);
+    ~Thread();
 
-        void setPriority(Priority type);
+    bool wait();
+    void destroy();
 
-        static void Sleep(unsigned long msecs);
-        static std::thread::id currentId();
+    void setPriority(Priority type);
 
-    private:
-        Thread(const Thread&);
-        Thread& operator=(const Thread&);
+    static void            Sleep(unsigned long msecs);
+    static std::thread::id currentId();
 
-        static void ThreadTask(void* param);
+private:
+    Thread(const Thread&);
+    Thread& operator=(const Thread&);
 
-        Runnable* const m_task;
-        std::thread::id m_iThreadId;
-        std::thread m_ThreadImp;
-    };
-}
+    static void ThreadTask(void* param);
+
+    Runnable* const m_task;
+    std::thread::id m_iThreadId;
+    std::thread     m_ThreadImp;
+};
+} // namespace Acore
 #endif

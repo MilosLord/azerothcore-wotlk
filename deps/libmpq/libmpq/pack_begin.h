@@ -25,10 +25,9 @@
 #endif
 
 #ifdef _MSC_VER
-  #pragma pack(push,1)
-  #define PACK_STRUCT
+#pragma pack(push, 1)
+#define PACK_STRUCT
 #else
-  /* we assume GNU here */
-  #define PACK_STRUCT __attribute__((packed))
+/* we assume GNU here */
+#define PACK_STRUCT __attribute__((packed))
 #endif
-

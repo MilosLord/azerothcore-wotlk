@@ -16,7 +16,6 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
-
 /* Header file for my_aes.c */
 /* Wrapper to give simple interface for MySQL to AES standard encryption */
 
@@ -24,7 +23,7 @@
 
 C_MODE_START
 
-#define AES_KEY_LENGTH 128		/* Must be 128 192 or 256 */
+#define AES_KEY_LENGTH 128 /* Must be 128 192 or 256 */
 
 /*
   my_aes_encrypt	- Crypt buffer with AES encryption algorithm.
@@ -37,8 +36,11 @@ C_MODE_START
   returns  - size of encrypted data, or negative in case of error.
 */
 
-int my_aes_encrypt(const char *source, int source_length, char *dest,
-		   const char *key, int key_length);
+int my_aes_encrypt(const char* source,
+                   int         source_length,
+                   char*       dest,
+                   const char* key,
+                   int         key_length);
 
 /*
   my_aes_decrypt	- DeCrypt buffer with AES encryption algorithm.
@@ -51,13 +53,15 @@ int my_aes_encrypt(const char *source, int source_length, char *dest,
   returns  - size of original data, or negative in case of error.
 */
 
-
-int my_aes_decrypt(const char *source, int source_length, char *dest,
-		   const char *key, int key_length);
+int my_aes_decrypt(const char* source,
+                   int         source_length,
+                   char*       dest,
+                   const char* key,
+                   int         key_length);
 
 /*
   my_aes_get_size - get size of buffer which will be large enough for encrypted
-		    data
+            data
   source_length   -  length of data to be encrypted
 
   returns  - size of buffer required to store encrypted data

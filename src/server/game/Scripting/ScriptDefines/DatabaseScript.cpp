@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,15 +22,22 @@
 
 void ScriptMgr::OnAfterDatabasesLoaded(uint32 updateFlags)
 {
-    CALL_ENABLED_HOOKS(DatabaseScript, DATABASEHOOK_ON_AFTER_DATABASES_LOADED, script->OnAfterDatabasesLoaded(updateFlags));
+    CALL_ENABLED_HOOKS(DatabaseScript,
+                       DATABASEHOOK_ON_AFTER_DATABASES_LOADED,
+                       script->OnAfterDatabasesLoaded(updateFlags));
 }
 
-void ScriptMgr::OnAfterDatabaseLoadCreatureTemplates(std::vector<CreatureTemplate*> creatureTemplates)
+void ScriptMgr::OnAfterDatabaseLoadCreatureTemplates(
+    std::vector<CreatureTemplate*> creatureTemplates)
 {
-    CALL_ENABLED_HOOKS(DatabaseScript, DATABASEHOOK_ON_AFTER_DATABASE_LOAD_CREATURETEMPLATES, script->OnAfterDatabaseLoadCreatureTemplates(creatureTemplates));
+    CALL_ENABLED_HOOKS(
+        DatabaseScript,
+        DATABASEHOOK_ON_AFTER_DATABASE_LOAD_CREATURETEMPLATES,
+        script->OnAfterDatabaseLoadCreatureTemplates(creatureTemplates));
 }
 
-DatabaseScript::DatabaseScript(const char* name, std::vector<uint16> enabledHooks)
+DatabaseScript::DatabaseScript(const char*         name,
+                               std::vector<uint16> enabledHooks)
     : ScriptObject(name, DATABASEHOOK_END)
 {
     // If empty - enable all available hooks.

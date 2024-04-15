@@ -9,21 +9,21 @@
 #ifndef G3D_MATRIX_H
 #define G3D_MATRIX_H
 
-#include "G3D/g3dmath.h"
-#include "G3D/Vector3.h"
-#include "G3D/Vector4.h"
 #include "G3D/Matrix3.h"
 #include "G3D/Matrix4.h"
 #include "G3D/ReferenceCount.h"
+#include "G3D/Vector3.h"
+#include "G3D/Vector4.h"
+#include "G3D/g3dmath.h"
 
 namespace G3D {
 
-/** 
- N x M matrix.  
- 
+/**
+ N x M matrix.
+
  The actual data is tracked internally by a reference counted pointer;
- it is efficient to pass and assign Matrix objects because no data is actually copied.
- This avoids the headache of pointers and allows natural math notation:
+ it is efficient to pass and assign Matrix objects because no data is actually
+ copied. This avoids the headache of pointers and allows natural math notation:
 
   <PRE>
     Matrix A, B, C;
@@ -34,61 +34,61 @@ namespace G3D {
 
     A = Matrix::identity(4);
     C = A;
-    C.set(0, 0, 2.0); // Triggers a copy of the data so that A remains unchanged.
+    C.set(0, 0, 2.0); // Triggers a copy of the data so that A remains
+ unchanged.
 
     // etc.
 
   </PRE>
 
   The Matrix::debugNumCopyOps and Matrix::debugNumAllocOps counters
-  increment every time an operation forces the copy and allocation of matrices.  You
-  can use these to detect slow operations when efficiency is a major concern.
+  increment every time an operation forces the copy and allocation of matrices.
+ You can use these to detect slow operations when efficiency is a major concern.
 
-  Some methods accept an output argument instead of returning a value.  For example,
-  <CODE>A = B.transpose()</CODE> can also be invoked as <CODE>B.transpose(A)</CODE>.
-  The latter may be more efficient, since Matrix may be able to re-use the storage of
-  A (if it has approximatly the right size and isn't currently shared with another matrix).  
+  Some methods accept an output argument instead of returning a value.  For
+ example, <CODE>A = B.transpose()</CODE> can also be invoked as
+ <CODE>B.transpose(A)</CODE>. The latter may be more efficient, since Matrix may
+ be able to re-use the storage of A (if it has approximatly the right size and
+ isn't currently shared with another matrix).
 
-  @sa G3D::Matrix3, G3D::Matrix4, G3D::Vector2, G3D::Vector3, G3D::Vector4, G3D::CoordinateFrame
+  @sa G3D::Matrix3, G3D::Matrix4, G3D::Vector2, G3D::Vector3, G3D::Vector4,
+ G3D::CoordinateFrame
 
   @beta
  */
 class Matrix {
 public:
-    /** 
-      Internal precision.  Currently float, but this may become a templated class in the future
-      to allow operations like Matrix<double> and Matrix<ComplexFloat>.
+    /**
+      Internal precision.  Currently float, but this may become a templated
+      class in the future to allow operations like Matrix<double> and
+      Matrix<ComplexFloat>.
 
-      Not necessarily a plain-old-data type (e.g., could ComplexFloat), but must be something 
-      with no constructor, that can be safely memcpyd, and that has a bit pattern of all zeros
-      when zero.*/
+      Not necessarily a plain-old-data type (e.g., could ComplexFloat), but must
+      be something with no constructor, that can be safely memcpyd, and that has
+      a bit pattern of all zeros when zero.*/
     typedef float T;
 
-    /** Incremented every time the elements of a matrix are copied.  Useful for profiling your
-        own code that uses Matrix to determine when it is slow due to copying.*/
-    static int                     debugNumCopyOps;
+    /** Incremented every time the elements of a matrix are copied.  Useful for
+       profiling your own code that uses Matrix to determine when it is slow due
+       to copying.*/
+    static int debugNumCopyOps;
 
-    /** Incremented every time a new matrix object is allocated.  Useful for profiling your
-        own code that uses Matrix to determine when it is slow due to allocation.*/
-    static int                     debugNumAllocOps;
+    /** Incremented every time a new matrix object is allocated.  Useful for
+       profiling your own code that uses Matrix to determine when it is slow due
+       to allocation.*/
+    static int debugNumAllocOps;
 
 private:
 public:
-
     /** Used internally by Matrix.
-    
-        Does not throw exceptions-- assumes the caller has taken care of 
+
+        Does not throw exceptions-- assumes the caller has taken care of
         argument checking. */
     class Impl : public ReferenceCountedObject {
     public:
+        static void* operator new(size_t size) { return System::malloc(size); }
 
-        static void* operator new(size_t size) {
-            return System::malloc(size);
-        }
-
-        static void operator delete(void* p) {
-            System::free(p);
-        }
+        static void operator delete(void* p) { System::free(p); }
 
         ~Impl();
 
@@ -96,22 +96,22 @@ public:
         friend class Matrix;
 
         /** elt[r][c] = the element.  Pointers into data.*/
-        T**                 elt;
+        T** elt;
 
         /** Row major data for the entire matrix. */
-        T*                  data;
+        T* data;
 
         /** The number of rows */
-        int                 R;
+        int R;
 
         /** The number of columns */
-        int                 C;
+        int C;
 
-        int                 dataSize;
+        int dataSize;
 
-        /** If R*C is much larger or smaller than the current, deletes all previous data
-            and resets to random data.  Otherwise re-uses existing memory and just resets
-            R, C, and the row pointers. */
+        /** If R*C is much larger or smaller than the current, deletes all
+           previous data and resets to random data.  Otherwise re-uses existing
+           memory and just resets R, C, and the row pointers. */
         void setSize(int newRows, int newCols);
 
         inline Impl() : elt(NULL), data(NULL), R(0), C(0), dataSize(0) {}
@@ -120,26 +120,32 @@ public:
 
         Impl(const Matrix4& M);
 
-        inline Impl(int r, int c) : elt(NULL), data(NULL), R(0), C(0), dataSize(0) {
+        inline Impl(int r, int c)
+            : elt(NULL), data(NULL), R(0), C(0), dataSize(0)
+        {
             setSize(r, c);
         }
 
         Impl& operator=(const Impl& m);
 
-        inline Impl(const Impl& B) : elt(NULL), data(NULL), R(0), C(0), dataSize(0) {
+        inline Impl(const Impl& B)
+            : elt(NULL), data(NULL), R(0), C(0), dataSize(0)
+        {
             // Use the assignment operator
             *this = B;
         }
 
         void setZero();
 
-        inline void set(int r, int c, T v) {
+        inline void set(int r, int c, T v)
+        {
             debugAssert(r < R);
             debugAssert(c < C);
             elt[r][c] = v;
         }
 
-        inline const T& get(int r, int c) const {
+        inline const T& get(int r, int c) const
+        {
             debugAssert(r < R);
             debugAssert(c < C);
             return elt[r][c];
@@ -180,7 +186,8 @@ public:
         /** Slow way of computing an inverse; for reference */
         void inverseViaAdjoint(Impl& out) const;
 
-        /** Use Gaussian elimination with pivots to solve for the inverse destructively in place. */
+        /** Use Gaussian elimination with pivots to solve for the inverse
+         * destructively in place. */
         void inverseInPlaceGaussJordan();
 
         void adjoint(Impl& out) const;
@@ -191,7 +198,7 @@ public:
         /**
          Cofactor [r][c] is defined as C[r][c] = -1 ^(r+c) * det(A[r][c]),
          where A[r][c] is the (R-1)x(C-1) matrix formed by removing row r and
-         column c from the original matrix. 
+         column c from the original matrix.
         */
         T cofactor(int r, int c) const;
 
@@ -232,11 +239,11 @@ public:
 
         void setCol(int c, const T* vals);
     };
-private:
 
+private:
     typedef shared_ptr<Impl> ImplRef;
 
-    ImplRef       impl;
+    ImplRef impl;
 
     inline Matrix(ImplRef i) : impl(i) {}
     inline Matrix(Impl* i) : impl(ImplRef(i)) {}
@@ -244,30 +251,36 @@ private:
     /** Used by SVD */
     class SortRank {
     public:
-        T           value;
-        int         col;
+        T   value;
+        int col;
 
-        inline bool operator>(const SortRank& x) const {
+        inline bool operator>(const SortRank& x) const
+        {
             return x.value > value;
         }
-        
-        inline bool operator<(const SortRank& x) const {
+
+        inline bool operator<(const SortRank& x) const
+        {
             return x.value < value;
         }
-        
-        inline bool operator>=(const SortRank& x) const {
+
+        inline bool operator>=(const SortRank& x) const
+        {
             return x.value >= value;
         }
-        
-        inline bool operator<=(const SortRank& x) const {
+
+        inline bool operator<=(const SortRank& x) const
+        {
             return x.value <= value;
         }
-        
-        inline bool operator==(const SortRank& x) const {
+
+        inline bool operator==(const SortRank& x) const
+        {
             return x.value == value;
         }
 
-        inline bool operator!=(const SortRank& x) const {
+        inline bool operator!=(const SortRank& x) const
+        {
             return x.value != value;
         }
     };
@@ -285,15 +298,15 @@ private:
     Matrix row4PseudoInverse(const Matrix& B) const;
 
 public:
-
     Matrix() : impl(new Impl(0, 0)) {}
 
     Matrix(const Matrix3& M) : impl(new Impl(M)) {}
 
     Matrix(const Matrix4& M) : impl(new Impl(M)) {}
 
-    template<class S>
-    static Matrix fromDiagonal(const Array<S>& d) {
+    template <class S>
+    static Matrix fromDiagonal(const Array<S>& d)
+    {
         Matrix D = zero(d.length(), d.length());
         for (int i = 0; i < d.length(); ++i) {
             D.set(i, i, d[i]);
@@ -304,9 +317,7 @@ public:
     static Matrix fromDiagonal(const Matrix& d);
 
     /** Returns a new matrix that is all zero. */
-    Matrix(int R, int C) : impl(new Impl(R, C)) {
-        impl->setZero();
-    }
+    Matrix(int R, int C) : impl(new Impl(R, C)) { impl->setZero(); }
 
     /** Returns a new matrix that is all zero. */
     static Matrix zero(int R, int C);
@@ -321,14 +332,10 @@ public:
     static Matrix random(int R, int C);
 
     /** The number of rows */
-    inline int rows() const {
-        return impl->R;
-    }
+    inline int rows() const { return impl->R; }
 
     /** Number of columns */
-    inline int cols() const {
-        return impl->C;
-    }
+    inline int cols() const { return impl->C; }
 
     /** Generally more efficient than A * B */
     Matrix& operator*=(const T& B);
@@ -357,49 +364,54 @@ public:
         from r1:r2 to c1:c2, inclusive.*/
     Matrix subMatrix(int r1, int r2, int c1, int c2) const;
 
-    /** Matrix multiplication.  To perform element-by-element multiplication, 
+    /** Matrix multiplication.  To perform element-by-element multiplication,
         see arrayMul. */
-    inline Matrix operator*(const Matrix& B) const {
+    inline Matrix operator*(const Matrix& B) const
+    {
         Matrix C(impl->R, B.impl->C);
         impl->mul(*B.impl, *C.impl);
         return C;
     }
 
     /** See also A *= B, which is more efficient in many cases */
-    inline Matrix operator*(const T& B) const {
+    inline Matrix operator*(const T& B) const
+    {
         Matrix C(impl->R, impl->C);
         impl->mul(B, *C.impl);
         return C;
     }
 
     /** See also A += B, which is more efficient in many cases */
-    inline Matrix operator+(const Matrix& B) const {
+    inline Matrix operator+(const Matrix& B) const
+    {
         Matrix C(impl->R, impl->C);
         impl->add(*B.impl, *C.impl);
         return C;
     }
 
     /** See also A -= B, which is more efficient in many cases */
-    inline Matrix operator-(const Matrix& B) const {
+    inline Matrix operator-(const Matrix& B) const
+    {
         Matrix C(impl->R, impl->C);
         impl->sub(*B.impl, *C.impl);
         return C;
     }
 
     /** See also A += B, which is more efficient in many cases */
-    inline Matrix operator+(const T& v) const {
+    inline Matrix operator+(const T& v) const
+    {
         Matrix C(impl->R, impl->C);
         impl->add(v, *C.impl);
         return C;
     }
 
     /** See also A -= B, which is more efficient in many cases */
-    inline Matrix operator-(const T& v) const {
+    inline Matrix operator-(const T& v) const
+    {
         Matrix C(impl->R, impl->C);
         impl->sub(v, *C.impl);
         return C;
     }
-
 
     Matrix operator>(const T& scalar) const;
 
@@ -414,13 +426,15 @@ public:
     Matrix operator!=(const T& scalar) const;
 
     /** scalar B - this */
-    inline Matrix lsub(const T& B) const {
+    inline Matrix lsub(const T& B) const
+    {
         Matrix C(impl->R, impl->C);
         impl->lsub(B, *C.impl);
         return C;
     }
 
-    inline Matrix arrayMul(const Matrix& B) const {
+    inline Matrix arrayMul(const Matrix& B) const
+    {
         Matrix C(impl->R, impl->C);
         impl->arrayMul(*B.impl, *C.impl);
         return C;
@@ -429,7 +443,7 @@ public:
     Matrix3 toMatrix3() const;
 
     Matrix4 toMatrix4() const;
-    
+
     Vector2 toVector2() const;
 
     Vector3 toVector3() const;
@@ -443,14 +457,14 @@ public:
     void arrayDivInPlace(const Matrix& B);
 
     // Declares an array unary method and its explicit-argument counterpart
-#   define DECLARE_METHODS_1(method)\
-    inline Matrix method() const {\
-        Matrix C(impl->R, impl->C);\
-        impl->method(*C.impl);\
-        return C;\
-    }\
+#define DECLARE_METHODS_1(method)                                              \
+    inline Matrix method() const                                               \
+    {                                                                          \
+        Matrix C(impl->R, impl->C);                                            \
+        impl->method(*C.impl);                                                 \
+        return C;                                                              \
+    }                                                                          \
     void method(Matrix& out) const;
-
 
     DECLARE_METHODS_1(abs)
     DECLARE_METHODS_1(arrayLog)
@@ -460,32 +474,30 @@ public:
     DECLARE_METHODS_1(arraySin)
     DECLARE_METHODS_1(negate)
 
-#   undef DECLARE_METHODS_1
+#undef DECLARE_METHODS_1
 
-    inline Matrix operator-() const {
-        return negate();
-    }
+    inline Matrix operator-() const { return negate(); }
 
     /**
      A<SUP>-1</SUP> computed using the Gauss-Jordan algorithm,
      for square matrices.
-     Run time is <I>O(R<sup>3</sup>)</I>, where <I>R</i> is the 
+     Run time is <I>O(R<sup>3</sup>)</I>, where <I>R</i> is the
      number of rows.
      */
-    inline Matrix inverse() const {
+    inline Matrix inverse() const
+    {
         Impl* A = new Impl(*impl);
         A->inverseInPlaceGaussJordan();
         return Matrix(A);
     }
 
-    inline T determinant() const {
-        return impl->determinant();
-    }
+    inline T determinant() const { return impl->determinant(); }
 
     /**
      A<SUP>T</SUP>
      */
-    inline Matrix transpose() const {
+    inline Matrix transpose() const
+    {
         Impl* A = new Impl(cols(), rows());
         impl->transpose(*A);
         return Matrix(A);
@@ -494,40 +506,44 @@ public:
     /** Transpose in place; more efficient than transpose */
     void transpose(Matrix& out) const;
 
-    inline Matrix adjoint() const {
+    inline Matrix adjoint() const
+    {
         Impl* A = new Impl(cols(), rows());
         impl->adjoint(*A);
         return Matrix(A);
     }
 
-    /**     
+    /**
             \brief Computes the Moore-Penrose pseudo inverse, equivalent to
             (A<SUP>T</SUP>A)<SUP>-1</SUP>A<SUP>T</SUP>).  The SVD method is used
             for performance when the matrix has more than four rows or columns
 
-            \cite http://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_pseudoinverse
+            \cite
+       http://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_pseudoinverse
 
             \param tolerance Use -1 for automatic tolerance.
      */
     Matrix pseudoInverse(float tolerance = -1) const;
 
-    /** Called from pseudoInverse when the matrix has size > 4 along some dimension.*/
+    /** Called from pseudoInverse when the matrix has size > 4 along some
+     * dimension.*/
     Matrix svdPseudoInverse(float tolerance = -1) const;
 
     /**
      (A<SUP>T</SUP>A)<SUP>-1</SUP>A<SUP>T</SUP>) computed
      using Gauss-Jordan elimination.
      */
-    inline Matrix gaussJordanPseudoInverse() const {
+    inline Matrix gaussJordanPseudoInverse() const
+    {
         Matrix trans = transpose();
         return (trans * (*this)).inverse() * trans;
     }
 
-    /** Singular value decomposition.  Factors into three matrices 
+    /** Singular value decomposition.  Factors into three matrices
         such that @a this = @a U * fromDiagonal(@a d) * @a V.transpose().
 
         The matrix must have at least as many rows as columns.
-        
+
         Run time is <I>O(C<sup>2</sup>*R)</I>.
 
         @param sort If true (default), the singular values
@@ -547,13 +563,9 @@ public:
 
     T get(int r, int c) const;
 
-    Vector2int16 size() const {
-        return Vector2int16(rows(), cols());
-    }
+    Vector2int16 size() const { return Vector2int16(rows(), cols()); }
 
-    int numElements() const {
-        return rows() * cols();
-    }
+    int numElements() const { return rows() * cols(); }
 
     void swapRows(int r0, int r1);
 
@@ -568,20 +580,17 @@ public:
     /** Returns true if all elements are non-zero */
     bool allNonZero() const;
 
-    inline bool allZero() const {
-        return !anyNonZero();
-    }
+    inline bool allZero() const { return !anyNonZero(); }
 
-    inline bool anyZero() const {
-        return !allNonZero();
-    }
+    inline bool anyZero() const { return !allNonZero(); }
 
     /** Serializes in Matlab source format */
     void serialize(TextOutput& t) const;
 
     std::string toString(const std::string& name) const;
 
-    std::string toString() const {
+    std::string toString() const
+    {
         static const std::string name = "";
         return toString(name);
     }
@@ -601,37 +610,40 @@ public:
       Assumes that rows >= cols
 
       @return NULL on success, a string describing the error on failure.
-      @param U rows x cols matrix to be decomposed, gets overwritten with U, a rows x cols matrix with orthogonal columns.
-      @param D vector of singular values of a (diagonal of the D matrix).  Length cols.
-      @param V returns the right orthonormal transformation matrix, size cols x cols
+      @param U rows x cols matrix to be decomposed, gets overwritten with U, a
+      rows x cols matrix with orthogonal columns.
+      @param D vector of singular values of a (diagonal of the D matrix). Length
+      cols.
+      @param V returns the right orthonormal transformation matrix, size cols x
+      cols
 
-      @cite Based on Dianne Cook's implementation, which is adapted from 
-      svdecomp.c in XLISP-STAT 2.1, which is code from Numerical Recipes 
-      adapted by Luke Tierney and David Betz.  The Numerical Recipes code 
+      @cite Based on Dianne Cook's implementation, which is adapted from
+      svdecomp.c in XLISP-STAT 2.1, which is code from Numerical Recipes
+      adapted by Luke Tierney and David Betz.  The Numerical Recipes code
       is adapted from Forsythe et al, who based their code on Golub and
       Reinsch's original implementation.
     */
-    static const char* svdCore(float** U, int rows, int cols, float* D, float** V);
-
+    static const char*
+    svdCore(float** U, int rows, int cols, float* D, float** V);
 };
 
-}
+} // namespace G3D
 
-inline G3D::Matrix operator-(const G3D::Matrix::T& v, const G3D::Matrix& M) {
+inline G3D::Matrix operator-(const G3D::Matrix::T& v, const G3D::Matrix& M)
+{
     return M.lsub(v);
 }
 
-inline G3D::Matrix operator*(const G3D::Matrix::T& v, const G3D::Matrix& M) {
+inline G3D::Matrix operator*(const G3D::Matrix::T& v, const G3D::Matrix& M)
+{
     return M * v;
 }
 
-inline G3D::Matrix operator+(const G3D::Matrix::T& v, const G3D::Matrix& M) {
+inline G3D::Matrix operator+(const G3D::Matrix::T& v, const G3D::Matrix& M)
+{
     return M + v;
 }
 
-inline G3D::Matrix abs(const G3D::Matrix& M) {
-    return M.abs();
-}
+inline G3D::Matrix abs(const G3D::Matrix& M) { return M.abs(); }
 
 #endif
-

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -32,12 +33,11 @@ void WhoListCacheMgr::Update()
     _whoListStorage.clear();
     _whoListStorage.reserve(sWorld->GetPlayerCount() + 1);
 
-    for (auto const& [guid, player] : ObjectAccessor::GetPlayers())
-    {
+    for (auto const& [guid, player] : ObjectAccessor::GetPlayers()) {
         if (!player->FindMap() || player->GetSession()->PlayerLoading())
             continue;
 
-        std::string playerName = player->GetName();
+        std::string  playerName = player->GetName();
         std::wstring widePlayerName;
 
         if (!Utf8toWStr(playerName, widePlayerName))
@@ -45,7 +45,8 @@ void WhoListCacheMgr::Update()
 
         wstrToLower(widePlayerName);
 
-        std::string guildName = sGuildMgr->GetGuildNameById(player->GetGuildId());
+        std::string guildName =
+            sGuildMgr->GetGuildNameById(player->GetGuildId());
         std::wstring wideGuildName;
 
         if (!Utf8toWStr(guildName, wideGuildName))
@@ -53,9 +54,19 @@ void WhoListCacheMgr::Update()
 
         wstrToLower(wideGuildName);
 
-        _whoListStorage.emplace_back(player->GetGUID(), player->GetTeamId(), player->GetSession()->GetSecurity(), player->GetLevel(),
-            player->getClass(), player->getRace(),
-            (player->IsSpectator() ? 4395 /*Dalaran*/ : player->GetZoneId()), player->getGender(), player->IsVisible(),
-            widePlayerName, wideGuildName, playerName, guildName);
+        _whoListStorage.emplace_back(
+            player->GetGUID(),
+            player->GetTeamId(),
+            player->GetSession()->GetSecurity(),
+            player->GetLevel(),
+            player->getClass(),
+            player->getRace(),
+            (player->IsSpectator() ? 4395 /*Dalaran*/ : player->GetZoneId()),
+            player->getGender(),
+            player->IsVisible(),
+            widePlayerName,
+            wideGuildName,
+            playerName,
+            guildName);
     }
 }

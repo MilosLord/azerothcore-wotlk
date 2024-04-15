@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -17,13 +18,12 @@
 
 #include "GuildPackets.h"
 
-void WorldPackets::Guild::QueryGuildInfo::Read()
-{
-    _worldPacket >> GuildId;
-}
+void WorldPackets::Guild::QueryGuildInfo::Read() { _worldPacket >> GuildId; }
 
 WorldPackets::Guild::QueryGuildInfoResponse::QueryGuildInfoResponse()
-        : ServerPacket(SMSG_GUILD_QUERY_RESPONSE) { }
+    : ServerPacket(SMSG_GUILD_QUERY_RESPONSE)
+{
+}
 
 WorldPacket const* WorldPackets::Guild::QueryGuildInfoResponse::Write()
 {
@@ -42,10 +42,7 @@ WorldPacket const* WorldPackets::Guild::QueryGuildInfoResponse::Write()
     return &_worldPacket;
 }
 
-void WorldPackets::Guild::GuildCreate::Read()
-{
-    _worldPacket >> GuildName;
-}
+void WorldPackets::Guild::GuildCreate::Read() { _worldPacket >> GuildName; }
 
 WorldPacket const* WorldPackets::Guild::GuildInfoResponse::Write()
 {
@@ -87,10 +84,7 @@ WorldPacket const* WorldPackets::Guild::GuildCommandResult::Write()
     return &_worldPacket;
 }
 
-void WorldPackets::Guild::GuildInviteByName::Read()
-{
-    _worldPacket >> Name;
-}
+void WorldPackets::Guild::GuildInviteByName::Read() { _worldPacket >> Name; }
 
 WorldPacket const* WorldPackets::Guild::GuildInvite::Write()
 {
@@ -100,7 +94,9 @@ WorldPacket const* WorldPackets::Guild::GuildInvite::Write()
     return &_worldPacket;
 }
 
-ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Guild::GuildRosterMemberData const& rosterMemberData)
+ByteBuffer&
+operator<<(ByteBuffer&                                       data,
+           WorldPackets::Guild::GuildRosterMemberData const& rosterMemberData)
 {
     data << rosterMemberData.Guid;
     data << uint8(rosterMemberData.Status);
@@ -126,16 +122,15 @@ WorldPacket const* WorldPackets::Guild::GuildEvent::Write()
     for (std::string_view param : Params)
         _worldPacket << param;
 
-    switch (Type)
-    {
-        case GE_JOINED:
-        case GE_LEFT:
-        case GE_SIGNED_ON:
-        case GE_SIGNED_OFF:
-            _worldPacket << Guid;
-            break;
-        default:
-            break;
+    switch (Type) {
+    case GE_JOINED:
+    case GE_LEFT:
+    case GE_SIGNED_ON:
+    case GE_SIGNED_OFF:
+        _worldPacket << Guid;
+        break;
+    default:
+        break;
     }
 
     return &_worldPacket;
@@ -147,13 +142,14 @@ WorldPacket const* WorldPackets::Guild::GuildEventLogQueryResults::Write()
 
     _worldPacket << uint8(Entry.size());
 
-    for (GuildEventEntry const& entry : Entry)
-    {
+    for (GuildEventEntry const& entry : Entry) {
         _worldPacket << uint8(entry.TransactionType);
         _worldPacket << entry.PlayerGUID;
-        if (entry.TransactionType != GUILD_EVENT_LOG_JOIN_GUILD && entry.TransactionType != GUILD_EVENT_LOG_LEAVE_GUILD)
+        if (entry.TransactionType != GUILD_EVENT_LOG_JOIN_GUILD &&
+            entry.TransactionType != GUILD_EVENT_LOG_LEAVE_GUILD)
             _worldPacket << entry.OtherGUID;
-        if (entry.TransactionType == GUILD_EVENT_LOG_PROMOTE_PLAYER || entry.TransactionType == GUILD_EVENT_LOG_DEMOTE_PLAYER)
+        if (entry.TransactionType == GUILD_EVENT_LOG_PROMOTE_PLAYER ||
+            entry.TransactionType == GUILD_EVENT_LOG_DEMOTE_PLAYER)
             _worldPacket << uint8(entry.RankID);
         _worldPacket << uint32(entry.TransactionDate);
     }
@@ -168,8 +164,7 @@ WorldPacket const* WorldPackets::Guild::GuildPermissionsQueryResults::Write()
     _worldPacket << int32(WithdrawGoldLimit);
     _worldPacket << int8(NumTabs);
 
-    for (GuildRankTabPermissions const& tab : Tab)
-    {
+    for (GuildRankTabPermissions const& tab : Tab) {
         _worldPacket << int32(tab.Flags);
         _worldPacket << int32(tab.WithdrawItemLimit);
     }
@@ -184,20 +179,19 @@ void WorldPackets::Guild::GuildSetRankPermissions::Read()
     _worldPacket >> RankName;
     _worldPacket >> WithdrawGoldLimit;
 
-    for (uint8 i = 0; i < GUILD_BANK_MAX_TABS; i++)
-    {
+    for (uint8 i = 0; i < GUILD_BANK_MAX_TABS; i++) {
         _worldPacket >> TabFlags[i];
         _worldPacket >> TabWithdrawItemLimit[i];
     }
 }
 
-ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Guild::GuildRankData const& rankData)
+ByteBuffer& operator<<(ByteBuffer&                               data,
+                       WorldPackets::Guild::GuildRankData const& rankData)
 {
     data << uint32(rankData.Flags);
     data << uint32(rankData.WithdrawGoldLimit);
 
-    for (uint8 i = 0; i < GUILD_BANK_MAX_TABS; i++)
-    {
+    for (uint8 i = 0; i < GUILD_BANK_MAX_TABS; i++) {
         data << uint32(rankData.TabFlags[i]);
         data << uint32(rankData.TabWithdrawItemLimit[i]);
     }
@@ -205,10 +199,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Guild::GuildRankData cons
     return data;
 }
 
-void WorldPackets::Guild::GuildAddRank::Read()
-{
-    _worldPacket >> Name;
-}
+void WorldPackets::Guild::GuildAddRank::Read() { _worldPacket >> Name; }
 
 void WorldPackets::Guild::GuildUpdateInfoText::Read()
 {
@@ -221,10 +212,7 @@ void WorldPackets::Guild::GuildSetMemberNote::Read()
     _worldPacket >> Note;
 }
 
-void WorldPackets::Guild::GuildDemoteMember::Read()
-{
-    _worldPacket >> Demotee;
-}
+void WorldPackets::Guild::GuildDemoteMember::Read() { _worldPacket >> Demotee; }
 
 void WorldPackets::Guild::GuildPromoteMember::Read()
 {
@@ -290,23 +278,19 @@ WorldPacket const* WorldPackets::Guild::GuildBankQueryResults::Write()
     _worldPacket << int32(WithdrawalsRemaining);
     _worldPacket << uint8(FullUpdate);
 
-    if (!Tab && FullUpdate)
-    {
+    if (!Tab && FullUpdate) {
         _worldPacket << uint8(TabInfo.size());
-        for (GuildBankTabInfo const& tab : TabInfo)
-        {
+        for (GuildBankTabInfo const& tab : TabInfo) {
             _worldPacket << tab.Name;
             _worldPacket << tab.Icon;
         }
     }
 
     _worldPacket << uint8(ItemInfo.size());
-    for (GuildBankItemInfo const& item : ItemInfo)
-    {
+    for (GuildBankItemInfo const& item : ItemInfo) {
         _worldPacket << uint8(item.Slot);
         _worldPacket << uint32(item.ItemID);
-        if (item.ItemID)
-        {
+        if (item.ItemID) {
             _worldPacket << int32(item.Flags);
             _worldPacket << int32(item.RandomPropertiesID);
             if (item.RandomPropertiesID)
@@ -317,8 +301,8 @@ WorldPacket const* WorldPackets::Guild::GuildBankQueryResults::Write()
             _worldPacket << uint8(item.Charges);
             _worldPacket << uint8(item.SocketEnchant.size());
 
-            for (GuildBankSocketEnchant const& socketEnchant : item.SocketEnchant)
-            {
+            for (GuildBankSocketEnchant const& socketEnchant :
+                 item.SocketEnchant) {
                 _worldPacket << uint8(socketEnchant.SocketIndex);
                 _worldPacket << int32(socketEnchant.SocketEnchantID);
             }
@@ -328,7 +312,8 @@ WorldPacket const* WorldPackets::Guild::GuildBankQueryResults::Write()
     return &_worldPacket;
 }
 
-void WorldPackets::Guild::GuildBankQueryResults::SetWithdrawalsRemaining(int32 withdrawalsRemaining)
+void WorldPackets::Guild::GuildBankQueryResults::SetWithdrawalsRemaining(
+    int32 withdrawalsRemaining)
 {
     WithdrawalsRemaining = withdrawalsRemaining;
     _worldPacket.put<int32>(_withdrawalsRemainingPos, withdrawalsRemaining);
@@ -339,8 +324,7 @@ void WorldPackets::Guild::GuildBankSwapItems::Read()
     _worldPacket >> Banker;
     _worldPacket >> BankOnly;
 
-    if (BankOnly)
-    {
+    if (BankOnly) {
         // dest
         _worldPacket >> BankTab;
         _worldPacket >> BankSlot;
@@ -354,21 +338,18 @@ void WorldPackets::Guild::GuildBankSwapItems::Read()
         _worldPacket >> AutoStore;
         _worldPacket >> BankItemCount;
     }
-    else
-    {
+    else {
         _worldPacket >> BankTab;
         _worldPacket >> BankSlot;
         _worldPacket >> ItemID;
 
         _worldPacket >> AutoStore;
-        if (AutoStore)
-        {
+        if (AutoStore) {
             _worldPacket >> BankItemCount;
             _worldPacket >> ToSlot;
             _worldPacket >> StackCount;
         }
-        else
-        {
+        else {
             _worldPacket >> ContainerSlot;
             _worldPacket >> ContainerItemSlot;
             _worldPacket >> ToSlot;
@@ -377,37 +358,32 @@ void WorldPackets::Guild::GuildBankSwapItems::Read()
     }
 }
 
-void WorldPackets::Guild::GuildBankLogQuery::Read()
-{
-    _worldPacket >> Tab;
-}
+void WorldPackets::Guild::GuildBankLogQuery::Read() { _worldPacket >> Tab; }
 
 WorldPacket const* WorldPackets::Guild::GuildBankLogQueryResults::Write()
 {
     _worldPacket << uint8(Tab);
     _worldPacket << uint8(Entry.size());
 
-    for (GuildBankLogEntry const& logEntry : Entry)
-    {
+    for (GuildBankLogEntry const& logEntry : Entry) {
         _worldPacket << int8(logEntry.EntryType);
         _worldPacket << logEntry.PlayerGUID;
 
-        switch (logEntry.EntryType)
-        {
-            case GUILD_BANK_LOG_DEPOSIT_ITEM:
-            case GUILD_BANK_LOG_WITHDRAW_ITEM:
-                _worldPacket << uint32(logEntry.ItemID);
-                _worldPacket << uint32(logEntry.Count);
-                break;
-            case GUILD_BANK_LOG_MOVE_ITEM:
-            case GUILD_BANK_LOG_MOVE_ITEM2:
-                _worldPacket << uint32(logEntry.ItemID);
-                _worldPacket << uint32(logEntry.Count);
-                _worldPacket << uint8(logEntry.OtherTab);
-                break;
-            default:
-                _worldPacket << uint32(logEntry.Money);
-                break;
+        switch (logEntry.EntryType) {
+        case GUILD_BANK_LOG_DEPOSIT_ITEM:
+        case GUILD_BANK_LOG_WITHDRAW_ITEM:
+            _worldPacket << uint32(logEntry.ItemID);
+            _worldPacket << uint32(logEntry.Count);
+            break;
+        case GUILD_BANK_LOG_MOVE_ITEM:
+        case GUILD_BANK_LOG_MOVE_ITEM2:
+            _worldPacket << uint32(logEntry.ItemID);
+            _worldPacket << uint32(logEntry.Count);
+            _worldPacket << uint8(logEntry.OtherTab);
+            break;
+        default:
+            _worldPacket << uint32(logEntry.Money);
+            break;
         }
 
         _worldPacket << uint32(logEntry.TimeOffset);
@@ -416,10 +392,7 @@ WorldPacket const* WorldPackets::Guild::GuildBankLogQueryResults::Write()
     return &_worldPacket;
 }
 
-void WorldPackets::Guild::GuildBankTextQuery::Read()
-{
-    _worldPacket >> Tab;
-}
+void WorldPackets::Guild::GuildBankTextQuery::Read() { _worldPacket >> Tab; }
 
 WorldPacket const* WorldPackets::Guild::GuildBankTextQueryResult::Write()
 {

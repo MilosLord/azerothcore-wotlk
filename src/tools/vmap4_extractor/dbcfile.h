@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,10 +23,9 @@
 #include <string>
 #include <utility>
 
-class DBCFile
-{
+class DBCFile {
 public:
-    DBCFile(std::string  filename);
+    DBCFile(std::string filename);
     ~DBCFile();
 
     // Open database. It must be openened before it can be used.
@@ -34,33 +34,29 @@ public:
     /// @todo: Add a close function?
 
     // Database exceptions
-    class Exception
-    {
+    class Exception {
     public:
-        Exception(std::string  message): message(std::move(message))
-        { }
+        Exception(std::string message) : message(std::move(message)) {}
         virtual ~Exception() = default;
-        const std::string& getMessage() {return message;}
+        const std::string& getMessage() { return message; }
+
     private:
         std::string message;
     };
 
     //
-    class NotFound: public Exception
-    {
+    class NotFound : public Exception {
     public:
-        NotFound(): Exception("Key was not found")
-        { }
+        NotFound() : Exception("Key was not found") {}
     };
 
     // Iteration over database
     class Iterator;
-    class Record
-    {
+    class Record {
     public:
-        Record& operator= (const Record& r)
+        Record& operator=(const Record& r)
         {
-            file = r.file;
+            file   = r.file;
             offset = r.offset;
             return *this;
         }
@@ -89,13 +85,17 @@ public:
             assert(field < file.fieldCount);
             size_t stringOffset = getUInt(field);
             assert(stringOffset < file.stringSize);
-            //char * tmp = (char*)file.stringTable + stringOffset;
-            //unsigned char * tmp2 = file.stringTable + stringOffset;
+            // char * tmp = (char*)file.stringTable + stringOffset;
+            // unsigned char * tmp2 = file.stringTable + stringOffset;
             return reinterpret_cast<char*>(file.stringTable + stringOffset);
         }
+
     private:
-        Record(DBCFile& file, unsigned char* offset): file(file), offset(offset) {}
-        DBCFile& file;
+        Record(DBCFile& file, unsigned char* offset)
+            : file(file), offset(offset)
+        {
+        }
+        DBCFile&       file;
         unsigned char* offset;
 
         friend class DBCFile;
@@ -103,11 +103,9 @@ public:
     };
 
     /* Iterator that iterates over records */
-    class Iterator
-    {
+    class Iterator {
     public:
-        Iterator(DBCFile& file, unsigned char* offset):
-            record(file, offset) {}
+        Iterator(DBCFile& file, unsigned char* offset) : record(file, offset) {}
         /// Advance (prefix only)
         Iterator& operator++()
         {
@@ -116,10 +114,7 @@ public:
         }
         /// Return address of current instance
         Record const& operator*() const { return record; }
-        const Record* operator->() const
-        {
-            return &record;
-        }
+        const Record* operator->() const { return &record; }
         /// Comparison
         bool operator==(const Iterator& b) const
         {
@@ -129,6 +124,7 @@ public:
         {
             return record.offset != b.record.offset;
         }
+
     private:
         Record record;
     };
@@ -140,15 +136,15 @@ public:
     /// Get begin iterator over records
     Iterator end();
     /// Trivial
-    [[nodiscard]] size_t getRecordCount() const { return recordCount;}
+    [[nodiscard]] size_t getRecordCount() const { return recordCount; }
     [[nodiscard]] size_t getFieldCount() const { return fieldCount; }
 
 private:
-    std::string filename;
-    size_t recordSize;
-    size_t recordCount;
-    size_t fieldCount;
-    size_t stringSize;
+    std::string    filename;
+    size_t         recordSize;
+    size_t         recordCount;
+    size_t         fieldCount;
+    size_t         stringSize;
     unsigned char* data;
     unsigned char* stringTable;
 };

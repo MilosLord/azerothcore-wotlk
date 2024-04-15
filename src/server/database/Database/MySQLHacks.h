@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,14 +22,16 @@
 #include "MySQLWorkaround.h"
 #include <type_traits>
 
-struct MySQLHandle : MYSQL { };
-struct MySQLResult : MYSQL_RES { };
-struct MySQLField : MYSQL_FIELD { };
-struct MySQLBind : MYSQL_BIND { };
-struct MySQLStmt : MYSQL_STMT { };
+struct MySQLHandle : MYSQL {};
+struct MySQLResult : MYSQL_RES {};
+struct MySQLField : MYSQL_FIELD {};
+struct MySQLBind : MYSQL_BIND {};
+struct MySQLStmt : MYSQL_STMT {};
 
-// mysql 8 removed my_bool typedef (it was char) and started using bools directly
-// to maintain compatibility we use this trick to retrieve which type is being used
-using MySQLBool = std::remove_pointer_t<decltype(std::declval<MYSQL_BIND>().is_null)>;
+// mysql 8 removed my_bool typedef (it was char) and started using bools
+// directly to maintain compatibility we use this trick to retrieve which type
+// is being used
+using MySQLBool =
+    std::remove_pointer_t<decltype(std::declval<MYSQL_BIND>().is_null)>;
 
 #endif // MySQLHacks_h__

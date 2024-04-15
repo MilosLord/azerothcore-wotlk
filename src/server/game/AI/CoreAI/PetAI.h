@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -24,17 +25,16 @@
 class Creature;
 class Spell;
 
-enum SpecialPets
-{
-    ENTRY_IMP                   =   416,
-    ENTRY_WATER_ELEMENTAL       =   510,
-    ENTRY_WATER_ELEMENTAL_PERM  = 37994,
+enum SpecialPets {
+    ENTRY_IMP                  = 416,
+    ENTRY_WATER_ELEMENTAL      = 510,
+    ENTRY_WATER_ELEMENTAL_PERM = 37994,
 
-    IMP_FIREBOLT_RANK_1         =  3110,
-    IMP_FIREBOLT_RANK_2         =  7799,
-    IMP_FIREBOLT_RANK_3         =  7800,
-    IMP_FIREBOLT_RANK_4         =  7801,
-    IMP_FIREBOLT_RANK_5         =  7802,
+    IMP_FIREBOLT_RANK_1         = 3110,
+    IMP_FIREBOLT_RANK_2         = 7799,
+    IMP_FIREBOLT_RANK_3         = 7800,
+    IMP_FIREBOLT_RANK_4         = 7801,
+    IMP_FIREBOLT_RANK_5         = 7802,
     IMP_FIREBOLT_RANK_6         = 11762,
     IMP_FIREBOLT_RANK_7         = 11763,
     IMP_FIREBOLT_RANK_8         = 27267,
@@ -43,12 +43,11 @@ enum SpecialPets
     WATER_ELEMENTAL_WATERBOLT_2 = 72898
 };
 
-class PetAI : public CreatureAI
-{
+class PetAI : public CreatureAI {
 public:
     explicit PetAI(Creature* c);
 
-    void UpdateAI(uint32) override;
+    void         UpdateAI(uint32) override;
     static int32 Permissible(Creature const* creature);
 
     void KilledUnit(Unit* /*victim*/) override;
@@ -62,10 +61,13 @@ public:
     // The following aren't used by the PetAI but need to be defined to override
     //  default CreatureAI functions which interfere with the PetAI
     //
-    void MoveInLineOfSight(Unit* /*who*/) override {} // CreatureAI interferes with returning pets
-    void MoveInLineOfSight_Safe(Unit* /*who*/) {} // CreatureAI interferes with returning pets
+    void MoveInLineOfSight(Unit* /*who*/) override {
+    } // CreatureAI interferes with returning pets
+    void MoveInLineOfSight_Safe(Unit* /*who*/) {
+    } // CreatureAI interferes with returning pets
 
-    void EnterEvadeMode(EvadeReason /*why*/) override {} // For fleeing, pets don't use this type of Evade mechanic
+    void EnterEvadeMode(EvadeReason /*why*/) override {
+    } // For fleeing, pets don't use this type of Evade mechanic
     void SpellHit(Unit* caster, SpellInfo const* spellInfo) override;
 
     void PetStopAttack() override;
@@ -80,14 +82,14 @@ private:
     void UpdateAllies();
 
     TimeTracker i_tracker;
-    GuidSet m_AllySet;
-    uint32 m_updateAlliesTimer;
-    float combatRange;
+    GuidSet     m_AllySet;
+    uint32      m_updateAlliesTimer;
+    float       combatRange;
 
     Unit* SelectNextTarget(bool allowAutoSelect) const;
-    void HandleReturnMovement();
-    void DoAttack(Unit* target, bool chase);
-    bool CanAttack(Unit* target, SpellInfo const* spellInfo = nullptr);
-    void ClearCharmInfoFlags();
+    void  HandleReturnMovement();
+    void  DoAttack(Unit* target, bool chase);
+    bool  CanAttack(Unit* target, SpellInfo const* spellInfo = nullptr);
+    void  ClearCharmInfoFlags();
 };
 #endif

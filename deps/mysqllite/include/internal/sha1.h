@@ -58,18 +58,16 @@
   HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF
   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 
-  Acknowledgement 
-  Funding for the RFC Editor function is currently provided by the 
-  Internet Society. 
+  Acknowledgement
+  Funding for the RFC Editor function is currently provided by the
+  Internet Society.
 */
 
-
-enum sha_result_codes
-{
-  SHA_SUCCESS = 0,
-  SHA_NULL,		/* Null pointer parameter */
-  SHA_INPUT_TOO_LONG,	/* input data too long */
-  SHA_STATE_ERROR	/* called Input after Result */
+enum sha_result_codes {
+    SHA_SUCCESS = 0,
+    SHA_NULL,           /* Null pointer parameter */
+    SHA_INPUT_TOO_LONG, /* input data too long */
+    SHA_STATE_ERROR     /* called Input after Result */
 };
 
 #define SHA1_HASH_SIZE 20 /* Hash size in bytes */
@@ -79,14 +77,13 @@ enum sha_result_codes
   hashing operation
 */
 
-typedef struct SHA1_CONTEXT
-{
-  ulonglong  Length;		/* Message length in bits      */
-  uint32 Intermediate_Hash[SHA1_HASH_SIZE/4]; /* Message Digest  */
-  int Computed;			/* Is the digest computed?	   */
-  int Corrupted;		/* Is the message digest corrupted? */
-  int16 Message_Block_Index;	/* Index into message block array   */
-  uint8 Message_Block[64];	/* 512-bit message blocks      */
+typedef struct SHA1_CONTEXT {
+    ulonglong Length; /* Message length in bits      */
+    uint32    Intermediate_Hash[SHA1_HASH_SIZE / 4]; /* Message Digest  */
+    int       Computed;            /* Is the digest computed?	   */
+    int       Corrupted;           /* Is the message digest corrupted? */
+    int16     Message_Block_Index; /* Index into message block array   */
+    uint8     Message_Block[64];   /* 512-bit message blocks      */
 } SHA1_CONTEXT;
 
 /*
@@ -96,8 +93,8 @@ typedef struct SHA1_CONTEXT
 C_MODE_START
 
 int mysql_sha1_reset(SHA1_CONTEXT*);
-int mysql_sha1_input(SHA1_CONTEXT*, const uint8 *, unsigned int);
-int mysql_sha1_result(SHA1_CONTEXT* , uint8 Message_Digest[SHA1_HASH_SIZE]);
+int mysql_sha1_input(SHA1_CONTEXT*, const uint8*, unsigned int);
+int mysql_sha1_result(SHA1_CONTEXT*, uint8 Message_Digest[SHA1_HASH_SIZE]);
 
 C_MODE_END
 

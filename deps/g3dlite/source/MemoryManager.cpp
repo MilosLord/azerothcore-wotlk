@@ -16,76 +16,50 @@ namespace G3D {
 
 MemoryManager::MemoryManager() {}
 
+void* MemoryManager::alloc(size_t s) { return System::malloc(s); }
 
-void* MemoryManager::alloc(size_t s) {
-    return System::malloc(s);
-}
+void MemoryManager::free(void* ptr) { System::free(ptr); }
 
+bool MemoryManager::isThreadsafe() const { return true; }
 
-void MemoryManager::free(void* ptr) {
-    System::free(ptr);
-}
-
-
-bool MemoryManager::isThreadsafe() const {
-    return true;
-}
-
-
-MemoryManager::Ref MemoryManager::create() {
+MemoryManager::Ref MemoryManager::create()
+{
     static MemoryManager::Ref m(new MemoryManager());
     return m;
 }
-
 
 ///////////////////////////////////////////////////
 
 AlignedMemoryManager::AlignedMemoryManager() {}
 
-
-void* AlignedMemoryManager::alloc(size_t s) {
+void* AlignedMemoryManager::alloc(size_t s)
+{
     return System::alignedMalloc(s, 16);
 }
 
+void AlignedMemoryManager::free(void* ptr) { System::alignedFree(ptr); }
 
-void AlignedMemoryManager::free(void* ptr) {
-    System::alignedFree(ptr);
-}
+bool AlignedMemoryManager::isThreadsafe() const { return true; }
 
-
-bool AlignedMemoryManager::isThreadsafe() const {
-    return true;
-}
-
-
-AlignedMemoryManager::Ref AlignedMemoryManager::create() {
+AlignedMemoryManager::Ref AlignedMemoryManager::create()
+{
     static AlignedMemoryManager::Ref m(new AlignedMemoryManager());
     return m;
 }
-
 
 ///////////////////////////////////////////////////
 
 CRTMemoryManager::CRTMemoryManager() {}
 
+void* CRTMemoryManager::alloc(size_t s) { return ::malloc(s); }
 
-void* CRTMemoryManager::alloc(size_t s) {
-    return ::malloc(s);
-}
+void CRTMemoryManager::free(void* ptr) { return ::free(ptr); }
 
+bool CRTMemoryManager::isThreadsafe() const { return true; }
 
-void CRTMemoryManager::free(void* ptr) {
-    return ::free(ptr);
-}
-
-
-bool CRTMemoryManager::isThreadsafe() const {
-    return true;
-}
-
-
-CRTMemoryManager::Ref CRTMemoryManager::create() {
+CRTMemoryManager::Ref CRTMemoryManager::create()
+{
     static CRTMemoryManager::Ref m(new CRTMemoryManager());
     return m;
 }
-}
+} // namespace G3D

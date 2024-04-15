@@ -1,10 +1,10 @@
 /**
  @file Ray.h
- 
+
  Ray class
- 
+
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
- 
+
  @created 2002-07-12
  @edited  2009-06-29
  */
@@ -12,9 +12,9 @@
 #ifndef G3D_Ray_h
 #define G3D_Ray_h
 
-#include "G3D/platform.h"
-#include "G3D/Vector3.h"
 #include "G3D/Triangle.h"
+#include "G3D/Vector3.h"
+#include "G3D/platform.h"
 
 namespace G3D {
 
@@ -25,7 +25,7 @@ class Ray {
 private:
     friend class Intersect;
 
-    Point3  m_origin;
+    Point3 m_origin;
 
     /** Unit length */
     Vector3 m_direction;
@@ -33,13 +33,39 @@ private:
     /** 1.0 / direction */
     Vector3 m_invDirection;
 
-    
     /** The following are for the "ray slope" optimization from
-      "Fast Ray / Axis-Aligned Bounding Box Overlap Tests using Ray Slopes" 
+      "Fast Ray / Axis-Aligned Bounding Box Overlap Tests using Ray Slopes"
       by Martin Eisemann, Thorsten Grosch, Stefan Müller and Marcus Magnor
       Computer Graphics Lab, TU Braunschweig, Germany and
       University of Koblenz-Landau, Germany */
-    enum Classification {MMM, MMP, MPM, MPP, PMM, PMP, PPM, PPP, POO, MOO, OPO, OMO, OOP, OOM, OMM, OMP, OPM, OPP, MOM, MOP, POM, POP, MMO, MPO, PMO, PPO};    
+    enum Classification {
+        MMM,
+        MMP,
+        MPM,
+        MPP,
+        PMM,
+        PMP,
+        PPM,
+        PPP,
+        POO,
+        MOO,
+        OPO,
+        OMO,
+        OOP,
+        OOM,
+        OMM,
+        OMP,
+        OPM,
+        OPP,
+        MOM,
+        MOP,
+        POM,
+        POP,
+        MMO,
+        MPO,
+        PMO,
+        PPO
+    };
 
     Classification classification;
 
@@ -53,61 +79,61 @@ public:
     /** \param direction Assumed to have unit length */
     void set(const Point3& origin, const Vector3& direction);
 
-    const Point3& origin() const {
-        return m_origin;
-    }
-    
-    /** Unit direction vector. */
-    const Vector3& direction() const {
-        return m_direction;
-    }
+    const Point3& origin() const { return m_origin; }
 
-    /** Component-wise inverse of direction vector.  May have inf() components */
-    const Vector3& invDirection() const {
-        return m_invDirection;
-    }
-    
-    Ray() {
-        set(Point3::zero(), Vector3::unitX());
-    }
+    /** Unit direction vector. */
+    const Vector3& direction() const { return m_direction; }
+
+    /** Component-wise inverse of direction vector.  May have inf() components
+     */
+    const Vector3& invDirection() const { return m_invDirection; }
+
+    Ray() { set(Point3::zero(), Vector3::unitX()); }
 
     /** \param direction Assumed to have unit length */
-    Ray(const Point3& origin, const Vector3& direction) {
+    Ray(const Point3& origin, const Vector3& direction)
+    {
         set(origin, direction);
     }
 
     Ray(class BinaryInput& b);
-    
+
     void serialize(class BinaryOutput& b) const;
     void deserialize(class BinaryInput& b);
-    
+
     /**
        Creates a Ray from a origin and a (nonzero) unit direction.
     */
-    static Ray fromOriginAndDirection(const Point3& point, const Vector3& direction) {
+    static Ray fromOriginAndDirection(const Point3&  point,
+                                      const Vector3& direction)
+    {
         return Ray(point, direction);
     }
-    
+
     /** Returns a new ray which has the same direction but an origin
         advanced along direction by @a distance */
-    Ray bumpedRay(float distance) const {
+    Ray bumpedRay(float distance) const
+    {
         return Ray(m_origin + m_direction * distance, m_direction);
     }
 
     /** Returns a new ray which has the same direction but an origin
         advanced by \a distance * \a bumpDirection */
-    Ray bumpedRay(float distance, const Vector3& bumpDirection) const {
+    Ray bumpedRay(float distance, const Vector3& bumpDirection) const
+    {
         return Ray(m_origin + bumpDirection * distance, m_direction);
     }
 
     /**
        \brief Returns the closest point on the Ray to point.
     */
-    Point3 closestPoint(const Point3& point) const {
+    Point3 closestPoint(const Point3& point) const
+    {
         float t = m_direction.dot(point - m_origin);
         if (t < 0) {
             return m_origin;
-        } else {
+        }
+        else {
             return m_origin + m_direction * t;
         }
     }
@@ -115,7 +141,8 @@ public:
     /**
      Returns the closest distance between point and the Ray
      */
-    float distance(const Point3& point) const {
+    float distance(const Point3& point) const
+    {
         return (closestPoint(point) - point).magnitude();
     }
 
@@ -129,8 +156,9 @@ public:
     Point3 intersection(const class Plane& plane) const;
 
     /**
-     Returns the distance until intersection with the sphere or the (solid) ball bounded by the sphere.
-     Will be 0 if inside the sphere, inf if there is no intersection.
+     Returns the distance until intersection with the sphere or the (solid) ball
+     bounded by the sphere. Will be 0 if inside the sphere, inf if there is no
+     intersection.
 
      The ray direction is <B>not</B> normalized.  If the ray direction
      has unit length, the distance from the origin to intersection
@@ -140,9 +168,12 @@ public:
      See also the G3D::CollisionDetection "movingPoint" methods,
      which give more information about the intersection.
 
-     \param solid If true, rays inside the sphere immediately intersect (good for collision detection).  If false, they hit the opposite side of the sphere (good for ray tracing).
+     \param solid If true, rays inside the sphere immediately intersect (good
+     for collision detection).  If false, they hit the opposite side of the
+     sphere (good for ray tracing).
      */
-    float intersectionTime(const class Sphere& sphere, bool solid = false) const;
+    float intersectionTime(const class Sphere& sphere,
+                           bool                solid = false) const;
 
     float intersectionTime(const class Plane& plane) const;
 
@@ -155,101 +186,107 @@ public:
      at the intersection point; they are useful for texture mapping
      and interpolated normals.
      */
-    float intersectionTime(
-        const Vector3& v0, const Vector3& v1, const Vector3& v2,
-        const Vector3& edge01, const Vector3& edge02,
-        float& w0, float& w1, float& w2) const;
+    float intersectionTime(const Vector3& v0,
+                           const Vector3& v1,
+                           const Vector3& v2,
+                           const Vector3& edge01,
+                           const Vector3& edge02,
+                           float&         w0,
+                           float&         w1,
+                           float&         w2) const;
 
-     /**
-     Ray-triangle intersection for a 1-sided triangle.  Fastest version.
-       @cite http://www.acm.org/jgt/papers/MollerTrumbore97/
-       http://www.graphics.cornell.edu/pubs/1997/MT97.html
-     */
-    float intersectionTime(
-        const Point3& vert0,
-        const Point3& vert1,
-        const Point3& vert2,
-        const Vector3& edge01,
-        const Vector3& edge02) const;
+    /**
+    Ray-triangle intersection for a 1-sided triangle.  Fastest version.
+      @cite http://www.acm.org/jgt/papers/MollerTrumbore97/
+      http://www.graphics.cornell.edu/pubs/1997/MT97.html
+    */
+    float intersectionTime(const Point3&  vert0,
+                           const Point3&  vert1,
+                           const Point3&  vert2,
+                           const Vector3& edge01,
+                           const Vector3& edge02) const;
 
+    float intersectionTime(const Point3& vert0,
+                           const Point3& vert1,
+                           const Point3& vert2) const
+    {
 
-    float intersectionTime(
-        const Point3& vert0,
-        const Point3& vert1,
-        const Point3& vert2) const {
-
-        return intersectionTime(vert0, vert1, vert2, vert1 - vert0, vert2 - vert0);
-    }
-
-
-    float intersectionTime(
-        const Point3&  vert0,
-        const Point3&  vert1,
-        const Point3&  vert2,
-        float&         w0,
-        float&         w1,
-        float&         w2) const {
-
-        return intersectionTime(vert0, vert1, vert2, vert1 - vert0, vert2 - vert0, w0, w1, w2);
-    }
-
-
-    /* One-sided triangle 
-       */
-    float intersectionTime(const Triangle& triangle) const {
         return intersectionTime(
-            triangle.vertex(0), triangle.vertex(1), triangle.vertex(2),
-            triangle.edge01(), triangle.edge02());
+            vert0, vert1, vert2, vert1 - vert0, vert2 - vert0);
     }
 
+    float intersectionTime(const Point3& vert0,
+                           const Point3& vert1,
+                           const Point3& vert2,
+                           float&        w0,
+                           float&        w1,
+                           float&        w2) const
+    {
 
-    float intersectionTime
-    (const Triangle& triangle,
-     float&         w0,
-     float&         w1,
-     float&         w2) const {
-        return intersectionTime(triangle.vertex(0), triangle.vertex(1), triangle.vertex(2),
-            triangle.edge01(), triangle.edge02(), w0, w1, w2);
+        return intersectionTime(
+            vert0, vert1, vert2, vert1 - vert0, vert2 - vert0, w0, w1, w2);
+    }
+
+    /* One-sided triangle
+     */
+    float intersectionTime(const Triangle& triangle) const
+    {
+        return intersectionTime(triangle.vertex(0),
+                                triangle.vertex(1),
+                                triangle.vertex(2),
+                                triangle.edge01(),
+                                triangle.edge02());
+    }
+
+    float intersectionTime(const Triangle& triangle,
+                           float&          w0,
+                           float&          w1,
+                           float&          w2) const
+    {
+        return intersectionTime(triangle.vertex(0),
+                                triangle.vertex(1),
+                                triangle.vertex(2),
+                                triangle.edge01(),
+                                triangle.edge02(),
+                                w0,
+                                w1,
+                                w2);
     }
 
     /** Refracts about the normal
         using G3D::Vector3::refractionDirection
         and bumps the ray slightly from the newOrigin. */
-    Ray refract(
-        const Vector3&  newOrigin,
-        const Vector3&  normal,
-        float           iInside,
-        float           iOutside) const;
+    Ray refract(const Vector3& newOrigin,
+                const Vector3& normal,
+                float          iInside,
+                float          iOutside) const;
 
     /** Reflects about the normal
         using G3D::Vector3::reflectionDirection
         and bumps the ray slightly from
         the newOrigin. */
-    Ray reflect(
-        const Vector3&  newOrigin,
-        const Vector3&  normal) const;
+    Ray reflect(const Vector3& newOrigin, const Vector3& normal) const;
 };
 
-
 #define EPSILON 0.000001
-#define CROSS(dest,v1,v2) \
-          dest[0]=v1[1]*v2[2]-v1[2]*v2[1]; \
-          dest[1]=v1[2]*v2[0]-v1[0]*v2[2]; \
-          dest[2]=v1[0]*v2[1]-v1[1]*v2[0];
+#define CROSS(dest, v1, v2)                                                    \
+    dest[0] = v1[1] * v2[2] - v1[2] * v2[1];                                   \
+    dest[1] = v1[2] * v2[0] - v1[0] * v2[2];                                   \
+    dest[2] = v1[0] * v2[1] - v1[1] * v2[0];
 
-#define DOT(v1,v2) (v1[0]*v2[0]+v1[1]*v2[1]+v1[2]*v2[2])
+#define DOT(v1, v2) (v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2])
 
-#define SUB(dest,v1,v2) \
-          dest[0]=v1[0]-v2[0]; \
-          dest[1]=v1[1]-v2[1]; \
-          dest[2]=v1[2]-v2[2]; 
+#define SUB(dest, v1, v2)                                                      \
+    dest[0] = v1[0] - v2[0];                                                   \
+    dest[1] = v1[1] - v2[1];                                                   \
+    dest[2] = v1[2] - v2[2];
 
-inline float Ray::intersectionTime(
-    const Point3& vert0,
-    const Point3& vert1,
-    const Point3& vert2,
-    const Vector3& edge1,
-    const Vector3& edge2) const {
+inline float Ray::intersectionTime(const Point3&  vert0,
+                                   const Point3&  vert1,
+                                   const Point3&  vert2,
+                                   const Vector3& edge1,
+                                   const Vector3& edge2) const
+{
 
     (void)vert1;
     (void)vert2;
@@ -258,60 +295,59 @@ inline float Ray::intersectionTime(
     float u, v;
 
     float tvec[3], pvec[3], qvec[3];
-    
+
     // begin calculating determinant - also used to calculate U parameter
     CROSS(pvec, m_direction, edge2);
-    
+
     // if determinant is near zero, ray lies in plane of triangle
     const float det = DOT(edge1, pvec);
-    
+
     if (det < EPSILON) {
         return finf();
     }
-    
+
     // calculate distance from vert0 to ray origin
     SUB(tvec, m_origin, vert0);
-    
+
     // calculate U parameter and test bounds
     u = DOT(tvec, pvec);
     if ((u < 0.0f) || (u > det)) {
         // Hit the plane outside the triangle
         return finf();
     }
-    
+
     // prepare to test V parameter
     CROSS(qvec, tvec, edge1);
-    
+
     // calculate V parameter and test bounds
     v = DOT(m_direction, qvec);
     if ((v < 0.0f) || (u + v > det)) {
         // Hit the plane outside the triangle
         return finf();
     }
-    
 
     // Case where we don't need correct (u, v):
     const float t = DOT(edge2, qvec);
-    
+
     if (t >= 0.0f) {
         // Note that det must be positive
         return t / det;
-    } else {
+    }
+    else {
         // We had to travel backwards in time to intersect
         return finf();
     }
 }
 
-
-inline float Ray::intersectionTime
-(const Point3&  vert0,
- const Point3&  vert1,
- const Point3&  vert2,
- const Vector3&  edge1,
- const Vector3&  edge2,
- float&         w0,
- float&         w1,
- float&         w2) const {
+inline float Ray::intersectionTime(const Point3&  vert0,
+                                   const Point3&  vert1,
+                                   const Point3&  vert2,
+                                   const Vector3& edge1,
+                                   const Vector3& edge2,
+                                   float&         w0,
+                                   float&         w1,
+                                   float&         w2) const
+{
 
     (void)vert1;
     (void)vert2;
@@ -323,36 +359,36 @@ inline float Ray::intersectionTime
 
     // begin calculating determinant - also used to calculate U parameter
     CROSS(pvec, m_direction, edge2);
-    
+
     // if determinant is near zero, ray lies in plane of triangle
     const float det = DOT(edge1, pvec);
-    
+
     if (det < EPSILON) {
         return finf();
     }
-    
+
     // calculate distance from vert0 to ray origin
     SUB(tvec, m_origin, vert0);
-    
+
     // calculate U parameter and test bounds
     u = DOT(tvec, pvec);
     if ((u < 0.0f) || (u > det)) {
         // Hit the plane outside the triangle
         return finf();
     }
-    
+
     // prepare to test V parameter
     CROSS(qvec, tvec, edge1);
-    
+
     // calculate V parameter and test bounds
     v = DOT(m_direction, qvec);
     if ((v < 0.0f) || (u + v > det)) {
         // Hit the plane outside the triangle
         return finf();
     }
-    
+
     float t = DOT(edge2, qvec);
-    
+
     if (t >= 0) {
         const float inv_det = 1.0f / det;
         t *= inv_det;
@@ -364,7 +400,8 @@ inline float Ray::intersectionTime
         w2 = v;
 
         return t;
-    } else {
+    }
+    else {
         // We had to travel backwards in time to intersect
         return finf();
     }
@@ -375,6 +412,6 @@ inline float Ray::intersectionTime
 #undef DOT
 #undef SUB
 
-}// namespace
+} // namespace G3D
 
 #endif

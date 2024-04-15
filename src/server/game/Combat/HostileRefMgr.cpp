@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,34 +23,34 @@
 #include "ThreatMgr.h"
 #include "Unit.h"
 
-HostileRefMgr::~HostileRefMgr()
-{
-    deleteReferences();
-}
+HostileRefMgr::~HostileRefMgr() { deleteReferences(); }
 
 //=================================================
 // send threat to all my hateres for the victim
 // The victim is hated than by them as well
 // use for buffs and healing threat functionality
 
-void HostileRefMgr::threatAssist(Unit* victim, float baseThreat, SpellInfo const* threatSpell)
+void HostileRefMgr::threatAssist(Unit*            victim,
+                                 float            baseThreat,
+                                 SpellInfo const* threatSpell)
 {
     if (getSize() == 0)
         return;
 
-    HostileReference* ref = getFirst();
-    float threat = ThreatCalcHelper::calcThreat(victim, baseThreat, (threatSpell ? threatSpell->GetSchoolMask() : SPELL_SCHOOL_MASK_NORMAL), threatSpell);
+    HostileReference* ref    = getFirst();
+    float             threat = ThreatCalcHelper::calcThreat(
+        victim,
+        baseThreat,
+        (threatSpell ? threatSpell->GetSchoolMask() : SPELL_SCHOOL_MASK_NORMAL),
+        threatSpell);
     threat /= getSize();
-    while (ref)
-    {
+    while (ref) {
         Unit* refOwner = ref->GetSource()->GetOwner();
-        if (ThreatCalcHelper::isValidProcess(victim, refOwner, threatSpell))
-        {
-            if (Creature* hatingCreature = refOwner->ToCreature())
-            {
-                if (hatingCreature->IsAIEnabled)
-                {
-                    hatingCreature->AI()->CalculateThreat(victim, threat, threatSpell);
+        if (ThreatCalcHelper::isValidProcess(victim, refOwner, threatSpell)) {
+            if (Creature* hatingCreature = refOwner->ToCreature()) {
+                if (hatingCreature->IsAIEnabled) {
+                    hatingCreature->AI()->CalculateThreat(
+                        victim, threat, threatSpell);
                 }
             }
 
@@ -66,10 +67,8 @@ void HostileRefMgr::addTempThreat(float threat, bool apply)
 {
     HostileReference* ref = getFirst();
 
-    while (ref)
-    {
-        if (apply)
-        {
+    while (ref) {
+        if (apply) {
             if (ref->getTempThreatModifier() == 0.0f)
                 ref->addTempThreat(threat);
         }
@@ -85,21 +84,20 @@ void HostileRefMgr::addTempThreat(float threat, bool apply)
 void HostileRefMgr::addThreatPercent(int32 percent)
 {
     HostileReference* ref = getFirst();
-    while (ref)
-    {
+    while (ref) {
         ref->addThreatPercent(percent);
         ref = ref->next();
     }
 }
 
 //=================================================
-// The online / offline status is given to the method. The calculation has to be done before
+// The online / offline status is given to the method. The calculation has to be
+// done before
 
 void HostileRefMgr::setOnlineOfflineState(bool isOnline)
 {
     HostileReference* ref = getFirst();
-    while (ref)
-    {
+    while (ref) {
         ref->setOnlineOfflineState(isOnline);
         ref = ref->next();
     }
@@ -111,8 +109,7 @@ void HostileRefMgr::setOnlineOfflineState(bool isOnline)
 void HostileRefMgr::updateThreatTables()
 {
     HostileReference* ref = getFirst();
-    while (ref)
-    {
+    while (ref) {
         ref->updateOnlineStatus();
         ref = ref->next();
     }
@@ -127,19 +124,15 @@ void HostileRefMgr::deleteReferences(bool removeFromMap /*= false*/)
     std::vector<Creature*> creaturesToEvade;
 
     HostileReference* ref = getFirst();
-    while (ref)
-    {
+    while (ref) {
         HostileReference* nextRef = ref->next();
         ref->removeReference();
 
-        if (removeFromMap)
-        {
-            if (ThreatMgr const* threatMgr = ref->GetSource())
-            {
-                if (threatMgr->areThreatListsEmpty())
-                {
-                    if (Creature* creature = threatMgr->GetOwner()->ToCreature())
-                    {
+        if (removeFromMap) {
+            if (ThreatMgr const* threatMgr = ref->GetSource()) {
+                if (threatMgr->areThreatListsEmpty()) {
+                    if (Creature* creature =
+                            threatMgr->GetOwner()->ToCreature()) {
                         creaturesToEvade.push_back(creature);
                     }
                 }
@@ -150,8 +143,7 @@ void HostileRefMgr::deleteReferences(bool removeFromMap /*= false*/)
         ref = nextRef;
     }
 
-    for (Creature* creature : creaturesToEvade)
-    {
+    for (Creature* creature : creaturesToEvade) {
         creature->AI()->EnterEvadeMode();
     }
 }
@@ -162,11 +154,10 @@ void HostileRefMgr::deleteReferences(bool removeFromMap /*= false*/)
 void HostileRefMgr::deleteReferencesForFaction(uint32 faction)
 {
     HostileReference* ref = getFirst();
-    while (ref)
-    {
+    while (ref) {
         HostileReference* nextRef = ref->next();
-        if (ref->GetSource()->GetOwner()->GetFactionTemplateEntry()->faction == faction)
-        {
+        if (ref->GetSource()->GetOwner()->GetFactionTemplateEntry()->faction ==
+            faction) {
             ref->removeReference();
             delete ref;
         }
@@ -180,11 +171,9 @@ void HostileRefMgr::deleteReferencesForFaction(uint32 faction)
 void HostileRefMgr::deleteReference(Unit* creature)
 {
     HostileReference* ref = getFirst();
-    while (ref)
-    {
+    while (ref) {
         HostileReference* nextRef = ref->next();
-        if (ref->GetSource()->GetOwner() == creature)
-        {
+        if (ref->GetSource()->GetOwner() == creature) {
             ref->removeReference();
             delete ref;
             break;
@@ -199,13 +188,12 @@ void HostileRefMgr::deleteReference(Unit* creature)
 void HostileRefMgr::deleteReferencesOutOfRange(float range)
 {
     HostileReference* ref = getFirst();
-    range = range * range;
-    while (ref)
-    {
+    range                 = range * range;
+    while (ref) {
         HostileReference* nextRef = ref->next();
-        Unit* owner = ref->GetSource()->GetOwner();
-        if (!owner->isActiveObject() && owner->GetExactDist2dSq(GetOwner()) > range)
-        {
+        Unit*             owner   = ref->GetSource()->GetOwner();
+        if (!owner->isActiveObject() &&
+            owner->GetExactDist2dSq(GetOwner()) > range) {
             ref->removeReference();
             delete ref;
         }
@@ -219,11 +207,9 @@ void HostileRefMgr::deleteReferencesOutOfRange(float range)
 void HostileRefMgr::setOnlineOfflineState(Unit* creature, bool isOnline)
 {
     HostileReference* ref = getFirst();
-    while (ref)
-    {
+    while (ref) {
         HostileReference* nextRef = ref->next();
-        if (ref->GetSource()->GetOwner() == creature)
-        {
+        if (ref->GetSource()->GetOwner() == creature) {
             ref->setOnlineOfflineState(isOnline);
             break;
         }
@@ -236,11 +222,9 @@ void HostileRefMgr::setOnlineOfflineState(Unit* creature, bool isOnline)
 void HostileRefMgr::UpdateVisibility(bool checkThreat)
 {
     HostileReference* ref = getFirst();
-    while (ref)
-    {
+    while (ref) {
         HostileReference* nextRef = ref->next();
-        if ((!checkThreat || ref->GetSource()->GetThreatListSize() <= 1))
-        {
+        if ((!checkThreat || ref->GetSource()->GetThreatListSize() <= 1)) {
             nextRef = ref->next();
             ref->removeReference();
             delete ref;

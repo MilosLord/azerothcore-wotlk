@@ -62,44 +62,45 @@
 */
 #define CR_OK_HANDSHAKE_COMPLETE -2
 
-typedef struct st_plugin_vio_info
-{
-  enum { MYSQL_VIO_INVALID, MYSQL_VIO_TCP, MYSQL_VIO_SOCKET,
-         MYSQL_VIO_PIPE, MYSQL_VIO_MEMORY } protocol;
-  int socket;     /**< it's set, if the protocol is SOCKET or TCP */
+typedef struct st_plugin_vio_info {
+    enum {
+        MYSQL_VIO_INVALID,
+        MYSQL_VIO_TCP,
+        MYSQL_VIO_SOCKET,
+        MYSQL_VIO_PIPE,
+        MYSQL_VIO_MEMORY
+    } protocol;
+    int socket; /**< it's set, if the protocol is SOCKET or TCP */
 #ifdef _WIN32
-  HANDLE handle;  /**< it's set, if the protocol is PIPE or MEMORY */
+    HANDLE handle; /**< it's set, if the protocol is PIPE or MEMORY */
 #endif
 } MYSQL_PLUGIN_VIO_INFO;
 
 /**
   Provides plugin access to communication channel
 */
-typedef struct st_plugin_vio
-{
-  /**
-    Plugin provides a pointer reference and this function sets it to the
-    contents of any incoming packet. Returns the packet length, or -1 if
-    the plugin should terminate.
-  */
-  int (*read_packet)(struct st_plugin_vio *vio, 
-                     unsigned char **buf);
-  
-  /**
-    Plugin provides a buffer with data and the length and this
-    function sends it as a packet. Returns 0 on success, 1 on failure.
-  */
-  int (*write_packet)(struct st_plugin_vio *vio, 
-                      const unsigned char *packet, 
-                      int packet_len);
+typedef struct st_plugin_vio {
+    /**
+      Plugin provides a pointer reference and this function sets it to the
+      contents of any incoming packet. Returns the packet length, or -1 if
+      the plugin should terminate.
+    */
+    int (*read_packet)(struct st_plugin_vio* vio, unsigned char** buf);
 
-  /**
-    Fills in a st_plugin_vio_info structure, providing the information
-    about the connection.
-  */
-  void (*info)(struct st_plugin_vio *vio, struct st_plugin_vio_info *info);
+    /**
+      Plugin provides a buffer with data and the length and this
+      function sends it as a packet. Returns 0 on success, 1 on failure.
+    */
+    int (*write_packet)(struct st_plugin_vio* vio,
+                        const unsigned char*  packet,
+                        int                   packet_len);
+
+    /**
+      Fills in a st_plugin_vio_info structure, providing the information
+      about the connection.
+    */
+    void (*info)(struct st_plugin_vio* vio, struct st_plugin_vio_info* info);
 
 } MYSQL_PLUGIN_VIO;
 
 #endif
-

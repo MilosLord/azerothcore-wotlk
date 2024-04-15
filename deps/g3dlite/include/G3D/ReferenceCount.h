@@ -11,9 +11,9 @@
 #ifndef G3D_ReferenceCount_h
 #define G3D_ReferenceCount_h
 
-#include "G3D/platform.h"
-#include "G3D/debug.h"
 #include "G3D/AtomicInt32.h"
+#include "G3D/debug.h"
+#include "G3D/platform.h"
 
 #define USE_SHARED_PTR
 
@@ -21,36 +21,40 @@
 #define WeakReferenceCountedPointer weak_ptr
 namespace G3D {
 
-class ReferenceCountedObject : public enable_shared_from_this<ReferenceCountedObject> {
+class ReferenceCountedObject
+    : public enable_shared_from_this<ReferenceCountedObject> {
 public:
-    virtual ~ReferenceCountedObject() {};
+    virtual ~ReferenceCountedObject(){};
 };
 
-} // namespace
+} // namespace G3D
 
 namespace G3D {
 
-template<class T>
-bool isNull(const ReferenceCountedPointer<T>& ptr) {
-    return ! ptr;
+template <class T>
+bool isNull(const ReferenceCountedPointer<T>& ptr)
+{
+    return !ptr;
 }
 
-template<class T>
-bool notNull(const ReferenceCountedPointer<T>& ptr) {
+template <class T>
+bool notNull(const ReferenceCountedPointer<T>& ptr)
+{
     return (bool)ptr;
 }
 
-template<class T>
-bool isNull(const T* ptr) {
+template <class T>
+bool isNull(const T* ptr)
+{
     return ptr == NULL;
 }
 
-template<class T>
-bool notNull(const T* ptr) {
+template <class T>
+bool notNull(const T* ptr)
+{
     return ptr != NULL;
 }
 
-} // namespace
+} // namespace G3D
 
 #endif
-

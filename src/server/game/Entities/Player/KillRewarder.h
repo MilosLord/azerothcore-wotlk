@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -24,13 +25,12 @@ class Group;
 class Player;
 class Unit;
 
-class AC_GAME_API KillRewarder
-{
+class AC_GAME_API KillRewarder {
 public:
     KillRewarder(Player* killer, Unit* victim, bool isBattleGround);
 
-    void Reward();
-    Unit* GetVictim();
+    void    Reward();
+    Unit*   GetVictim();
     Player* GetKiller();
 
 private:
@@ -45,18 +45,18 @@ private:
     void _RewardGroup();
 
     Player* _killer;
-    Unit* _victim;
-    Group* _group;
-    float _groupRate;
+    Unit*   _victim;
+    Group*  _group;
+    float   _groupRate;
     Player* _maxNotGrayMember;
-    uint32 _count;
-    uint32 _aliveSumLevel;
-    uint32 _sumLevel;
-    uint32 _xp;
-    bool _isFullXP;
-    uint8 _maxLevel;
-    bool _isBattleGround;
-    bool _isPvP;
+    uint32  _count;
+    uint32  _aliveSumLevel;
+    uint32  _sumLevel;
+    uint32  _xp;
+    bool    _isFullXP;
+    uint8   _maxLevel;
+    bool    _isBattleGround;
+    bool    _isPvP;
 };
 
 #endif

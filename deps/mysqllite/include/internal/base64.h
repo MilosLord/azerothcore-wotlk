@@ -33,14 +33,15 @@ int base64_needed_decoded_length(int length_of_encoded_data);
 /*
   Encode data as a base64 string
 */
-int base64_encode(const void *src, size_t src_len, char *dst);
+int base64_encode(const void* src, size_t src_len, char* dst);
 
 /*
   Decode a base64 string into data
 */
-int base64_decode(const char *src, size_t src_len,
-                  void *dst, const char **end_ptr);
-
+int base64_decode(const char*  src,
+                  size_t       src_len,
+                  void*        dst,
+                  const char** end_ptr);
 
 #ifdef __cplusplus
 }

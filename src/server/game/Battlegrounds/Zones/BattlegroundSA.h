@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,12 +22,11 @@
 #include "Battleground.h"
 #include "BattlegroundScore.h"
 
-#define BG_SA_FLAG_AMOUNT           3
-#define BG_SA_DEMOLISHER_AMOUNT     4
+#define BG_SA_FLAG_AMOUNT 3
+#define BG_SA_DEMOLISHER_AMOUNT 4
 #define SPELL_SA_END_OF_ROUND 52459
 
-enum BG_SA_Status
-{
+enum BG_SA_Status {
     BG_SA_NOTSTARTED = 0,
     BG_SA_WARMUP,
     BG_SA_ROUND_ONE,
@@ -35,52 +35,48 @@ enum BG_SA_Status
     BG_SA_BONUS_ROUND
 };
 
-enum BG_SA_GateState
-{
-    BG_SA_GATE_OK           = 1,
-    BG_SA_GATE_DAMAGED      = 2,
-    BG_SA_GATE_DESTROYED    = 3
+enum BG_SA_GateState {
+    BG_SA_GATE_OK        = 1,
+    BG_SA_GATE_DAMAGED   = 2,
+    BG_SA_GATE_DESTROYED = 3
 };
 
-enum BG_SA_WorldStates
-{
-    BG_SA_TIMER_MINS                = 3559,
-    BG_SA_TIMER_SEC_TENS            = 3560,
-    BG_SA_TIMER_SEC_DECS            = 3561,
-    BG_SA_ALLY_ATTACKS              = 4352,
-    BG_SA_HORDE_ATTACKS             = 4353,
-    BG_SA_PURPLE_GATEWS             = 3614,
-    BG_SA_RED_GATEWS                = 3617,
-    BG_SA_BLUE_GATEWS               = 3620,
-    BG_SA_GREEN_GATEWS              = 3623,
-    BG_SA_YELLOW_GATEWS             = 3638,
-    BG_SA_ANCIENT_GATEWS            = 3849,
-    BG_SA_LEFT_GY_ALLIANCE          = 3635,
-    BG_SA_RIGHT_GY_ALLIANCE         = 3636,
-    BG_SA_CENTER_GY_ALLIANCE        = 3637,
-    BG_SA_RIGHT_ATT_TOKEN_ALL       = 3627,
-    BG_SA_LEFT_ATT_TOKEN_ALL        = 3626,
-    BG_SA_LEFT_ATT_TOKEN_HRD        = 3629,
-    BG_SA_RIGHT_ATT_TOKEN_HRD       = 3628,
-    BG_SA_HORDE_DEFENCE_TOKEN       = 3631,
-    BG_SA_ALLIANCE_DEFENCE_TOKEN    = 3630,
-    BG_SA_RIGHT_GY_HORDE            = 3632,
-    BG_SA_LEFT_GY_HORDE             = 3633,
-    BG_SA_CENTER_GY_HORDE           = 3634,
-    BG_SA_BONUS_TIMER               = 0xdf3,
-    BG_SA_ENABLE_TIMER              = 3564,
+enum BG_SA_WorldStates {
+    BG_SA_TIMER_MINS             = 3559,
+    BG_SA_TIMER_SEC_TENS         = 3560,
+    BG_SA_TIMER_SEC_DECS         = 3561,
+    BG_SA_ALLY_ATTACKS           = 4352,
+    BG_SA_HORDE_ATTACKS          = 4353,
+    BG_SA_PURPLE_GATEWS          = 3614,
+    BG_SA_RED_GATEWS             = 3617,
+    BG_SA_BLUE_GATEWS            = 3620,
+    BG_SA_GREEN_GATEWS           = 3623,
+    BG_SA_YELLOW_GATEWS          = 3638,
+    BG_SA_ANCIENT_GATEWS         = 3849,
+    BG_SA_LEFT_GY_ALLIANCE       = 3635,
+    BG_SA_RIGHT_GY_ALLIANCE      = 3636,
+    BG_SA_CENTER_GY_ALLIANCE     = 3637,
+    BG_SA_RIGHT_ATT_TOKEN_ALL    = 3627,
+    BG_SA_LEFT_ATT_TOKEN_ALL     = 3626,
+    BG_SA_LEFT_ATT_TOKEN_HRD     = 3629,
+    BG_SA_RIGHT_ATT_TOKEN_HRD    = 3628,
+    BG_SA_HORDE_DEFENCE_TOKEN    = 3631,
+    BG_SA_ALLIANCE_DEFENCE_TOKEN = 3630,
+    BG_SA_RIGHT_GY_HORDE         = 3632,
+    BG_SA_LEFT_GY_HORDE          = 3633,
+    BG_SA_CENTER_GY_HORDE        = 3634,
+    BG_SA_BONUS_TIMER            = 0xdf3,
+    BG_SA_ENABLE_TIMER           = 3564,
 };
 
-enum npc
-{
-    NPC_ANTI_PERSONNAL_CANNON       = 27894,
-    NPC_DEMOLISHER_SA               = 28781,
-    NPC_RIGGER_SPARKLIGHT           = 29260,
-    NPC_GORGRIL_RIGSPARK            = 29262,
+enum npc {
+    NPC_ANTI_PERSONNAL_CANNON = 27894,
+    NPC_DEMOLISHER_SA         = 28781,
+    NPC_RIGGER_SPARKLIGHT     = 29260,
+    NPC_GORGRIL_RIGSPARK      = 29262,
 };
 
-enum BG_SA_NPCs
-{
+enum BG_SA_NPCs {
     BG_SA_GUN_1 = 0,
     BG_SA_GUN_2,
     BG_SA_GUN_3,
@@ -109,83 +105,76 @@ enum BG_SA_NPCs
     BG_SA_MAXNPC
 };
 
-enum BG_SA_Boat
-{
-    BG_SA_BOAT_ONE_A    = 193182,
-    BG_SA_BOAT_TWO_H    = 193183,
-    BG_SA_BOAT_ONE_H    = 193184,
-    BG_SA_BOAT_TWO_A    = 193185,
+enum BG_SA_Boat {
+    BG_SA_BOAT_ONE_A = 193182,
+    BG_SA_BOAT_TWO_H = 193183,
+    BG_SA_BOAT_ONE_H = 193184,
+    BG_SA_BOAT_TWO_A = 193185,
 };
 
-uint32 const BG_SA_NpcEntries[BG_SA_MAXNPC] =
-{
-    NPC_ANTI_PERSONNAL_CANNON,
-    NPC_ANTI_PERSONNAL_CANNON,
-    NPC_ANTI_PERSONNAL_CANNON,
-    NPC_ANTI_PERSONNAL_CANNON,
-    NPC_ANTI_PERSONNAL_CANNON,
-    NPC_ANTI_PERSONNAL_CANNON,
-    NPC_ANTI_PERSONNAL_CANNON,
-    NPC_ANTI_PERSONNAL_CANNON,
-    NPC_ANTI_PERSONNAL_CANNON,
-    NPC_ANTI_PERSONNAL_CANNON,
-    // Triggers
-    23472,
-    23472,
-    23472,
-    23472,
-    23472,
-    // 4 beach demolishers
-    NPC_DEMOLISHER_SA,
-    NPC_DEMOLISHER_SA,
-    NPC_DEMOLISHER_SA,
-    NPC_DEMOLISHER_SA,
-    // 4 factory demolishers
-    NPC_DEMOLISHER_SA,
-    NPC_DEMOLISHER_SA,
-    NPC_DEMOLISHER_SA,
-    NPC_DEMOLISHER_SA,
-    // Used Demolisher Salesman
-    NPC_RIGGER_SPARKLIGHT,
-    NPC_GORGRIL_RIGSPARK
-};
+uint32 const BG_SA_NpcEntries[BG_SA_MAXNPC] = {NPC_ANTI_PERSONNAL_CANNON,
+                                               NPC_ANTI_PERSONNAL_CANNON,
+                                               NPC_ANTI_PERSONNAL_CANNON,
+                                               NPC_ANTI_PERSONNAL_CANNON,
+                                               NPC_ANTI_PERSONNAL_CANNON,
+                                               NPC_ANTI_PERSONNAL_CANNON,
+                                               NPC_ANTI_PERSONNAL_CANNON,
+                                               NPC_ANTI_PERSONNAL_CANNON,
+                                               NPC_ANTI_PERSONNAL_CANNON,
+                                               NPC_ANTI_PERSONNAL_CANNON,
+                                               // Triggers
+                                               23472,
+                                               23472,
+                                               23472,
+                                               23472,
+                                               23472,
+                                               // 4 beach demolishers
+                                               NPC_DEMOLISHER_SA,
+                                               NPC_DEMOLISHER_SA,
+                                               NPC_DEMOLISHER_SA,
+                                               NPC_DEMOLISHER_SA,
+                                               // 4 factory demolishers
+                                               NPC_DEMOLISHER_SA,
+                                               NPC_DEMOLISHER_SA,
+                                               NPC_DEMOLISHER_SA,
+                                               NPC_DEMOLISHER_SA,
+                                               // Used Demolisher Salesman
+                                               NPC_RIGGER_SPARKLIGHT,
+                                               NPC_GORGRIL_RIGSPARK};
 
-float const BG_SA_NpcSpawnlocs[BG_SA_MAXNPC][4] =
-{
+float const BG_SA_NpcSpawnlocs[BG_SA_MAXNPC][4] = {
     // Cannons
-    { 1436.429f, 110.05f, 41.407f, 5.4f },
-    { 1404.9023f, 84.758f, 41.183f, 5.46f },
-    { 1068.693f, -86.951f, 93.81f, 0.02f },
-    { 1068.83f, -127.56f, 96.45f, 0.0912f },
-    { 1422.115f, -196.433f, 42.1825f, 1.0222f },
-    { 1454.887f, -220.454f, 41.956f, 0.9627f },
-    { 1232.345f, -187.517f, 66.945f, 0.45f },
-    { 1249.634f, -224.189f, 66.72f, 0.635f },
-    { 1236.213f, 92.287f, 64.965f, 5.751f },
-    { 1215.11f, 57.772f, 64.739f, 5.78f },
+    {1436.429f, 110.05f, 41.407f, 5.4f},
+    {1404.9023f, 84.758f, 41.183f, 5.46f},
+    {1068.693f, -86.951f, 93.81f, 0.02f},
+    {1068.83f, -127.56f, 96.45f, 0.0912f},
+    {1422.115f, -196.433f, 42.1825f, 1.0222f},
+    {1454.887f, -220.454f, 41.956f, 0.9627f},
+    {1232.345f, -187.517f, 66.945f, 0.45f},
+    {1249.634f, -224.189f, 66.72f, 0.635f},
+    {1236.213f, 92.287f, 64.965f, 5.751f},
+    {1215.11f, 57.772f, 64.739f, 5.78f},
     // Triggers
-    { 1453.49f, -250.453f, 30.896f, 4.2883f},
-    { 1377.05f, 97.036f, 30.8605f, 2.46539f},
-    { 1186.05f, 58.8048f, 56.5491f, 2.75992f},
-    { 1042.83f, -72.839f, 84.8145f, 3.58615f},
-    { 1233.62f, -250.49f, 55.4036f, 3.7016f},
+    {1453.49f, -250.453f, 30.896f, 4.2883f},
+    {1377.05f, 97.036f, 30.8605f, 2.46539f},
+    {1186.05f, 58.8048f, 56.5491f, 2.75992f},
+    {1042.83f, -72.839f, 84.8145f, 3.58615f},
+    {1233.62f, -250.49f, 55.4036f, 3.7016f},
     // Demolishers
-    { 1611.597656f, -117.270073f, 8.719355f, 2.513274f},
-    { 1575.562500f, -158.421875f, 5.024450f, 2.129302f},
-    { 1618.047729f, 61.424641f, 7.248210f, 3.979351f},
-    { 1575.103149f, 98.873344f, 2.830360f, 3.752458f},
+    {1611.597656f, -117.270073f, 8.719355f, 2.513274f},
+    {1575.562500f, -158.421875f, 5.024450f, 2.129302f},
+    {1618.047729f, 61.424641f, 7.248210f, 3.979351f},
+    {1575.103149f, 98.873344f, 2.830360f, 3.752458f},
     // Demolishers 2
-    { 1371.055786f, -317.071136f, 35.007359f, 1.947460f},
-    { 1424.034912f, -260.195190f, 31.084425f, 2.820013f},
-    { 1353.139893f, 223.745438f, 35.265411f, 4.343684f},
-    { 1404.809570f, 197.027237f, 32.046032f, 3.605401f},
+    {1371.055786f, -317.071136f, 35.007359f, 1.947460f},
+    {1424.034912f, -260.195190f, 31.084425f, 2.820013f},
+    {1353.139893f, 223.745438f, 35.265411f, 4.343684f},
+    {1404.809570f, 197.027237f, 32.046032f, 3.605401f},
     // Npcs
-    { 1348.644165f, -298.786469f, 31.080130f, 1.710423f},
-    { 1358.191040f, 195.527786f, 31.018187f, 4.171337f}
-};
+    {1348.644165f, -298.786469f, 31.080130f, 1.710423f},
+    {1358.191040f, 195.527786f, 31.018187f, 4.171337f}};
 
-enum BG_SA_Objects
-{
+enum BG_SA_Objects {
     BG_SA_GREEN_GATE = 0,
     BG_SA_YELLOW_GATE,
     BG_SA_BLUE_GATE,
@@ -215,38 +204,37 @@ enum BG_SA_Objects
     BG_SA_MAXOBJ = BG_SA_BOMB + 68
 };
 
-float const BG_SA_ObjSpawnlocs[BG_SA_MAXOBJ][4] =
-{
-    { 1411.57f, 108.163f, 28.692f, 5.441f },
-    { 1055.452f, -108.1f, 82.134f, 0.034f },
-    { 1431.3413f, -219.437f, 30.893f, 0.9736f },
-    { 1227.667f, -212.555f, 55.372f, 0.5023f },
-    { 1214.681f, 81.21f, 53.413f, 5.745f },
-    { 878.555f, -108.2f, 117.845f, 0.0f },
-    { 836.5f, -108.8f, 120.219f, 0.0f },
+float const BG_SA_ObjSpawnlocs[BG_SA_MAXOBJ][4] = {
+    {1411.57f, 108.163f, 28.692f, 5.441f},
+    {1055.452f, -108.1f, 82.134f, 0.034f},
+    {1431.3413f, -219.437f, 30.893f, 0.9736f},
+    {1227.667f, -212.555f, 55.372f, 0.5023f},
+    {1214.681f, 81.21f, 53.413f, 5.745f},
+    {878.555f, -108.2f, 117.845f, 0.0f},
+    {836.5f, -108.8f, 120.219f, 0.0f},
     // Ships
-    { 2679.696777f, -826.891235f, 3.712860f, 5.78367f}, //rot2 1 rot3 0.0002f
-    { 2574.003662f, 981.261475f, 2.603424f, 0.807696f},
+    {2679.696777f, -826.891235f, 3.712860f, 5.78367f}, // rot2 1 rot3 0.0002f
+    {2574.003662f, 981.261475f, 2.603424f, 0.807696f},
     // Sigils
-    { 1414.054f, 106.72f, 41.442f, 5.441f },
-    { 1060.63f, -107.8f, 94.7f, 0.034f },
-    { 1433.383f, -216.4f, 43.642f, 0.9736f },
-    { 1230.75f, -210.724f, 67.611f, 0.5023f },
-    { 1217.8f, 79.532f, 66.58f, 5.745f },
+    {1414.054f, 106.72f, 41.442f, 5.441f},
+    {1060.63f, -107.8f, 94.7f, 0.034f},
+    {1433.383f, -216.4f, 43.642f, 0.9736f},
+    {1230.75f, -210.724f, 67.611f, 0.5023f},
+    {1217.8f, 79.532f, 66.58f, 5.745f},
     // Flagpoles
-    { 1215.114258f, -65.711861f, 70.084267f, -3.124123f},
+    {1215.114258f, -65.711861f, 70.084267f, -3.124123f},
     {1338.863892f, -153.336533f, 30.895121f, -2.530723f},
     {1309.124268f, 9.410645f, 30.893402f, -1.623156f},
     // Flags
-    { 1215.108032f, -65.715767f, 70.084267f, -3.124123f},
-    { 1338.859253f, -153.327316f, 30.895077f, -2.530723f},
-    { 1309.192017f, 9.416233f, 30.893402f, 1.518436f},
+    {1215.108032f, -65.715767f, 70.084267f, -3.124123f},
+    {1338.859253f, -153.327316f, 30.895077f, -2.530723f},
+    {1309.192017f, 9.416233f, 30.893402f, 1.518436f},
     // Portal
-    {1468.380005f, -225.798996f, 30.896200f, 0.0f}, //blue
-    {1394.270020f, 72.551399f, 31.054300f, 0.0f}, //green
-    {1065.260010f, -89.79501f, 81.073402f, 0.0f}, //yellow
-    {1216.069946f, 47.904301f, 54.278198f, 0.0f}, //purple
-    {1255.569946f, -233.548996f, 56.43699f, 0.0f}, //red
+    {1468.380005f, -225.798996f, 30.896200f, 0.0f}, // blue
+    {1394.270020f, 72.551399f, 31.054300f, 0.0f},   // green
+    {1065.260010f, -89.79501f, 81.073402f, 0.0f},   // yellow
+    {1216.069946f, 47.904301f, 54.278198f, 0.0f},   // purple
+    {1255.569946f, -233.548996f, 56.43699f, 0.0f},  // red
     // Bombs
     {1333.45f, 211.354f, 31.0538f, 5.03666f},
     {1334.29f, 209.582f, 31.0532f, 1.28088f},
@@ -331,44 +319,19 @@ float const BG_SA_ObjSpawnlocs[BG_SA_MAXOBJ][4] =
  * to get horde ones.
  */
 
-uint32 const BG_SA_ObjEntries[BG_SA_MAXOBJ + BG_SA_FLAG_AMOUNT] =
-{
-    190722,
-    190727,
-    190724,
-    190726,
-    190723,
-    192549,
-    192834,
+uint32 const BG_SA_ObjEntries[BG_SA_MAXOBJ + BG_SA_FLAG_AMOUNT] = {
+    190722, 190727, 190724, 190726, 190723, 192549, 192834,
     0, // Boat
     0, // Boat
-    192687,
-    192685,
-    192689,
-    192690,
-    192691,
-    191311,
-    191311,
-    191311,
-    191310,
-    191306,
-    191308,
-    192819,
-    192819,
-    192819,
-    192819,
-    192819,
-    190753
-};
+    192687, 192685, 192689, 192690, 192691, 191311, 191311, 191311, 191310,
+    191306, 191308, 192819, 192819, 192819, 192819, 192819, 190753};
 
-uint32 const BG_SA_Factions[2] =
-{
+uint32 const BG_SA_Factions[2] = {
     1732,
     1735,
 };
 
-enum BG_SA_Graveyards
-{
+enum BG_SA_Graveyards {
     BG_SA_BEACH_GY = 0,
     BG_SA_DEFENDER_LAST_GY,
     BG_SA_RIGHT_CAPTURABLE_GY,
@@ -377,8 +340,7 @@ enum BG_SA_Graveyards
     BG_SA_MAX_GY
 };
 
-const uint32 BG_SA_GYEntries[BG_SA_MAX_GY] =
-{
+const uint32 BG_SA_GYEntries[BG_SA_MAX_GY] = {
     1350,
     1349,
     1347,
@@ -386,8 +348,7 @@ const uint32 BG_SA_GYEntries[BG_SA_MAX_GY] =
     1348,
 };
 
-float const BG_SA_GYOrientation[BG_SA_MAX_GY] =
-{
+float const BG_SA_GYOrientation[BG_SA_MAX_GY] = {
     6.202f,
     1.926f, // right capturable GY
     3.917f, // left capturable GY
@@ -395,41 +356,38 @@ float const BG_SA_GYOrientation[BG_SA_MAX_GY] =
     6.148f, // defender last GY
 };
 
-enum BG_SA_BroadcastTexts
-{
+enum BG_SA_BroadcastTexts {
     BG_SA_TEXT_ALLIANCE_CAPTURED_TITAN_PORTAL = 28944,
-    BG_SA_TEXT_HORDE_CAPTURED_TITAN_PORTAL = 28945,
+    BG_SA_TEXT_HORDE_CAPTURED_TITAN_PORTAL    = 28945,
 
-    BG_SA_TEXT_ROUND_TWO_START_ONE_MINUTE = 29448,
+    BG_SA_TEXT_ROUND_TWO_START_ONE_MINUTE  = 29448,
     BG_SA_TEXT_ROUND_TWO_START_HALF_MINUTE = 29449
 };
 
-struct BG_SA_RoundScore
-{
-    TeamId winner;
+struct BG_SA_RoundScore {
+    TeamId       winner;
     Milliseconds time;
 };
 
-const float SOTADefPortalDest[5][4] =
-{
-    { 1388.94f, 103.067f, 34.49f, 5.4571f },
-    { 1043.69f, -87.95f, 87.12f, 0.003f },
-    { 1441.0411f, -240.974f, 35.264f, 0.949f },
-    { 1228.342f, -235.234f, 60.03f, 0.4584f },
-    { 1193.857f, 69.9f, 58.046f, 5.7245f },
+const float SOTADefPortalDest[5][4] = {
+    {1388.94f, 103.067f, 34.49f, 5.4571f},
+    {1043.69f, -87.95f, 87.12f, 0.003f},
+    {1441.0411f, -240.974f, 35.264f, 0.949f},
+    {1228.342f, -235.234f, 60.03f, 0.4584f},
+    {1193.857f, 69.9f, 58.046f, 5.7245f},
 };
 
-struct BattlegroundSAScore final : public BattlegroundScore
-{
+struct BattlegroundSAScore final : public BattlegroundScore {
     friend class BattlegroundSA;
 
 protected:
-    BattlegroundSAScore(ObjectGuid playerGuid) : BattlegroundScore(playerGuid) { }
+    BattlegroundSAScore(ObjectGuid playerGuid) : BattlegroundScore(playerGuid)
+    {
+    }
 
     void UpdateScore(uint32 type, uint32 value) override
     {
-        switch (type)
-        {
+        switch (type) {
         case SCORE_DESTROYED_DEMOLISHER:
             DemolishersDestroyed += value;
             break;
@@ -448,12 +406,11 @@ protected:
     uint32 GetAttr2() const override { return GatesDestroyed; }
 
     uint32 DemolishersDestroyed = 0;
-    uint32 GatesDestroyed = 0;
+    uint32 GatesDestroyed       = 0;
 };
 
 /// Class for manage Strand of Ancient battleground
-class AC_GAME_API BattlegroundSA : public Battleground
-{
+class AC_GAME_API BattlegroundSA : public Battleground {
 public:
     BattlegroundSA();
     ~BattlegroundSA() override;
@@ -477,13 +434,16 @@ public:
     /// Called for generate packet contain worldstate data
     void FillInitialWorldStates(WorldPacket& data) override;
     /// Called when a player deal damage to building (door)
-    void EventPlayerDamagedGO(Player* player, GameObject* go, uint32 eventType) override;
+    void EventPlayerDamagedGO(Player*     player,
+                              GameObject* go,
+                              uint32      eventType) override;
     /// Called when a player kill a unit in bg
     void HandleKillUnit(Creature* creature, Player* killer) override;
     /// Return the nearest graveyard where player can respawn
     GraveyardStruct const* GetClosestGraveyard(Player* player) override;
     /// Called when a player click on flag (graveyard flag)
-    void EventPlayerClickedOnFlag(Player* Source, GameObject* gameObject) override;
+    void EventPlayerClickedOnFlag(Player*     Source,
+                                  GameObject* gameObject) override;
     /// Called when a player use a gamobject (relic)
     void EventPlayerUsedGO(Player* Source, GameObject* object) override;
 
@@ -491,26 +451,25 @@ public:
     uint32 GetWorldStateFromGateID(uint32 id)
     {
         uint32 uws = 0;
-        switch (id)
-        {
-            case BG_SA_GREEN_GATE:
-                uws = BG_SA_GREEN_GATEWS;
-                break;
-            case BG_SA_YELLOW_GATE:
-                uws = BG_SA_YELLOW_GATEWS;
-                break;
-            case BG_SA_BLUE_GATE:
-                uws = BG_SA_BLUE_GATEWS;
-                break;
-            case BG_SA_RED_GATE:
-                uws = BG_SA_RED_GATEWS;
-                break;
-            case BG_SA_PURPLE_GATE:
-                uws = BG_SA_PURPLE_GATEWS;
-                break;
-            case BG_SA_ANCIENT_GATE:
-                uws = BG_SA_ANCIENT_GATEWS;
-                break;
+        switch (id) {
+        case BG_SA_GREEN_GATE:
+            uws = BG_SA_GREEN_GATEWS;
+            break;
+        case BG_SA_YELLOW_GATE:
+            uws = BG_SA_YELLOW_GATEWS;
+            break;
+        case BG_SA_BLUE_GATE:
+            uws = BG_SA_BLUE_GATEWS;
+            break;
+        case BG_SA_RED_GATE:
+            uws = BG_SA_RED_GATEWS;
+            break;
+        case BG_SA_PURPLE_GATE:
+            uws = BG_SA_PURPLE_GATEWS;
+            break;
+        case BG_SA_ANCIENT_GATE:
+            uws = BG_SA_ANCIENT_GATEWS;
+            break;
         }
         return uws;
     }
@@ -529,33 +488,35 @@ public:
     bool AllowDefenseOfTheAncients(Player* source);
 
     // Achievement: Not Even a Scratch
-    bool notEvenAScratch(TeamId teamId) const { return _notEvenAScratch[teamId]; }
+    bool notEvenAScratch(TeamId teamId) const
+    {
+        return _notEvenAScratch[teamId];
+    }
 
 private:
     /// Return gate id, relative to bg data, according to gameobject id
     uint32 GetGateIDFromEntry(uint32 id)
     {
         uint32 i = 0;
-        switch(id)
-        {
-            case 190722:
-                i = BG_SA_GREEN_GATE;
-                break; //Green gate destroyed
-            case 190724:
-                i = BG_SA_BLUE_GATE;
-                break; //blue gate
-            case 190726:
-                i = BG_SA_RED_GATE;
-                break; //red gate
-            case 190723:
-                i = BG_SA_PURPLE_GATE;
-                break; //purple gate
-            case 190727:
-                i = BG_SA_YELLOW_GATE;
-                break; //yellow gate
-            case 192549:
-                i = BG_SA_ANCIENT_GATE;
-                break; //ancient gate
+        switch (id) {
+        case 190722:
+            i = BG_SA_GREEN_GATE;
+            break; // Green gate destroyed
+        case 190724:
+            i = BG_SA_BLUE_GATE;
+            break; // blue gate
+        case 190726:
+            i = BG_SA_RED_GATE;
+            break; // red gate
+        case 190723:
+            i = BG_SA_PURPLE_GATE;
+            break; // purple gate
+        case 190727:
+            i = BG_SA_YELLOW_GATE;
+            break; // yellow gate
+        case 192549:
+            i = BG_SA_ANCIENT_GATE;
+            break; // ancient gate
         }
         return i;
     }
@@ -578,7 +539,8 @@ private:
      * -Update faction of all vehicle
      */
     void OverrideGunFaction();
-    /// Set selectable or not demolisher, called on battle start, when boats arrive to dock
+    /// Set selectable or not demolisher, called on battle start, when boats
+    /// arrive to dock
     void DemolisherStartState(bool start);
     /// Checks if a player can interact with the given object
     bool CanInteractWithObject(uint32 objectId);
@@ -589,7 +551,8 @@ private:
      * \brief Called when a gate is destroy
      * -Give honor to player witch destroy it
      * -Update worldstate
-     * -Delete gameobject in front of door (lighting object, with different colours for each door)
+     * -Delete gameobject in front of door (lighting object, with different
+     * colours for each door)
      */
     void DestroyGate(Player* player, GameObject* go) override;
     /// Update timer worldstate
@@ -640,8 +603,8 @@ private:
     /// for know if warning about second round start has been sent
     bool SignaledRoundTwoHalfMin;
     /// for know if second round has been init
-    bool InitSecondRound;
-    std::map<uint32/*id*/, uint32/*timer*/> DemoliserRespawnList;
+    bool                                      InitSecondRound;
+    std::map<uint32 /*id*/, uint32 /*timer*/> DemoliserRespawnList;
 
     // xinef:
     bool _relicClicked;

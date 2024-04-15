@@ -1,10 +1,10 @@
 /**
  \file G3D/Sphere.h
- 
+
  Sphere class
- 
+
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
- 
+
  \created 2001-06-02
  \edited  2011-02-07
  */
@@ -12,9 +12,9 @@
 #ifndef G3D_Sphere_h
 #define G3D_Sphere_h
 
-#include "G3D/platform.h"
-#include "G3D/Vector3.h"
 #include "G3D/Array.h"
+#include "G3D/Vector3.h"
+#include "G3D/platform.h"
 
 namespace G3D {
 
@@ -23,15 +23,13 @@ namespace G3D {
  */
 class Sphere {
 private:
-
-    static int32     dummy;
+    static int32 dummy;
 
 public:
-    Point3           center;
-    float            radius;
+    Point3 center;
+    float  radius;
 
-    Sphere() : center(Point3::zero()), radius(0) {
-    }
+    Sphere() : center(Point3::zero()), radius(0) {}
 
     explicit Sphere(float radius) : radius(radius) {}
 
@@ -47,9 +45,8 @@ public:
 
     Any toAny() const;
 
-    Sphere
-    (const Point3&  center,
-     float          radius) : center(center), radius(radius) {
+    Sphere(const Point3& center, float radius) : center(center), radius(radius)
+    {
     }
 
     virtual ~Sphere() {}
@@ -57,11 +54,13 @@ public:
     /** Returns the infinite sphere. */
     static const Sphere& inf();
 
-    bool operator==(const Sphere& other) const {
+    bool operator==(const Sphere& other) const
+    {
         return (center == other.center) && (radius == other.radius);
     }
 
-    bool operator!=(const Sphere& other) const {
+    bool operator!=(const Sphere& other) const
+    {
         return !((center == other.center) && (radius == other.radius));
     }
 
@@ -76,38 +75,34 @@ public:
     /**
        @deprecated Use culledBy(Array<Plane>&)
      */
-    bool culledBy(
-                  const class Plane*  plane,
-                  int                 numPlanes,
-                  int32&              cullingPlaneIndex,
-                  const uint32        testMask,
-                  uint32&             childMask) const;
-    
+    bool culledBy(const class Plane* plane,
+                  int                numPlanes,
+                  int32&             cullingPlaneIndex,
+                  const uint32       testMask,
+                  uint32&            childMask) const;
+
     /**
        @deprecated Use culledBy(Array<Plane>&)
      */
-    bool culledBy(
-                  const class Plane*  plane,
-                  int                 numPlanes,
-                  int32&              cullingPlaneIndex = dummy,
-                  const uint32        testMask = 0xFFFFFFFF) const;
+    bool culledBy(const class Plane* plane,
+                  int                numPlanes,
+                  int32&             cullingPlaneIndex = dummy,
+                  const uint32       testMask          = 0xFFFFFFFF) const;
 
     /**
        See AABox::culledBy
     */
-    bool culledBy(
-                  const Array<Plane>&        plane,
-                  int32&                    cullingPlaneIndex,
-                  const uint32              testMask,
-                  uint32&                 childMask) const;
-    
+    bool culledBy(const Array<Plane>& plane,
+                  int32&              cullingPlaneIndex,
+                  const uint32        testMask,
+                  uint32&             childMask) const;
+
     /**
      Conservative culling test that does not produce a mask for children.
      */
-    bool culledBy(
-                  const Array<Plane>&        plane,
-                  int32&                    cullingPlaneIndex = dummy,
-                  const uint32              testMask          = 0xFFFFFFFF) const;
+    bool culledBy(const Array<Plane>& plane,
+                  int32&              cullingPlaneIndex = dummy,
+                  const uint32        testMask          = 0xFFFFFFFF) const;
 
     virtual std::string toString() const;
 
@@ -130,12 +125,14 @@ public:
     bool intersects(const Sphere& other) const;
 
     /** Translates the sphere */
-    Sphere operator+(const Vector3& v) const {
+    Sphere operator+(const Vector3& v) const
+    {
         return Sphere(center + v, radius);
     }
 
     /** Translates the sphere */
-    Sphere operator-(const Vector3& v) const {
+    Sphere operator-(const Vector3& v) const
+    {
         return Sphere(center - v, radius);
     }
 
@@ -143,13 +140,14 @@ public:
     void merge(const Sphere& s);
 };
 
-}
+} // namespace G3D
 
-template <> struct HashTrait<G3D::Sphere> {
-    static size_t hashCode(const G3D::Sphere& key) { 
+template <>
+struct HashTrait<G3D::Sphere> {
+    static size_t hashCode(const G3D::Sphere& key)
+    {
         return static_cast<size_t>(key.center.hashCode() + (key.radius * 13));
     }
 };
-
 
 #endif

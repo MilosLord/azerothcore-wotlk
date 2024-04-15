@@ -2,7 +2,7 @@
  \file PhysicsFrame.h
 
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
- 
+
  \created 2002-07-08
  \edited  2011-05-10
 */
@@ -10,14 +10,13 @@
 #ifndef G3D_PhysicsFrame_h
 #define G3D_PhysicsFrame_h
 
-#include "G3D/platform.h"
-#include "G3D/Vector3.h"
+#include "G3D/CoordinateFrame.h"
 #include "G3D/Matrix3.h"
 #include "G3D/Quat.h"
-#include "G3D/CoordinateFrame.h"
+#include "G3D/Vector3.h"
+#include "G3D/platform.h"
 #include <math.h>
 #include <string>
-
 
 namespace G3D {
 
@@ -29,8 +28,7 @@ namespace G3D {
  */
 class PhysicsFrame {
 public:
-
-    Quat    rotation;
+    Quat rotation;
 
     /**
      Origin of this reference frame in its parent's frame.
@@ -46,13 +44,23 @@ public:
      Purely translational.
      */
     PhysicsFrame(const Vector3& translation) : translation(translation) {}
-    PhysicsFrame(const Quat& rot, const Vector3& translation) : rotation(rot), translation(translation) {}
-    PhysicsFrame(const Matrix3& rot, const Vector3& translation) : rotation(rot), translation(translation) {}
-    PhysicsFrame(const Matrix3& rot) : rotation(rot), translation(Vector3::zero()) {}
+    PhysicsFrame(const Quat& rot, const Vector3& translation)
+        : rotation(rot), translation(translation)
+    {
+    }
+    PhysicsFrame(const Matrix3& rot, const Vector3& translation)
+        : rotation(rot), translation(translation)
+    {
+    }
+    PhysicsFrame(const Matrix3& rot)
+        : rotation(rot), translation(Vector3::zero())
+    {
+    }
     PhysicsFrame(const CoordinateFrame& coordinateFrame);
 
-    PhysicsFrame& operator=(const PhysicsFrame& p) {
-        rotation = p.rotation;
+    PhysicsFrame& operator=(const PhysicsFrame& p)
+    {
+        rotation    = p.rotation;
         translation = p.translation;
 
         return *this;
@@ -68,7 +76,8 @@ public:
 
     Any toAny() const;
 
-    /** Compose: create the transformation that is <I>other</I> followed by <I>this</I>.*/
+    /** Compose: create the transformation that is <I>other</I> followed by
+     * <I>this</I>.*/
     PhysicsFrame operator*(const PhysicsFrame& other) const;
 
     virtual ~PhysicsFrame() {}
@@ -76,9 +85,7 @@ public:
     /**
      Linear interpolation (spherical linear for the rotations).
      */
-    PhysicsFrame lerp(
-        const PhysicsFrame&     other,
-        float                   alpha) const;
+    PhysicsFrame lerp(const PhysicsFrame& other, float alpha) const;
 
     void deserialize(class BinaryInput& b);
 
@@ -86,43 +93,48 @@ public:
 
     operator CFrame() const;
 
-    /** Multiplies both pieces by \a f; note that this will result in a non-unit 
+    /** Multiplies both pieces by \a f; note that this will result in a non-unit
     quaternion that needs to be normalized */
-    PhysicsFrame& operator*=(float f) {
+    PhysicsFrame& operator*=(float f)
+    {
         rotation *= f;
         translation *= f;
         return *this;
     }
 
-    /** Multiplies both pieces by \a f; note that this will result in a non-unit 
+    /** Multiplies both pieces by \a f; note that this will result in a non-unit
     quaternion that needs to be normalized */
-    PhysicsFrame operator*(float f) const {
+    PhysicsFrame operator*(float f) const
+    {
         return PhysicsFrame(rotation * f, translation * f);
     }
 
-    PhysicsFrame operator+(const PhysicsFrame& f) const {
+    PhysicsFrame operator+(const PhysicsFrame& f) const
+    {
         return PhysicsFrame(rotation + f.rotation, translation + f.translation);
     }
 
-    PhysicsFrame& operator+=(const PhysicsFrame& f) {
+    PhysicsFrame& operator+=(const PhysicsFrame& f)
+    {
         rotation += f.rotation;
         translation += f.translation;
         return *this;
     }
 
-    bool operator==(const PhysicsFrame& other) const {
-        return (translation == other.translation) && 
-            ((rotation == other.rotation) || (rotation == -other.rotation));
+    bool operator==(const PhysicsFrame& other) const
+    {
+        return (translation == other.translation) &&
+               ((rotation == other.rotation) || (rotation == -other.rotation));
     }
 
-    bool operator!=(const PhysicsFrame& other) const {
-        return ! ((*this) == other);
+    bool operator!=(const PhysicsFrame& other) const
+    {
+        return !((*this) == other);
     }
-
 };
 
 typedef PhysicsFrame PFrame;
 
-} // namespace
+} // namespace G3D
 
 #endif

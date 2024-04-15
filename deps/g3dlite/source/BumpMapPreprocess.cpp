@@ -15,29 +15,33 @@
 
 namespace G3D {
 
-BumpMapPreprocess::BumpMapPreprocess(const Any& any) {
+BumpMapPreprocess::BumpMapPreprocess(const Any& any)
+{
     *this = BumpMapPreprocess();
     for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
         const std::string& key = toLower(it->key);
         if (key == "lowpassfilter") {
             lowPassFilter = it->value;
-        } else if (key == "zextentpixels") {
+        }
+        else if (key == "zextentpixels") {
             zExtentPixels = it->value;
-        } else if (key == "scalezbynz") {
+        }
+        else if (key == "scalezbynz") {
             scaleZByNz = it->value;
-        } else {
+        }
+        else {
             any.verify(false, "Illegal key: " + it->key);
         }
     }
 }
 
-
-Any BumpMapPreprocess::toAny() const {
+Any BumpMapPreprocess::toAny() const
+{
     Any any(Any::TABLE, "BumpMapPreprocess");
     any["lowPassFilter"] = lowPassFilter;
     any["zExtentPixels"] = zExtentPixels;
-    any["scaleZByNz"] = scaleZByNz;
+    any["scaleZByNz"]    = scaleZByNz;
     return any;
 }
 
-}
+} // namespace G3D

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,42 +23,36 @@
 #include "TaskScheduler.h"
 #include "zulgurub.h"
 
-enum Say
-{
-    SAY_AGGRO                       = 1
+enum Say { SAY_AGGRO = 1 };
+
+enum Spells {
+    SPELL_BRAIN_WASH_TOTEM       = 24262,
+    SPELL_POWERFULL_HEALING_WARD = 24309,
+    SPELL_HEX                    = 24053,
+    SPELL_DELUSIONS_OF_JINDO     = 24306,
+    SPELL_SUMMON_SHADE_OF_JINDO  = 24308,
+    SPELL_BANISH                 = 24466,
+
+    // Healing Ward Spell
+    SPELL_HEAL = 24311,
+
+    // Shade of Jindo Spell
+    SPELL_SHADE_OF_JINDO_PASSIVE = 24307,
+    SPELL_SHADE_OF_JINDO_VISUAL  = 24313,
+    SPELL_SHADOW_SHOCK           = 19460,
+    SPELL_RANDOM_AGGRO           = 23878
 };
 
-enum Spells
-{
-    SPELL_BRAIN_WASH_TOTEM          = 24262,
-    SPELL_POWERFULL_HEALING_WARD    = 24309,
-    SPELL_HEX                       = 24053,
-    SPELL_DELUSIONS_OF_JINDO        = 24306,
-    SPELL_SUMMON_SHADE_OF_JINDO     = 24308,
-    SPELL_BANISH                    = 24466,
-
-    //Healing Ward Spell
-    SPELL_HEAL                      = 24311,
-
-    //Shade of Jindo Spell
-    SPELL_SHADE_OF_JINDO_PASSIVE    = 24307,
-    SPELL_SHADE_OF_JINDO_VISUAL     = 24313,
-    SPELL_SHADOW_SHOCK              = 19460,
-    SPELL_RANDOM_AGGRO              = 23878
+enum Events {
+    EVENT_BRAIN_WASH_TOTEM       = 1,
+    EVENT_POWERFULL_HEALING_WARD = 2,
+    EVENT_HEX                    = 3,
+    EVENT_DELUSIONS_OF_JINDO     = 4,
+    EVENT_TELEPORT               = 5
 };
 
-enum Events
-{
-    EVENT_BRAIN_WASH_TOTEM          = 1,
-    EVENT_POWERFULL_HEALING_WARD    = 2,
-    EVENT_HEX                       = 3,
-    EVENT_DELUSIONS_OF_JINDO        = 4,
-    EVENT_TELEPORT                  = 5
-};
-
-struct boss_jindo : public BossAI
-{
-    boss_jindo(Creature* creature) : BossAI(creature, DATA_JINDO) { }
+struct boss_jindo : public BossAI {
+    boss_jindo(Creature* creature) : BossAI(creature, DATA_JINDO) {}
 
     void JustEngagedWith(Unit* who) override
     {
@@ -78,29 +73,27 @@ struct boss_jindo : public BossAI
     {
         BossAI::JustSummoned(summon);
 
-        switch (summon->GetEntry())
-        {
-            case NPC_BRAIN_WASH_TOTEM:
-                summon->SetReactState(REACT_PASSIVE);
-                if (Unit* target = SelectTarget(SelectTargetMethod::Random, me->GetThreatMgr().GetThreatListSize() > 1 ? 1 : 0))
-                {
-                    summon->CastSpell(target, summon->m_spells[0], true);
-                }
-                break;
-            default:
-                break;
+        switch (summon->GetEntry()) {
+        case NPC_BRAIN_WASH_TOTEM:
+            summon->SetReactState(REACT_PASSIVE);
+            if (Unit* target = SelectTarget(
+                    SelectTargetMethod::Random,
+                    me->GetThreatMgr().GetThreatListSize() > 1 ? 1 : 0)) {
+                summon->CastSpell(target, summon->m_spells[0], true);
+            }
+            break;
+        default:
+            break;
         }
     }
 
     void EnterEvadeMode(EvadeReason evadeReason) override
     {
-        if (_EnterEvadeMode(evadeReason))
-        {
+        if (_EnterEvadeMode(evadeReason)) {
             Reset();
             me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_DANCE);
 
-            _scheduler.Schedule(4s, [this](TaskContext /*context*/)
-            {
+            _scheduler.Schedule(4s, [this](TaskContext /*context*/) {
                 me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_NONE);
                 me->AddUnitState(UNIT_STATE_EVADE);
                 me->GetMotionMaster()->MoveTargetedHome();
@@ -120,10 +113,8 @@ struct boss_jindo : public BossAI
         if (me->HasUnitState(UNIT_STATE_CASTING))
             return;
 
-        while (uint32 eventId = events.ExecuteEvent())
-        {
-            switch (eventId)
-            {
+        while (uint32 eventId = events.ExecuteEvent()) {
+            switch (eventId) {
             case EVENT_BRAIN_WASH_TOTEM:
                 DoCastSelf(SPELL_BRAIN_WASH_TOTEM);
                 events.ScheduleEvent(EVENT_BRAIN_WASH_TOTEM, 18s, 26s);
@@ -155,14 +146,12 @@ struct boss_jindo : public BossAI
 
     bool CanAIAttack(Unit const* target) const override
     {
-        if (me->GetThreatMgr().GetThreatListSize() > 1)
-        {
-            ThreatContainer::StorageType::const_iterator lastRef = me->GetThreatMgr().GetOnlineContainer().GetThreatList().end();
+        if (me->GetThreatMgr().GetThreatListSize() > 1) {
+            ThreatContainer::StorageType::const_iterator lastRef =
+                me->GetThreatMgr().GetOnlineContainer().GetThreatList().end();
             --lastRef;
-            if (Unit* lastTarget = (*lastRef)->getTarget())
-            {
-                if (lastTarget != target)
-                {
+            if (Unit* lastTarget = (*lastRef)->getTarget()) {
+                if (lastTarget != target) {
                     return !target->HasAura(SPELL_HEX);
                 }
             }
@@ -175,48 +164,39 @@ private:
     TaskScheduler _scheduler;
 };
 
-//Healing Ward
-struct npc_healing_ward : public ScriptedAI
-{
+// Healing Ward
+struct npc_healing_ward : public ScriptedAI {
     npc_healing_ward(Creature* creature) : ScriptedAI(creature)
     {
         _instance = creature->GetInstanceScript();
     }
 
-    void Reset() override
-    {
-        _scheduler.CancelAll();
-    }
+    void Reset() override { _scheduler.CancelAll(); }
 
     void JustEngagedWith(Unit* /*who*/) override
     {
-        _scheduler.
-            Schedule(2s, [this](TaskContext context)
-            {
-                Unit* pJindo = ObjectAccessor::GetUnit(*me, _instance->GetGuidData(DATA_JINDO));
-                if (pJindo)
-                    DoCast(pJindo, SPELL_HEAL);
-                context.Repeat(3s);
-            });
+        _scheduler.Schedule(2s, [this](TaskContext context) {
+            Unit* pJindo = ObjectAccessor::GetUnit(
+                *me, _instance->GetGuidData(DATA_JINDO));
+            if (pJindo)
+                DoCast(pJindo, SPELL_HEAL);
+            context.Repeat(3s);
+        });
     }
 
     void UpdateAI(uint32 diff) override
     {
-        _scheduler.Update(diff, [this]
-            {
-                DoMeleeAttackIfReady();
-            });
+        _scheduler.Update(diff, [this] { DoMeleeAttackIfReady(); });
     }
 
 private:
     InstanceScript* _instance;
-    TaskScheduler _scheduler;
+    TaskScheduler   _scheduler;
 };
 
-//Shade of Jindo
-struct npc_shade_of_jindo : public ScriptedAI
-{
-    npc_shade_of_jindo(Creature* creature) : ScriptedAI(creature) { }
+// Shade of Jindo
+struct npc_shade_of_jindo : public ScriptedAI {
+    npc_shade_of_jindo(Creature* creature) : ScriptedAI(creature) {}
 
     void IsSummonedBy(WorldObject* /*summoner*/) override
     {
@@ -230,38 +210,30 @@ struct npc_shade_of_jindo : public ScriptedAI
     {
         _scheduler.CancelAll();
 
-        _scheduler.
-            Schedule(1s, [this](TaskContext context)
-            {
-                DoCastAOE(SPELL_RANDOM_AGGRO, true);
-                context.Repeat();
-            });
+        _scheduler.Schedule(1s, [this](TaskContext context) {
+            DoCastAOE(SPELL_RANDOM_AGGRO, true);
+            context.Repeat();
+        });
     }
 
     void JustEngagedWith(Unit* /*who*/) override
     {
-        _scheduler.
-            Schedule(1s, [this](TaskContext context)
-            {
-                DoCastVictim(SPELL_SHADOW_SHOCK);
-                context.Repeat(2s);
-            });
+        _scheduler.Schedule(1s, [this](TaskContext context) {
+            DoCastVictim(SPELL_SHADOW_SHOCK);
+            context.Repeat(2s);
+        });
     }
 
     void UpdateAI(uint32 diff) override
     {
-        _scheduler.Update(diff, [this]
-            {
-                DoMeleeAttackIfReady();
-            });
+        _scheduler.Update(diff, [this] { DoMeleeAttackIfReady(); });
     }
 
 private:
     TaskScheduler _scheduler;
 };
 
-class spell_random_aggro : public SpellScript
-{
+class spell_random_aggro : public SpellScript {
     PrepareSpellScript(spell_random_aggro);
 
     void HandleOnHit()
@@ -280,13 +252,12 @@ class spell_random_aggro : public SpellScript
     }
 };
 
-class spell_delusions_of_jindo : public SpellScript
-{
+class spell_delusions_of_jindo : public SpellScript {
     PrepareSpellScript(spell_delusions_of_jindo);
 
     bool Validate(SpellInfo const* /*spellInfo*/) override
     {
-        return ValidateSpellInfo({ SPELL_SUMMON_SHADE_OF_JINDO });
+        return ValidateSpellInfo({SPELL_SUMMON_SHADE_OF_JINDO});
     }
 
     void HandleOnHit()
@@ -302,15 +273,10 @@ class spell_delusions_of_jindo : public SpellScript
     }
 };
 
-struct npc_brain_wash_totem : public ScriptedAI
-{
-    npc_brain_wash_totem(Creature* creature) : ScriptedAI(creature)
-    {
-    }
+struct npc_brain_wash_totem : public ScriptedAI {
+    npc_brain_wash_totem(Creature* creature) : ScriptedAI(creature) {}
 
-    void EnterEvadeMode(EvadeReason /*evadeReason*/) override
-    {
-    }
+    void EnterEvadeMode(EvadeReason /*evadeReason*/) override {}
 };
 
 void AddSC_boss_jindo()
@@ -322,4 +288,3 @@ void AddSC_boss_jindo()
     RegisterSpellScript(spell_random_aggro);
     RegisterSpellScript(spell_delusions_of_jindo);
 }
-

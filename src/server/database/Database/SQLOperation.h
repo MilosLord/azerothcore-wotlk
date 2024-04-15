@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -23,25 +24,19 @@
 #include <variant>
 
 //- Type specifier of our element data
-enum SQLElementDataType
-{
-    SQL_ELEMENT_RAW,
-    SQL_ELEMENT_PREPARED
-};
+enum SQLElementDataType { SQL_ELEMENT_RAW, SQL_ELEMENT_PREPARED };
 
 //- The element
-struct SQLElementData
-{
+struct SQLElementData {
     std::variant<PreparedStatementBase*, std::string> element;
-    SQLElementDataType type;
+    SQLElementDataType                                type;
 };
 
 class MySQLConnection;
 
-class AC_DATABASE_API SQLOperation
-{
+class AC_DATABASE_API SQLOperation {
 public:
-    SQLOperation() = default;
+    SQLOperation()          = default;
     virtual ~SQLOperation() = default;
 
     virtual int call()
@@ -56,7 +51,7 @@ public:
     MySQLConnection* m_conn{nullptr};
 
 private:
-    SQLOperation(SQLOperation const& right) = delete;
+    SQLOperation(SQLOperation const& right)            = delete;
     SQLOperation& operator=(SQLOperation const& right) = delete;
 };
 

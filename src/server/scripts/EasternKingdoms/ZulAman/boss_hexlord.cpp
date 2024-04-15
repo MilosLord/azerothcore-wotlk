@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -28,8 +29,7 @@ SDComment:
 SDCategory: Zul'Aman
 EndScriptData */
 
-enum Says
-{
+enum Says {
     SAY_AGGRO = 0,
     SAY_KILL_ONE,
     SAY_KILL_TWO,
@@ -38,187 +38,167 @@ enum Says
     SAY_DEATH
 };
 
-enum Creatures
-{
-    NPC_TEMP_TRIGGER                = 23920
-};
+enum Creatures { NPC_TEMP_TRIGGER = 23920 };
 
-enum Spells
-{
-    SPELL_SPIRIT_BOLTS              = 43383,
-    SPELL_DRAIN_POWER               = 44131,
-    SPELL_SIPHON_SOUL               = 43501,
+enum Spells {
+    SPELL_SPIRIT_BOLTS = 43383,
+    SPELL_DRAIN_POWER  = 44131,
+    SPELL_SIPHON_SOUL  = 43501,
 
     // Druid
-    SPELL_DR_THORNS                 = 43420,
-    SPELL_DR_LIFEBLOOM              = 43421,
-    SPELL_DR_MOONFIRE               = 43545,
+    SPELL_DR_THORNS    = 43420,
+    SPELL_DR_LIFEBLOOM = 43421,
+    SPELL_DR_MOONFIRE  = 43545,
 
     // Hunter
-    SPELL_HU_EXPLOSIVE_TRAP         = 43444,
-    SPELL_HU_FREEZING_TRAP          = 43447,
-    SPELL_HU_SNAKE_TRAP             = 43449,
+    SPELL_HU_EXPLOSIVE_TRAP = 43444,
+    SPELL_HU_FREEZING_TRAP  = 43447,
+    SPELL_HU_SNAKE_TRAP     = 43449,
 
     // Mage
-    SPELL_MG_FIREBALL               = 41383,
-    SPELL_MG_FROST_NOVA             = 43426,
-    SPELL_MG_ICE_LANCE              = 43427,
-    SPELL_MG_FROSTBOLT              = 43428,
+    SPELL_MG_FIREBALL   = 41383,
+    SPELL_MG_FROST_NOVA = 43426,
+    SPELL_MG_ICE_LANCE  = 43427,
+    SPELL_MG_FROSTBOLT  = 43428,
 
     // Paladin
-    SPELL_PA_CONSECRATION           = 43429,
-    SPELL_PA_AVENGING_WRATH         = 43430,
-    SPELL_PA_HOLY_LIGHT             = 43451,
+    SPELL_PA_CONSECRATION   = 43429,
+    SPELL_PA_AVENGING_WRATH = 43430,
+    SPELL_PA_HOLY_LIGHT     = 43451,
 
     // Priest
-    SPELL_PR_HEAL                   = 41372,
-    SPELL_PR_MIND_BLAST             = 41374,
-    SPELL_PR_SW_DEATH               = 41375,
-    SPELL_PR_PSYCHIC_SCREAM         = 43432,
-    SPELL_PR_MIND_CONTROL           = 43550,
-    SPELL_PR_PAIN_SUPP              = 44416,
+    SPELL_PR_HEAL           = 41372,
+    SPELL_PR_MIND_BLAST     = 41374,
+    SPELL_PR_SW_DEATH       = 41375,
+    SPELL_PR_PSYCHIC_SCREAM = 43432,
+    SPELL_PR_MIND_CONTROL   = 43550,
+    SPELL_PR_PAIN_SUPP      = 44416,
 
     // Rogue
-    SPELL_RO_BLIND                  = 43433,
-    SPELL_RO_SLICE_DICE             = 43457,
-    SPELL_RO_WOUND_POISON           = 43461,
+    SPELL_RO_BLIND        = 43433,
+    SPELL_RO_SLICE_DICE   = 43457,
+    SPELL_RO_WOUND_POISON = 43461,
 
     // Shaman
-    SPELL_SH_CHAIN_LIGHT            = 43435,
-    SPELL_SH_FIRE_NOVA              = 43436,
-    SPELL_SH_HEALING_WAVE           = 43548,
+    SPELL_SH_CHAIN_LIGHT  = 43435,
+    SPELL_SH_FIRE_NOVA    = 43436,
+    SPELL_SH_HEALING_WAVE = 43548,
 
     // Warlock
-    SPELL_WL_CURSE_OF_DOOM          = 43439,
-    SPELL_WL_RAIN_OF_FIRE           = 43440,
-    SPELL_WL_UNSTABLE_AFFL          = 43522,
-    SPELL_WL_UNSTABLE_AFFL_DISPEL   = 43523,
+    SPELL_WL_CURSE_OF_DOOM        = 43439,
+    SPELL_WL_RAIN_OF_FIRE         = 43440,
+    SPELL_WL_UNSTABLE_AFFL        = 43522,
+    SPELL_WL_UNSTABLE_AFFL_DISPEL = 43523,
 
     // Warrior
-    SPELL_WR_MORTAL_STRIKE          = 43441,
-    SPELL_WR_WHIRLWIND              = 43442,
-    SPELL_WR_SPELL_REFLECT          = 43443,
+    SPELL_WR_MORTAL_STRIKE = 43441,
+    SPELL_WR_WHIRLWIND     = 43442,
+    SPELL_WR_SPELL_REFLECT = 43443,
 
     // Thurg
-    SPELL_BLOODLUST                 = 43578,
-    SPELL_CLEAVE                    = 15496,
+    SPELL_BLOODLUST = 43578,
+    SPELL_CLEAVE    = 15496,
 
     // Gazakroth
-    SPELL_FIREBOLT                  = 43584,
+    SPELL_FIREBOLT = 43584,
 
     // Alyson Antille
-    SPELL_FLASH_HEAL                = 43575,
-    SPELL_DISPEL_MAGIC              = 43577,
+    SPELL_FLASH_HEAL   = 43575,
+    SPELL_DISPEL_MAGIC = 43577,
 
     // Lord Raadan
-    SPELL_FLAME_BREATH              = 43582,
-    SPELL_THUNDERCLAP               = 43583,
+    SPELL_FLAME_BREATH = 43582,
+    SPELL_THUNDERCLAP  = 43583,
 
     // Darkheart
-    SPELL_PSYCHIC_WAIL              = 43590,
+    SPELL_PSYCHIC_WAIL = 43590,
 
     // Slither
-    SPELL_VENOM_SPIT                = 43579,
+    SPELL_VENOM_SPIT = 43579,
 
     // Fenstalker
-    SPELL_VOLATILE_INFECTION        = 43586,
+    SPELL_VOLATILE_INFECTION = 43586,
 
     // Koragg
-    SPELL_COLD_STARE                = 43593,
-    SPELL_MIGHTY_BLOW               = 43592
+    SPELL_COLD_STARE  = 43593,
+    SPELL_MIGHTY_BLOW = 43592
 };
 
-#define ORIENT                  1.5696f
-#define POS_Y                   921.2795f
-#define POS_Z                   33.8883f
+#define ORIENT 1.5696f
+#define POS_Y 921.2795f
+#define POS_Z 33.8883f
 
 static float Pos_X[4] = {112.8827f, 107.8827f, 122.8827f, 127.8827f};
 
-static uint32 AddEntryList[8] =
-{
-    24240, //Alyson Antille
-    24241, //Thurg
-    24242, //Slither
-    24243, //Lord Raadan
-    24244, //Gazakroth
-    24245, //Fenstalker
-    24246, //Darkheart
-    24247  //Koragg
+static uint32 AddEntryList[8] = {
+    24240, // Alyson Antille
+    24241, // Thurg
+    24242, // Slither
+    24243, // Lord Raadan
+    24244, // Gazakroth
+    24245, // Fenstalker
+    24246, // Darkheart
+    24247  // Koragg
 };
 
-enum AbilityTarget
-{
-    ABILITY_TARGET_SELF = 0,
-    ABILITY_TARGET_VICTIM = 1,
-    ABILITY_TARGET_ENEMY = 2,
-    ABILITY_TARGET_HEAL = 3,
-    ABILITY_TARGET_BUFF = 4,
+enum AbilityTarget {
+    ABILITY_TARGET_SELF    = 0,
+    ABILITY_TARGET_VICTIM  = 1,
+    ABILITY_TARGET_ENEMY   = 2,
+    ABILITY_TARGET_HEAL    = 3,
+    ABILITY_TARGET_BUFF    = 4,
     ABILITY_TARGET_SPECIAL = 5
 };
 
-struct PlayerAbilityStruct
-{
-    uint32 spell;
+struct PlayerAbilityStruct {
+    uint32        spell;
     AbilityTarget target;
-    uint32 cooldown; //FIXME - it's never used
+    uint32        cooldown; // FIXME - it's never used
 };
 
-static PlayerAbilityStruct PlayerAbility[][3] =
-{
+static PlayerAbilityStruct PlayerAbility[][3] = {
     // 1 warrior
-    {   {SPELL_WR_SPELL_REFLECT, ABILITY_TARGET_SELF, 10000},
-        {SPELL_WR_WHIRLWIND, ABILITY_TARGET_SELF, 10000},
-        {SPELL_WR_MORTAL_STRIKE, ABILITY_TARGET_VICTIM, 6000}
-    },
+    {{SPELL_WR_SPELL_REFLECT, ABILITY_TARGET_SELF, 10000},
+     {SPELL_WR_WHIRLWIND, ABILITY_TARGET_SELF, 10000},
+     {SPELL_WR_MORTAL_STRIKE, ABILITY_TARGET_VICTIM, 6000}},
     // 2 paladin
-    {   {SPELL_PA_CONSECRATION, ABILITY_TARGET_SELF, 10000},
-        {SPELL_PA_HOLY_LIGHT, ABILITY_TARGET_HEAL, 10000},
-        {SPELL_PA_AVENGING_WRATH, ABILITY_TARGET_SELF, 10000}
-    },
+    {{SPELL_PA_CONSECRATION, ABILITY_TARGET_SELF, 10000},
+     {SPELL_PA_HOLY_LIGHT, ABILITY_TARGET_HEAL, 10000},
+     {SPELL_PA_AVENGING_WRATH, ABILITY_TARGET_SELF, 10000}},
     // 3 hunter
-    {   {SPELL_HU_EXPLOSIVE_TRAP, ABILITY_TARGET_SELF, 10000},
-        {SPELL_HU_FREEZING_TRAP, ABILITY_TARGET_SELF, 10000},
-        {SPELL_HU_SNAKE_TRAP, ABILITY_TARGET_SELF, 10000}
-    },
+    {{SPELL_HU_EXPLOSIVE_TRAP, ABILITY_TARGET_SELF, 10000},
+     {SPELL_HU_FREEZING_TRAP, ABILITY_TARGET_SELF, 10000},
+     {SPELL_HU_SNAKE_TRAP, ABILITY_TARGET_SELF, 10000}},
     // 4 rogue
-    {   {SPELL_RO_WOUND_POISON, ABILITY_TARGET_VICTIM, 3000},
-        {SPELL_RO_SLICE_DICE, ABILITY_TARGET_SELF, 10000},
-        {SPELL_RO_BLIND, ABILITY_TARGET_ENEMY, 10000}
-    },
+    {{SPELL_RO_WOUND_POISON, ABILITY_TARGET_VICTIM, 3000},
+     {SPELL_RO_SLICE_DICE, ABILITY_TARGET_SELF, 10000},
+     {SPELL_RO_BLIND, ABILITY_TARGET_ENEMY, 10000}},
     // 5 priest
-    {   {SPELL_PR_PAIN_SUPP, ABILITY_TARGET_HEAL, 10000},
-        {SPELL_PR_HEAL, ABILITY_TARGET_HEAL, 10000},
-        {SPELL_PR_PSYCHIC_SCREAM, ABILITY_TARGET_SELF, 10000}
-    },
+    {{SPELL_PR_PAIN_SUPP, ABILITY_TARGET_HEAL, 10000},
+     {SPELL_PR_HEAL, ABILITY_TARGET_HEAL, 10000},
+     {SPELL_PR_PSYCHIC_SCREAM, ABILITY_TARGET_SELF, 10000}},
     // 5* shadow priest
-    {   {SPELL_PR_MIND_CONTROL, ABILITY_TARGET_ENEMY, 15000},
-        {SPELL_PR_MIND_BLAST, ABILITY_TARGET_ENEMY, 5000},
-        {SPELL_PR_SW_DEATH, ABILITY_TARGET_ENEMY, 10000}
-    },
+    {{SPELL_PR_MIND_CONTROL, ABILITY_TARGET_ENEMY, 15000},
+     {SPELL_PR_MIND_BLAST, ABILITY_TARGET_ENEMY, 5000},
+     {SPELL_PR_SW_DEATH, ABILITY_TARGET_ENEMY, 10000}},
     // 7 shaman
-    {   {SPELL_SH_FIRE_NOVA, ABILITY_TARGET_SELF, 10000},
-        {SPELL_SH_HEALING_WAVE, ABILITY_TARGET_HEAL, 10000},
-        {SPELL_SH_CHAIN_LIGHT, ABILITY_TARGET_ENEMY, 8000}
-    },
+    {{SPELL_SH_FIRE_NOVA, ABILITY_TARGET_SELF, 10000},
+     {SPELL_SH_HEALING_WAVE, ABILITY_TARGET_HEAL, 10000},
+     {SPELL_SH_CHAIN_LIGHT, ABILITY_TARGET_ENEMY, 8000}},
     // 8 mage
-    {   {SPELL_MG_FIREBALL, ABILITY_TARGET_ENEMY, 5000},
-        {SPELL_MG_FROSTBOLT, ABILITY_TARGET_ENEMY, 5000},
-        {SPELL_MG_ICE_LANCE, ABILITY_TARGET_SPECIAL, 2000}
-    },
+    {{SPELL_MG_FIREBALL, ABILITY_TARGET_ENEMY, 5000},
+     {SPELL_MG_FROSTBOLT, ABILITY_TARGET_ENEMY, 5000},
+     {SPELL_MG_ICE_LANCE, ABILITY_TARGET_SPECIAL, 2000}},
     // 9 warlock
-    {   {SPELL_WL_CURSE_OF_DOOM, ABILITY_TARGET_ENEMY, 10000},
-        {SPELL_WL_RAIN_OF_FIRE, ABILITY_TARGET_ENEMY, 10000},
-        {SPELL_WL_UNSTABLE_AFFL, ABILITY_TARGET_ENEMY, 10000}
-    },
+    {{SPELL_WL_CURSE_OF_DOOM, ABILITY_TARGET_ENEMY, 10000},
+     {SPELL_WL_RAIN_OF_FIRE, ABILITY_TARGET_ENEMY, 10000},
+     {SPELL_WL_UNSTABLE_AFFL, ABILITY_TARGET_ENEMY, 10000}},
     // 11 druid
-    {   {SPELL_DR_LIFEBLOOM, ABILITY_TARGET_HEAL, 10000},
-        {SPELL_DR_THORNS, ABILITY_TARGET_SELF, 10000},
-        {SPELL_DR_MOONFIRE, ABILITY_TARGET_ENEMY, 8000}
-    }
-};
+    {{SPELL_DR_LIFEBLOOM, ABILITY_TARGET_HEAL, 10000},
+     {SPELL_DR_THORNS, ABILITY_TARGET_SELF, 10000},
+     {SPELL_DR_MOONFIRE, ABILITY_TARGET_ENEMY, 8000}}};
 
-struct boss_hexlord_addAI : public ScriptedAI
-{
+struct boss_hexlord_addAI : public ScriptedAI {
     InstanceScript* instance;
 
     boss_hexlord_addAI(Creature* creature) : ScriptedAI(creature)
@@ -226,17 +206,13 @@ struct boss_hexlord_addAI : public ScriptedAI
         instance = creature->GetInstanceScript();
     }
 
-    void Reset() override { }
+    void Reset() override {}
 
-    void JustEngagedWith(Unit* /*who*/) override
-    {
-        DoZoneInCombat();
-    }
+    void JustEngagedWith(Unit* /*who*/) override { DoZoneInCombat(); }
 
     void UpdateAI(uint32 /*diff*/) override
     {
-        if (instance->GetData(DATA_HEXLORDEVENT) != IN_PROGRESS)
-        {
+        if (instance->GetData(DATA_HEXLORDEVENT) != IN_PROGRESS) {
             EnterEvadeMode();
             return;
         }
@@ -245,16 +221,11 @@ struct boss_hexlord_addAI : public ScriptedAI
     }
 };
 
-class boss_hexlord_malacrass : public CreatureScript
-{
+class boss_hexlord_malacrass : public CreatureScript {
 public:
-    boss_hexlord_malacrass()
-        : CreatureScript("boss_hexlord_malacrass")
-    {
-    }
+    boss_hexlord_malacrass() : CreatureScript("boss_hexlord_malacrass") {}
 
-    struct boss_hex_lord_malacrassAI : public ScriptedAI
-    {
+    struct boss_hex_lord_malacrassAI : public ScriptedAI {
         boss_hex_lord_malacrassAI(Creature* creature) : ScriptedAI(creature)
         {
             instance = creature->GetInstanceScript();
@@ -264,7 +235,7 @@ public:
         InstanceScript* instance;
 
         ObjectGuid AddGUID[4];
-        uint32 AddEntry[4];
+        uint32     AddEntry[4];
 
         ObjectGuid PlayerGUID;
 
@@ -281,12 +252,12 @@ public:
         {
             instance->SetData(DATA_HEXLORDEVENT, NOT_STARTED);
 
-            SpiritBolts_Timer = 20000;
-            DrainPower_Timer = 60000;
-            SiphonSoul_Timer = 100000;
+            SpiritBolts_Timer   = 20000;
+            DrainPower_Timer    = 60000;
+            SiphonSoul_Timer    = 100000;
             PlayerAbility_Timer = 99999;
             CheckAddState_Timer = 5000;
-            ResetTimer = 5000;
+            ResetTimer          = 5000;
 
             SpawnAdds();
         }
@@ -298,13 +269,12 @@ public:
             DoZoneInCombat();
             Talk(SAY_AGGRO);
 
-            for (uint8 i = 0; i < 4; ++i)
-            {
-                Creature* creature = ObjectAccessor::GetCreature(*me, AddGUID[i]);
+            for (uint8 i = 0; i < 4; ++i) {
+                Creature* creature =
+                    ObjectAccessor::GetCreature(*me, AddGUID[i]);
                 if (creature && creature->IsAlive())
                     creature->AI()->AttackStart(me->GetVictim());
-                else
-                {
+                else {
                     EnterEvadeMode();
                     break;
                 }
@@ -313,14 +283,13 @@ public:
 
         void KilledUnit(Unit* /*victim*/) override
         {
-            switch (urand(0, 1))
-            {
-                case 0:
-                    Talk(SAY_KILL_ONE);
-                    break;
-                case 1:
-                    Talk(SAY_KILL_TWO);
-                    break;
+            switch (urand(0, 1)) {
+            case 0:
+                Talk(SAY_KILL_ONE);
+                break;
+            case 1:
+                Talk(SAY_KILL_TWO);
+                break;
             }
         }
 
@@ -330,11 +299,17 @@ public:
 
             Talk(SAY_DEATH);
 
-            for (uint8 i = 0; i < 4; ++i)
-            {
+            for (uint8 i = 0; i < 4; ++i) {
                 Unit* Temp = ObjectAccessor::GetUnit(*me, AddGUID[i]);
                 if (Temp && Temp->IsAlive())
-                    Unit::DealDamage(Temp, Temp, Temp->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                    Unit::DealDamage(Temp,
+                                     Temp,
+                                     Temp->GetHealth(),
+                                     nullptr,
+                                     DIRECT_DAMAGE,
+                                     SPELL_SCHOOL_MASK_NORMAL,
+                                     nullptr,
+                                     false);
             }
         }
 
@@ -349,23 +324,31 @@ public:
                 AddList.erase(AddList.begin() + rand() % AddList.size());
 
             uint8 i = 0;
-            for (std::vector<uint32>::const_iterator itr = AddList.begin(); itr != AddList.end(); ++itr, ++i)
+            for (std::vector<uint32>::const_iterator itr = AddList.begin();
+                 itr != AddList.end();
+                 ++itr, ++i)
                 AddEntry[i] = *itr;
         }
 
         void SpawnAdds()
         {
-            for (uint8 i = 0; i < 4; ++i)
-            {
-                Creature* creature = (ObjectAccessor::GetCreature((*me), AddGUID[i]));
-                if (!creature || !creature->IsAlive())
-                {
-                    if (creature) creature->setDeathState(DeathState::Dead);
-                    creature = me->SummonCreature(AddEntry[i], Pos_X[i], POS_Y, POS_Z, ORIENT, TEMPSUMMON_DEAD_DESPAWN, 0);
-                    if (creature) AddGUID[i] = creature->GetGUID();
+            for (uint8 i = 0; i < 4; ++i) {
+                Creature* creature =
+                    (ObjectAccessor::GetCreature((*me), AddGUID[i]));
+                if (!creature || !creature->IsAlive()) {
+                    if (creature)
+                        creature->setDeathState(DeathState::Dead);
+                    creature = me->SummonCreature(AddEntry[i],
+                                                  Pos_X[i],
+                                                  POS_Y,
+                                                  POS_Z,
+                                                  ORIENT,
+                                                  TEMPSUMMON_DEAD_DESPAWN,
+                                                  0);
+                    if (creature)
+                        AddGUID[i] = creature->GetGUID();
                 }
-                else
-                {
+                else {
                     creature->AI()->EnterEvadeMode();
                     creature->SetPosition(Pos_X[i], POS_Y, POS_Z, ORIENT);
                     creature->StopMovingOnCurrentPos();
@@ -378,95 +361,104 @@ public:
             if (!UpdateVictim())
                 return;
 
-            if (ResetTimer <= diff)
-            {
-                if (me->IsWithinDist3d(119.223f, 1035.45f, 29.4481f, 10))
-                {
+            if (ResetTimer <= diff) {
+                if (me->IsWithinDist3d(119.223f, 1035.45f, 29.4481f, 10)) {
                     EnterEvadeMode();
                     return;
                 }
                 ResetTimer = 5000;
             }
-            else ResetTimer -= diff;
+            else
+                ResetTimer -= diff;
 
-            if (CheckAddState_Timer <= diff)
-            {
+            if (CheckAddState_Timer <= diff) {
                 for (uint8 i = 0; i < 4; ++i)
-                    if (Creature* temp = ObjectAccessor::GetCreature(*me, AddGUID[i]))
+                    if (Creature* temp =
+                            ObjectAccessor::GetCreature(*me, AddGUID[i]))
                         if (temp->IsAlive() && !temp->GetVictim())
                             temp->AI()->AttackStart(me->GetVictim());
 
                 CheckAddState_Timer = 5000;
             }
-            else CheckAddState_Timer -= diff;
+            else
+                CheckAddState_Timer -= diff;
 
-            if (DrainPower_Timer <= diff)
-            {
+            if (DrainPower_Timer <= diff) {
                 DoCast(me, SPELL_DRAIN_POWER, true);
                 Talk(SAY_DRAIN_POWER);
-                DrainPower_Timer = urand(40000, 55000);    // must cast in 60 sec, or buff/debuff will disappear
+                DrainPower_Timer =
+                    urand(40000, 55000); // must cast in 60 sec, or buff/debuff
+                                         // will disappear
             }
-            else DrainPower_Timer -= diff;
+            else
+                DrainPower_Timer -= diff;
 
-            if (SpiritBolts_Timer <= diff)
-            {
-                if (DrainPower_Timer < 12000)    // channel 10 sec
-                    SpiritBolts_Timer = 13000;   // cast drain power first
-                else
-                {
+            if (SpiritBolts_Timer <= diff) {
+                if (DrainPower_Timer < 12000)  // channel 10 sec
+                    SpiritBolts_Timer = 13000; // cast drain power first
+                else {
                     DoCast(me, SPELL_SPIRIT_BOLTS, false);
                     Talk(SAY_SPIRIT_BOLTS);
-                    SpiritBolts_Timer = 40000;
-                    SiphonSoul_Timer = 10000;    // ready to drain
+                    SpiritBolts_Timer   = 40000;
+                    SiphonSoul_Timer    = 10000; // ready to drain
                     PlayerAbility_Timer = 99999;
                 }
             }
-            else SpiritBolts_Timer -= diff;
+            else
+                SpiritBolts_Timer -= diff;
 
-            if (SiphonSoul_Timer <= diff)
-            {
-                Unit* target = SelectTarget(SelectTargetMethod::Random, 0, 70, true);
-                Unit* trigger = DoSpawnCreature(NPC_TEMP_TRIGGER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 30000);
-                if (!target || !trigger)
-                {
+            if (SiphonSoul_Timer <= diff) {
+                Unit* target =
+                    SelectTarget(SelectTargetMethod::Random, 0, 70, true);
+                Unit* trigger = DoSpawnCreature(NPC_TEMP_TRIGGER,
+                                                0,
+                                                0,
+                                                0,
+                                                0,
+                                                TEMPSUMMON_TIMED_DESPAWN,
+                                                30000);
+                if (!target || !trigger) {
                     EnterEvadeMode();
                     return;
                 }
-                else
-                {
+                else {
                     trigger->SetDisplayId(11686);
                     trigger->SetUnitFlag(UNIT_FLAG_NOT_SELECTABLE);
                     trigger->CastSpell(target, SPELL_SIPHON_SOUL, true);
                     trigger->GetMotionMaster()->MoveChase(me);
 
-                    //DoCast(target, SPELL_SIPHON_SOUL, true);
-                    //me->SetGuidValue(UNIT_FIELD_CHANNEL_OBJECT, target->GetGUID());
-                    //me->SetUInt32Value(UNIT_CHANNEL_SPELL, SPELL_SIPHON_SOUL);
+                    // DoCast(target, SPELL_SIPHON_SOUL, true);
+                    // me->SetGuidValue(UNIT_FIELD_CHANNEL_OBJECT,
+                    // target->GetGUID());
+                    // me->SetUInt32Value(UNIT_CHANNEL_SPELL,
+                    // SPELL_SIPHON_SOUL);
 
-                    PlayerGUID = target->GetGUID();
+                    PlayerGUID          = target->GetGUID();
                     PlayerAbility_Timer = urand(8000, 10000);
-                    PlayerClass = target->getClass() - 1;
+                    PlayerClass         = target->getClass() - 1;
 
                     if (target->IsClass(CLASS_DRUID))
                         PlayerClass = CLASS_DRUID;
-                    else if (target->IsClass(CLASS_PRIEST) && target->HasSpell(15473))
+                    else if (target->IsClass(CLASS_PRIEST) &&
+                             target->HasSpell(15473))
                         PlayerClass = CLASS_PRIEST; // shadow priest
 
-                    SiphonSoul_Timer = 99999;   // buff lasts 30 sec
+                    SiphonSoul_Timer = 99999; // buff lasts 30 sec
                 }
             }
-            else SiphonSoul_Timer -= diff;
+            else
+                SiphonSoul_Timer -= diff;
 
-            if (PlayerAbility_Timer <= diff)
-            {
-                //Unit* target = ObjectAccessor::GetUnit(*me, PlayerGUID);
-                //if (target && target->IsAlive())
+            if (PlayerAbility_Timer <= diff) {
+                // Unit* target = ObjectAccessor::GetUnit(*me, PlayerGUID);
+                // if (target && target->IsAlive())
                 //{
                 UseAbility();
                 PlayerAbility_Timer = urand(8000, 10000);
                 //}
             }
-            else PlayerAbility_Timer -= diff;
+            else
+                PlayerAbility_Timer -= diff;
 
             DoMeleeAttackIfReady();
         }
@@ -475,28 +467,26 @@ public:
         {
             uint8 random = urand(0, 2);
             Unit* target = nullptr;
-            switch (PlayerAbility[PlayerClass][random].target)
-            {
-                case ABILITY_TARGET_SELF:
-                    target = me;
-                    break;
-                case ABILITY_TARGET_VICTIM:
-                    target = me->GetVictim();
-                    break;
-                case ABILITY_TARGET_ENEMY:
-                default:
-                    target = SelectTarget(SelectTargetMethod::Random, 0, 100, true);
-                    break;
-                case ABILITY_TARGET_HEAL:
-                    target = DoSelectLowestHpFriendly(50, 0);
-                    break;
-                case ABILITY_TARGET_BUFF:
-                    {
-                        std::list<Creature*> templist = DoFindFriendlyMissingBuff(50, PlayerAbility[PlayerClass][random].spell);
-                        if (!templist.empty())
-                            target = *(templist.begin());
-                    }
-                    break;
+            switch (PlayerAbility[PlayerClass][random].target) {
+            case ABILITY_TARGET_SELF:
+                target = me;
+                break;
+            case ABILITY_TARGET_VICTIM:
+                target = me->GetVictim();
+                break;
+            case ABILITY_TARGET_ENEMY:
+            default:
+                target = SelectTarget(SelectTargetMethod::Random, 0, 100, true);
+                break;
+            case ABILITY_TARGET_HEAL:
+                target = DoSelectLowestHpFriendly(50, 0);
+                break;
+            case ABILITY_TARGET_BUFF: {
+                std::list<Creature*> templist = DoFindFriendlyMissingBuff(
+                    50, PlayerAbility[PlayerClass][random].spell);
+                if (!templist.empty())
+                    target = *(templist.begin());
+            } break;
             }
             if (target)
                 DoCast(target, PlayerAbility[PlayerClass][random].spell, false);
@@ -509,17 +499,12 @@ public:
     }
 };
 
-class boss_thurg : public CreatureScript
-{
+class boss_thurg : public CreatureScript {
 public:
-    boss_thurg()
-        : CreatureScript("boss_thurg")
-    {
-    }
+    boss_thurg() : CreatureScript("boss_thurg") {}
 
-    struct boss_thurgAI : public boss_hexlord_addAI
-    {
-        boss_thurgAI(Creature* creature) : boss_hexlord_addAI(creature) { }
+    struct boss_thurgAI : public boss_hexlord_addAI {
+        boss_thurgAI(Creature* creature) : boss_hexlord_addAI(creature) {}
 
         uint32 bloodlust_timer;
         uint32 cleave_timer;
@@ -527,7 +512,7 @@ public:
         void Reset() override
         {
             bloodlust_timer = 15000;
-            cleave_timer = 10000;
+            cleave_timer    = 10000;
 
             boss_hexlord_addAI::Reset();
         }
@@ -537,24 +522,24 @@ public:
             if (!UpdateVictim())
                 return;
 
-            if (bloodlust_timer <= diff)
-            {
-                std::list<Creature*> templist = DoFindFriendlyMissingBuff(50, SPELL_BLOODLUST);
-                if (!templist.empty())
-                {
+            if (bloodlust_timer <= diff) {
+                std::list<Creature*> templist =
+                    DoFindFriendlyMissingBuff(50, SPELL_BLOODLUST);
+                if (!templist.empty()) {
                     if (Unit* target = *(templist.begin()))
                         DoCast(target, SPELL_BLOODLUST, false);
                 }
                 bloodlust_timer = 12000;
             }
-            else bloodlust_timer -= diff;
+            else
+                bloodlust_timer -= diff;
 
-            if (cleave_timer <= diff)
-            {
+            if (cleave_timer <= diff) {
                 DoCastVictim(SPELL_CLEAVE, false);
-                cleave_timer = 12000; //3 sec cast
+                cleave_timer = 12000; // 3 sec cast
             }
-            else cleave_timer -= diff;
+            else
+                cleave_timer -= diff;
 
             boss_hexlord_addAI::UpdateAI(diff);
         }
@@ -566,28 +551,25 @@ public:
     }
 };
 
-class boss_alyson_antille : public CreatureScript
-{
+class boss_alyson_antille : public CreatureScript {
 public:
-    boss_alyson_antille()
-        : CreatureScript("boss_alyson_antille")
-    {
-    }
+    boss_alyson_antille() : CreatureScript("boss_alyson_antille") {}
 
-    struct boss_alyson_antilleAI : public boss_hexlord_addAI
-    {
-        //Holy Priest
-        boss_alyson_antilleAI(Creature* creature) : boss_hexlord_addAI(creature) { }
+    struct boss_alyson_antilleAI : public boss_hexlord_addAI {
+        // Holy Priest
+        boss_alyson_antilleAI(Creature* creature) : boss_hexlord_addAI(creature)
+        {
+        }
 
         uint32 flashheal_timer;
         uint32 dispelmagic_timer;
 
         void Reset() override
         {
-            flashheal_timer = 2500;
+            flashheal_timer   = 2500;
             dispelmagic_timer = 10000;
 
-            //AcquireGUID();
+            // AcquireGUID();
 
             boss_hexlord_addAI::Reset();
         }
@@ -597,10 +579,8 @@ public:
             if (!who)
                 return;
 
-            if (who->isTargetableForAttack())
-            {
-                if (me->Attack(who, false))
-                {
+            if (who->isTargetableForAttack()) {
+                if (me->Attack(who, false)) {
                     me->GetMotionMaster()->MoveChase(who, 20);
                     me->AddThreat(who, 0.0f);
                 }
@@ -612,27 +592,23 @@ public:
             if (!UpdateVictim())
                 return;
 
-            if (flashheal_timer <= diff)
-            {
+            if (flashheal_timer <= diff) {
                 Unit* target = DoSelectLowestHpFriendly(99, 30000);
-                if (target)
-                {
+                if (target) {
                     if (target->IsWithinDistInMap(me, 50))
                         DoCast(target, SPELL_FLASH_HEAL, false);
-                    else
-                    {
+                    else {
                         /**
                          * @bug
                          * Bugged
                          * //me->GetMotionMaster()->Clear();
                          * //me->GetMotionMaster()->MoveChase(target, 20);
                          */
-                        //me->GetMotionMaster()->Clear();
-                        //me->GetMotionMaster()->MoveChase(target, 20);
+                        // me->GetMotionMaster()->Clear();
+                        // me->GetMotionMaster()->MoveChase(target, 20);
                     }
                 }
-                else
-                {
+                else {
                     if (urand(0, 1))
                         target = DoSelectLowestHpFriendly(50, 0);
                     else
@@ -642,7 +618,8 @@ public:
                 }
                 flashheal_timer = 2500;
             }
-            else flashheal_timer -= diff;
+            else
+                flashheal_timer -= diff;
 
             /*if (dispelmagic_timer <= diff)
             {
@@ -653,7 +630,8 @@ public:
                 DoCast(target, SPELL_DISPEL_MAGIC, false);
             }
             else
-                me->CastSpell(SelectUnit(SelectTargetMethod::Random, 0), SPELL_DISPEL_MAGIC, false);
+                me->CastSpell(SelectUnit(SelectTargetMethod::Random, 0),
+            SPELL_DISPEL_MAGIC, false);
 
             dispelmagic_timer = 12000;
             } else dispelmagic_timer -= diff;*/
@@ -668,9 +646,8 @@ public:
     }
 };
 
-struct boss_gazakrothAI : public boss_hexlord_addAI
-{
-    boss_gazakrothAI(Creature* creature) : boss_hexlord_addAI(creature)  { }
+struct boss_gazakrothAI : public boss_hexlord_addAI {
+    boss_gazakrothAI(Creature* creature) : boss_hexlord_addAI(creature) {}
 
     uint32 firebolt_timer;
 
@@ -685,10 +662,8 @@ struct boss_gazakrothAI : public boss_hexlord_addAI
         if (!who)
             return;
 
-        if (who->isTargetableForAttack())
-        {
-            if (me->Attack(who, false))
-            {
+        if (who->isTargetableForAttack()) {
+            if (me->Attack(who, false)) {
                 me->GetMotionMaster()->MoveChase(who, 20);
                 me->AddThreat(who, 0.0f);
             }
@@ -700,28 +675,23 @@ struct boss_gazakrothAI : public boss_hexlord_addAI
         if (!UpdateVictim())
             return;
 
-        if (firebolt_timer <= diff)
-        {
+        if (firebolt_timer <= diff) {
             DoCastVictim(SPELL_FIREBOLT, false);
             firebolt_timer = 700;
         }
-        else firebolt_timer -= diff;
+        else
+            firebolt_timer -= diff;
 
         boss_hexlord_addAI::UpdateAI(diff);
     }
 };
 
-class boss_lord_raadan : public CreatureScript
-{
+class boss_lord_raadan : public CreatureScript {
 public:
-    boss_lord_raadan()
-        : CreatureScript("boss_lord_raadan")
-    {
-    }
+    boss_lord_raadan() : CreatureScript("boss_lord_raadan") {}
 
-    struct boss_lord_raadanAI : public boss_hexlord_addAI
-    {
-        boss_lord_raadanAI(Creature* creature) : boss_hexlord_addAI(creature)  { }
+    struct boss_lord_raadanAI : public boss_hexlord_addAI {
+        boss_lord_raadanAI(Creature* creature) : boss_hexlord_addAI(creature) {}
 
         uint32 flamebreath_timer;
         uint32 thunderclap_timer;
@@ -738,19 +708,19 @@ public:
             if (!UpdateVictim())
                 return;
 
-            if (thunderclap_timer <= diff)
-            {
+            if (thunderclap_timer <= diff) {
                 DoCastVictim(SPELL_THUNDERCLAP, false);
                 thunderclap_timer = 12000;
             }
-            else thunderclap_timer -= diff;
+            else
+                thunderclap_timer -= diff;
 
-            if (flamebreath_timer <= diff)
-            {
+            if (flamebreath_timer <= diff) {
                 DoCastVictim(SPELL_FLAME_BREATH, false);
                 flamebreath_timer = 12000;
             }
-            else flamebreath_timer -= diff;
+            else
+                flamebreath_timer -= diff;
 
             boss_hexlord_addAI::UpdateAI(diff);
         }
@@ -762,17 +732,12 @@ public:
     }
 };
 
-class boss_darkheart : public CreatureScript
-{
+class boss_darkheart : public CreatureScript {
 public:
-    boss_darkheart()
-        : CreatureScript("boss_darkheart")
-    {
-    }
+    boss_darkheart() : CreatureScript("boss_darkheart") {}
 
-    struct boss_darkheartAI : public boss_hexlord_addAI
-    {
-        boss_darkheartAI(Creature* creature) : boss_hexlord_addAI(creature)  { }
+    struct boss_darkheartAI : public boss_hexlord_addAI {
+        boss_darkheartAI(Creature* creature) : boss_hexlord_addAI(creature) {}
 
         uint32 psychicwail_timer;
 
@@ -786,12 +751,12 @@ public:
             if (!UpdateVictim())
                 return;
 
-            if (psychicwail_timer <= diff)
-            {
+            if (psychicwail_timer <= diff) {
                 DoCastVictim(SPELL_PSYCHIC_WAIL, false);
                 psychicwail_timer = 12000;
             }
-            else psychicwail_timer -= diff;
+            else
+                psychicwail_timer -= diff;
 
             boss_hexlord_addAI::UpdateAI(diff);
         }
@@ -803,17 +768,12 @@ public:
     }
 };
 
-class boss_slither : public CreatureScript
-{
+class boss_slither : public CreatureScript {
 public:
-    boss_slither()
-        : CreatureScript("boss_slither")
-    {
-    }
+    boss_slither() : CreatureScript("boss_slither") {}
 
-    struct boss_slitherAI : public boss_hexlord_addAI
-    {
-        boss_slitherAI(Creature* creature) : boss_hexlord_addAI(creature) { }
+    struct boss_slitherAI : public boss_hexlord_addAI {
+        boss_slitherAI(Creature* creature) : boss_hexlord_addAI(creature) {}
 
         uint32 venomspit_timer;
 
@@ -828,10 +788,8 @@ public:
             if (!who)
                 return;
 
-            if (who->isTargetableForAttack())
-            {
-                if (me->Attack(who, false))
-                {
+            if (who->isTargetableForAttack()) {
+                if (me->Attack(who, false)) {
                     me->GetMotionMaster()->MoveChase(who, 20);
                     me->AddThreat(who, 0.0f);
                 }
@@ -843,13 +801,14 @@ public:
             if (!UpdateVictim())
                 return;
 
-            if (venomspit_timer <= diff)
-            {
-                if (Unit* victim = SelectTarget(SelectTargetMethod::Random, 0, 100, true))
+            if (venomspit_timer <= diff) {
+                if (Unit* victim =
+                        SelectTarget(SelectTargetMethod::Random, 0, 100, true))
                     DoCast(victim, SPELL_VENOM_SPIT, false);
                 venomspit_timer = 2500;
             }
-            else venomspit_timer -= diff;
+            else
+                venomspit_timer -= diff;
 
             boss_hexlord_addAI::UpdateAI(diff);
         }
@@ -861,17 +820,12 @@ public:
     }
 };
 
-class boss_fenstalker : public CreatureScript
-{
+class boss_fenstalker : public CreatureScript {
 public:
-    boss_fenstalker()
-        : CreatureScript("boss_fenstalker")
-    {
-    }
+    boss_fenstalker() : CreatureScript("boss_fenstalker") {}
 
-    struct boss_fenstalkerAI : public boss_hexlord_addAI
-    {
-        boss_fenstalkerAI(Creature* creature) : boss_hexlord_addAI(creature) { }
+    struct boss_fenstalkerAI : public boss_hexlord_addAI {
+        boss_fenstalkerAI(Creature* creature) : boss_hexlord_addAI(creature) {}
 
         uint32 volatileinf_timer;
 
@@ -885,13 +839,14 @@ public:
             if (!UpdateVictim())
                 return;
 
-            if (volatileinf_timer <= diff)
-            {
+            if (volatileinf_timer <= diff) {
                 // core bug
-                me->GetVictim()->CastSpell(me->GetVictim(), SPELL_VOLATILE_INFECTION, false);
+                me->GetVictim()->CastSpell(
+                    me->GetVictim(), SPELL_VOLATILE_INFECTION, false);
                 volatileinf_timer = 12000;
             }
-            else volatileinf_timer -= diff;
+            else
+                volatileinf_timer -= diff;
 
             boss_hexlord_addAI::UpdateAI(diff);
         }
@@ -903,24 +858,19 @@ public:
     }
 };
 
-class boss_koragg : public CreatureScript
-{
+class boss_koragg : public CreatureScript {
 public:
-    boss_koragg()
-        : CreatureScript("boss_koragg")
-    {
-    }
+    boss_koragg() : CreatureScript("boss_koragg") {}
 
-    struct boss_koraggAI : public boss_hexlord_addAI
-    {
-        boss_koraggAI(Creature* creature) : boss_hexlord_addAI(creature) { }
+    struct boss_koraggAI : public boss_hexlord_addAI {
+        boss_koraggAI(Creature* creature) : boss_hexlord_addAI(creature) {}
 
         uint32 coldstare_timer;
         uint32 mightyblow_timer;
 
         void Reset() override
         {
-            coldstare_timer = 15000;
+            coldstare_timer  = 15000;
             mightyblow_timer = 10000;
             boss_hexlord_addAI::Reset();
         }
@@ -929,14 +879,13 @@ public:
             if (!UpdateVictim())
                 return;
 
-            if (mightyblow_timer <= diff)
-            {
+            if (mightyblow_timer <= diff) {
                 DoCastVictim(SPELL_MIGHTY_BLOW, false);
                 mightyblow_timer = 12000;
             }
-            if (coldstare_timer <= diff)
-            {
-                if (Unit* victim = SelectTarget(SelectTargetMethod::Random, 0, 100, true))
+            if (coldstare_timer <= diff) {
+                if (Unit* victim =
+                        SelectTarget(SelectTargetMethod::Random, 0, 100, true))
                     DoCast(victim, SPELL_COLD_STARE, false);
                 coldstare_timer = 12000;
             }
@@ -951,29 +900,35 @@ public:
     }
 };
 
-class spell_hexlord_unstable_affliction : public SpellScriptLoader
-{
+class spell_hexlord_unstable_affliction : public SpellScriptLoader {
 public:
-    spell_hexlord_unstable_affliction() : SpellScriptLoader("spell_hexlord_unstable_affliction") { }
-
-    class spell_hexlord_unstable_affliction_AuraScript : public AuraScript
+    spell_hexlord_unstable_affliction()
+        : SpellScriptLoader("spell_hexlord_unstable_affliction")
     {
+    }
+
+    class spell_hexlord_unstable_affliction_AuraScript : public AuraScript {
         PrepareAuraScript(spell_hexlord_unstable_affliction_AuraScript);
 
         bool Validate(SpellInfo const* /*spell*/) override
         {
-            return ValidateSpellInfo({ SPELL_WL_UNSTABLE_AFFL_DISPEL });
+            return ValidateSpellInfo({SPELL_WL_UNSTABLE_AFFL_DISPEL});
         }
 
         void HandleDispel(DispelInfo* dispelInfo)
         {
             if (Unit* caster = GetCaster())
-                caster->CastSpell(dispelInfo->GetDispeller(), SPELL_WL_UNSTABLE_AFFL_DISPEL, true, nullptr, GetEffect(EFFECT_0));
+                caster->CastSpell(dispelInfo->GetDispeller(),
+                                  SPELL_WL_UNSTABLE_AFFL_DISPEL,
+                                  true,
+                                  nullptr,
+                                  GetEffect(EFFECT_0));
         }
 
         void Register() override
         {
-            AfterDispel += AuraDispelFn(spell_hexlord_unstable_affliction_AuraScript::HandleDispel);
+            AfterDispel += AuraDispelFn(
+                spell_hexlord_unstable_affliction_AuraScript::HandleDispel);
         }
     };
 
@@ -996,4 +951,3 @@ void AddSC_boss_hex_lord_malacrass()
     new boss_alyson_antille();
     new spell_hexlord_unstable_affliction();
 }
-

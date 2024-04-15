@@ -1,8 +1,8 @@
-/** 
+/**
   @file Color1uint8.h
- 
+
   @maintainer Morgan McGuire, graphics3d.com
- 
+
   @created 2007-01-30
   @edited  2007-01-30
 
@@ -13,14 +13,14 @@
 #ifndef G3D_COLOR1UINT8_H
 #define G3D_COLOR1UINT8_H
 
-#include "G3D/platform.h"
 #include "G3D/g3dmath.h"
+#include "G3D/platform.h"
 
 namespace G3D {
 
 /**
  Represents a Color1 as a packed integer.  Convenient
- for creating unsigned int vertex arrays. 
+ for creating unsigned int vertex arrays.
 
  <B>WARNING</B>: Integer color formats are different than
  integer vertex formats.  The color channels are automatically
@@ -29,9 +29,10 @@ namespace G3D {
  but Vector3(1,1,1) == Vector3int16(1,1,1).
 
  <B>Note</B>:
- Conversion of a float32 to uint8 is accomplished by min(iFloor(f * 256)) and 
+ Conversion of a float32 to uint8 is accomplished by min(iFloor(f * 256)) and
  back to float32 by u / 255.0f.  This gives equal size intervals.
-Consider a number line from 0 to 1 and a corresponding one from 0 to 255.  If we use iRound(x * 255), then the mapping for three critical intervals are:
+Consider a number line from 0 to 1 and a corresponding one from 0 to 255.  If we
+use iRound(x * 255), then the mapping for three critical intervals are:
 
 <pre>
 let s = 0.5/255
@@ -50,7 +51,8 @@ let s = 1/256
 [s, 2 * s)       -> 1               s
 (1 - s, 1]       -> 255             s
 </PRE>
-and the intervals are all the same size, thus giving equal precision to all values.
+and the intervals are all the same size, thus giving equal precision to all
+values.
  */
 G3D_BEGIN_PACKED_CLASS(1)
 class Color1uint8 {
@@ -62,8 +64,7 @@ private:
     bool operator>=(const Color1uint8&) const;
 
 public:
-
-    uint8       value;
+    uint8 value;
 
     Color1uint8() : value(0) {}
 
@@ -77,15 +78,16 @@ public:
 
     void deserialize(class BinaryInput& bi);
 
-    inline bool operator==(const Color1uint8& other) const {
+    inline bool operator==(const Color1uint8& other) const
+    {
         return value == other.value;
     }
 
-    inline bool operator!=(const Color1uint8& other) const {
+    inline bool operator!=(const Color1uint8& other) const
+    {
         return value != other.value;
     }
 
-}
-G3D_END_PACKED_CLASS(1)
-}
+} G3D_END_PACKED_CLASS(1)
+} // namespace G3D
 #endif

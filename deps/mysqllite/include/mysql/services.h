@@ -29,4 +29,3 @@ extern "C" {
 
 #define MYSQL_SERVICES_INCLUDED
 #endif
-

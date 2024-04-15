@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,17 +22,22 @@
 
 bool ScriptMgr::CanAddMember(ArenaTeam* team, ObjectGuid PlayerGuid)
 {
-    CALL_ENABLED_BOOLEAN_HOOKS(ArenaScript, ARENAHOOK_CAN_ADD_MEMBER, !script->CanAddMember(team, PlayerGuid));
+    CALL_ENABLED_BOOLEAN_HOOKS(ArenaScript,
+                               ARENAHOOK_CAN_ADD_MEMBER,
+                               !script->CanAddMember(team, PlayerGuid));
 }
 
 void ScriptMgr::OnGetPoints(ArenaTeam* team, uint32 memberRating, float& points)
 {
-    CALL_ENABLED_HOOKS(ArenaScript, ARENAHOOK_ON_GET_POINTS, script->OnGetPoints(team, memberRating, points));
+    CALL_ENABLED_HOOKS(ArenaScript,
+                       ARENAHOOK_ON_GET_POINTS,
+                       script->OnGetPoints(team, memberRating, points));
 }
 
 bool ScriptMgr::CanSaveToDB(ArenaTeam* team)
 {
-    CALL_ENABLED_BOOLEAN_HOOKS(ArenaScript, ARENAHOOK_CAN_SAVE_TO_DB, !script->CanSaveToDB(team));
+    CALL_ENABLED_BOOLEAN_HOOKS(
+        ArenaScript, ARENAHOOK_CAN_SAVE_TO_DB, !script->CanSaveToDB(team));
 }
 
 ArenaScript::ArenaScript(const char* name, std::vector<uint16> enabledHooks)

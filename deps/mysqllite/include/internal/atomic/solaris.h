@@ -18,50 +18,49 @@
 
 #include <atomic.h>
 
-#define	MY_ATOMIC_MODE	"solaris-atomic"
+#define MY_ATOMIC_MODE "solaris-atomic"
 
 #if defined(__GNUC__)
-#define atomic_typeof(T,V)      __typeof__(V)
+#define atomic_typeof(T, V) __typeof__(V)
 #else
-#define atomic_typeof(T,V)      T
+#define atomic_typeof(T, V) T
 #endif
 
-#define uintptr_t void *
-#define atomic_or_ptr_nv(X,Y) (void *)atomic_or_ulong_nv((volatile ulong_t *)X, Y)
+#define uintptr_t void*
+#define atomic_or_ptr_nv(X, Y)                                                 \
+    (void*)atomic_or_ulong_nv((volatile ulong_t*)X, Y)
 
-#define make_atomic_cas_body(S)                         \
-  atomic_typeof(uint ## S ## _t, *cmp) sav;             \
-  sav = atomic_cas_ ## S(                               \
-           (volatile uint ## S ## _t *)a,               \
-           (uint ## S ## _t)*cmp,                       \
-           (uint ## S ## _t)set);                       \
-  if (! (ret= (sav == *cmp)))                           \
-    *cmp= sav;
+#define make_atomic_cas_body(S)                                                \
+    atomic_typeof(uint##S##_t, *cmp) sav;                                      \
+    sav = atomic_cas_##S(                                                      \
+        (volatile uint##S##_t*)a, (uint##S##_t) * cmp, (uint##S##_t)set);      \
+    if (!(ret = (sav == *cmp)))                                                \
+        *cmp = sav;
 
-#define make_atomic_add_body(S)                         \
-  int ## S nv;  /* new value */                         \
-  nv= atomic_add_ ## S ## _nv((volatile uint ## S ## _t *)a, v); \
-  v= nv - v
+#define make_atomic_add_body(S)                                                \
+    int##S nv; /* new value */                                                 \
+    nv = atomic_add_##S##_nv((volatile uint##S##_t*)a, v);                     \
+    v  = nv - v
 
 /* ------------------------------------------------------------------------ */
 
 #ifdef MY_ATOMIC_MODE_DUMMY
 
-#define make_atomic_load_body(S)  ret= *a
-#define make_atomic_store_body(S)   *a= v
+#define make_atomic_load_body(S) ret = *a
+#define make_atomic_store_body(S) *a = v
 
 #else /* MY_ATOMIC_MODE_DUMMY */
 
-#define make_atomic_load_body(S)                        \
-  ret= atomic_or_ ## S ## _nv((volatile uint ## S ## _t *)a, 0)
+#define make_atomic_load_body(S)                                               \
+    ret = atomic_or_##S##_nv((volatile uint##S##_t*)a, 0)
 
-#define make_atomic_store_body(S)                       \
-  (void) atomic_swap_ ## S((volatile uint ## S ## _t *)a, (uint ## S ## _t)v)
+#define make_atomic_store_body(S)                                              \
+    (void)atomic_swap_##S((volatile uint##S##_t*)a, (uint##S##_t)v)
 
 #endif
 
-#define make_atomic_fas_body(S)                        \
-  v= atomic_swap_ ## S((volatile uint ## S ## _t *)a, (uint ## S ## _t)v)
+#define make_atomic_fas_body(S)                                                \
+    v = atomic_swap_##S((volatile uint##S##_t*)a, (uint##S##_t)v)
 
 #else /* cleanup */
 
@@ -69,4 +68,3 @@
 #undef atomic_or_ptr_nv
 
 #endif
-

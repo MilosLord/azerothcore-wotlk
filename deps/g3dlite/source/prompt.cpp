@@ -1,7 +1,7 @@
 /**
  @file prompt.cpp
- 
- @author Morgan McGuire, http://graphics.cs.williams.edu 
+
+ @author Morgan McGuire, http://graphics.cs.williams.edu
  @cite Windows dialog interface by Max McGuire, mmcguire@ironlore.com
  @cite Font setting code by Kurt Miller, kurt@flipcode.com
 
@@ -15,10 +15,10 @@
 #include <stdio.h>
 
 #ifdef G3D_WINDOWS
-#    include <sstream>
-#    include <conio.h>
+#include <conio.h>
+#include <sstream>
 #else
-#    define _getch getchar
+#define _getch getchar
 #endif
 
 #if 0 /* G3DFIX: exclude GUI prompt code */
@@ -29,7 +29,7 @@
 #endif
 */
 
-#    include "G3D/prompt_cocoa.h"
+#include "G3D/prompt_cocoa.h"
 
 /*
 #ifdef G3D_64BIT
@@ -298,8 +298,8 @@ struct PromptParams {
 /**
  * Constants for controls.
  */
-#define IDC_MESSAGE     1000
-#define IDC_BUTTON0     2000
+#define IDC_MESSAGE 1000
+#define IDC_BUTTON0 2000
 
 INT_PTR CALLBACK PromptDlgProc(HWND hDlg, UINT msg,
                                WPARAM wParam, LPARAM lParam) {
@@ -474,15 +474,14 @@ static int guiPrompt(
 #endif
 #endif /* G3DFIX: exclude GUI prompt code */
 
-
 /**
- * Show a prompt on stdout 
+ * Show a prompt on stdout
  */
-static int textPrompt(
-    const char*         windowTitle,
-    const char*         prompt,
-    const char**        choice,
-    int                 numChoices) {
+static int textPrompt(const char*  windowTitle,
+                      const char*  prompt,
+                      const char** choice,
+                      int          numChoices)
+{
 
     printf("\n___________________________________________________\n");
     printf("%s\n", windowTitle);
@@ -497,13 +496,14 @@ static int textPrompt(
         printf("\n");
         printf("Choose an option by number:");
 
-        while ((c < 0) || (c >= numChoices)) { 
+        while ((c < 0) || (c >= numChoices)) {
             printf("\n");
 
             for (int i = 0; i < numChoices; ++i) {
                 if (numChoices <= 3) {
                     printf("  (%d) %s ", i, choice[i]);
-                } else {
+                }
+                else {
                     printf("  (%d) %s\n", i, choice[i]);
                 }
             }
@@ -513,18 +513,19 @@ static int textPrompt(
 
             if ((c < 0) || (c >= numChoices)) {
                 printf("'%d' is not a valid choice.", c);
-            } else {
+            }
+            else {
                 printf("%d", c);
             }
         }
-    
-    } else if (numChoices == 1) {
-        
+    }
+    else if (numChoices == 1) {
+
         printf("\nPress any key for '%s'...", choice[0]);
         _getch();
         c = 0;
-
-    } else {
+    }
+    else {
 
         printf("\nPress any key...");
         _getch();
@@ -550,46 +551,43 @@ static int guiPrompt
 #endif
 
 #endif /* G3DFIX: exclude GUI prompt code */
-int prompt(
-    const char*      windowTitle,
-    const char*      prompt, 
-    const char**     choice,
-    int              numChoices,
-    bool             useGui) {
+int prompt(const char*  windowTitle,
+           const char*  prompt,
+           const char** choice,
+           int          numChoices,
+           bool         useGui)
+{
 #if 0 /* G3DFIX: exclude GUI prompt code */
-    #ifdef G3D_WINDOWS
+#ifdef G3D_WINDOWS
         if (useGui) {
             // Build the message box
             return guiPrompt(windowTitle, prompt, choice, numChoices);
         }
-    #endif
-    
-        #ifdef G3D_OSX
+#endif
+
+#ifdef G3D_OSX
                 if (useGui){
                     //Will default to text prompt if numChoices > 4
 		  int result = guiPrompt(windowTitle, prompt, choice, numChoices);
 		  fprintf(stderr, "%d\n", result);
 		  return result;
                 }
-        #endif
+#endif
 #else
     (void)useGui;
 #endif /* G3DFIX: exclude GUI prompt code */
     return textPrompt(windowTitle, prompt, choice, numChoices);
 }
 
+void msgBox(const std::string& message, const std::string& title)
+{
 
-void msgBox(
-    const std::string& message,
-    const std::string& title) {
-
-    const char *choice[] = {"Ok"};
-    prompt(title.c_str(), message.c_str(), choice, 1, true); 
+    const char* choice[] = {"Ok"};
+    prompt(title.c_str(), message.c_str(), choice, 1, true);
 }
 
 #ifndef G3D_WINDOWS
-    #undef _getch
+#undef _getch
 #endif
 
-}// namespace
-
+} // namespace G3D

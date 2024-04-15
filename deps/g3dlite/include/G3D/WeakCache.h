@@ -1,8 +1,8 @@
-/** 
+/**
   \file G3D/WeakCache.h
- 
+
   \maintainer Morgan McGuire, graphics3d.com
- 
+
   \created 2007-05-16
   \edited  2012-01-02
 
@@ -43,65 +43,62 @@ namespace G3D {
 
           return t;
       }
-      
-      
+
+
     </pre>
  */
-template<class Key, class ValueRef>
+template <class Key, class ValueRef>
 class WeakCache {
     typedef weak_ptr<typename ValueRef::element_type> ValueWeakRef;
 
 private:
-
     Table<Key, ValueWeakRef> table;
 
 public:
     /**
        Returns NULL if the object is not in the cache
     */
-    ValueRef operator[](const Key& k) {
+    ValueRef operator[](const Key& k)
+    {
         if (table.containsKey(k)) {
             ValueWeakRef w = table[k];
-            ValueRef s = w.lock();
-            if (! s) {
+            ValueRef     s = w.lock();
+            if (!s) {
                 // This object has been collected; clean out its key
                 table.remove(k);
             }
             return s;
-        } else {
+        }
+        else {
             return ValueRef();
         }
     }
 
-
-
-    void getValues(Array<ValueRef>& values) {
+    void getValues(Array<ValueRef>& values)
+    {
         Array<Key> keys;
         table.getKeys(keys);
         for (int i = 0; i < keys.size(); ++i) {
             ValueRef value = (*this)[keys[i]];
-            if(notNull(value)) {
+            if (notNull(value)) {
                 values.append(value);
             }
         }
     }
 
-    void clear() {
-        table.clear();
-    }
+    void clear() { table.clear(); }
 
-    void set(const Key& k, ValueRef v) {
-        table.set(k, v);
-    }
+    void set(const Key& k, ValueRef v) { table.set(k, v); }
 
-    /** Removes k from the cache or does nothing if it is not currently in the cache.*/
-    void remove(const Key& k) {
+    /** Removes k from the cache or does nothing if it is not currently in the
+     * cache.*/
+    void remove(const Key& k)
+    {
         if (table.containsKey(k)) {
             table.remove(k);
         }
     }
 };
 
-}
+} // namespace G3D
 #endif
-

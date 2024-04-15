@@ -16,15 +16,14 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
-#if defined(__i386__) || defined(_MSC_VER) || defined(__x86_64__)   \
-    || defined(HAVE_GCC_ATOMIC_BUILTINS) \
-    || defined(HAVE_SOLARIS_ATOMIC)
+#if defined(__i386__) || defined(_MSC_VER) || defined(__x86_64__) ||           \
+    defined(HAVE_GCC_ATOMIC_BUILTINS) || defined(HAVE_SOLARIS_ATOMIC)
 
-#  ifdef MY_ATOMIC_MODE_DUMMY
-#    define LOCK_prefix ""
-#  else
-#    define LOCK_prefix "lock"
-#  endif
+#ifdef MY_ATOMIC_MODE_DUMMY
+#define LOCK_prefix ""
+#else
+#define LOCK_prefix "lock"
+#endif
 /*
   We choose implementation as follows:
   ------------------------------------
@@ -36,19 +35,19 @@
   choose the Solaris implementation on Solaris (mainly for SunStudio
   compilers).
 */
-#  if defined(_MSV_VER)
-#    include "generic-msvc.h"
-#  elif __GNUC__
-#    if defined(HAVE_SOLARIS_ATOMIC)
-#      include "solaris.h"
-#    elif defined(HAVE_GCC_ATOMIC_BUILTINS)
-#      include "gcc_builtins.h"
-#    elif defined(__i386__) || defined(__x86_64__)
-#      include "x86-gcc.h"
-#    endif
-#  elif defined(HAVE_SOLARIS_ATOMIC)
-#    include "solaris.h"
-#  endif
+#if defined(_MSV_VER)
+#include "generic-msvc.h"
+#elif __GNUC__
+#if defined(HAVE_SOLARIS_ATOMIC)
+#include "solaris.h"
+#elif defined(HAVE_GCC_ATOMIC_BUILTINS)
+#include "gcc_builtins.h"
+#elif defined(__i386__) || defined(__x86_64__)
+#include "x86-gcc.h"
+#endif
+#elif defined(HAVE_SOLARIS_ATOMIC)
+#include "solaris.h"
+#endif
 #endif
 
 #if defined(make_atomic_cas_body)
@@ -56,7 +55,7 @@
   Type not used so minimal size (emptry struct has different size between C
   and C++, zero-length array is gcc-specific).
 */
-typedef char my_atomic_rwlock_t __attribute__ ((unused));
+typedef char my_atomic_rwlock_t __attribute__((unused));
 #define my_atomic_rwlock_destroy(name)
 #define my_atomic_rwlock_init(name)
 #define my_atomic_rwlock_rdlock(name)

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -21,8 +22,7 @@
 #include "Appender.h"
 
 // EnumUtils: DESCRIBE THIS
-enum ColorTypes
-{
+enum ColorTypes {
     BLACK,
     RED,
     GREEN,
@@ -41,20 +41,23 @@ enum ColorTypes
     NUM_COLOR_TYPES // SKIP
 };
 
-class AppenderConsole : public Appender
-{
+class AppenderConsole : public Appender {
 public:
     static constexpr AppenderType type = APPENDER_CONSOLE;
 
-    AppenderConsole(uint8 _id, std::string const& name, LogLevel level, AppenderFlags flags, std::vector<std::string_view> const& args);
-    void InitColors(std::string const& name, std::string_view init_str);
+    AppenderConsole(uint8                                _id,
+                    std::string const&                   name,
+                    LogLevel                             level,
+                    AppenderFlags                        flags,
+                    std::vector<std::string_view> const& args);
+    void         InitColors(std::string const& name, std::string_view init_str);
     AppenderType getType() const override { return type; }
 
 private:
-    void SetColor(bool stdout_stream, ColorTypes color);
-    void ResetColor(bool stdout_stream);
-    void _write(LogMessage const* message) override;
-    bool _colored;
+    void       SetColor(bool stdout_stream, ColorTypes color);
+    void       ResetColor(bool stdout_stream);
+    void       _write(LogMessage const* message) override;
+    bool       _colored;
     ColorTypes _colors[NUM_ENABLED_LOG_LEVELS];
 };
 

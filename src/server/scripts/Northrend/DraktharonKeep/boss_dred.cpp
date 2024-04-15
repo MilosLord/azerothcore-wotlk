@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,34 +23,31 @@
 #include "SpellScriptLoader.h"
 #include "drak_tharon_keep.h"
 
-enum Spells
-{
-    SPELL_BELLOWING_ROAR                = 22686,
-    SPELL_GRIEVOUS_BITE                 = 48920,
-    SPELL_MANGLING_SLASH                = 48873,
-    SPELL_FEARSOME_ROAR                 = 48849,
-    SPELL_PIERCING_SLASH                = 48878,
-    SPELL_RAPTOR_CALL                   = 59416
+enum Spells {
+    SPELL_BELLOWING_ROAR = 22686,
+    SPELL_GRIEVOUS_BITE  = 48920,
+    SPELL_MANGLING_SLASH = 48873,
+    SPELL_FEARSOME_ROAR  = 48849,
+    SPELL_PIERCING_SLASH = 48878,
+    SPELL_RAPTOR_CALL    = 59416
 };
 
-enum Misc
-{
-    NPC_DRAKKARI_SCYTHECLAW             = 26628,
-    NPC_DRAKKARI_GUTRIPPER              = 26641,
+enum Misc {
+    NPC_DRAKKARI_SCYTHECLAW = 26628,
+    NPC_DRAKKARI_GUTRIPPER  = 26641,
 
-    SAY_CLAW_EMOTE                      = 0,
+    SAY_CLAW_EMOTE = 0,
 
-    EVENT_SPELL_BELLOWING_ROAR          = 1,
-    EVENT_SPELL_GRIEVOUS_BITE           = 2,
-    EVENT_SPELL_MANGLING_SLASH          = 3,
-    EVENT_SPELL_FEARSOME_ROAR           = 4,
-    EVENT_SPELL_PIERCING_SLASH          = 5,
-    EVENT_SPELL_RAPTOR_CALL             = 6,
-    EVENT_MENACING_CLAW                 = 7
+    EVENT_SPELL_BELLOWING_ROAR = 1,
+    EVENT_SPELL_GRIEVOUS_BITE  = 2,
+    EVENT_SPELL_MANGLING_SLASH = 3,
+    EVENT_SPELL_FEARSOME_ROAR  = 4,
+    EVENT_SPELL_PIERCING_SLASH = 5,
+    EVENT_SPELL_RAPTOR_CALL    = 6,
+    EVENT_MENACING_CLAW        = 7
 };
 
-class boss_dred : public CreatureScript
-{
+class boss_dred : public CreatureScript {
 public:
     boss_dred() : CreatureScript("boss_dred") {}
 
@@ -58,11 +56,8 @@ public:
         return GetDraktharonKeepAI<boss_dredAI>(creature);
     }
 
-    struct boss_dredAI : public BossAI
-    {
-        boss_dredAI(Creature* creature) : BossAI(creature, DATA_DRED)
-        {
-        }
+    struct boss_dredAI : public BossAI {
+        boss_dredAI(Creature* creature) : BossAI(creature, DATA_DRED) {}
 
         void Reset() override
         {
@@ -93,8 +88,7 @@ public:
             events.ScheduleEvent(EVENT_SPELL_MANGLING_SLASH, 18s + 500ms);
             events.ScheduleEvent(EVENT_SPELL_FEARSOME_ROAR, 10s, 20s);
             events.ScheduleEvent(EVENT_SPELL_PIERCING_SLASH, 17s);
-            if (IsHeroic())
-            {
+            if (IsHeroic()) {
                 events.ScheduleEvent(EVENT_MENACING_CLAW, 21s);
                 events.ScheduleEvent(EVENT_SPELL_RAPTOR_CALL, 20s, 25s);
             }
@@ -109,42 +103,41 @@ public:
             if (me->HasUnitState(UNIT_STATE_CASTING))
                 return;
 
-            switch (events.ExecuteEvent())
-            {
-                case EVENT_SPELL_BELLOWING_ROAR:
-                    me->CastSpell(me, SPELL_BELLOWING_ROAR, false);
-                    events.ScheduleEvent(EVENT_SPELL_BELLOWING_ROAR, 40s);
-                    break;
-                case EVENT_SPELL_GRIEVOUS_BITE:
-                    me->CastSpell(me->GetVictim(), SPELL_GRIEVOUS_BITE, false);
-                    events.ScheduleEvent(EVENT_SPELL_GRIEVOUS_BITE, 20s);
-                    break;
-                case EVENT_SPELL_MANGLING_SLASH:
-                    me->CastSpell(me->GetVictim(), SPELL_MANGLING_SLASH, false);
-                    events.ScheduleEvent(EVENT_SPELL_MANGLING_SLASH, 20s);
-                    break;
-                case EVENT_SPELL_FEARSOME_ROAR:
-                    me->CastSpell(me, SPELL_FEARSOME_ROAR, false);
-                    events.ScheduleEvent(EVENT_SPELL_FEARSOME_ROAR, 17s);
-                    break;
-                case EVENT_SPELL_PIERCING_SLASH:
-                    me->CastSpell(me->GetVictim(), SPELL_PIERCING_SLASH, false);
-                    events.ScheduleEvent(EVENT_SPELL_PIERCING_SLASH, 20s);
-                    break;
-                case EVENT_SPELL_RAPTOR_CALL:
-                    me->CastSpell(me, SPELL_RAPTOR_CALL, false);
-                    events.ScheduleEvent(EVENT_SPELL_RAPTOR_CALL, 20s);
-                    break;
-                case EVENT_MENACING_CLAW:
-                    Talk(SAY_CLAW_EMOTE);
-                    me->setAttackTimer(BASE_ATTACK, 2000);
+            switch (events.ExecuteEvent()) {
+            case EVENT_SPELL_BELLOWING_ROAR:
+                me->CastSpell(me, SPELL_BELLOWING_ROAR, false);
+                events.ScheduleEvent(EVENT_SPELL_BELLOWING_ROAR, 40s);
+                break;
+            case EVENT_SPELL_GRIEVOUS_BITE:
+                me->CastSpell(me->GetVictim(), SPELL_GRIEVOUS_BITE, false);
+                events.ScheduleEvent(EVENT_SPELL_GRIEVOUS_BITE, 20s);
+                break;
+            case EVENT_SPELL_MANGLING_SLASH:
+                me->CastSpell(me->GetVictim(), SPELL_MANGLING_SLASH, false);
+                events.ScheduleEvent(EVENT_SPELL_MANGLING_SLASH, 20s);
+                break;
+            case EVENT_SPELL_FEARSOME_ROAR:
+                me->CastSpell(me, SPELL_FEARSOME_ROAR, false);
+                events.ScheduleEvent(EVENT_SPELL_FEARSOME_ROAR, 17s);
+                break;
+            case EVENT_SPELL_PIERCING_SLASH:
+                me->CastSpell(me->GetVictim(), SPELL_PIERCING_SLASH, false);
+                events.ScheduleEvent(EVENT_SPELL_PIERCING_SLASH, 20s);
+                break;
+            case EVENT_SPELL_RAPTOR_CALL:
+                me->CastSpell(me, SPELL_RAPTOR_CALL, false);
+                events.ScheduleEvent(EVENT_SPELL_RAPTOR_CALL, 20s);
+                break;
+            case EVENT_MENACING_CLAW:
+                Talk(SAY_CLAW_EMOTE);
+                me->setAttackTimer(BASE_ATTACK, 2000);
+                me->AttackerStateUpdate(me->GetVictim());
+                if (me->GetVictim())
                     me->AttackerStateUpdate(me->GetVictim());
-                    if (me->GetVictim())
-                        me->AttackerStateUpdate(me->GetVictim());
-                    if (me->GetVictim())
-                        me->AttackerStateUpdate(me->GetVictim());
-                    events.ScheduleEvent(EVENT_MENACING_CLAW, 20s);
-                    break;
+                if (me->GetVictim())
+                    me->AttackerStateUpdate(me->GetVictim());
+                events.ScheduleEvent(EVENT_MENACING_CLAW, 20s);
+                break;
             }
 
             DoMeleeAttackIfReady();
@@ -155,20 +148,19 @@ public:
     };
 };
 
-class spell_dred_grievious_bite : public SpellScriptLoader
-{
+class spell_dred_grievious_bite : public SpellScriptLoader {
 public:
-    spell_dred_grievious_bite() : SpellScriptLoader("spell_dred_grievious_bite") { }
-
-    class spell_dred_grievious_bite_AuraScript : public AuraScript
+    spell_dred_grievious_bite() : SpellScriptLoader("spell_dred_grievious_bite")
     {
+    }
+
+    class spell_dred_grievious_bite_AuraScript : public AuraScript {
         PrepareAuraScript(spell_dred_grievious_bite_AuraScript);
 
         void OnPeriodic(AuraEffect const* /*aurEff*/)
         {
             if (Unit* target = GetTarget())
-                if (target->GetHealth() == target->GetMaxHealth())
-                {
+                if (target->GetHealth() == target->GetMaxHealth()) {
                     PreventDefaultAction();
                     SetDuration(0);
                 }
@@ -176,7 +168,10 @@ public:
 
         void Register() override
         {
-            OnEffectPeriodic += AuraEffectPeriodicFn(spell_dred_grievious_bite_AuraScript::OnPeriodic, EFFECT_1, SPELL_AURA_PERIODIC_DAMAGE);
+            OnEffectPeriodic += AuraEffectPeriodicFn(
+                spell_dred_grievious_bite_AuraScript::OnPeriodic,
+                EFFECT_1,
+                SPELL_AURA_PERIODIC_DAMAGE);
         }
     };
 
@@ -186,23 +181,29 @@ public:
     }
 };
 
-class spell_dred_raptor_call : public SpellScriptLoader
-{
+class spell_dred_raptor_call : public SpellScriptLoader {
 public:
-    spell_dred_raptor_call() : SpellScriptLoader("spell_dred_raptor_call") { }
+    spell_dred_raptor_call() : SpellScriptLoader("spell_dred_raptor_call") {}
 
-    class spell_dred_raptor_call_SpellScript : public SpellScript
-    {
+    class spell_dred_raptor_call_SpellScript : public SpellScript {
         PrepareSpellScript(spell_dred_raptor_call_SpellScript);
 
         void HandleDummy(SpellEffIndex /*effIndex*/)
         {
-            GetCaster()->SummonCreature(RAND(NPC_DRAKKARI_GUTRIPPER, NPC_DRAKKARI_SCYTHECLAW), -522.02f, -718.89f, 30.26f, 2.41f);
+            GetCaster()->SummonCreature(
+                RAND(NPC_DRAKKARI_GUTRIPPER, NPC_DRAKKARI_SCYTHECLAW),
+                -522.02f,
+                -718.89f,
+                30.26f,
+                2.41f);
         }
 
         void Register() override
         {
-            OnEffectHitTarget += SpellEffectFn(spell_dred_raptor_call_SpellScript::HandleDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
+            OnEffectHitTarget +=
+                SpellEffectFn(spell_dred_raptor_call_SpellScript::HandleDummy,
+                              EFFECT_0,
+                              SPELL_EFFECT_DUMMY);
         }
     };
 
@@ -212,14 +213,15 @@ public:
     }
 };
 
-class achievement_better_off_dred : public AchievementCriteriaScript
-{
+class achievement_better_off_dred : public AchievementCriteriaScript {
 public:
-    achievement_better_off_dred() : AchievementCriteriaScript("achievement_better_off_dred")
+    achievement_better_off_dred()
+        : AchievementCriteriaScript("achievement_better_off_dred")
     {
     }
 
-    bool OnCheck(Player* /*player*/, Unit* target, uint32 /*criteria_id*/) override
+    bool
+    OnCheck(Player* /*player*/, Unit* target, uint32 /*criteria_id*/) override
     {
         if (!target)
             return false;

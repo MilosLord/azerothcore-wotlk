@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -19,55 +20,48 @@
 #include "InstanceScript.h"
 #include "mechanar.h"
 
-static DoorData const doorData[] =
-{
-    { GO_DOOR_MOARG_1,          DATA_GATEWATCHER_IRON_HAND,     DOOR_TYPE_PASSAGE },
-    { GO_DOOR_MOARG_2,          DATA_GATEWATCHER_GYROKILL,      DOOR_TYPE_PASSAGE },
-    { GO_DOOR_NETHERMANCER,     DATA_NETHERMANCER_SEPRETHREA,   DOOR_TYPE_ROOM },
-    { 0,                        0,                              DOOR_TYPE_ROOM }
-};
+static DoorData const doorData[] = {
+    {GO_DOOR_MOARG_1, DATA_GATEWATCHER_IRON_HAND, DOOR_TYPE_PASSAGE},
+    {GO_DOOR_MOARG_2, DATA_GATEWATCHER_GYROKILL, DOOR_TYPE_PASSAGE},
+    {GO_DOOR_NETHERMANCER, DATA_NETHERMANCER_SEPRETHREA, DOOR_TYPE_ROOM},
+    {0, 0, DOOR_TYPE_ROOM}};
 
-class instance_mechanar : public InstanceMapScript
-{
+class instance_mechanar : public InstanceMapScript {
 public:
-    instance_mechanar(): InstanceMapScript("instance_mechanar", 554) { }
+    instance_mechanar() : InstanceMapScript("instance_mechanar", 554) {}
 
-    struct instance_mechanar_InstanceMapScript : public InstanceScript
-    {
+    struct instance_mechanar_InstanceMapScript : public InstanceScript {
         instance_mechanar_InstanceMapScript(Map* map) : InstanceScript(map)
         {
             SetHeaders(DataHeader);
             SetBossNumber(MAX_ENCOUNTER);
             SetPersistentDataCount(MAX_DATA_INDEXES);
             LoadDoorData(doorData);
-
         }
 
         void OnGameObjectCreate(GameObject* gameObject) override
         {
-            switch (gameObject->GetEntry())
-            {
-                case GO_DOOR_MOARG_1:
-                case GO_DOOR_MOARG_2:
-                case GO_DOOR_NETHERMANCER:
-                    AddDoor(gameObject);
-                    break;
-                default:
-                    break;
+            switch (gameObject->GetEntry()) {
+            case GO_DOOR_MOARG_1:
+            case GO_DOOR_MOARG_2:
+            case GO_DOOR_NETHERMANCER:
+                AddDoor(gameObject);
+                break;
+            default:
+                break;
             }
         }
 
         void OnGameObjectRemove(GameObject* gameObject) override
         {
-            switch (gameObject->GetEntry())
-            {
-                case GO_DOOR_MOARG_1:
-                case GO_DOOR_MOARG_2:
-                case GO_DOOR_NETHERMANCER:
-                    RemoveDoor(gameObject);
-                    break;
-                default:
-                    break;
+            switch (gameObject->GetEntry()) {
+            case GO_DOOR_MOARG_1:
+            case GO_DOOR_MOARG_2:
+            case GO_DOOR_NETHERMANCER:
+                RemoveDoor(gameObject);
+                break;
+            default:
+                break;
             }
         }
 
@@ -87,7 +81,4 @@ public:
     }
 };
 
-void AddSC_instance_mechanar()
-{
-    new instance_mechanar();
-}
+void AddSC_instance_mechanar() { new instance_mechanar(); }

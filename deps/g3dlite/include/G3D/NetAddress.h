@@ -3,13 +3,13 @@
 
  \created 2010-01-03
  \edited  2013-03-17
- */   
+ */
 #ifndef G3D_NetAddress_h
 #define G3D_NetAddress_h
 
-#include "G3D/platform.h"
 #include "G3D/Table.h"
 #include "G3D/netheaders.h"
+#include "G3D/platform.h"
 
 #include "G3D/g3dmath.h"
 
@@ -27,13 +27,13 @@ private:
     NetAddress(const SOCKADDR_IN& a);
     NetAddress(const struct in_addr& addr, uint16 port = 0);
 
-    SOCKADDR_IN                 addr;
+    SOCKADDR_IN addr;
 
 public:
-
-    enum { 
-        /** 
-         Use the host portion of the IP address of the default adapter on this machine.
+    enum {
+        /**
+         Use the host portion of the IP address of the default adapter on this
+         machine.
         */
         // Must match ENET_HOST_ANY
         DEFAULT_ADAPTER_HOST = 0
@@ -47,7 +47,8 @@ public:
     explicit NetAddress(uint32 host, uint16 port = 0);
 
     /**
-     @param port Specified in host byte order (i.e., don't worry about endian issues)
+     @param port Specified in host byte order (i.e., don't worry about endian
+     issues)
     */
     NetAddress(const std::string& hostname, uint16 port);
 
@@ -83,24 +84,25 @@ public:
 
     /** @brief Returns a value in host format (i.e., don't worry about
         endian issues) */
-    inline uint32 ip() const {
+    inline uint32 ip() const
+    {
         return ntohl(addr.sin_addr.s_addr);
-        //return ntohl(addr.sin_addr.S_un.S_addr);
+        // return ntohl(addr.sin_addr.S_un.S_addr);
     }
 
-    inline uint16 port() const {
-        return ntohs(addr.sin_port);
-    }
+    inline uint16 port() const { return ntohs(addr.sin_port); }
 
     std::string ipString() const;
     std::string toString() const;
 
-    /** Name of this address, without the domain.  Performs reverse DNS lookup on this address.  This may make a network 
-    connection to a DNS server and block until that communication completes
-    if the address is one that has not been recently checked.*/
+    /** Name of this address, without the domain.  Performs reverse DNS lookup
+    on this address.  This may make a network connection to a DNS server and
+    block until that communication completes if the address is one that has not
+    been recently checked.*/
     std::string hostname() const;
 
-    /** Name of the local machine machine, without the domain.  The value is cached after the first call.*/
+    /** Name of the local machine machine, without the domain.  The value is
+     * cached after the first call.*/
     static std::string localHostname();
 };
 
@@ -108,9 +110,12 @@ std::ostream& operator<<(std::ostream& os, const NetAddress&);
 
 } // namespace G3D
 
-template <> struct HashTrait<G3D::NetAddress> {
-    static size_t hashCode(const G3D::NetAddress& key) { 
-        return static_cast<size_t>(key.ip() + (static_cast<G3D::uint32>(key.port()) << 16));
+template <>
+struct HashTrait<G3D::NetAddress> {
+    static size_t hashCode(const G3D::NetAddress& key)
+    {
+        return static_cast<size_t>(
+            key.ip() + (static_cast<G3D::uint32>(key.port()) << 16));
     }
 };
 
@@ -120,12 +125,13 @@ namespace G3D {
  Two addresses may point to the same computer but be != because
  they have different IP's.
  */
-inline bool operator==(const NetAddress& a, const NetAddress& b) {
+inline bool operator==(const NetAddress& a, const NetAddress& b)
+{
     return (a.ip() == b.ip()) && (a.port() == b.port());
 }
 
-
-inline bool operator!=(const NetAddress& a, const NetAddress& b) {
+inline bool operator!=(const NetAddress& a, const NetAddress& b)
+{
     return !(a == b);
 }
 

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,32 +21,28 @@
 
 #include "Battleground.h"
 
-enum ArenaBroadcastTexts
-{
-    ARENA_TEXT_START_ONE_MINUTE             = 15740,
-    ARENA_TEXT_START_THIRTY_SECONDS         = 15741,
-    ARENA_TEXT_START_FIFTEEN_SECONDS        = 15739,
-    ARENA_TEXT_START_BATTLE_HAS_BEGUN       = 15742,
+enum ArenaBroadcastTexts {
+    ARENA_TEXT_START_ONE_MINUTE       = 15740,
+    ARENA_TEXT_START_THIRTY_SECONDS   = 15741,
+    ARENA_TEXT_START_FIFTEEN_SECONDS  = 15739,
+    ARENA_TEXT_START_BATTLE_HAS_BEGUN = 15742,
 };
 
-enum ArenaSpellIds
-{
-    SPELL_ALLIANCE_GOLD_FLAG                = 32724,
-    SPELL_ALLIANCE_GREEN_FLAG               = 32725,
-    SPELL_HORDE_GOLD_FLAG                   = 35774,
-    SPELL_HORDE_GREEN_FLAG                  = 35775,
+enum ArenaSpellIds {
+    SPELL_ALLIANCE_GOLD_FLAG  = 32724,
+    SPELL_ALLIANCE_GREEN_FLAG = 32725,
+    SPELL_HORDE_GOLD_FLAG     = 35774,
+    SPELL_HORDE_GREEN_FLAG    = 35775,
 
-    SPELL_LAST_MAN_STANDING                 = 26549  // Achievement Credit
+    SPELL_LAST_MAN_STANDING = 26549 // Achievement Credit
 };
 
-enum ArenaWorldStates
-{
-    ARENA_WORLD_STATE_ALIVE_PLAYERS_GREEN   = 3600,
-    ARENA_WORLD_STATE_ALIVE_PLAYERS_GOLD    = 3601
+enum ArenaWorldStates {
+    ARENA_WORLD_STATE_ALIVE_PLAYERS_GREEN = 3600,
+    ARENA_WORLD_STATE_ALIVE_PLAYERS_GOLD  = 3601
 };
 
-class AC_GAME_API Arena : public Battleground
-{
+class AC_GAME_API Arena : public Battleground {
 protected:
     Arena();
 

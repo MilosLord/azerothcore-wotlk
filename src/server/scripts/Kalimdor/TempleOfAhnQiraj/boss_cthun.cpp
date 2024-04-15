@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -29,122 +30,112 @@ SDComment: Darkglare tracking issue
 SDCategory: Temple of Ahn'Qiraj
 EndScriptData */
 
-enum Spells
-{
+enum Spells {
     // ***** Main Phase 1 ********
-    //Eye Spells
-    SPELL_FREEZE_ANIM                           = 16245,
-    SPELL_GREEN_BEAM                            = 26134,
-    SPELL_DARK_GLARE                            = 26029,
-    SPELL_RED_COLORATION                        = 22518,        //Probably not the right spell but looks similar
+    // Eye Spells
+    SPELL_FREEZE_ANIM = 16245,
+    SPELL_GREEN_BEAM  = 26134,
+    SPELL_DARK_GLARE  = 26029,
+    SPELL_RED_COLORATION =
+        22518, // Probably not the right spell but looks similar
 
-    //Eye Tentacles Spells
-    SPELL_MIND_FLAY                             = 26143,
+    // Eye Tentacles Spells
+    SPELL_MIND_FLAY = 26143,
 
-    //Claw Tentacles Spells
-    SPELL_GROUND_RUPTURE                        = 26139,
-    SPELL_HAMSTRING                             = 26141,
+    // Claw Tentacles Spells
+    SPELL_GROUND_RUPTURE = 26139,
+    SPELL_HAMSTRING      = 26141,
 
     // ***** Main Phase 2 ******
-    //Body spells
-    SPELL_CARAPACE_CTHUN                        = 26156,     // Server-side
-    SPELL_TRANSFORM                             = 26232,
-    SPELL_PURPLE_COLORATION                     = 22581,     //Probably not the right spell but looks similar
+    // Body spells
+    SPELL_CARAPACE_CTHUN = 26156, // Server-side
+    SPELL_TRANSFORM      = 26232,
+    SPELL_PURPLE_COLORATION =
+        22581, // Probably not the right spell but looks similar
 
-    //Eye Tentacles Spells
-    //SAME AS PHASE1
+    // Eye Tentacles Spells
+    // SAME AS PHASE1
 
-    //Giant Claw Tentacles
-    SPELL_MASSIVE_GROUND_RUPTURE                = 26478,
+    // Giant Claw Tentacles
+    SPELL_MASSIVE_GROUND_RUPTURE = 26478,
 
-    //Also casts Hamstring
-    SPELL_THRASH                                = 3391,
+    // Also casts Hamstring
+    SPELL_THRASH = 3391,
 
-    //Giant Eye Tentacles
-    //CHAIN CASTS "SPELL_GREEN_BEAM"
+    // Giant Eye Tentacles
+    // CHAIN CASTS "SPELL_GREEN_BEAM"
 
-    //Stomach Spells
-    SPELL_MOUTH_TENTACLE                        = 26332,
-    SPELL_EXIT_STOMACH_KNOCKBACK                = 25383,
-    SPELL_DIGESTIVE_ACID                        = 26476,
+    // Stomach Spells
+    SPELL_MOUTH_TENTACLE         = 26332,
+    SPELL_EXIT_STOMACH_KNOCKBACK = 25383,
+    SPELL_DIGESTIVE_ACID         = 26476,
 
     // Tentacles
-    SPELL_SUBMERGE_VISUAL                       = 26234,
-    SPELL_BIRTH                                 = 26262,
-    SPELL_ROCKY_GROUND_IMPACT                   = 26271,
+    SPELL_SUBMERGE_VISUAL     = 26234,
+    SPELL_BIRTH               = 26262,
+    SPELL_ROCKY_GROUND_IMPACT = 26271,
 
     // Areatriggers
-    SPELL_SPIT_OUT                              = 25383,
-    SPELL_EXIT_STOMACH                          = 26221,
-    SPELL_RUBBLE_ROCKY                          = 26271
+    SPELL_SPIT_OUT     = 25383,
+    SPELL_EXIT_STOMACH = 26221,
+    SPELL_RUBBLE_ROCKY = 26271
 };
 
-enum Actions
-{
-    ACTION_FLESH_TENTACLE_KILLED                = 1,
+enum Actions {
+    ACTION_FLESH_TENTACLE_KILLED = 1,
 
-    ACTION_SPAWN_EYE_TENTACLES                  = 1,
+    ACTION_SPAWN_EYE_TENTACLES = 1,
 
-    ACTION_START_PHASE_TWO                      = 1,
+    ACTION_START_PHASE_TWO = 1,
 };
 
-enum TaskGroups
-{
-    GROUP_BEAM_PHASE = 1
+enum TaskGroups { GROUP_BEAM_PHASE = 1 };
+
+enum Phases { PHASE_BODY = 2 };
+
+enum Misc {
+    MAX_TENTACLE_GROUPS = 5,
+    NPC_TRIGGER         = 15384,
+    NPC_EXIT_TRIGGER    = 15800
 };
 
-enum Phases
-{
-    PHASE_BODY = 2
-};
-
-enum Misc
-{
-    MAX_TENTACLE_GROUPS                         = 5,
-    NPC_TRIGGER                                 = 15384,
-    NPC_EXIT_TRIGGER                            = 15800
-};
-
-enum Yells
-{
-    //Text emote
-    EMOTE_WEAKENED                              = 0,
+enum Yells {
+    // Text emote
+    EMOTE_WEAKENED = 0,
 
     // ****** Out of Combat ******
     // Random Wispers - No txt only sound
     // The random sound is chosen by the client.
-    RANDOM_SOUND_WHISPER                        = 8663,
+    RANDOM_SOUND_WHISPER = 8663,
 };
 
-//Stomach Teleport positions
-#define STOMACH_X                           -8562.0f
-#define STOMACH_Y                           2037.0f
-#define STOMACH_Z                           -70.0f
-#define STOMACH_O                           5.05f
+// Stomach Teleport positions
+#define STOMACH_X -8562.0f
+#define STOMACH_Y 2037.0f
+#define STOMACH_Z -70.0f
+#define STOMACH_O 5.05f
 
-//Flesh tentacle positions
-const Position FleshTentaclePos[2] =
-{
-    { -8571.0f, 1990.0f, -98.0f, 1.22f},
-    { -8525.0f, 1994.0f, -98.0f, 2.12f},
+// Flesh tentacle positions
+const Position FleshTentaclePos[2] = {
+    {-8571.0f, 1990.0f, -98.0f, 1.22f},
+    {-8525.0f, 1994.0f, -98.0f, 2.12f},
 };
 
-class NotInStomachSelector
-{
+class NotInStomachSelector {
 public:
-    NotInStomachSelector() { }
+    NotInStomachSelector() {}
 
     bool operator()(Unit* unit) const
     {
-        return unit->IsPlayer() && !unit->HasAura(SPELL_DIGESTIVE_ACID) && (unit->GetPositionZ() > 0.0f);
+        return unit->IsPlayer() && !unit->HasAura(SPELL_DIGESTIVE_ACID) &&
+               (unit->GetPositionZ() > 0.0f);
     }
 };
 
-//Kick out position
-const Position KickPos = { -8545.0f, 1984.0f, -96.0f, 0.0f};
+// Kick out position
+const Position KickPos = {-8545.0f, 1984.0f, -96.0f, 0.0f};
 
-struct boss_eye_of_cthun : public BossAI
-{
+struct boss_eye_of_cthun : public BossAI {
     boss_eye_of_cthun(Creature* creature) : BossAI(creature, DATA_CTHUN)
     {
         me->SetCombatMovement(false);
@@ -153,18 +144,18 @@ struct boss_eye_of_cthun : public BossAI
 
     void Reset() override
     {
-        //Dark Beam phase 35 seconds (each tick = 1 second, 35 ticks)
-        DarkGlareTick = 0;
+        // Dark Beam phase 35 seconds (each tick = 1 second, 35 ticks)
+        DarkGlareTick  = 0;
         DarkGlareAngle = 0;
-        ClockWise = false;
+        ClockWise      = false;
 
         _eyeTentacleCounter = 0;
 
-        //Reset flags
+        // Reset flags
         me->RemoveUnitFlag(UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
         me->SetVisible(true);
 
-        //to avoid having a following void zone
+        // to avoid having a following void zone
         Creature* pPortal = me->FindNearestCreature(NPC_CTHUN_PORTAL, 10);
         if (pPortal)
             pPortal->SetReactState(REACT_PASSIVE);
@@ -174,8 +165,7 @@ struct boss_eye_of_cthun : public BossAI
 
     void JustDied(Unit* /*killer*/) override
     {
-        if (Creature* cthun = instance->GetCreature(DATA_CTHUN))
-        {
+        if (Creature* cthun = instance->GetCreature(DATA_CTHUN)) {
             cthun->AI()->DoAction(ACTION_START_PHASE_TWO);
         }
     }
@@ -189,11 +179,10 @@ struct boss_eye_of_cthun : public BossAI
 
     void MoveInLineOfSight(Unit* who) override
     {
-        if (who->GetTypeId() == TYPEID_PLAYER && !me->IsInCombat())
-        {
+        if (who->GetTypeId() == TYPEID_PLAYER && !me->IsInCombat()) {
             // Z checks are necessary here because AQ maps do funky stuff.
-            if (me->IsWithinLOSInMap(who) && me->IsWithinDist2d(who, 90.0f) && who->GetPositionZ() > 100.0f)
-            {
+            if (me->IsWithinLOSInMap(who) && me->IsWithinDist2d(who, 90.0f) &&
+                who->GetPositionZ() > 100.0f) {
                 AttackStart(who);
             }
         }
@@ -201,13 +190,11 @@ struct boss_eye_of_cthun : public BossAI
 
     void DoAction(int32 action) override
     {
-        if (action == ACTION_SPAWN_EYE_TENTACLES)
-        {
+        if (action == ACTION_SPAWN_EYE_TENTACLES) {
             me->SummonCreatureGroup(_eyeTentacleCounter);
             _eyeTentacleCounter++;
 
-            if (_eyeTentacleCounter >= MAX_TENTACLE_GROUPS)
-            {
+            if (_eyeTentacleCounter >= MAX_TENTACLE_GROUPS) {
                 _eyeTentacleCounter = 0;
             }
         }
@@ -217,64 +204,67 @@ struct boss_eye_of_cthun : public BossAI
     {
         summons.Summon(summon);
 
-        if (Creature* cthun = instance->GetCreature(DATA_CTHUN))
-        {
+        if (Creature* cthun = instance->GetCreature(DATA_CTHUN)) {
             cthun->AI()->JustSummoned(summon);
         }
     }
 
     void ScheduleTask(bool onEngage = false)
     {
-        scheduler.
-            Schedule(3s, [this, onEngage](TaskContext task)
-            {
-                if (task.GetRepeatCounter() < 3 && onEngage)
-                {
-                    if (Unit* target = ObjectAccessor::GetUnit(*me, _beamTarget))
-                    {
-                        DoCast(target, SPELL_GREEN_BEAM);
-                    }
+        scheduler
+            .Schedule(3s,
+                      [this, onEngage](TaskContext task) {
+                          if (task.GetRepeatCounter() < 3 && onEngage) {
+                              if (Unit* target = ObjectAccessor::GetUnit(
+                                      *me, _beamTarget)) {
+                                  DoCast(target, SPELL_GREEN_BEAM);
+                              }
 
-                    task.Repeat();
-                }
-                else
-                {
-                    scheduler.Schedule(5s, [this](TaskContext task)
-                    {
-                        if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0, 0.0f, true))
-                        {
-                            DoCast(target, SPELL_GREEN_BEAM);
-                            DarkGlareAngle = me->GetAngle(target); //keep as the location dark glare will be at
-                        }
+                              task.Repeat();
+                          }
+                          else {
+                              scheduler.Schedule(5s, [this](TaskContext task) {
+                                  if (Unit* target = SelectTarget(
+                                          SelectTargetMethod::Random,
+                                          0,
+                                          0.0f,
+                                          true)) {
+                                      DoCast(target, SPELL_GREEN_BEAM);
+                                      DarkGlareAngle = me->GetAngle(
+                                          target); // keep as the location dark
+                                                   // glare will be at
+                                  }
 
-                        task.SetGroup(GROUP_BEAM_PHASE);
-                        task.Repeat(3s);
-                    });
-                }
+                                  task.SetGroup(GROUP_BEAM_PHASE);
+                                  task.Repeat(3s);
+                              });
+                          }
 
-                task.SetGroup(GROUP_BEAM_PHASE);
-            })
-            .Schedule(8s, [this](TaskContext task)
-            {
-                if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0, 0.0f, true))
-                {
-                    if (Creature* tentacle = me->SummonCreature(NPC_CLAW_TENTACLE, *target, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000))
-                    {
-                        tentacle->AI()->AttackStart(target);
-                    }
-                }
+                          task.SetGroup(GROUP_BEAM_PHASE);
+                      })
+            .Schedule(8s,
+                      [this](TaskContext task) {
+                          if (Unit* target = SelectTarget(
+                                  SelectTargetMethod::Random, 0, 0.0f, true)) {
+                              if (Creature* tentacle = me->SummonCreature(
+                                      NPC_CLAW_TENTACLE,
+                                      *target,
+                                      TEMPSUMMON_CORPSE_TIMED_DESPAWN,
+                                      5000)) {
+                                  tentacle->AI()->AttackStart(target);
+                              }
+                          }
 
-                task.SetGroup(GROUP_BEAM_PHASE);
-                task.Repeat();
-            })
-            .Schedule(45s, [this](TaskContext task)
-            {
-                DoAction(ACTION_SPAWN_EYE_TENTACLES);
-                task.SetGroup(GROUP_BEAM_PHASE);
-                task.Repeat();
-            })
-            .Schedule(46s, [this](TaskContext /*task*/)
-            {
+                          task.SetGroup(GROUP_BEAM_PHASE);
+                          task.Repeat();
+                      })
+            .Schedule(45s,
+                      [this](TaskContext task) {
+                          DoAction(ACTION_SPAWN_EYE_TENTACLES);
+                          task.SetGroup(GROUP_BEAM_PHASE);
+                          task.Repeat();
+                      })
+            .Schedule(46s, [this](TaskContext /*task*/) {
                 scheduler.CancelGroup(GROUP_BEAM_PHASE);
 
                 me->StopMoving();
@@ -282,30 +272,32 @@ struct boss_eye_of_cthun : public BossAI
                 me->InterruptNonMeleeSpells(false);
                 me->SetTarget(ObjectGuid::Empty);
 
-                //Freeze animation
+                // Freeze animation
                 DoCast(me, SPELL_FREEZE_ANIM, true);
 
-                scheduler.Schedule(1s, [this](TaskContext /*task*/)
-                {
-                    //Select last target that had a beam cast on it
-                    //Face our target
+                scheduler.Schedule(1s, [this](TaskContext /*task*/) {
+                    // Select last target that had a beam cast on it
+                    // Face our target
 
                     DarkGlareTick = 0;
-                    ClockWise = RAND(true, false);
+                    ClockWise     = RAND(true, false);
 
-                    //Add red coloration to C'thun
+                    // Add red coloration to C'thun
                     DoCast(me, SPELL_RED_COLORATION, true);
 
                     me->StopMoving();
                     me->SetOrientation(DarkGlareAngle);
                     me->SetFacingTo(DarkGlareAngle);
 
-                    scheduler.Schedule(3s, [this](TaskContext tasker)
-                    {
+                    scheduler.Schedule(3s, [this](TaskContext tasker) {
                         me->SetTarget(ObjectGuid::Empty);
                         me->StopMoving();
 
-                        float angle = ClockWise ? DarkGlareAngle + DarkGlareTick * float(M_PI) / 35 : DarkGlareAngle - DarkGlareTick * float(M_PI) / 35;
+                        float angle =
+                            ClockWise ? DarkGlareAngle +
+                                            DarkGlareTick * float(M_PI) / 35
+                                      : DarkGlareAngle -
+                                            DarkGlareTick * float(M_PI) / 35;
                         me->SetFacingTo(angle);
                         me->SetOrientation(angle);
 
@@ -313,8 +305,7 @@ struct boss_eye_of_cthun : public BossAI
 
                         ++DarkGlareTick;
 
-                        if (tasker.GetRepeatCounter() >= 35)
-                        {
+                        if (tasker.GetRepeatCounter() >= 35) {
                             scheduler.CancelAll();
                             me->SetReactState(REACT_AGGRESSIVE);
                             me->RemoveAurasDueToSpell(SPELL_RED_COLORATION);
@@ -329,22 +320,25 @@ struct boss_eye_of_cthun : public BossAI
             });
     }
 
-    void DamageTaken(Unit*, uint32& damage, DamageEffectType, SpellSchoolMask) override
+    void DamageTaken(Unit*,
+                     uint32& damage,
+                     DamageEffectType,
+                     SpellSchoolMask) override
     {
-        //Only if it will kill
+        // Only if it will kill
         if (damage < me->GetHealth() || !me->GetHealth())
             return;
 
-        //Fake death in phase 0 or 1 (green beam or dark glare phase)
+        // Fake death in phase 0 or 1 (green beam or dark glare phase)
         me->InterruptNonMeleeSpells(false);
 
-        //Remove Red coloration from c'thun
+        // Remove Red coloration from c'thun
         me->RemoveAurasDueToSpell(SPELL_RED_COLORATION);
 
-        //Reset to normal emote state and prevent select and attack
+        // Reset to normal emote state and prevent select and attack
         me->SetUnitFlag(UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
 
-        //Remove Target field
+        // Remove Target field
         me->SetTarget();
 
         me->SetHealth(0);
@@ -354,27 +348,26 @@ struct boss_eye_of_cthun : public BossAI
         me->RemoveAllAuras();
         scheduler.CancelAll();
 
-        me->m_Events.AddEventAtOffset([this]()
-        {
-            if (Creature* cthun = instance->GetCreature(DATA_CTHUN))
-            {
-                cthun->AI()->DoAction(ACTION_START_PHASE_TWO);
-            }
-        }, 3s);
+        me->m_Events.AddEventAtOffset(
+            [this]() {
+                if (Creature* cthun = instance->GetCreature(DATA_CTHUN)) {
+                    cthun->AI()->DoAction(ACTION_START_PHASE_TWO);
+                }
+            },
+            3s);
     }
 
 private:
-    //Dark Glare phase
+    // Dark Glare phase
     uint32 DarkGlareTick;
-    float DarkGlareAngle;
-    bool ClockWise;
+    float  DarkGlareAngle;
+    bool   ClockWise;
 
-    uint32 _eyeTentacleCounter;
+    uint32     _eyeTentacleCounter;
     ObjectGuid _beamTarget;
 };
 
-struct boss_cthun : public BossAI
-{
+struct boss_cthun : public BossAI {
     boss_cthun(Creature* creature) : BossAI(creature, DATA_CTHUN)
     {
         me->SetCombatMovement(false);
@@ -382,42 +375,42 @@ struct boss_cthun : public BossAI
 
     void Reset() override
     {
-        //One random wisper every 90 - 300 seconds
+        // One random wisper every 90 - 300 seconds
         WisperTimer = 90000;
 
         _fleshTentaclesKilled = 0;
 
-        //Reset flags
+        // Reset flags
         me->RemoveAurasDueToSpell(SPELL_TRANSFORM);
         me->SetUnitFlag(UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
 
         BossAI::Reset();
     }
 
-    void JustEngagedWith(Unit* /*who*/) override
-    {
-        DoZoneInCombat();
-    }
+    void JustEngagedWith(Unit* /*who*/) override { DoZoneInCombat(); }
 
     void DoAction(int32 actionId) override
     {
-        if (actionId == ACTION_START_PHASE_TWO)
-        {
+        if (actionId == ACTION_START_PHASE_TWO) {
             // Animation only plays if Cthun already has this aura...
             DoCastSelf(SPELL_TRANSFORM);
 
-            me->m_Events.AddEventAtOffset([this]()
-            {
-                DoCastSelf(SPELL_TRANSFORM);
-                DoCastSelf(SPELL_CARAPACE_CTHUN, true);
-                me->RemoveUnitFlag(UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
-                DoZoneInCombat();
-            }, 500ms);
+            me->m_Events.AddEventAtOffset(
+                [this]() {
+                    DoCastSelf(SPELL_TRANSFORM);
+                    DoCastSelf(SPELL_CARAPACE_CTHUN, true);
+                    me->RemoveUnitFlag(UNIT_FLAG_NOT_SELECTABLE |
+                                       UNIT_FLAG_NON_ATTACKABLE);
+                    DoZoneInCombat();
+                },
+                500ms);
 
-            //Spawn flesh tentacle
-            for (uint8 i = 0; i < 2; i++)
-            {
-                me->SummonCreature(NPC_FLESH_TENTACLE, FleshTentaclePos[i], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000);
+            // Spawn flesh tentacle
+            for (uint8 i = 0; i < 2; i++) {
+                me->SummonCreature(NPC_FLESH_TENTACLE,
+                                   FleshTentaclePos[i],
+                                   TEMPSUMMON_CORPSE_TIMED_DESPAWN,
+                                   5000);
             }
 
             ScheduleTasks();
@@ -426,89 +419,110 @@ struct boss_cthun : public BossAI
 
     void ScheduleTasks() override
     {
-        scheduler.Schedule(13800ms, [this](TaskContext context)
-        {
-            if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0, NotInStomachSelector()))
-            {
-                target->CastSpell(target, SPELL_MOUTH_TENTACLE, true);
+        scheduler
+            .Schedule(
+                13800ms,
+                [this](TaskContext context) {
+                    if (Unit* target = SelectTarget(SelectTargetMethod::Random,
+                                                    0,
+                                                    NotInStomachSelector())) {
+                        target->CastSpell(target, SPELL_MOUTH_TENTACLE, true);
 
-                target->m_Events.AddEventAtOffset([target, this]()
-                {
-                    DoTeleportPlayer(target, STOMACH_X, STOMACH_Y, STOMACH_Z, STOMACH_O);
-                    target->RemoveAurasDueToSpell(SPELL_MIND_FLAY);
+                        target->m_Events.AddEventAtOffset(
+                            [target, this]() {
+                                DoTeleportPlayer(target,
+                                                 STOMACH_X,
+                                                 STOMACH_Y,
+                                                 STOMACH_Z,
+                                                 STOMACH_O);
+                                target->RemoveAurasDueToSpell(SPELL_MIND_FLAY);
 
-                    target->m_Events.AddEventAtOffset([target, this]()
-                    {
-                        DoCast(target, SPELL_DIGESTIVE_ACID, true);
-                    }, 2s);
-                }, 3800ms);
-            }
+                                target->m_Events.AddEventAtOffset(
+                                    [target, this]() {
+                                        DoCast(
+                                            target, SPELL_DIGESTIVE_ACID, true);
+                                    },
+                                    2s);
+                            },
+                            3800ms);
+                    }
 
-            context.Repeat();
-        }).Schedule(30s, [this](TaskContext context)
-        {
-            if (Creature* eye = instance->GetCreature(DATA_EYE_OF_CTHUN))
-            {
-                eye->AI()->DoAction(ACTION_SPAWN_EYE_TENTACLES);
-            }
+                    context.Repeat();
+                })
+            .Schedule(30s,
+                      [this](TaskContext context) {
+                          if (Creature* eye =
+                                  instance->GetCreature(DATA_EYE_OF_CTHUN)) {
+                              eye->AI()->DoAction(ACTION_SPAWN_EYE_TENTACLES);
+                          }
 
-            context.Repeat(30s);
-        }).Schedule(8s, [this](TaskContext context)
-        {
-            if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0, NotInStomachSelector()))
-            {
-                //Spawn claw tentacle on the random target
-                if (Creature* spawned = me->SummonCreature(NPC_GIANT_CLAW_TENTACLE, *target, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000))
-                {
-                    spawned->AI()->AttackStart(target);
+                          context.Repeat(30s);
+                      })
+            .Schedule(8s,
+                      [this](TaskContext context) {
+                          if (Unit* target =
+                                  SelectTarget(SelectTargetMethod::Random,
+                                               0,
+                                               NotInStomachSelector())) {
+                              // Spawn claw tentacle on the random target
+                              if (Creature* spawned = me->SummonCreature(
+                                      NPC_GIANT_CLAW_TENTACLE,
+                                      *target,
+                                      TEMPSUMMON_CORPSE_TIMED_DESPAWN,
+                                      5000)) {
+                                  spawned->AI()->AttackStart(target);
+                              }
+                          }
+
+                          context.Repeat(1min);
+                      })
+            .Schedule(38s, [this](TaskContext context) {
+                if (Unit* target = SelectTarget(SelectTargetMethod::Random,
+                                                0,
+                                                NotInStomachSelector())) {
+                    // Spawn claw tentacle on the random target
+                    if (Creature* spawned =
+                            me->SummonCreature(NPC_GIANT_EYE_TENTACLE,
+                                               *target,
+                                               TEMPSUMMON_CORPSE_TIMED_DESPAWN,
+                                               5000)) {
+                        spawned->AI()->AttackStart(target);
+                    }
                 }
-            }
 
-            context.Repeat(1min);
-        }).Schedule(38s, [this](TaskContext context)
-        {
-            if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0, NotInStomachSelector()))
-            {
-                //Spawn claw tentacle on the random target
-                if (Creature* spawned = me->SummonCreature(NPC_GIANT_EYE_TENTACLE, *target, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000))
-                {
-                    spawned->AI()->AttackStart(target);
-                }
-            }
-
-            context.Repeat(1min);
-        });
+                context.Repeat(1min);
+            });
     }
 
     void UpdateAI(uint32 diff) override
     {
-        //Check if we have a target
-        if (!UpdateVictim())
-        {
-            //No target so we'll use this section to do our random wispers instance wide
-            //WisperTimer
-            if (WisperTimer <= diff)
-            {
+        // Check if we have a target
+        if (!UpdateVictim()) {
+            // No target so we'll use this section to do our random wispers
+            // instance wide WisperTimer
+            if (WisperTimer <= diff) {
                 Map* map = me->GetMap();
                 if (!map->IsDungeon())
                     return;
 
-                //Play random sound to the zone
+                // Play random sound to the zone
                 Map::PlayerList const& PlayerList = map->GetPlayers();
 
-                if (!PlayerList.IsEmpty())
-                {
-                    for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
-                    {
+                if (!PlayerList.IsEmpty()) {
+                    for (Map::PlayerList::const_iterator itr =
+                             PlayerList.begin();
+                         itr != PlayerList.end();
+                         ++itr) {
                         if (Player* pPlr = itr->GetSource())
                             pPlr->PlayDirectSound(RANDOM_SOUND_WHISPER, pPlr);
                     }
                 }
 
-                //One random wisper every 90 - 300 seconds
+                // One random wisper every 90 - 300 seconds
                 WisperTimer = urand(90000, 300000);
             }
-            else WisperTimer -= diff;
+            else
+                WisperTimer -= diff;
 
             return;
         }
@@ -522,27 +536,24 @@ struct boss_cthun : public BossAI
     {
         BossAI::JustDied(killer);
 
-        if (Creature* pPortal = me->FindNearestCreature(NPC_CTHUN_PORTAL, 10.0f))
-        {
+        if (Creature* pPortal =
+                me->FindNearestCreature(NPC_CTHUN_PORTAL, 10.0f)) {
             pPortal->DespawnOrUnsummon();
         }
 
-        if (Creature* eye = instance->GetCreature(DATA_EYE_OF_CTHUN))
-        {
+        if (Creature* eye = instance->GetCreature(DATA_EYE_OF_CTHUN)) {
             eye->DespawnOrUnsummon();
         }
     }
 
     void SummonedCreatureDies(Creature* creature, Unit* /*killer*/) override
     {
-        if (creature->GetEntry() == NPC_FLESH_TENTACLE)
-        {
+        if (creature->GetEntry() == NPC_FLESH_TENTACLE) {
             ++_fleshTentaclesKilled;
 
             creature->CastSpell(creature, SPELL_ROCKY_GROUND_IMPACT, true);
 
-            if (_fleshTentaclesKilled > 1)
-            {
+            if (_fleshTentaclesKilled > 1) {
                 scheduler.CancelAll();
 
                 _fleshTentaclesKilled = 0;
@@ -552,45 +563,42 @@ struct boss_cthun : public BossAI
                 DoCast(me, SPELL_PURPLE_COLORATION, true);
                 me->RemoveAurasDueToSpell(SPELL_CARAPACE_CTHUN);
 
-                scheduler.Schedule(45s, [this](TaskContext /*context*/)
-                {
+                scheduler.Schedule(45s, [this](TaskContext /*context*/) {
                     ScheduleTasks();
-                    //Remove purple coloration
+                    // Remove purple coloration
                     me->RemoveAurasDueToSpell(SPELL_PURPLE_COLORATION);
                     DoCastSelf(SPELL_CARAPACE_CTHUN, true);
-                    //Spawn flesh tentacle
-                    for (uint8 i = 0; i < 2; i++)
-                    {
-                        me->SummonCreature(NPC_FLESH_TENTACLE, FleshTentaclePos[i], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000);
+                    // Spawn flesh tentacle
+                    for (uint8 i = 0; i < 2; i++) {
+                        me->SummonCreature(NPC_FLESH_TENTACLE,
+                                           FleshTentaclePos[i],
+                                           TEMPSUMMON_CORPSE_TIMED_DESPAWN,
+                                           5000);
                     }
                 });
             }
         }
     }
 
-    private:
-        //Out of combat whisper timer
-        uint32 WisperTimer;
+private:
+    // Out of combat whisper timer
+    uint32 WisperTimer;
 
-        //Body Phase
-        uint8 _fleshTentaclesKilled;
+    // Body Phase
+    uint8 _fleshTentaclesKilled;
 };
 
-struct npc_eye_tentacle : public ScriptedAI
-{
+struct npc_eye_tentacle : public ScriptedAI {
     npc_eye_tentacle(Creature* creature) : ScriptedAI(creature)
     {
-        if (Creature* portal = me->SummonCreature(NPC_SMALL_PORTAL, *me, TEMPSUMMON_CORPSE_DESPAWN))
-        {
+        if (Creature* portal = me->SummonCreature(
+                NPC_SMALL_PORTAL, *me, TEMPSUMMON_CORPSE_DESPAWN)) {
             portal->SetReactState(REACT_PASSIVE);
             _portalGUID = portal->GetGUID();
 
-            if (me->ToTempSummon())
-            {
-                if (Unit* summoner = me->ToTempSummon()->GetSummonerUnit())
-                {
-                    if (Creature* creature = summoner->ToCreature())
-                    {
+            if (me->ToTempSummon()) {
+                if (Unit* summoner = me->ToTempSummon()->GetSummonerUnit()) {
+                    if (Creature* creature = summoner->ToCreature()) {
                         creature->AI()->JustSummoned(portal);
                     }
                 }
@@ -602,8 +610,7 @@ struct npc_eye_tentacle : public ScriptedAI
 
     void JustDied(Unit* /*killer*/) override
     {
-        if (Unit* p = ObjectAccessor::GetUnit(*me, _portalGUID))
-        {
+        if (Unit* p = ObjectAccessor::GetUnit(*me, _portalGUID)) {
             Unit::Kill(p, p);
         }
     }
@@ -611,22 +618,21 @@ struct npc_eye_tentacle : public ScriptedAI
     void Reset() override
     {
         DoZoneInCombat();
-        scheduler.Schedule(500ms, [this](TaskContext /*task*/)
-        {
-            DoCastAOE(SPELL_GROUND_RUPTURE);
-        })
-        .Schedule(5min, [this](TaskContext /*task*/)
-        {
-            me->DespawnOrUnsummon();
-        });
+        scheduler
+            .Schedule(500ms,
+                      [this](TaskContext /*task*/) {
+                          DoCastAOE(SPELL_GROUND_RUPTURE);
+                      })
+            .Schedule(5min, [this](TaskContext /*task*/) {
+                me->DespawnOrUnsummon();
+            });
     }
 
     void JustEngagedWith(Unit* /*who*/) override
     {
-        scheduler.Schedule(1s, 5s, [this](TaskContext context)
-        {
-            if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0, NotInStomachSelector()))
-            {
+        scheduler.Schedule(1s, 5s, [this](TaskContext context) {
+            if (Unit* target = SelectTarget(
+                    SelectTargetMethod::Random, 0, NotInStomachSelector())) {
                 DoCast(target, SPELL_MIND_FLAY);
             }
 
@@ -636,7 +642,7 @@ struct npc_eye_tentacle : public ScriptedAI
 
     void UpdateAI(uint32 diff) override
     {
-        //Check if we have a target
+        // Check if we have a target
         if (!UpdateVictim())
             return;
 
@@ -647,23 +653,19 @@ private:
     ObjectGuid _portalGUID;
 };
 
-struct npc_claw_tentacle : public ScriptedAI
-{
+struct npc_claw_tentacle : public ScriptedAI {
     npc_claw_tentacle(Creature* creature) : ScriptedAI(creature)
     {
         me->SetCombatMovement(false);
 
-        if (Creature* portal = me->SummonCreature(NPC_SMALL_PORTAL, *me, TEMPSUMMON_CORPSE_DESPAWN))
-        {
+        if (Creature* portal = me->SummonCreature(
+                NPC_SMALL_PORTAL, *me, TEMPSUMMON_CORPSE_DESPAWN)) {
             portal->SetReactState(REACT_PASSIVE);
             _portalGUID = portal->GetGUID();
 
-            if (me->ToTempSummon())
-            {
-                if (Unit* summoner = me->ToTempSummon()->GetSummonerUnit())
-                {
-                    if (Creature* creature = summoner->ToCreature())
-                    {
+            if (me->ToTempSummon()) {
+                if (Unit* summoner = me->ToTempSummon()->GetSummonerUnit()) {
+                    if (Creature* creature = summoner->ToCreature()) {
                         creature->AI()->JustSummoned(portal);
                     }
                 }
@@ -673,29 +675,28 @@ struct npc_claw_tentacle : public ScriptedAI
 
     void JustDied(Unit* /*killer*/) override
     {
-        if (Unit* p = ObjectAccessor::GetUnit(*me, _portalGUID))
-        {
+        if (Unit* p = ObjectAccessor::GetUnit(*me, _portalGUID)) {
             Unit::Kill(p, p);
         }
     }
 
     void Reset() override
     {
-        scheduler.Schedule(Milliseconds(500), [this](TaskContext /*task*/)
-        {
-            DoCastAOE(SPELL_GROUND_RUPTURE);
-        }).Schedule(Minutes(5), [this](TaskContext /*task*/)
-        {
-            me->DespawnOrUnsummon();
-        });
+        scheduler
+            .Schedule(Milliseconds(500),
+                      [this](TaskContext /*task*/) {
+                          DoCastAOE(SPELL_GROUND_RUPTURE);
+                      })
+            .Schedule(Minutes(5), [this](TaskContext /*task*/) {
+                me->DespawnOrUnsummon();
+            });
     }
 
     void JustEngagedWith(Unit* /*who*/) override
     {
         DoZoneInCombat();
 
-        scheduler.Schedule(2s, [this](TaskContext context)
-        {
+        scheduler.Schedule(2s, [this](TaskContext context) {
             DoCastVictim(SPELL_HAMSTRING);
             context.Repeat(5s);
         });
@@ -703,7 +704,7 @@ struct npc_claw_tentacle : public ScriptedAI
 
     void UpdateAI(uint32 diff) override
     {
-        //Check if we have a target
+        // Check if we have a target
         if (!UpdateVictim())
             return;
 
@@ -716,23 +717,19 @@ private:
     ObjectGuid _portalGUID;
 };
 
-struct npc_giant_claw_tentacle : public ScriptedAI
-{
+struct npc_giant_claw_tentacle : public ScriptedAI {
     npc_giant_claw_tentacle(Creature* creature) : ScriptedAI(creature)
     {
         me->SetCombatMovement(false);
 
-        if (Creature* portal = me->SummonCreature(NPC_GIANT_PORTAL, *me, TEMPSUMMON_CORPSE_DESPAWN))
-        {
+        if (Creature* portal = me->SummonCreature(
+                NPC_GIANT_PORTAL, *me, TEMPSUMMON_CORPSE_DESPAWN)) {
             portal->SetReactState(REACT_PASSIVE);
             _portalGUID = portal->GetGUID();
 
-            if (me->ToTempSummon())
-            {
-                if (Unit* summoner = me->ToTempSummon()->GetSummonerUnit())
-                {
-                    if (Creature* creature = summoner->ToCreature())
-                    {
+            if (me->ToTempSummon()) {
+                if (Unit* summoner = me->ToTempSummon()->GetSummonerUnit()) {
+                    if (Creature* creature = summoner->ToCreature()) {
                         creature->AI()->JustSummoned(portal);
                     }
                 }
@@ -744,16 +741,14 @@ struct npc_giant_claw_tentacle : public ScriptedAI
 
     void JustDied(Unit* /*killer*/) override
     {
-        if (Unit* p = ObjectAccessor::GetUnit(*me, _portalGUID))
-        {
+        if (Unit* p = ObjectAccessor::GetUnit(*me, _portalGUID)) {
             Unit::Kill(p, p);
         }
     }
 
     void Reset() override
     {
-        scheduler.Schedule(500ms, [this](TaskContext /*task*/)
-        {
+        scheduler.Schedule(500ms, [this](TaskContext /*task*/) {
             DoCastAOE(SPELL_MASSIVE_GROUND_RUPTURE);
         });
     }
@@ -767,49 +762,49 @@ struct npc_giant_claw_tentacle : public ScriptedAI
     void ScheduleTasks()
     {
         // Check if a target is in melee range
-        scheduler.Schedule(10s, [this](TaskContext task)
-            {
-                if (Unit* target = me->GetVictim())
-                {
-                    if (!target->IsWithinMeleeRange(me))
-                    {
-                        // Main target not found within melee range, try to select a new one
-                        if (Player* newTarget = me->SelectNearestPlayer(5.0f))
-                        {
-                            AttackStart(newTarget);
-                        }
-                        else // Main target not found, and failed to acquire a new target... Submerge
-                        {
-                            Submerge();
-                        }
-                    }
-                }
+        scheduler
+            .Schedule(10s,
+                      [this](TaskContext task) {
+                          if (Unit* target = me->GetVictim()) {
+                              if (!target->IsWithinMeleeRange(me)) {
+                                  // Main target not found within melee range,
+                                  // try to select a new one
+                                  if (Player* newTarget =
+                                          me->SelectNearestPlayer(5.0f)) {
+                                      AttackStart(newTarget);
+                                  }
+                                  else // Main target not found, and failed to
+                                       // acquire a new target... Submerge
+                                  {
+                                      Submerge();
+                                  }
+                              }
+                          }
 
-                task.Repeat();
-            }).Schedule(2s, [this](TaskContext context)
-            {
-                DoCastVictim(SPELL_HAMSTRING);
-                context.Repeat(10s);
-            }).Schedule(5s, [this](TaskContext context)
-            {
-                DoCastSelf(SPELL_THRASH);
-                context.Repeat(10s);
-            }).Schedule(3s, [this](TaskContext /*context*/)
-            {
-                _canAttack = true;
-            });
+                          task.Repeat();
+                      })
+            .Schedule(2s,
+                      [this](TaskContext context) {
+                          DoCastVictim(SPELL_HAMSTRING);
+                          context.Repeat(10s);
+                      })
+            .Schedule(5s,
+                      [this](TaskContext context) {
+                          DoCastSelf(SPELL_THRASH);
+                          context.Repeat(10s);
+                      })
+            .Schedule(3s,
+                      [this](TaskContext /*context*/) { _canAttack = true; });
     }
 
     void Submerge()
     {
-        if (me->SelectNearestPlayer(5.0f))
-        {
+        if (me->SelectNearestPlayer(5.0f)) {
             return;
         }
 
         // Despawn portal
-        if (Creature* p = ObjectAccessor::GetCreature(*me, _portalGUID))
-        {
+        if (Creature* p = ObjectAccessor::GetCreature(*me, _portalGUID)) {
             p->DespawnOrUnsummon();
         }
 
@@ -820,20 +815,18 @@ struct npc_giant_claw_tentacle : public ScriptedAI
         scheduler.CancelAll();
         _canAttack = false;
 
-        scheduler.Schedule(5s, [this](TaskContext /*task*/)
-        {
-            Emerge();
-        });
+        scheduler.Schedule(5s, [this](TaskContext /*task*/) { Emerge(); });
     }
 
     void Emerge()
     {
-        if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0, NotInStomachSelector()))
-        {
+        if (Unit* target = SelectTarget(
+                SelectTargetMethod::Random, 0, NotInStomachSelector())) {
             Position pos = target->GetPosition();
-            me->NearTeleportTo(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), 0);
-            if (Creature* portal = me->SummonCreature(NPC_GIANT_PORTAL, pos, TEMPSUMMON_CORPSE_DESPAWN))
-            {
+            me->NearTeleportTo(
+                pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), 0);
+            if (Creature* portal = me->SummonCreature(
+                    NPC_GIANT_PORTAL, pos, TEMPSUMMON_CORPSE_DESPAWN)) {
                 portal->SetReactState(REACT_PASSIVE);
                 _portalGUID = portal->GetGUID();
             }
@@ -841,7 +834,8 @@ struct npc_giant_claw_tentacle : public ScriptedAI
             me->RemoveAurasDueToSpell(SPELL_SUBMERGE_VISUAL);
             DoCastSelf(SPELL_BIRTH);
             DoCastAOE(SPELL_MASSIVE_GROUND_RUPTURE, true);
-            me->RemoveUnitFlag(UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
+            me->RemoveUnitFlag(UNIT_FLAG_NOT_SELECTABLE |
+                               UNIT_FLAG_NON_ATTACKABLE);
 
             ScheduleTasks();
         }
@@ -849,40 +843,35 @@ struct npc_giant_claw_tentacle : public ScriptedAI
 
     void UpdateAI(uint32 diff) override
     {
-        //Check if we have a target
+        // Check if we have a target
         if (!UpdateVictim())
             return;
 
         scheduler.Update(diff);
 
-        if (_canAttack)
-        {
+        if (_canAttack) {
             DoMeleeAttackIfReady();
         }
     }
 
 private:
     ObjectGuid _portalGUID;
-    bool _canAttack;
+    bool       _canAttack;
 };
 
-struct npc_giant_eye_tentacle : public ScriptedAI
-{
+struct npc_giant_eye_tentacle : public ScriptedAI {
     npc_giant_eye_tentacle(Creature* creature) : ScriptedAI(creature)
     {
         me->SetCombatMovement(false);
 
-        if (Creature* portal = me->SummonCreature(NPC_GIANT_PORTAL, *me, TEMPSUMMON_CORPSE_DESPAWN))
-        {
+        if (Creature* portal = me->SummonCreature(
+                NPC_GIANT_PORTAL, *me, TEMPSUMMON_CORPSE_DESPAWN)) {
             portal->SetReactState(REACT_PASSIVE);
             _portalGUID = portal->GetGUID();
 
-            if (me->ToTempSummon())
-            {
-                if (Unit* summoner = me->ToTempSummon()->GetSummonerUnit())
-                {
-                    if (Creature* creature = summoner->ToCreature())
-                    {
+            if (me->ToTempSummon()) {
+                if (Unit* summoner = me->ToTempSummon()->GetSummonerUnit()) {
+                    if (Creature* creature = summoner->ToCreature()) {
                         creature->AI()->JustSummoned(portal);
                     }
                 }
@@ -892,36 +881,34 @@ struct npc_giant_eye_tentacle : public ScriptedAI
 
     void JustDied(Unit* /*killer*/) override
     {
-        if (Unit* p = ObjectAccessor::GetUnit(*me, _portalGUID))
-        {
+        if (Unit* p = ObjectAccessor::GetUnit(*me, _portalGUID)) {
             Unit::Kill(p, p);
         }
     }
 
     void Reset() override
     {
-        scheduler.Schedule(500ms, [this](TaskContext /*task*/)
-        {
-            DoCastAOE(SPELL_MASSIVE_GROUND_RUPTURE);
-        }).Schedule(1s, 5s, [this](TaskContext context)
-        {
-            if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0, NotInStomachSelector()))
-            {
-                DoCast(target, SPELL_GREEN_BEAM);
-            }
+        scheduler
+            .Schedule(500ms,
+                      [this](TaskContext /*task*/) {
+                          DoCastAOE(SPELL_MASSIVE_GROUND_RUPTURE);
+                      })
+            .Schedule(1s, 5s, [this](TaskContext context) {
+                if (Unit* target = SelectTarget(SelectTargetMethod::Random,
+                                                0,
+                                                NotInStomachSelector())) {
+                    DoCast(target, SPELL_GREEN_BEAM);
+                }
 
-            context.Repeat(2100ms);
-        });
+                context.Repeat(2100ms);
+            });
     }
 
-    void JustEngagedWith(Unit* /*who*/) override
-    {
-        DoZoneInCombat();
-    }
+    void JustEngagedWith(Unit* /*who*/) override { DoZoneInCombat(); }
 
     void UpdateAI(uint32 diff) override
     {
-        //Check if we have a target
+        // Check if we have a target
         if (!UpdateVictim())
             return;
 
@@ -932,32 +919,33 @@ private:
     ObjectGuid _portalGUID;
 };
 
-class spell_cthun_dark_glare : public SpellScript
-{
+class spell_cthun_dark_glare : public SpellScript {
     PrepareSpellScript(spell_cthun_dark_glare);
 
     void FilterTargets(std::list<WorldObject*>& targets)
     {
         Unit* caster = GetCaster();
-        targets.remove_if([caster](WorldObject const* target) { return !caster->HasInLine(target, 5.0f); });
+        targets.remove_if([caster](WorldObject const* target) {
+            return !caster->HasInLine(target, 5.0f);
+        });
     }
 
     void Register() override
     {
-        OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_cthun_dark_glare::FilterTargets, EFFECT_ALL, TARGET_UNIT_CONE_ENEMY_24);
+        OnObjectAreaTargetSelect +=
+            SpellObjectAreaTargetSelectFn(spell_cthun_dark_glare::FilterTargets,
+                                          EFFECT_ALL,
+                                          TARGET_UNIT_CONE_ENEMY_24);
     }
 };
 
-class spell_cthun_digestive_acid : public AuraScript
-{
+class spell_cthun_digestive_acid : public AuraScript {
     PrepareAuraScript(spell_cthun_digestive_acid);
 
     void OnPeriodic(AuraEffect const* /*aurEff*/)
     {
-        if (InstanceScript* instance = GetUnitOwner()->GetInstanceScript())
-        {
-            if (Creature* cthun = instance->GetCreature(DATA_CTHUN))
-            {
+        if (InstanceScript* instance = GetUnitOwner()->GetInstanceScript()) {
+            if (Creature* cthun = instance->GetCreature(DATA_CTHUN)) {
                 cthun->CastSpell(GetUnitOwner(), SPELL_DIGESTIVE_ACID, true);
             }
         }
@@ -965,53 +953,59 @@ class spell_cthun_digestive_acid : public AuraScript
 
     void Register() override
     {
-        OnEffectPeriodic += AuraEffectPeriodicFn(spell_cthun_digestive_acid::OnPeriodic, EFFECT_0, SPELL_AURA_PERIODIC_DAMAGE);
+        OnEffectPeriodic +=
+            AuraEffectPeriodicFn(spell_cthun_digestive_acid::OnPeriodic,
+                                 EFFECT_0,
+                                 SPELL_AURA_PERIODIC_DAMAGE);
     }
 };
 
 // 4033 - At C'thun's stomach
-class at_cthun_stomach_exit : public AreaTriggerScript
-{
+class at_cthun_stomach_exit : public AreaTriggerScript {
 public:
-    at_cthun_stomach_exit() : AreaTriggerScript("at_cthun_stomach_exit") { }
+    at_cthun_stomach_exit() : AreaTriggerScript("at_cthun_stomach_exit") {}
 
     bool OnTrigger(Player* player, AreaTrigger const* /*at*/) override
     {
-        if (InstanceScript* instance = player->GetInstanceScript())
-        {
-            if (Creature* cthun = instance->GetCreature(DATA_CTHUN))
-            {
-                if (Creature* trigger = player->FindNearestCreature(NPC_TRIGGER, 15.0f))
-                {
+        if (InstanceScript* instance = player->GetInstanceScript()) {
+            if (Creature* cthun = instance->GetCreature(DATA_CTHUN)) {
+                if (Creature* trigger =
+                        player->FindNearestCreature(NPC_TRIGGER, 15.0f)) {
                     trigger->CastSpell(player, SPELL_EXIT_STOMACH, true);
 
-                    if (Creature* exittrigger = player->FindNearestCreature(NPC_EXIT_TRIGGER, 15.0f))
-                    {
-                        exittrigger->CastSpell(player, SPELL_RUBBLE_ROCKY, true);
+                    if (Creature* exittrigger = player->FindNearestCreature(
+                            NPC_EXIT_TRIGGER, 15.0f)) {
+                        exittrigger->CastSpell(
+                            player, SPELL_RUBBLE_ROCKY, true);
                     }
                 }
 
-                player->m_Events.AddEventAtOffset([player, cthun]()
-                {
-                    if (player->FindNearestCreature(NPC_EXIT_TRIGGER, 10.0f))
-                    {
-                        player->JumpTo(0.0f, 80.0f, false);
+                player->m_Events.AddEventAtOffset(
+                    [player, cthun]() {
+                        if (player->FindNearestCreature(NPC_EXIT_TRIGGER,
+                                                        10.0f)) {
+                            player->JumpTo(0.0f, 80.0f, false);
 
-                        player->m_Events.AddEventAtOffset([player, cthun]()
-                        {
-                            if (cthun)
-                            {
-                                player->NearTeleportTo(cthun->GetPositionX(), cthun->GetPositionY(), cthun->GetPositionZ() + 10, float(rand32() % 6));
-                            }
+                            player->m_Events.AddEventAtOffset(
+                                [player, cthun]() {
+                                    if (cthun) {
+                                        player->NearTeleportTo(
+                                            cthun->GetPositionX(),
+                                            cthun->GetPositionY(),
+                                            cthun->GetPositionZ() + 10,
+                                            float(rand32() % 6));
+                                    }
 
-                            player->RemoveAurasDueToSpell(SPELL_DIGESTIVE_ACID);
-                        }, 1s);
-                    }
-                    else
-                    {
-                        player->m_Events.KillAllEvents(false);
-                    }
-                }, 3s);
+                                    player->RemoveAurasDueToSpell(
+                                        SPELL_DIGESTIVE_ACID);
+                                },
+                                1s);
+                        }
+                        else {
+                            player->m_Events.KillAllEvents(false);
+                        }
+                    },
+                    3s);
             }
         }
 
@@ -1019,19 +1013,15 @@ public:
     }
 };
 
-class at_cthun_center : public AreaTriggerScript
-{
+class at_cthun_center : public AreaTriggerScript {
 public:
-    at_cthun_center() : AreaTriggerScript("at_cthun_center") { }
+    at_cthun_center() : AreaTriggerScript("at_cthun_center") {}
 
     bool OnTrigger(Player* player, AreaTrigger const* /*at*/) override
     {
-        if (InstanceScript* instance = player->GetInstanceScript())
-        {
-            if (Creature* cthun = instance->GetCreature(DATA_CTHUN))
-            {
-                if (cthun->IsAlive())
-                {
+        if (InstanceScript* instance = player->GetInstanceScript()) {
+            if (Creature* cthun = instance->GetCreature(DATA_CTHUN)) {
+                if (cthun->IsAlive()) {
                     cthun->CastSpell(player, SPELL_SPIT_OUT, true);
                 }
             }
@@ -1054,4 +1044,3 @@ void AddSC_boss_cthun()
     new at_cthun_stomach_exit();
     new at_cthun_center();
 }
-

@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -28,14 +29,16 @@
 
 void AddScripts() {}
 
-class WorldMock: public IWorld
-{
+class WorldMock : public IWorld {
 public:
-    ~WorldMock() override { }
+    ~WorldMock() override {}
     MOCK_METHOD(WorldSession*, FindSession, (uint32 id), (const));
     MOCK_METHOD(WorldSession*, FindOfflineSession, (uint32 id), (const));
-    MOCK_METHOD(WorldSession*, FindOfflineSessionForCharacterGUID, (ObjectGuid::LowType guidLow),(const));
-    MOCK_METHOD(void, AddSession, (WorldSession* s), ());
+    MOCK_METHOD(WorldSession*,
+                FindOfflineSessionForCharacterGUID,
+                (ObjectGuid::LowType guidLow),
+                (const));
+    MOCK_METHOD(void, AddSession, (WorldSession * s), ());
     MOCK_METHOD(bool, KickSession, (uint32 id), ());
     MOCK_METHOD(void, UpdateMaxSessionCounters, ());
     MOCK_METHOD(const SessionMap&, GetAllSessions, (), (const));
@@ -57,7 +60,7 @@ public:
     MOCK_METHOD(void, SetPlayerAmountLimit, (uint32 limit), ());
     MOCK_METHOD(uint32, GetPlayerAmountLimit, (), (const));
     MOCK_METHOD(void, AddQueuedPlayer, (WorldSession*), ());
-    MOCK_METHOD(bool, RemoveQueuedPlayer, (WorldSession* session), ());
+    MOCK_METHOD(bool, RemoveQueuedPlayer, (WorldSession * session), ());
     MOCK_METHOD(int32, GetQueuePos, (WorldSession*), ());
     MOCK_METHOD(bool, HasRecentlyDisconnected, (WorldSession*), ());
     MOCK_METHOD(bool, getAllowMovement, (), (const));
@@ -74,25 +77,60 @@ public:
     MOCK_METHOD(void, LoadConfigSettings, (bool reload), ());
     void SendWorldText(uint32 string_id, ...) override {}
     void SendWorldTextOptional(uint32 string_id, uint32 flag, ...) override {}
-    MOCK_METHOD(void, SendGlobalText, (const char* text, WorldSession* self), ());
+    MOCK_METHOD(void,
+                SendGlobalText,
+                (const char* text, WorldSession* self),
+                ());
     void SendGMText(uint32 string_id, ...) override {}
-    MOCK_METHOD(void, SendGlobalMessage, (WorldPacket const* packet, WorldSession* self, TeamId teamId), ());
-    MOCK_METHOD(void, SendGlobalGMMessage, (WorldPacket const* packet, WorldSession* self, TeamId teamId), ());
-    MOCK_METHOD(bool, SendZoneMessage, (uint32 zone, WorldPacket const* packet, WorldSession* self, TeamId teamId), ());
-    MOCK_METHOD(void, SendZoneText, (uint32 zone, const char* text, WorldSession* self, TeamId teamId), ());
-    MOCK_METHOD(void, SendServerMessage, (ServerMessageType messageID, std::string stringParam, Player* player));
+    MOCK_METHOD(void,
+                SendGlobalMessage,
+                (WorldPacket const* packet, WorldSession* self, TeamId teamId),
+                ());
+    MOCK_METHOD(void,
+                SendGlobalGMMessage,
+                (WorldPacket const* packet, WorldSession* self, TeamId teamId),
+                ());
+    MOCK_METHOD(bool,
+                SendZoneMessage,
+                (uint32             zone,
+                 WorldPacket const* packet,
+                 WorldSession*      self,
+                 TeamId             teamId),
+                ());
+    MOCK_METHOD(
+        void,
+        SendZoneText,
+        (uint32 zone, const char* text, WorldSession* self, TeamId teamId),
+        ());
+    MOCK_METHOD(void,
+                SendServerMessage,
+                (ServerMessageType messageID,
+                 std::string       stringParam,
+                 Player*           player));
     MOCK_METHOD(bool, IsShuttingDown, (), (const));
     MOCK_METHOD(uint32, GetShutDownTimeLeft, (), (const));
-    MOCK_METHOD(void, ShutdownServ, (uint32 time, uint32 options, uint8 exitcode, const std::string& reason), ());
+    MOCK_METHOD(void,
+                ShutdownServ,
+                (uint32             time,
+                 uint32             options,
+                 uint8              exitcode,
+                 const std::string& reason),
+                ());
     MOCK_METHOD(void, ShutdownCancel, ());
-    MOCK_METHOD(void, ShutdownMsg, (bool show, Player* player, const std::string& reason), ());
+    MOCK_METHOD(void,
+                ShutdownMsg,
+                (bool show, Player* player, const std::string& reason),
+                ());
     MOCK_METHOD(void, Update, (uint32 diff), ());
     MOCK_METHOD(void, UpdateSessions, (uint32 diff), ());
     MOCK_METHOD(void, setRate, (Rates rate, float value), ());
     MOCK_METHOD(float, getRate, (Rates rate), (const));
     MOCK_METHOD(void, setBoolConfig, (WorldBoolConfigs index, bool value), ());
     MOCK_METHOD(bool, getBoolConfig, (WorldBoolConfigs index), (const));
-    MOCK_METHOD(void, setFloatConfig, (WorldFloatConfigs index, float value), ());
+    MOCK_METHOD(void,
+                setFloatConfig,
+                (WorldFloatConfigs index, float value),
+                ());
     MOCK_METHOD(float, getFloatConfig, (WorldFloatConfigs index), (const));
     MOCK_METHOD(void, setIntConfig, (WorldIntConfigs index, uint32 value), ());
     MOCK_METHOD(uint32, getIntConfig, (WorldIntConfigs index), (const));
@@ -105,23 +143,34 @@ public:
     MOCK_METHOD(void, KickAllLess, (AccountTypes sec), ());
     MOCK_METHOD(uint32, GetNextWhoListUpdateDelaySecs, ());
     MOCK_METHOD(void, ProcessCliCommands, ());
-    MOCK_METHOD(void, QueueCliCommand, (CliCommandHolder* commandHolder), ());
+    MOCK_METHOD(void, QueueCliCommand, (CliCommandHolder * commandHolder), ());
     MOCK_METHOD(void, ForceGameEventUpdate, ());
     MOCK_METHOD(void, UpdateRealmCharCount, (uint32 accid), ());
-    MOCK_METHOD(LocaleConstant, GetAvailableDbcLocale, (LocaleConstant locale), (const));
+    MOCK_METHOD(LocaleConstant,
+                GetAvailableDbcLocale,
+                (LocaleConstant locale),
+                (const));
     MOCK_METHOD(void, LoadDBVersion, ());
-    MOCK_METHOD(char const *, GetDBVersion, (), (const));
+    MOCK_METHOD(char const*, GetDBVersion, (), (const));
     MOCK_METHOD(void, UpdateAreaDependentAuras, ());
     MOCK_METHOD(uint32, GetCleaningFlags, (), (const));
     MOCK_METHOD(void, SetCleaningFlags, (uint32 flags), ());
     MOCK_METHOD(void, ResetEventSeasonalQuests, (uint16 event_id), ());
-    MOCK_METHOD(time_t, GetNextTimeWithDayAndHour, (int8 dayOfWeek, int8 hour), ());
-    MOCK_METHOD(time_t, GetNextTimeWithMonthAndHour, (int8 month, int8 hour), ());
+    MOCK_METHOD(time_t,
+                GetNextTimeWithDayAndHour,
+                (int8 dayOfWeek, int8 hour),
+                ());
+    MOCK_METHOD(time_t,
+                GetNextTimeWithMonthAndHour,
+                (int8 month, int8 hour),
+                ());
     MOCK_METHOD(std::string const&, GetRealmName, (), (const));
     MOCK_METHOD(void, SetRealmName, (std::string name), ());
     MOCK_METHOD(void, RemoveOldCorpses, ());
-    MOCK_METHOD(void, DoForAllOnlinePlayers, (std::function<void(Player*)> exec));
+    MOCK_METHOD(void,
+                DoForAllOnlinePlayers,
+                (std::function<void(Player*)> exec));
 };
 #pragma GCC diagnostic pop
 
-#endif //AZEROTHCORE_WORLDMOCK_H
+#endif // AZEROTHCORE_WORLDMOCK_H

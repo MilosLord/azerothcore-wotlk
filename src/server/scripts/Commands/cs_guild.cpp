@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -29,71 +30,65 @@ EndScriptData */
 
 using namespace Acore::ChatCommands;
 
-class guild_commandscript : public CommandScript
-{
+class guild_commandscript : public CommandScript {
 public:
-    guild_commandscript() : CommandScript("guild_commandscript") { }
+    guild_commandscript() : CommandScript("guild_commandscript") {}
 
     ChatCommandTable GetCommands() const override
     {
-        static ChatCommandTable guildCommandTable =
-        {
-            { "create",     HandleGuildCreateCommand,   SEC_GAMEMASTER, Console::Yes },
-            { "delete",     HandleGuildDeleteCommand,   SEC_GAMEMASTER, Console::Yes },
-            { "invite",     HandleGuildInviteCommand,   SEC_GAMEMASTER, Console::Yes },
-            { "uninvite",   HandleGuildUninviteCommand, SEC_GAMEMASTER, Console::Yes },
-            { "rank",       HandleGuildRankCommand,     SEC_GAMEMASTER, Console::Yes },
-            { "rename",     HandleGuildRenameCommand,   SEC_GAMEMASTER, Console::Yes },
-            { "info",       HandleGuildInfoCommand,     SEC_GAMEMASTER, Console::Yes }
-        };
-        static ChatCommandTable commandTable =
-        {
-            { "guild", guildCommandTable }
-        };
+        static ChatCommandTable guildCommandTable = {
+            {"create", HandleGuildCreateCommand, SEC_GAMEMASTER, Console::Yes},
+            {"delete", HandleGuildDeleteCommand, SEC_GAMEMASTER, Console::Yes},
+            {"invite", HandleGuildInviteCommand, SEC_GAMEMASTER, Console::Yes},
+            {"uninvite",
+             HandleGuildUninviteCommand,
+             SEC_GAMEMASTER,
+             Console::Yes},
+            {"rank", HandleGuildRankCommand, SEC_GAMEMASTER, Console::Yes},
+            {"rename", HandleGuildRenameCommand, SEC_GAMEMASTER, Console::Yes},
+            {"info", HandleGuildInfoCommand, SEC_GAMEMASTER, Console::Yes}};
+        static ChatCommandTable commandTable = {{"guild", guildCommandTable}};
         return commandTable;
     }
 
-    static bool HandleGuildCreateCommand(ChatHandler* handler, Optional<PlayerIdentifier> target, QuotedString guildName)
+    static bool HandleGuildCreateCommand(ChatHandler*               handler,
+                                         Optional<PlayerIdentifier> target,
+                                         QuotedString               guildName)
     {
-        if (!target)
-        {
+        if (!target) {
             target = PlayerIdentifier::FromTargetOrSelf(handler);
         }
 
-        if (!target || !target->IsConnected())
-        {
+        if (!target || !target->IsConnected()) {
             handler->SendErrorMessage(LANG_PLAYER_NOT_FOUND);
             return false;
         }
 
-        if (guildName.empty())
-        {
+        if (guildName.empty()) {
             return false;
         }
 
         Player* playerTarget = target->GetConnectedPlayer();
 
-        if (playerTarget->GetGuildId())
-        {
+        if (playerTarget->GetGuildId()) {
             handler->SendErrorMessage(LANG_PLAYER_IN_GUILD);
             return false;
         }
 
-        if (sGuildMgr->GetGuildByName(guildName))
-        {
+        if (sGuildMgr->GetGuildByName(guildName)) {
             handler->SendErrorMessage(LANG_GUILD_RENAME_ALREADY_EXISTS);
             return false;
         }
 
-        if (sObjectMgr->IsReservedName(guildName) || sObjectMgr->IsProfanityName(guildName) || !sObjectMgr->IsValidCharterName(guildName))
-        {
+        if (sObjectMgr->IsReservedName(guildName) ||
+            sObjectMgr->IsProfanityName(guildName) ||
+            !sObjectMgr->IsValidCharterName(guildName)) {
             handler->SendErrorMessage(LANG_BAD_VALUE);
             return false;
         }
 
         Guild* guild = new Guild;
-        if (!guild->Create(playerTarget, guildName))
-        {
+        if (!guild->Create(playerTarget, guildName)) {
             delete guild;
             handler->SendErrorMessage(LANG_GUILD_NOT_CREATED);
             return false;
@@ -106,8 +101,7 @@ public:
 
     static bool HandleGuildDeleteCommand(ChatHandler*, QuotedString guildName)
     {
-        if (guildName.empty())
-        {
+        if (guildName.empty()) {
             return false;
         }
 
@@ -121,20 +115,19 @@ public:
         return true;
     }
 
-    static bool HandleGuildInviteCommand(ChatHandler* handler, Optional<PlayerIdentifier> target, QuotedString guildName)
+    static bool HandleGuildInviteCommand(ChatHandler*               handler,
+                                         Optional<PlayerIdentifier> target,
+                                         QuotedString               guildName)
     {
-        if (!target)
-        {
+        if (!target) {
             target = PlayerIdentifier::FromTargetOrSelf(handler);
         }
 
-        if (!target)
-        {
+        if (!target) {
             return false;
         }
 
-        if (guildName.empty())
-        {
+        if (guildName.empty()) {
             return false;
         }
 
@@ -146,21 +139,23 @@ public:
         return targetGuild->AddMember(target->GetGUID());
     }
 
-    static bool HandleGuildUninviteCommand(ChatHandler* handler, Optional<PlayerIdentifier> target)
+    static bool HandleGuildUninviteCommand(ChatHandler*               handler,
+                                           Optional<PlayerIdentifier> target)
     {
-        if (!target)
-        {
+        if (!target) {
             target = PlayerIdentifier::FromTargetOrSelf(handler);
         }
 
-        if (!target)
-        {
+        if (!target) {
             return false;
         }
 
         Player* playerTarget = target->GetConnectedPlayer();
 
-        uint32 guildId = playerTarget ? playerTarget->GetGuildId() : sCharacterCache->GetCharacterGuildIdByGuid(target->GetGUID());
+        uint32 guildId =
+            playerTarget
+                ? playerTarget->GetGuildId()
+                : sCharacterCache->GetCharacterGuildIdByGuid(target->GetGUID());
         if (!guildId)
             return false;
 
@@ -172,7 +167,9 @@ public:
         return true;
     }
 
-    static bool HandleGuildRankCommand(ChatHandler* handler, Optional<PlayerIdentifier> player, uint8 rank)
+    static bool HandleGuildRankCommand(ChatHandler*               handler,
+                                       Optional<PlayerIdentifier> player,
+                                       uint8                      rank)
     {
         if (!player)
             player = PlayerIdentifier::FromTargetOrSelf(handler);
@@ -180,7 +177,10 @@ public:
         if (!player)
             return false;
 
-        uint32 guildId = player->IsConnected() ? player->GetConnectedPlayer()->GetGuildId() : sCharacterCache->GetCharacterGuildIdByGuid(player->GetGUID());
+        uint32 guildId =
+            player->IsConnected()
+                ? player->GetConnectedPlayer()->GetGuildId()
+                : sCharacterCache->GetCharacterGuildIdByGuid(player->GetGUID());
         if (!guildId)
             return false;
 
@@ -191,76 +191,95 @@ public:
         return targetGuild->ChangeMemberRank(player->GetGUID(), rank);
     }
 
-    static bool HandleGuildRenameCommand(ChatHandler* handler, QuotedString oldGuildStr, QuotedString newGuildStr)
+    static bool HandleGuildRenameCommand(ChatHandler* handler,
+                                         QuotedString oldGuildStr,
+                                         QuotedString newGuildStr)
     {
-        if (oldGuildStr.empty() || newGuildStr.empty())
-        {
+        if (oldGuildStr.empty() || newGuildStr.empty()) {
             return false;
         }
 
         Guild* guild = sGuildMgr->GetGuildByName(oldGuildStr);
-        if (!guild)
-        {
+        if (!guild) {
             handler->SendErrorMessage(LANG_COMMAND_COULDNOTFIND, oldGuildStr);
             return false;
         }
 
-        if (sGuildMgr->GetGuildByName(newGuildStr))
-        {
-            handler->SendErrorMessage(LANG_GUILD_RENAME_ALREADY_EXISTS, newGuildStr);
+        if (sGuildMgr->GetGuildByName(newGuildStr)) {
+            handler->SendErrorMessage(LANG_GUILD_RENAME_ALREADY_EXISTS,
+                                      newGuildStr);
             return false;
         }
 
-        if (!guild->SetName(newGuildStr))
-        {
+        if (!guild->SetName(newGuildStr)) {
             handler->SendErrorMessage(LANG_BAD_VALUE);
             return false;
         }
 
-        handler->PSendSysMessage(LANG_GUILD_RENAME_DONE, oldGuildStr, newGuildStr);
+        handler->PSendSysMessage(
+            LANG_GUILD_RENAME_DONE, oldGuildStr, newGuildStr);
         return true;
     }
 
-    static bool HandleGuildInfoCommand(ChatHandler* handler, Optional<Variant<ObjectGuid::LowType, QuotedString>> const& guildIdentifier)
+    static bool HandleGuildInfoCommand(
+        ChatHandler* handler,
+        Optional<Variant<ObjectGuid::LowType, QuotedString>> const&
+            guildIdentifier)
     {
         Guild* guild = nullptr;
 
-        if (guildIdentifier)
-        {
-            if (ObjectGuid::LowType const* guid = std::get_if<ObjectGuid::LowType>(&*guildIdentifier))
+        if (guildIdentifier) {
+            if (ObjectGuid::LowType const* guid =
+                    std::get_if<ObjectGuid::LowType>(&*guildIdentifier))
                 guild = sGuildMgr->GetGuildById(*guid);
             else
-                guild = sGuildMgr->GetGuildByName(guildIdentifier->get<QuotedString>());
+                guild = sGuildMgr->GetGuildByName(
+                    guildIdentifier->get<QuotedString>());
         }
-        else if (Optional<PlayerIdentifier> target = PlayerIdentifier::FromTargetOrSelf(handler); target && target->IsConnected())
+        else if (Optional<PlayerIdentifier> target =
+                     PlayerIdentifier::FromTargetOrSelf(handler);
+                 target && target->IsConnected())
             guild = target->GetConnectedPlayer()->GetGuild();
 
         if (!guild)
             return false;
 
         // Display Guild Information
-        handler->PSendSysMessage(LANG_GUILD_INFO_NAME, guild->GetName().c_str(), guild->GetId()); // Guild Id + Name
+        handler->PSendSysMessage(LANG_GUILD_INFO_NAME,
+                                 guild->GetName().c_str(),
+                                 guild->GetId()); // Guild Id + Name
 
         std::string guildMasterName;
-        if (sCharacterCache->GetCharacterNameByGuid(guild->GetLeaderGUID(), guildMasterName))
-            handler->PSendSysMessage(LANG_GUILD_INFO_GUILD_MASTER, guildMasterName.c_str(), guild->GetLeaderGUID().GetCounter()); // Guild Master
+        if (sCharacterCache->GetCharacterNameByGuid(guild->GetLeaderGUID(),
+                                                    guildMasterName))
+            handler->PSendSysMessage(
+                LANG_GUILD_INFO_GUILD_MASTER,
+                guildMasterName.c_str(),
+                guild->GetLeaderGUID().GetCounter()); // Guild Master
 
         // Format creation date
-        char createdDateStr[20];
+        char   createdDateStr[20];
         time_t createdDate = guild->GetCreatedDate();
-        tm localTm;
-        strftime(createdDateStr, 20, "%Y-%m-%d %H:%M:%S", localtime_r(&createdDate, &localTm));
+        tm     localTm;
+        strftime(createdDateStr,
+                 20,
+                 "%Y-%m-%d %H:%M:%S",
+                 localtime_r(&createdDate, &localTm));
 
-        handler->PSendSysMessage(LANG_GUILD_INFO_CREATION_DATE, createdDateStr); // Creation Date
-        handler->PSendSysMessage(LANG_GUILD_INFO_MEMBER_COUNT, guild->GetMemberCount()); // Number of Members
-        handler->PSendSysMessage(LANG_GUILD_INFO_BANK_GOLD, guild->GetTotalBankMoney() / 100 / 100); // Bank Gold (in gold coins)
-        handler->PSendSysMessage(LANG_GUILD_INFO_MOTD, guild->GetMOTD().c_str()); // Message of the Day
-        handler->PSendSysMessage(LANG_GUILD_INFO_EXTRA_INFO, guild->GetInfo().c_str()); // Extra Information
+        handler->PSendSysMessage(LANG_GUILD_INFO_CREATION_DATE,
+                                 createdDateStr); // Creation Date
+        handler->PSendSysMessage(LANG_GUILD_INFO_MEMBER_COUNT,
+                                 guild->GetMemberCount()); // Number of Members
+        handler->PSendSysMessage(LANG_GUILD_INFO_BANK_GOLD,
+                                 guild->GetTotalBankMoney() / 100 /
+                                     100); // Bank Gold (in gold coins)
+        handler->PSendSysMessage(
+            LANG_GUILD_INFO_MOTD,
+            guild->GetMOTD().c_str()); // Message of the Day
+        handler->PSendSysMessage(LANG_GUILD_INFO_EXTRA_INFO,
+                                 guild->GetInfo().c_str()); // Extra Information
         return true;
     }
 };
 
-void AddSC_guild_commandscript()
-{
-    new guild_commandscript();
-}
+void AddSC_guild_commandscript() { new guild_commandscript(); }

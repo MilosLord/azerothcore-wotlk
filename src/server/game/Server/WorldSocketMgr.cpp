@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -22,8 +23,7 @@
 #include "WorldSocket.h"
 #include <boost/system/error_code.hpp>
 
-class WorldSocketThread : public NetworkThread<WorldSocket>
-{
+class WorldSocketThread : public NetworkThread<WorldSocket> {
 public:
     void SocketAdded(std::shared_ptr<WorldSocket> sock) override
     {
@@ -37,8 +37,9 @@ public:
     }
 };
 
-WorldSocketMgr::WorldSocketMgr() :
-    BaseSocketMgr(), _socketSystemSendBufferSize(-1), _socketApplicationSendBufferSize(65536), _tcpNoDelay(true)
+WorldSocketMgr::WorldSocketMgr()
+    : BaseSocketMgr(), _socketSystemSendBufferSize(-1),
+      _socketApplicationSendBufferSize(65536), _tcpNoDelay(true)
 {
 }
 
@@ -48,7 +49,10 @@ WorldSocketMgr& WorldSocketMgr::Instance()
     return instance;
 }
 
-bool WorldSocketMgr::StartWorldNetwork(Acore::Asio::IoContext& ioContext, std::string const& bindIp, uint16 port, int threadCount)
+bool WorldSocketMgr::StartWorldNetwork(Acore::Asio::IoContext& ioContext,
+                                       std::string const&      bindIp,
+                                       uint16                  port,
+                                       int                     threadCount)
 {
     _tcpNoDelay = sConfigMgr->GetOption<bool>("Network.TcpNodelay", true);
 
@@ -56,11 +60,12 @@ bool WorldSocketMgr::StartWorldNetwork(Acore::Asio::IoContext& ioContext, std::s
     LOG_DEBUG("network", "Max allowed socket connections {}", max_connections);
 
     // -1 means use default
-    _socketSystemSendBufferSize = sConfigMgr->GetOption<int32>("Network.OutKBuff", -1);
-    _socketApplicationSendBufferSize = sConfigMgr->GetOption<int32>("Network.OutUBuff", 65536);
+    _socketSystemSendBufferSize =
+        sConfigMgr->GetOption<int32>("Network.OutKBuff", -1);
+    _socketApplicationSendBufferSize =
+        sConfigMgr->GetOption<int32>("Network.OutUBuff", 65536);
 
-    if (_socketApplicationSendBufferSize <= 0)
-    {
+    if (_socketApplicationSendBufferSize <= 0) {
         LOG_ERROR("network", "Network.OutUBuff is wrong in your config file");
         return false;
     }
@@ -84,27 +89,33 @@ void WorldSocketMgr::StopNetwork()
 void WorldSocketMgr::OnSocketOpen(tcp::socket&& sock, uint32 threadIndex)
 {
     // set some options here
-    if (_socketSystemSendBufferSize >= 0)
-    {
+    if (_socketSystemSendBufferSize >= 0) {
         boost::system::error_code err;
-        sock.set_option(boost::asio::socket_base::send_buffer_size(_socketSystemSendBufferSize), err);
+        sock.set_option(boost::asio::socket_base::send_buffer_size(
+                            _socketSystemSendBufferSize),
+                        err);
 
-        if (err && err != boost::system::errc::not_supported)
-        {
-            LOG_ERROR("network", "WorldSocketMgr::OnSocketOpen sock.set_option(boost::asio::socket_base::send_buffer_size) err = {}", err.message());
+        if (err && err != boost::system::errc::not_supported) {
+            LOG_ERROR("network",
+                      "WorldSocketMgr::OnSocketOpen "
+                      "sock.set_option(boost::asio::socket_base::send_buffer_"
+                      "size) err = {}",
+                      err.message());
             return;
         }
     }
 
     // Set TCP_NODELAY.
-    if (_tcpNoDelay)
-    {
+    if (_tcpNoDelay) {
         boost::system::error_code err;
         sock.set_option(boost::asio::ip::tcp::no_delay(true), err);
 
-        if (err)
-        {
-            LOG_ERROR("network", "WorldSocketMgr::OnSocketOpen sock.set_option(boost::asio::ip::tcp::no_delay) err = {}", err.message());
+        if (err) {
+            LOG_ERROR(
+                "network",
+                "WorldSocketMgr::OnSocketOpen "
+                "sock.set_option(boost::asio::ip::tcp::no_delay) err = {}",
+                err.message());
             return;
         }
     }

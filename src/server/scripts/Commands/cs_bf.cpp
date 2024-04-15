@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -28,25 +29,23 @@ EndScriptData */
 
 using namespace Acore::ChatCommands;
 
-class bf_commandscript : public CommandScript
-{
+class bf_commandscript : public CommandScript {
 public:
-    bf_commandscript() : CommandScript("bf_commandscript") { }
+    bf_commandscript() : CommandScript("bf_commandscript") {}
 
     ChatCommandTable GetCommands() const override
     {
-        static ChatCommandTable battlefieldcommandTable =
-        {
-            { "start",  HandleBattlefieldStart,  SEC_ADMINISTRATOR, Console::No },
-            { "stop",   HandleBattlefieldEnd,    SEC_ADMINISTRATOR, Console::No },
-            { "switch", HandleBattlefieldSwitch, SEC_ADMINISTRATOR, Console::No },
-            { "timer",  HandleBattlefieldTimer,  SEC_ADMINISTRATOR, Console::No },
-            { "enable", HandleBattlefieldEnable, SEC_ADMINISTRATOR, Console::No }
-        };
-        static ChatCommandTable commandTable =
-        {
-            { "bf", battlefieldcommandTable }
-        };
+        static ChatCommandTable battlefieldcommandTable = {
+            {"start", HandleBattlefieldStart, SEC_ADMINISTRATOR, Console::No},
+            {"stop", HandleBattlefieldEnd, SEC_ADMINISTRATOR, Console::No},
+            {"switch", HandleBattlefieldSwitch, SEC_ADMINISTRATOR, Console::No},
+            {"timer", HandleBattlefieldTimer, SEC_ADMINISTRATOR, Console::No},
+            {"enable",
+             HandleBattlefieldEnable,
+             SEC_ADMINISTRATOR,
+             Console::No}};
+        static ChatCommandTable commandTable = {
+            {"bf", battlefieldcommandTable}};
         return commandTable;
     }
 
@@ -87,14 +86,12 @@ public:
         if (!bf)
             return false;
 
-        if (bf->IsEnabled())
-        {
+        if (bf->IsEnabled()) {
             bf->ToggleBattlefield(false);
             if (battleId == 1)
                 handler->SendGlobalGMSysMessage("Wintergrasp is disabled");
         }
-        else
-        {
+        else {
             bf->ToggleBattlefield(true);
             if (battleId == 1)
                 handler->SendGlobalGMSysMessage("Wintergrasp is enabled");
@@ -112,32 +109,31 @@ public:
 
         bf->EndBattle(false);
         if (battleId == 1)
-            handler->SendGlobalGMSysMessage("Wintergrasp (Command switch used)");
+            handler->SendGlobalGMSysMessage(
+                "Wintergrasp (Command switch used)");
 
         return true;
     }
 
-    static bool HandleBattlefieldTimer(ChatHandler* handler, uint32 battleId, std::string timeStr)
+    static bool HandleBattlefieldTimer(ChatHandler* handler,
+                                       uint32       battleId,
+                                       std::string  timeStr)
     {
-        if (timeStr.empty())
-        {
+        if (timeStr.empty()) {
             return false;
         }
 
-        if (Acore::StringTo<int32>(timeStr).value_or(0) < 0)
-        {
+        if (Acore::StringTo<int32>(timeStr).value_or(0) < 0) {
             handler->SendErrorMessage(LANG_BAD_VALUE);
             return false;
         }
 
         int32 time = TimeStringToSecs(timeStr);
-        if (time <= 0)
-        {
+        if (time <= 0) {
             time = Acore::StringTo<int32>(timeStr).value_or(0);
         }
 
-        if (time <= 0)
-        {
+        if (time <= 0) {
             handler->SendErrorMessage(LANG_BAD_VALUE);
             return false;
         }
@@ -156,7 +152,4 @@ public:
     }
 };
 
-void AddSC_bf_commandscript()
-{
-    new bf_commandscript();
-}
+void AddSC_bf_commandscript() { new bf_commandscript(); }

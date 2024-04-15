@@ -1,5 +1,6 @@
 /*
- * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright
+ * information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by the
@@ -8,8 +9,8 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details.
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -25,19 +26,19 @@
 /*
  * C++ Wrapper for SFMT
  */
-class SFMTRand
-{
+class SFMTRand {
 public:
     SFMTRand();
     uint32 RandomUInt32(); // Output random bits
-    void* operator new(size_t size, std::nothrow_t const&);
-    void operator delete(void* ptr, std::nothrow_t const&);
-    void* operator new(size_t size);
-    void operator delete(void* ptr);
-    void* operator new[](size_t size, std::nothrow_t const&);
-    void operator delete[](void* ptr, std::nothrow_t const&);
-    void* operator new[](size_t size);
-    void operator delete[](void* ptr);
+    void*  operator new(size_t size, std::nothrow_t const&);
+    void   operator delete(void* ptr, std::nothrow_t const&);
+    void*  operator new(size_t size);
+    void   operator delete(void* ptr);
+    void*  operator new[](size_t size, std::nothrow_t const&);
+    void   operator delete[](void* ptr, std::nothrow_t const&);
+    void*  operator new[](size_t size);
+    void   operator delete[](void* ptr);
+
 private:
     sfmt_t _state;
 };
